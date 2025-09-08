@@ -99,9 +99,6 @@ Icon?
 # 🔒 사용자 정의
 # --------------------------
 
-# 외부 에셋 (Google Drive 관리)
-driveAssets/
-
 # 빌드 캐시
 [Bb]in/
 obj/
