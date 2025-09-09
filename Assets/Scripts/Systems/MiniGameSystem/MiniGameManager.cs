@@ -15,11 +15,17 @@ MiniGameManager.cs
 public class MiniGameManager : MonoBehaviour
 {
     private MiniGameAbstract currentGame;
+    public GameObject sliceMiniGamePrefab;
 
     private void Start() //***테스트용 임시코드 - 이후 Start()함수 삭제할 것***
     {
-        GameObject miniGameObject = new GameObject("ClickMiniGame");
-        currentGame = miniGameObject.AddComponent<ClickMiniGame>();
+        //클릭미니게임 실행코드
+        //GameObject miniGameObject = new GameObject("ClickMiniGame");
+        //currentGame = miniGameObject.AddComponent<ClickMiniGame>();
+
+        //슬라이스미니게임 실행코드
+        GameObject go = Instantiate(sliceMiniGamePrefab);
+        currentGame = go.GetComponent<MiniGameAbstract>();
         currentGame.StartGame();
     }
     public void StartMiniGame(MiniGameAbstract game)
