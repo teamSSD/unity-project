@@ -12,5 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1d49fb768c0943beb67eff314b604fa, type: 3}
   m_Name: SilverSandFish
   m_EditorClassIdentifier: 
-  ingredientName: "\uC740\uBE5B\uBAA8\uB798\uBB3C\uACE0\uAE30"
-  type: 2
+  id: 9
+  ingredientName: "\uC740\uBE5B \uBAA8\uB798 \uBB3C\uACE0\uAE30"
+  category: 1
+  tier: 1
+  description: "\uC740\uBE5B\uC73C\uB85C \uBE5B\uB098\uB294 \uC2E0\uBE44\uD55C \uBB3C\uACE0\uAE30"
+  sourceType: 0
+  purchasePrice: 70
+  sellPrice: 14
+  pirationDays: 1
+  tag: 6

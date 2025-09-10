@@ -9,10 +9,10 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Surface
   - Water
   - UI
-  - 
+  - Item
   - 
   - 
   - 
@@ -47,4 +47,7 @@ TagManager:
     locked: 0
   - name: Background
     uniqueID: 3469178407
+    locked: 0
+  - name: Surface
+    uniqueID: 1690641155
     locked: 0
