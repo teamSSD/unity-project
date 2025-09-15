@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
@@ -11,13 +9,11 @@ public class CookingTool : MonoBehaviour
     void Start()
     {
         clickStateUtil = GetComponent<ClickStateUtil>();
+
+        clickStateUtil.OnClicked += ClickRoutine;
     }
 
-    void Update()
-    {
-        if (clickStateUtil.GetClickState() == ClickState.ClickStart)
-        {
-            Debug.Log("호건이가~ 좋아하는~ 랜더어엄~ 게임!");
-        }
+    private void ClickRoutine() {
+        Debug.Log("호건이가~ 좋아하는~ 랜더어엄~ 게임!");
     }
 }

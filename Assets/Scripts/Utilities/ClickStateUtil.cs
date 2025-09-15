@@ -1,107 +1,144 @@
+using System;
 using UnityEngine;
 
-public enum ClickState { None, ClickStart, Clicking, ClickEnd }
+public enum ClickState { None, Clicked, DragStart, Dragging, DragEnd }
 
-/*
- * 2D 클릭 상태 유틸 (보이는 것만 선택 가능 + 겹침 시 최상위 선택 옵션)
- * - requireVisible: 화면에 보이는 경우에만 클릭 허용 (뷰포트 안 + 렌더러 on + 알파)
- * - requireTopMostAtPointer: 같은 지점에 여러 콜라이더가 있으면 sortingOrder 최상위만 허용
- * - pickMask: 선택 대상 레이어 필터
- */
 [RequireComponent(typeof(Collider2D))]
+[DisallowMultipleComponent]
 public class ClickStateUtil : MonoBehaviour
 {
-    [Header("Visible 조건")]
-    public bool requireVisible = true;
-    [Range(0f, 1f)] public float minAlpha = 0.01f;
-
-    [Header("겹침 처리")]
-    public bool requireTopMostAtPointer = true;
+    [Header("카메라 / 피킹")]
+    public Camera targetCamera;
     public LayerMask pickMask = ~0;
-
-    [Header("성능/버퍼 (겹침 처리용)")]
+    public bool requireOverCollider = true;
+    public bool requireTopMostAtPointer = true;
     [Min(1)] public int overlapBufferSize = 16;
 
-    private bool isDragging;
-    private Camera cam;
+    [Header("클릭 판정")]
+    [Tooltip("이 시간 이내에 떼고, 이동도 작으면 Clicked로 간주 (unscaled)")]
+    public float clickMaxDuration = 0.18f;
+    [Tooltip("Clicked로 인정되는 최대 이동(픽셀)")]
+    public float clickMaxMovePx = 6f;
+
+    // 콜백: (screenPos, worldPos)
+    public Action OnClicked;
+    public Action OnDragStart;
+    public Action OnDragging;
+    public Action OnDragEnd;
+    public Action OnNone;
+
     private Collider2D col2d;
-    private SpriteRenderer sr;
-    private ClickState currentState;
     private Collider2D[] overlapBuf;
 
-    void Start()
+    // 입력 추적
+    private bool isDown;
+    private bool dragging;
+    private Vector2 downPosPx;
+    private float  downTime;
+
+    // 외부 조회용 현재 상태
+    private ClickState current = ClickState.None;
+
+    void Awake()
     {
-        cam = Camera.main;
         col2d = GetComponent<Collider2D>();
-        sr = GetComponent<SpriteRenderer>();
         overlapBuf = new Collider2D[Mathf.Max(1, overlapBufferSize)];
-        isDragging = false;
-        currentState = ClickState.None;
+        if (targetCamera == null) targetCamera = Camera.main;
     }
 
     void Update()
     {
-        currentState = DistinguishState();
+        var cam = targetCamera != null ? targetCamera : Camera.main;
+        if (cam == null) return;
+
+        current = DetectState(cam);
+
+        InvokeFor(current);
     }
 
-    public ClickState GetClickState() => currentState;
+    public ClickState getState() => current;
 
-    private ClickState DistinguishState()
+    private ClickState DetectState(Camera cam)
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Vector2 p = (Vector2)cam.ScreenToWorldPoint(Input.mousePosition);
-
-            // 1) 내 콜라이더 위인지
-            var hit = Physics2D.OverlapPoint(p, pickMask);
-            if (hit == null || hit != col2d) goto NotClicked;
-
-            // 2) 보이는 상태인지(옵션)
-            if (requireVisible && !IsVisibleOnScreen()) goto NotClicked;
-
-            // 3) 겹침 시 최상위인지(옵션)
-            if (requireTopMostAtPointer && !IsTopMostAtPointer(p)) goto NotClicked;
-
-            isDragging = true;
-            return ClickState.ClickStart;
+            if (TryBeginOverMe(cam))
+            {
+                isDown    = true;
+                dragging  = false;
+                downPosPx = Input.mousePosition;
+                downTime  = Time.unscaledTime;
+            }
+            return ClickState.None;
         }
 
-    NotClicked:
-        // 클릭 유지
-        if (isDragging && Input.GetMouseButton(0))
-            return ClickState.Clicking;
+        if (!isDown) return ClickState.None;
 
-        // 클릭 종료
-        if (isDragging && Input.GetMouseButtonUp(0))
+        float heldSec = Time.unscaledTime - downTime;
+        float movedPx = (((Vector2)Input.mousePosition) - downPosPx).magnitude;
+
+        if (!dragging && (heldSec > clickMaxDuration || movedPx > clickMaxMovePx))
         {
-            isDragging = false;
-            return ClickState.ClickEnd;
+            dragging = true;
+            return ClickState.DragStart;
+        }
+
+        if (dragging && Input.GetMouseButton(0))
+        {
+            return ClickState.Dragging;
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            isDown = false;
+
+            if (!dragging && heldSec <= clickMaxDuration && movedPx <= clickMaxMovePx)
+            {
+                return ClickState.Clicked;
+            }
+
+            if (!dragging)
+            {
+                dragging = true;
+            }
+            dragging = false;
+            return ClickState.DragEnd;
         }
 
         return ClickState.None;
     }
 
-    // 화면 안 + 렌더러 on + 알파 체크
-    private bool IsVisibleOnScreen()
+    private void InvokeFor(ClickState state)
     {
-        var vp = cam.WorldToViewportPoint(transform.position);
-        if (!(vp.z > 0f && vp.x >= 0f && vp.x <= 1f && vp.y >= 0f && vp.y <= 1f))
-            return false;
-
-        if (sr != null) return sr.enabled && sr.color.a >= minAlpha;
-
-        var rend = GetComponent<Renderer>();
-        return rend == null || rend.enabled;
+        switch (state)
+        {
+            case ClickState.Clicked: SafeInvoke(OnClicked); break;
+            case ClickState.DragStart: SafeInvoke(OnDragStart); break;
+            case ClickState.Dragging: SafeInvoke(OnDragging); break;
+            case ClickState.DragEnd: SafeInvoke(OnDragEnd); break;
+            default: SafeInvoke(OnNone); break;
+        }
     }
 
-    // 같은 점에 겹친 콜라이더 중 최상위(SpriteRenderer.sortingLayerID → sortingOrder)인지
-    private bool IsTopMostAtPointer(Vector2 p)
+    private bool TryBeginOverMe(Camera cam)
     {
-        int count = Physics2D.OverlapCircleNonAlloc(p, 0.0005f, overlapBuf, pickMask);
+        if (!requireOverCollider) return true;
+
+        Vector2 world = cam.ScreenToWorldPoint(Input.mousePosition);
+        var hit = Physics2D.OverlapPoint(world, pickMask);
+        if (hit == null || hit != col2d) return false;
+
+        if (requireTopMostAtPointer && !IsTopMostAt(world)) return false;
+        return true;
+    }
+
+    private bool IsTopMostAt(Vector2 worldPoint)
+    {
+        int count = Physics2D.OverlapCircleNonAlloc(worldPoint, 0.0005f, overlapBuf, pickMask);
         if (count <= 0) return false;
 
         Collider2D best = null;
-        int bestLayer = int.MinValue;
+        int bestLayerVal = int.MinValue;
         int bestOrder = int.MinValue;
 
         for (int i = 0; i < count; i++)
@@ -109,25 +146,19 @@ public class ClickStateUtil : MonoBehaviour
             var c = overlapBuf[i];
             if (c == null) continue;
 
-            // 가시성 필터(옵션)
-            if (requireVisible)
-            {
-                var cSr = c.GetComponent<SpriteRenderer>();
-                if (cSr != null && (!cSr.enabled || cSr.color.a < minAlpha))
-                    continue;
-            }
+            var sr = c.GetComponent<SpriteRenderer>();
+            int layerVal = sr ? SortingLayer.GetLayerValueFromID(sr.sortingLayerID) : 0;
+            int order    = sr ? sr.sortingOrder : 0;
 
-            var csr = c.GetComponent<SpriteRenderer>();
-            int layer = csr ? csr.sortingLayerID : 0;
-            int order = csr ? csr.sortingOrder : 0;
-
-            if (layer > bestLayer || (layer == bestLayer && order > bestOrder))
-            {
-                bestLayer = layer;
-                bestOrder = order;
-                best = c;
-            }
+            bool better = layerVal > bestLayerVal || (layerVal == bestLayerVal && order > bestOrder);
+            if (better) { bestLayerVal = layerVal; bestOrder = order; best = c; }
         }
         return best == col2d;
+    }
+
+    private static void SafeInvoke(Action cb)
+    {
+        try { cb?.Invoke(); }
+        catch (Exception e) { Debug.LogException(e); }
     }
 }

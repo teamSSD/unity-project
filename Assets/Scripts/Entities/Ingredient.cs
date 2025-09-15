@@ -18,30 +18,31 @@ public class Ingredient : MonoBehaviour
         animator = GetComponent<Animator>();
         mainCamera = Camera.main;
         clickStateUtil = GetComponent<ClickStateUtil>();
+
+        clickStateUtil.OnDragStart += DragStartRoutine;
+        clickStateUtil.OnDragging += DraggingRoutine;
+        clickStateUtil.OnDragEnd += DragEndRoutine;
+        clickStateUtil.OnNone += NoneRoutine;
     }
 
-    void Update()
+    private void DragStartRoutine()
     {
-        ClickState clickState = clickStateUtil.GetClickState();
+        animator.SetBool("Clicking", true);
+    }
 
-        if (clickState == ClickState.ClickStart)
-        {
-            animator.SetBool("Clicking", true);
-        }
+    private void DraggingRoutine()
+    {
+        Vector3 target = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        target.z = defaultPosition.z;
+        transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * speed);
+    }
 
-        if (clickState == ClickState.Clicking)
-        {
-            Vector3 target = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            target.z = defaultPosition.z;
-            transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * speed);
-        }
+    private void DragEndRoutine() {
+        animator.SetBool("Clicking", false);
+    }
 
-        if (clickState == ClickState.ClickEnd)
-        {
-            animator.SetBool("Clicking", false);
-        }
-
-        if (clickState == ClickState.None && transform.position != defaultPosition)
+    private void NoneRoutine() {
+        if (transform.position != defaultPosition)
         {
             transform.position = Vector3.Lerp(transform.position, defaultPosition, Time.deltaTime * speed);
             if (Vector3.Distance(transform.position, defaultPosition) < 0.01f)
