@@ -28,4 +28,5 @@ public class IngredientData : ScriptableObject
     public int sellPrice;
     public int pirationDays;
     public IngredientTag tag;
+    public Sprite defaultImage;
 }

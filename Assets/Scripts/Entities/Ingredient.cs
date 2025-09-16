@@ -2,27 +2,33 @@ using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(ClickStateUtil))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class Ingredient : MonoBehaviour
 {
     public IngredientData ingredientData;
-
-    private Vector3 defaultPosition;
+    public Vector3 defaultPosition;
     private float speed = 10f;
     private Animator animator;
     private Camera mainCamera;
     private ClickStateUtil clickStateUtil;
+    private SpriteRenderer spriteRenderer;
 
     void Start()
     {
-        defaultPosition = transform.position;
         animator = GetComponent<Animator>();
         mainCamera = Camera.main;
         clickStateUtil = GetComponent<ClickStateUtil>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
         clickStateUtil.OnDragStart += DragStartRoutine;
         clickStateUtil.OnDragging += DraggingRoutine;
         clickStateUtil.OnDragEnd += DragEndRoutine;
         clickStateUtil.OnNone += NoneRoutine;
+
+        if (ingredientData != null && ingredientData.defaultImage != null)
+        {
+            spriteRenderer.sprite = ingredientData.defaultImage;
+        }
     }
 
     private void DragStartRoutine()
@@ -33,7 +39,7 @@ public class Ingredient : MonoBehaviour
     private void DraggingRoutine()
     {
         Vector3 target = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        target.z = defaultPosition.z;
+        target.z = transform.position.z;
         transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * speed);
     }
 

@@ -22,3 +22,4 @@ MonoBehaviour:
   sellPrice: 14
   pirationDays: 1
   tag: 6
+  defaultImage: {fileID: 21300000, guid: da0d15e66db3647138accfbc7a4a2893, type: 3}

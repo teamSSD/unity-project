@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
@@ -6,6 +7,8 @@ public class HoverStateUtil : MonoBehaviour
     private Camera cam;
     private Collider2D col2d;
     private bool isHovering;
+    public Action OnHovering;
+    public Action OnNone;
 
     void Start()
     {
@@ -30,7 +33,18 @@ public class HoverStateUtil : MonoBehaviour
                 break;
             }
         }
+
+        Invoke();
     }
 
     public bool IsHovering() => isHovering;
+
+    public void Invoke() {
+        try
+        {
+            if (isHovering) OnHovering?.Invoke();
+            else OnNone?.Invoke();
+        }
+        catch (Exception e) { Debug.LogException(e); }
+    }
 }

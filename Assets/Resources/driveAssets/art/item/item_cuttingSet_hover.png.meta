@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 14cfa374716cb4af0b3c942e3acdf31d
+guid: c887ce76c142f4e808c3b93af3c59b0e
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: temp_ingredients_0
+      name: item_cuttingSet_hover_0
       rect:
         serializedVersion: 2
-        x: 98
-        y: 1590
-        width: 274
-        height: 450
+        x: 0
+        y: 0
+        width: 256
+        height: 329
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -111,20 +111,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ba8567599eb3f4d0e9765ec5f2294e01
-      internalID: -1894962305
+      spriteID: e05f4e651ba694408ab401d6a7aee250
+      internalID: 1474588973
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: temp_ingredients_1
+      name: item_cuttingSet_hover_1
       rect:
         serializedVersion: 2
-        x: 63
-        y: 1347
-        width: 285
-        height: 240
+        x: 256
+        y: 0
+        width: 256
+        height: 329
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -132,20 +132,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cf540aec43ee440c1a0001fb5ffbf7e9
-      internalID: 1926207120
+      spriteID: 96e33349c80fd4c47902ef3ec0362b20
+      internalID: -796893338
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: temp_ingredients_2
+      name: item_cuttingSet_hover_2
       rect:
         serializedVersion: 2
-        x: 375
-        y: 1414
-        width: 907
-        height: 474
+        x: 512
+        y: 0
+        width: 256
+        height: 329
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,20 +153,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b424d62f5c3b345b0b50a431ab77d515
-      internalID: 879870384
+      spriteID: bead67795360c421d98f799667fe5d78
+      internalID: -659236555
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: temp_ingredients_3
+      name: item_cuttingSet_hover_3
       rect:
         serializedVersion: 2
-        x: 1092
-        y: 1874
-        width: 468
-        height: 286
+        x: 768
+        y: 0
+        width: 256
+        height: 329
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -174,71 +174,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 72bdd3c9deceb45b3ba3958b79b706e3
-      internalID: -1760149154
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: temp_ingredients_4
-      rect:
-        serializedVersion: 2
-        x: 1869
-        y: 115
-        width: 233
-        height: 247
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a0e69c41b73c8461ca59cf7e6a002acc
-      internalID: 198850003
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: temp_ingredients_5
-      rect:
-        serializedVersion: 2
-        x: 2109
-        y: 85
-        width: 236
-        height: 300
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ea8a293324704440dbbf4d3cc16edb75
-      internalID: 404265593
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: temp_ingredients_6
-      rect:
-        serializedVersion: 2
-        x: 2337
-        y: 25
-        width: 155
-        height: 213
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e4f73149ee48644289ca98f335d29672
-      internalID: -99868301
+      spriteID: 2e70405cdc6f64f60a8dc1a3f885d030
+      internalID: -1589449888
       vertices: []
       indices: 
       edges: []
@@ -254,13 +191,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      temp_ingredients_0: -1894962305
-      temp_ingredients_1: 1926207120
-      temp_ingredients_2: 879870384
-      temp_ingredients_3: -1760149154
-      temp_ingredients_4: 198850003
-      temp_ingredients_5: 404265593
-      temp_ingredients_6: -99868301
+      item_cuttingSet_hover_0: 1474588973
+      item_cuttingSet_hover_1: -796893338
+      item_cuttingSet_hover_2: -659236555
+      item_cuttingSet_hover_3: -1589449888
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

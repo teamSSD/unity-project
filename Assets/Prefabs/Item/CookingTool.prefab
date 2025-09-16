@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 7459708382901624544}
   - component: {fileID: 200773277737041495}
   - component: {fileID: 3247702670742113987}
-  m_Layer: 0
+  - component: {fileID: -2381725205459630842}
+  m_Layer: 6
   m_Name: CookingTool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -162,13 +163,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 185034539cb864c22bcbed8b6d5cae75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  requireVisible: 1
-  minAlpha: 0.01
-  requireTopMostAtPointer: 1
+  targetCamera: {fileID: 0}
   pickMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 64
+  requireOverCollider: 1
+  requireTopMostAtPointer: 1
   overlapBufferSize: 16
+  clickMaxDuration: 0.18
+  clickMaxMovePx: 6
 --- !u!114 &3247702670742113987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,3 +185,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cookingToolData: {fileID: 0}
+--- !u!114 &-2381725205459630842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3721458004035474150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2fe1f7aff17942bc8275ab0f92f33f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
