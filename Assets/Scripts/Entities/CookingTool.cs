@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(ClickStateUtil))]
 [RequireComponent(typeof(HoverStateUtil))]
+[RequireComponent(typeof(ScanColliderUtil))]
 public class CookingTool : MonoBehaviour
 {
     public CookingToolData cookingToolData;
@@ -14,6 +15,7 @@ public class CookingTool : MonoBehaviour
     ClickStateUtil clickStateUtil;
     HoverStateUtil hoverStateUtil;
     private Animator animator;
+    private ScanColliderUtil scanColliderUtil;
     private bool dragging = false;
     private List<IngredientData> ingredients;
 
@@ -28,6 +30,7 @@ public class CookingTool : MonoBehaviour
         clickStateUtil = GetComponent<ClickStateUtil>();
         clickStateUtil.OnClicked += ClickRoutine;
         clickStateUtil.OnDragging += DraggingRoutine;
+        clickStateUtil.OnDragEnd += DragEndRoutine;
         clickStateUtil.OnNone += NoneClickRoutine;
 
         hoverStateUtil = GetComponent<HoverStateUtil>();
@@ -36,6 +39,7 @@ public class CookingTool : MonoBehaviour
         hoverStateUtil.OnNone += NoneHoverRoutine;
 
         mainCamera = Camera.main;
+        scanColliderUtil = GetComponent<ScanColliderUtil>();
 
         ingredients = new List<IngredientData>(maxIngredientSize);
 
@@ -73,6 +77,15 @@ public class CookingTool : MonoBehaviour
         Vector3 target = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         target.z = transform.position.z;
         transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * speed);
+    }
+
+    private void DragEndRoutine()
+    {
+        if (scanColliderUtil.GetOverlappingWithTag("Trashcan") != null)
+        {
+            ingredients.Clear();
+            RefreshIngredientVisuals();
+        }
     }
 
     private void NoneClickRoutine()

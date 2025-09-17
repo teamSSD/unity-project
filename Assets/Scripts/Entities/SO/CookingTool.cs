@@ -8,4 +8,16 @@ public class CookingToolData : ScriptableObject
     public string cookerName;
     public List<int> minigameIds;
     public List<int> availableIngredientIds;
+
+    public override bool Equals(object obj)
+    {
+        if (obj is IngredientData other)
+            return this.id == other.id;
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return id.GetHashCode();
+    }
 }

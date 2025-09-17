@@ -18,4 +18,16 @@ public class RecipeData : ScriptableObject
     public IngredientData outputFood;
     public List<int> inputFoodIds;
     public TempMinigameData Minigame;
+
+    public override bool Equals(object obj)
+    {
+        if (obj is IngredientData other)
+            return this.id == other.id;
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return id.GetHashCode();
+    }
 }

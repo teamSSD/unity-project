@@ -1,9 +1,9 @@
 using UnityEngine;
-using System.Linq;
 
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(ClickStateUtil))]
 [RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(ScanColliderUtil))]
 public class Ingredient : MonoBehaviour
 {
     [Header("Ingredient SO")]
@@ -17,6 +17,7 @@ public class Ingredient : MonoBehaviour
     private Camera mainCamera;
     private ClickStateUtil clickStateUtil;
     private SpriteRenderer spriteRenderer;
+    private ScanColliderUtil scanColliderUtil;
 
     private Collider2D selfCollider;
     private ContactFilter2D overlapFilter;
@@ -31,6 +32,7 @@ public class Ingredient : MonoBehaviour
         clickStateUtil = GetComponent<ClickStateUtil>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         selfCollider = GetComponent<Collider2D>();
+        scanColliderUtil = GetComponent<ScanColliderUtil>();
 
         clickStateUtil.OnDragStart += DragStartRoutine;
         clickStateUtil.OnDragging += DraggingRoutine;
@@ -59,7 +61,7 @@ public class Ingredient : MonoBehaviour
     {
         animator.SetBool("Clicking", false);
 
-        CookingTool cookingTool = GetCookingTool();
+        CookingTool cookingTool = scanColliderUtil.GetOverlappingWithComponent<CookingTool>();
         if (cookingTool != null)
         {
             Interact(cookingTool);
@@ -74,15 +76,6 @@ public class Ingredient : MonoBehaviour
             if (Vector3.Distance(transform.position, defaultPosition) < 0.01f)
                 transform.position = defaultPosition;
         }
-    }
-
-    private CookingTool GetCookingTool()
-    {
-        int hitCount = selfCollider.OverlapCollider(overlapFilter, overlappingCollidersBuffer);
-        return overlappingCollidersBuffer
-            .Take(hitCount)
-            .Select(c => c?.GetComponentInParent<CookingTool>())
-            .FirstOrDefault(t => t != null);
     }
 
     private void Interact(CookingTool cookingTool)
