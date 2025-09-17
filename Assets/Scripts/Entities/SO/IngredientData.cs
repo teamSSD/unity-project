@@ -29,4 +29,16 @@ public class IngredientData : ScriptableObject
     public int pirationDays;
     public IngredientTag tag;
     public Sprite defaultImage;
+
+    public override bool Equals(object obj)
+    {
+        if (obj is IngredientData other)
+            return this.id == other.id;
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return id.GetHashCode();
+    }
 }

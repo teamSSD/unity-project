@@ -4,5 +4,6 @@ using UnityEngine;
 
 public class TempMinigameData : ScriptableObject
 {
+    public int id;
     public string minigameName;
 }

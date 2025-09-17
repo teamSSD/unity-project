@@ -16,6 +16,6 @@ public class RecipeData : ScriptableObject
 {
     public int id;
     public IngredientData outputFood;
-    public List<IngredientData> inputFoods;
+    public List<int> inputFoodIds;
     public TempMinigameData Minigame;
 }

@@ -6,5 +6,6 @@ public class CookingToolData : ScriptableObject
 {
     public int id;
     public string cookerName;
-    public List<TempMinigameData> minigames;
+    public List<int> minigameIds;
+    public List<int> availableIngredientIds;
 }

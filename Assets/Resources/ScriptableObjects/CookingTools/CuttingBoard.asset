@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 1
   cookerName: "\uB3C4\uB9C8"
+  minigameIds: 
+  availableIngredientIds: 09000000

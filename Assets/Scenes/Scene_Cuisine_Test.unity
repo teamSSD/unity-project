@@ -629,6 +629,11 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!4 &2024735454 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1859383098079619227, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+  m_PrefabInstance: {fileID: 4371184066043051109}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4371184066043051109
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -690,6 +695,26 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 4be5f0ca6249d45e5b7059e01df4424a, type: 3}
     - target: {fileID: 3247702670742113987, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: iconScale
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3247702670742113987, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: stackStep.x
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 3247702670742113987, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: stackStep.y
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3247702670742113987, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: stackStart.x
+      value: -0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3247702670742113987, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: stackStart.y
+      value: -0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3247702670742113987, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
       propertyPath: cookingToolData
       value: 
       objectReference: {fileID: 11400000, guid: 573843436d51d4e1084d2191fdb9f7aa, type: 2}
@@ -701,6 +726,14 @@ PrefabInstance:
       propertyPath: defaultPosition.y
       value: -3.98
       objectReference: {fileID: 0}
+    - target: {fileID: 3247702670742113987, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: maxIngredientSize
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3247702670742113987, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: ingredientVisualRoot
+      value: 
+      objectReference: {fileID: 2024735454}
     - target: {fileID: 3721458004035474150, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
       propertyPath: m_Name
       value: CookingTool

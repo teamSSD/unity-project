@@ -14,11 +14,9 @@ public class RecipeSystem : MonoBehaviour
             .ToArray();
 
         return recipes.FirstOrDefault(r =>
-            r != null && r.inputFoods != null &&
-            r.inputFoods.Count == sources.Count &&
-            r.inputFoods
-                .Where(i => i != null)
-                .Select(i => i.id)
+            r != null && r.inputFoodIds != null &&
+            r.inputFoodIds.Count == sources.Count &&
+            r.inputFoodIds
                 .OrderBy(id => id)
                 .SequenceEqual(srcSig));
     }

@@ -1,17 +1,28 @@
 using UnityEngine;
+using System.Linq;
 
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(ClickStateUtil))]
 [RequireComponent(typeof(SpriteRenderer))]
 public class Ingredient : MonoBehaviour
 {
+    [Header("Ingredient SO")]
     public IngredientData ingredientData;
+    public int tempQuantity = 10;
+    [Header("Metadata")]
     public Vector3 defaultPosition;
     private float speed = 10f;
+
     private Animator animator;
     private Camera mainCamera;
     private ClickStateUtil clickStateUtil;
     private SpriteRenderer spriteRenderer;
+
+    private Collider2D selfCollider;
+    private ContactFilter2D overlapFilter;
+    private readonly Collider2D[] overlappingCollidersBuffer = new Collider2D[8];
+
+    private readonly Collider2D[] scanBuf = new Collider2D[8];
 
     void Start()
     {
@@ -19,6 +30,7 @@ public class Ingredient : MonoBehaviour
         mainCamera = Camera.main;
         clickStateUtil = GetComponent<ClickStateUtil>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        selfCollider = GetComponent<Collider2D>();
 
         clickStateUtil.OnDragStart += DragStartRoutine;
         clickStateUtil.OnDragging += DraggingRoutine;
@@ -43,16 +55,50 @@ public class Ingredient : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * speed);
     }
 
-    private void DragEndRoutine() {
+    private void DragEndRoutine()
+    {
         animator.SetBool("Clicking", false);
+
+        CookingTool cookingTool = GetCookingTool();
+        if (cookingTool != null)
+        {
+            Interact(cookingTool);
+        }
     }
 
-    private void NoneRoutine() {
+    private void NoneRoutine()
+    {
         if (transform.position != defaultPosition)
         {
             transform.position = Vector3.Lerp(transform.position, defaultPosition, Time.deltaTime * speed);
             if (Vector3.Distance(transform.position, defaultPosition) < 0.01f)
                 transform.position = defaultPosition;
+        }
+    }
+
+    private CookingTool GetCookingTool()
+    {
+        int hitCount = selfCollider.OverlapCollider(overlapFilter, overlappingCollidersBuffer);
+        return overlappingCollidersBuffer
+            .Take(hitCount)
+            .Select(c => c?.GetComponentInParent<CookingTool>())
+            .FirstOrDefault(t => t != null);
+    }
+
+    private void Interact(CookingTool cookingTool)
+    {
+        if (cookingTool.AddIngredient(ingredientData))
+        {
+            SubQuantity();
+        }
+    }
+
+    private void SubQuantity()
+    {
+        tempQuantity -= 1;
+        if (tempQuantity <= 0)
+        {
+            Destroy(gameObject);
         }
     }
 }

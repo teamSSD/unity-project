@@ -24,12 +24,12 @@ public class RecipeSystem_RealRecipeTests
         return x;
     }
 
-    RecipeData MakeRecipe(int id, IngredientData output, params IngredientData[] inputs)
+    RecipeData MakeRecipe(int id, IngredientData output, params int[] inputs)
     {
         var r = ScriptableObject.CreateInstance<RecipeData>();
         r.id = id;
         r.outputFood = output;
-        r.inputFoods = new List<IngredientData>(inputs);
+        r.inputFoodIds = new List<int>(inputs);
         // r.Minigame = ... // 필요시 더미 세팅
         return r;
     }
@@ -70,26 +70,26 @@ public class RecipeSystem_RealRecipeTests
         var recipes = new List<RecipeData>
         {
             // 메인메뉴 1: 맨드레이크 새싹 나물 비빔밥
-            MakeRecipe(101, 냄비밥, 밥),                                 // 밥 → (냄비) → 냄비밥
-            MakeRecipe(102, 채썬맨드레이크, 맨드레이크새싹),             // 맨드레이크 → (채썰기) → 채썬 맨드레이크
-            MakeRecipe(103, 용달걀프라이, 용의달걀),                     // 용의 달걀 → (프라이팬) → 용 달걀 프라이
-            MakeRecipe(104, 비빔밥_완성, 냄비밥, 채썬맨드레이크, 용달걀프라이, 화염장), // 중간산물 3 + 화염장 → (비빔)
+            MakeRecipe(101, 냄비밥, 밥.id),                                 // 밥 → (냄비) → 냄비밥
+            MakeRecipe(102, 채썬맨드레이크, 맨드레이크새싹.id),             // 맨드레이크 → (채썰기) → 채썬 맨드레이크
+            MakeRecipe(103, 용달걀프라이, 용의달걀.id),                     // 용의 달걀 → (프라이팬) → 용 달걀 프라이
+            MakeRecipe(104, 비빔밥_완성, 냄비밥.id, 채썬맨드레이크.id, 용달걀프라이.id, 화염장.id), // 중간산물 3 + 화염장 → (비빔)
 
             // 메인메뉴 2: 잔치국수
-            MakeRecipe(201, 삶은면, 면),                                 // 면 → (냄비) → 삶은 면
-            MakeRecipe(202, 육수, 은빛모래물고기),                        // 은빛 모래 물고기 → (냄비) → 육수
-            MakeRecipe(203, 용달걀프라이, 용의달걀),                     // (재사용 가능) 달걀 프라이
-            MakeRecipe(204, 용달걀지단, 용달걀프라이),                    // 프라이 → (썰기) → 지단
-            MakeRecipe(205, 잔치국수_완성, 삶은면, 육수, 용달걀지단, 화염장), // 삶은 면 + 육수 + 지단 + 화염장 → (비빔)
+            MakeRecipe(201, 삶은면, 면.id),                                 // 면 → (냄비) → 삶은 면
+            MakeRecipe(202, 육수, 은빛모래물고기.id),                        // 은빛 모래 물고기 → (냄비) → 육수
+            MakeRecipe(203, 용달걀프라이, 용의달걀.id),                     // (재사용 가능) 달걀 프라이
+            MakeRecipe(204, 용달걀지단, 용달걀프라이.id),                    // 프라이 → (썰기) → 지단
+            MakeRecipe(205, 잔치국수_완성, 삶은면.id, 육수.id, 용달걀지단.id, 화염장.id), // 삶은 면 + 육수 + 지단 + 화염장 → (비빔)
 
             // 메인메뉴 3: 만둣국
-            MakeRecipe(301, 반죽, 밀가루, 물),                            // 밀가루 + 물 → (비빔) → 반죽
-            MakeRecipe(302, 다진고기00, 고기00),                          // 00고기 → (다지기) → 다진 00고기
-            MakeRecipe(303, 볶은다진고기00, 다진고기00),                  // 다진 00고기 → (볶기) → 볶은 00 다진 고기
-            MakeRecipe(304, 채썬용의꼬리풀, 용의꼬리풀),                  // 용의 꼬리풀 → (채썰기) → 채썬 용의 꼬리풀
-            MakeRecipe(305, 육수, 은빛모래물고기),                        // 은빛 모래 물고기 → (냄비) → 육수 (동일 출력 재활용 가정)
-            MakeRecipe(306, 만두, 반죽, 볶은다진고기00, 채썬용의꼬리풀),  // 반죽 + 볶은 고기 + 채썬 꼬리풀 → (찌기) → 만두
-            MakeRecipe(307, 만둣국_완성, 만두, 육수)                      // 만두 + 육수 → (냄비) → 만둣국
+            MakeRecipe(301, 반죽, 밀가루.id, 물.id),                            // 밀가루 + 물 → (비빔) → 반죽
+            MakeRecipe(302, 다진고기00, 고기00.id),                          // 00고기 → (다지기) → 다진 00고기
+            MakeRecipe(303, 볶은다진고기00, 다진고기00.id),                  // 다진 00고기 → (볶기) → 볶은 00 다진 고기
+            MakeRecipe(304, 채썬용의꼬리풀, 용의꼬리풀.id),                  // 용의 꼬리풀 → (채썰기) → 채썬 용의 꼬리풀
+            MakeRecipe(305, 육수, 은빛모래물고기.id),                        // 은빛 모래 물고기 → (냄비) → 육수 (동일 출력 재활용 가정)
+            MakeRecipe(306, 만두, 반죽.id, 볶은다진고기00.id, 채썬용의꼬리풀.id),  // 반죽 + 볶은 고기 + 채썬 꼬리풀 → (찌기) → 만두
+            MakeRecipe(307, 만둣국_완성, 만두.id, 육수.id)                      // 만두 + 육수 → (냄비) → 만둣국
         };
 
         // ---- 시스템 인스턴스 구성 ----
