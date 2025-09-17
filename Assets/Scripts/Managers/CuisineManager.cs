@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(RecipeSystem))]
 public class CuisineManager : MonoBehaviour
 {
     public GameObject ingredientPrefab;
@@ -10,14 +11,12 @@ public class CuisineManager : MonoBehaviour
     public float spacingX = 0.6f;
     public float spacingY = 0.6f;
     [Range(1, 30)] public int perRow = 999;
+    
+    private RecipeSystem recipeSystem;
     void Start()
     {
         generateIngredinets();
-    }
-
-    void Update()
-    {
-
+        recipeSystem = GetComponent<RecipeSystem>();
     }
 
     void generateIngredinets()

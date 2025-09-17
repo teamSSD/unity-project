@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(menuName = "SO/TempMinigame")]
 public class TempMinigameData : ScriptableObject
 {
     public int id;

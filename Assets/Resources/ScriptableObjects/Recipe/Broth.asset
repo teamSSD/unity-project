@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e36c8da74c1da4746a6775920114e22b, type: 3}
-  m_Name: BoiledNoodle
+  m_Name: Broth
   m_EditorClassIdentifier: 
-  id: 3
-  outputFood: {fileID: 11400000, guid: c4841b763ce3b434a8ba8a2f85cfa6c4, type: 2}
-  inputFoodIds: 02000000
+  id: 4
+  outputFood: {fileID: 11400000, guid: 4d7bf7f968be84c028c229f7f815fc6c, type: 2}
+  inputFoodIds: 09000000
   cookingToolId: 2
   minigame: {fileID: 11400000, guid: 77c6a80a887b9457c9ff1149893bdad7, type: 2}

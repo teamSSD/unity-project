@@ -6,7 +6,7 @@ public class CookingToolData : ScriptableObject
 {
     public int id;
     public string cookerName;
-    public List<int> minigameIds;
+    public List<TempMinigameData> minigames;
     public List<int> availableIngredientIds;
 
     public override bool Equals(object obj)

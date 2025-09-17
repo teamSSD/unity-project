@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e36c8da74c1da4746a6775920114e22b, type: 3}
-  m_Name: BoiledNoodle
+  m_Name: DragonEggFry
   m_EditorClassIdentifier: 
-  id: 3
-  outputFood: {fileID: 11400000, guid: c4841b763ce3b434a8ba8a2f85cfa6c4, type: 2}
-  inputFoodIds: 02000000
+  id: 2
+  outputFood: {fileID: 11400000, guid: db4f807b363e843e19bd9385abdb8d13, type: 2}
+  inputFoodIds: 08000000
   cookingToolId: 2
-  minigame: {fileID: 11400000, guid: 77c6a80a887b9457c9ff1149893bdad7, type: 2}
+  minigame: {fileID: 11400000, guid: 070d03a26cd764e66990805a213af4f9, type: 2}

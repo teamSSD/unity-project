@@ -17,7 +17,8 @@ public class RecipeData : ScriptableObject
     public int id;
     public IngredientData outputFood;
     public List<int> inputFoodIds;
-    public TempMinigameData Minigame;
+    public int cookingToolId;
+    public TempMinigameData minigame;
 
     public override bool Equals(object obj)
     {

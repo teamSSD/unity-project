@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6eaa2cef611b454cb14a4059b069f1b, type: 3}
-  m_Name: CuttingBoard
+  m_Name: Bowl
   m_EditorClassIdentifier: 
-  id: 1
-  cookerName: "\uB3C4\uB9C8"
+  id: 3
+  cookerName: "\uBCF4\uC6B8"
   minigames:
-  - {fileID: 11400000, guid: 3fa5802f4345a4d309872c6a1207c336, type: 2}
-  availableIngredientIds: 070000000a0000000b0000000c0000000e00000011000000
+  - {fileID: 11400000, guid: 5e78e710ff4634fff81729df57e198b9, type: 2}
+  availableIngredientIds: 010000000200000003000000040000000500000006000000100000001100000012000000130000001400000015000000

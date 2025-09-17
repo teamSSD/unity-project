@@ -1,23 +1,30 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(ClickStateUtil))]
 [RequireComponent(typeof(HoverStateUtil))]
 [RequireComponent(typeof(ScanColliderUtil))]
+[RequireComponent(typeof(SpriteStackRenderer))]
 public class CookingTool : MonoBehaviour
 {
     public CookingToolData cookingToolData;
     public Vector3 defaultPosition;
     public int maxIngredientSize = 7;
+
     private Camera mainCamera;
     private float speed = 10f;
     ClickStateUtil clickStateUtil;
     HoverStateUtil hoverStateUtil;
     private Animator animator;
     private ScanColliderUtil scanColliderUtil;
+    private SpriteStackRenderer spriteStackRenderer;
     private bool dragging = false;
     private List<IngredientData> ingredients;
+    public GameObject manager;
+    public IngredientData failure;
+    private IngredientData result = null;
 
     [Header("Ingredient Visuals")]
     [SerializeField] private Transform ingredientVisualRoot;
@@ -25,23 +32,27 @@ public class CookingTool : MonoBehaviour
     [SerializeField] private Vector2 stackStep = new Vector2(0.08f, 0.04f);
     [SerializeField] private float iconScale = 2f;
     [SerializeField] private int baseSortingOrder = 10;
+    private RecipeSystem recipeSystem;
     void Start()
     {
         clickStateUtil = GetComponent<ClickStateUtil>();
+        hoverStateUtil = GetComponent<HoverStateUtil>();
+        scanColliderUtil = GetComponent<ScanColliderUtil>();
+        spriteStackRenderer = GetComponent<SpriteStackRenderer>();
+
+        mainCamera = Camera.main;
+
         clickStateUtil.OnClicked += ClickRoutine;
         clickStateUtil.OnDragging += DraggingRoutine;
         clickStateUtil.OnDragEnd += DragEndRoutine;
         clickStateUtil.OnNone += NoneClickRoutine;
 
-        hoverStateUtil = GetComponent<HoverStateUtil>();
         animator = GetComponent<Animator>();
         hoverStateUtil.OnHovering += HoverRoutine;
         hoverStateUtil.OnNone += NoneHoverRoutine;
 
-        mainCamera = Camera.main;
-        scanColliderUtil = GetComponent<ScanColliderUtil>();
-
         ingredients = new List<IngredientData>(maxIngredientSize);
+        recipeSystem = manager.GetComponent<RecipeSystem>();
 
         if (ingredientVisualRoot == null)
         {
@@ -50,11 +61,25 @@ public class CookingTool : MonoBehaviour
             go.transform.localPosition = Vector3.zero;
             ingredientVisualRoot = go.transform;
         }
+
+        RefreshIngredientVisuals();
     }
 
     private void ClickRoutine()
     {
-        Debug.Log("호건이가~ 좋아하는~ 랜더어엄~ 게임!");
+        if (result != null || ingredients.Count == 0) return;
+
+        RecipeData recipeData = recipeSystem.Search(ingredients, cookingToolData.id);
+
+        TempMinigameData tempMinigameData = (recipeData == null)
+                ? cookingToolData.minigames[Random.Range(0, cookingToolData.minigames.Count)]
+                : recipeData.minigame;
+
+        Debug.Log($"호건이가~ 좋아하는~ 랜더어엄~ 게임!\n{tempMinigameData.minigameName}!!!!");
+
+        ingredients.Clear();
+        result = (recipeData == null) ? failure : recipeData.outputFood;
+        RefreshIngredientVisuals();
     }
 
     private void HoverRoutine()
@@ -84,7 +109,19 @@ public class CookingTool : MonoBehaviour
         if (scanColliderUtil.GetOverlappingWithTag("Trashcan") != null)
         {
             ingredients.Clear();
+            result = null;
             RefreshIngredientVisuals();
+            return;
+        }
+        if (result != null)
+        {
+            CookingTool other = scanColliderUtil.GetOverlappingWithComponent<CookingTool>();
+            if (other != null && other.AddIngredient(result))
+            {
+                result = null;
+                RefreshIngredientVisuals();
+            }
+
         }
     }
 
@@ -105,15 +142,24 @@ public class CookingTool : MonoBehaviour
         {
             return false;
         }
-        return cookingToolData.availableIngredientIds.Contains(ingredientData.id);
+        if (!cookingToolData.availableIngredientIds.Contains(ingredientData.id))
+        {
+            return false;
+        }
+        if (result != null && !cookingToolData.availableIngredientIds.Contains(result.id))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public bool AddIngredient(IngredientData ingredientData)
     {
-        if (!Addable(ingredientData))
-        {
-            return false;
-        }
+        if (!Addable(ingredientData)) return false;
+
+        if (result != null) ingredients.Add(result);
+
         ingredients.Add(ingredientData);
         RefreshIngredientVisuals();
         return true;
@@ -121,42 +167,15 @@ public class CookingTool : MonoBehaviour
 
     private void RefreshIngredientVisuals()
     {
-        for (int i = ingredientVisualRoot.childCount - 1; i >= 0; i--)
-            Destroy(ingredientVisualRoot.GetChild(i).gameObject);
-
-        var toolSr = GetComponent<SpriteRenderer>();
-        int visibleIndex = 0;
-
-        for (int i = 0; i < ingredients.Count; i++)
+        if (result != null)
         {
-            IngredientData data = ingredients[i];
-            if (data == null || data.defaultImage == null)
-                continue;
-
-            var iconGO = new GameObject($"IngredientIcon_{i}");
-            iconGO.transform.SetParent(ingredientVisualRoot, false);
-
-            var sr = iconGO.AddComponent<SpriteRenderer>();
-            if (toolSr != null)
-            {
-                sr.sortingLayerID = toolSr.sortingLayerID;
-                sr.sortingLayerName = toolSr.sortingLayerName;
-            }
-
-            sr.sprite = data.defaultImage;
-
-            Vector3 localPos = new Vector3(
-                stackStart.x + stackStep.x * visibleIndex,
-                stackStart.y + stackStep.y * visibleIndex,
-                -0.001f * visibleIndex
-            );
-
-            sr.transform.localPosition = localPos;
-            sr.transform.localScale = Vector3.one * iconScale;
-            sr.sortingOrder = baseSortingOrder + visibleIndex;
-
-            visibleIndex++;
+            spriteStackRenderer.DrawSingle(result.defaultImage);
+            return;
         }
+
+        spriteStackRenderer.DrawMany(ingredients
+            .Where(d => d != null)
+            .Select(d => d.defaultImage));
     }
 }
 
