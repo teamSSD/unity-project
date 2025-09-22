@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83dc2920694b8c448b179e5d2ea81148, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MiniGamePrefab: {fileID: 3355533741195455621, guid: c5e59880eb93d1743a36f6d766cce00a, type: 3}
+  MiniGamePrefab: {fileID: 6518053939684660665, guid: fc721a31c732d5e4b9ad64ed5f6ce067, type: 3}
 --- !u!4 &183934984
 Transform:
   m_ObjectHideFlags: 0

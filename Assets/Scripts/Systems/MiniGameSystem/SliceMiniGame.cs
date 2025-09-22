@@ -17,6 +17,7 @@ SliceMiniGame.cs
 public class SliceMiniGame : MiniGameAbstract
 {
     [Header("프리팹")]
+    public GameObject cuttingBoardPrefab;      // 도마, 토마토 프리팹
     public GameObject knifePrefab;      // 칼 프리팹
     public GameObject slicePrefab;      // 토마토 조각 프리팹
 
@@ -29,6 +30,11 @@ public class SliceMiniGame : MiniGameAbstract
     private Vector3 offset;
     private int sliceCount = 0;
     private bool wasAboveThreshold = true;
+
+    void Start()
+    {
+        GameObject cuttingBoard = Instantiate(cuttingBoardPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+    }
     public override void OnUpdate()
     {
         if (!isPlaying) return;
