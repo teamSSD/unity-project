@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b783a34a091294438214e14efbaa15c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  xPos: 0.3
+  yPos: 0.5
   gaugeBar: {fileID: 268536143422261507}
   increasePerSecond: 0.5
   decreasePerSecond: 0.3

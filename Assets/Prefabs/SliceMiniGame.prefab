@@ -44,6 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 048c017318e695d49985a2656251fb15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  xPos: 0.2
+  yPos: 0.5
   cuttingBoardPrefab: {fileID: 2496899434059364737, guid: ffaf2050c313dd14ab66127dcf9f0a8c, type: 3}
   knifePrefab: {fileID: 3543435988465954468, guid: a586ce342c933194d982dc60edd86cae, type: 3}
   slicePrefab: {fileID: 1742006347137837748, guid: 2fc8ad6945458da488596a36ebd86be5, type: 3}
