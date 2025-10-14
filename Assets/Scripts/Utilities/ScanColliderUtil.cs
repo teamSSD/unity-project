@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Linq;
 
 [RequireComponent(typeof(Collider2D))]
+[DisallowMultipleComponent]
 public class ScanColliderUtil : MonoBehaviour
 {
     [Header("Scan Settings")]

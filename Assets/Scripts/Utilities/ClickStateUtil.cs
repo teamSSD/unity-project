@@ -19,8 +19,6 @@ public class ClickStateUtil : MonoBehaviour
     public float clickMaxDuration = 0.18f;
     [Tooltip("Clicked로 인정되는 최대 이동(픽셀)")]
     public float clickMaxMovePx = 6f;
-
-    // 콜백: (screenPos, worldPos)
     public Action OnClicked;
     public Action OnDragStart;
     public Action OnDragging;

@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
+[DisallowMultipleComponent]
 public class HoverStateUtil : MonoBehaviour
 {
     private Camera cam;

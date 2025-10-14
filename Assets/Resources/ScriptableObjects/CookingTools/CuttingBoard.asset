@@ -14,6 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 1
   cookerName: "\uB3C4\uB9C8"
-  minigames:
-  - {fileID: 11400000, guid: 3fa5802f4345a4d309872c6a1207c336, type: 2}
-  availableIngredientIds: 070000000a0000000b0000000c0000000e00000011000000
+  defaultImage: {fileID: 21300000, guid: 4be5f0ca6249d45e5b7059e01df4424a, type: 3}
+  animatorController: {fileID: 9100000, guid: 0a0d748cb6ff24fd7bcac68e2bd71bfc, type: 2}

@@ -1,48 +1,84 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
 
 [RequireComponent(typeof(RecipeSystem))]
+[DisallowMultipleComponent]
 public class CuisineManager : MonoBehaviour
 {
-    public GameObject ingredientPrefab;
-    public List<IngredientData> tempInventory;
-    public Vector2 ingredientStartPosition;
-    public float spacingX = 0.6f;
-    public float spacingY = 0.6f;
-    [Range(1, 30)] public int perRow = 999;
-    
-    private RecipeSystem recipeSystem;
+    [SerializeField] private GameObject cookingToolParent;
+    [SerializeField] private GameObject cookingToolPrefab;
+    [SerializeField] private List<AnimatorController> animatorControllers;
+    PlayMinigameUsecase playMinigameUsecase;
+    SearchRecipeUsecase searchRecipeUsecase;
+
     void Start()
     {
-        generateIngredinets();
-        recipeSystem = GetComponent<RecipeSystem>();
+        MakeCookingTools();
+        playMinigameUsecase = new tempPlayMinigameUsecase(); 
+        searchRecipeUsecase = new tempSearchRecipeUsecase();
     }
 
-    void generateIngredinets()
+    private void MakeCookingTools()
     {
-        if (ingredientPrefab == null || tempInventory == null) return;
-
-        for (int i = 0; i < tempInventory.Count; i++)
+        /*
+        LoadCookingTools().ForEach(schema =>
         {
-            generateIngredient(tempInventory[i], i);
-        }
+            GameObject go = Instantiate(cookingToolPrefab, cookingToolParent.transform);
+            go.name = schema.Item1.cookingToolData.name;
+            go.GetComponent<CookingToolBehavior>().defaultPosition = schema.Item2;
+            go.GetComponent<CookingToolModel>().Inject(playMinigameUsecase, searchRecipeUsecase, schema.Item1, animatorControllers[0]);
+        });
+        */
     }
 
-    void generateIngredient(IngredientData data, int idx)
+    private List<(CookingToolSchema, Vector2)> LoadCookingTools()
     {
-        int row = idx / perRow;
-        int col = idx % perRow;
+        return new List<(CookingToolSchema, Vector2)>{
+            (
+                new CookingToolSchema(
+                    GenerateCookingToolData(
+                        Resources.Load<Sprite>("driveAssets/art/item/item_cuttingSet_default"),
+                        "C000",
+                        "cookerName"
+                    )
+                ),
+                new Vector2(1, 2)
+            )
+        };
+    }
+    
+    private CookingToolData GenerateCookingToolData(Sprite defaultImage, string id, string cookerName)
+    {
+        var data = ScriptableObject.CreateInstance<CookingToolData>();
+        data.Init(defaultImage, id, cookerName);
+        return data;
+    }
+}
 
-        Vector3 pos = new Vector3(
-            ingredientStartPosition.x + col * spacingX,
-            ingredientStartPosition.y - row * spacingY,
-            0f
-        );
+class tempPlayMinigameUsecase : PlayMinigameUsecase
+{
+    public IEnumerator<float> PlayCoroutine(Vector2 position, List<FoodData> ingredients, Action<float> onCompleted)
+    {
+        float duration = 3f;
+        float elapsed = 0f;
 
-        GameObject generated = Instantiate(ingredientPrefab, pos, Quaternion.identity, transform);
-        Ingredient ingredient = generated.GetComponent<Ingredient>();
-        ingredient.ingredientData = data;
-        ingredient.defaultPosition = pos;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            yield return elapsed / duration;
+        }
+
+        onCompleted?.Invoke(1f);
+    }
+}
+
+class tempSearchRecipeUsecase : SearchRecipeUsecase
+{
+    public (FoodData, RecipeData) Search(List<FoodData> ingredients)
+    {
+        return (new FoodData(), new RecipeData());
     }
 }

@@ -1,9 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum IngredientCategory {
+public enum FoodCategory {
     General, Special, Assistance, Processed, Failure
 }
 
@@ -11,28 +9,29 @@ public enum SourceType {
     Purchase, Cook, Failure
 }
 
-public enum IngredientTag {
+public enum FoodTag {
     Grain, Powder, Liquid, Sause, Vegetable, Egg, Fish, Seafood, Root, Meat
 }
 
-[CreateAssetMenu(menuName = "SO/Ingredient")]
-public class IngredientData : ScriptableObject
+[CreateAssetMenu(menuName = "SO/Food")]
+public class FoodData : ScriptableObject
 {
-    public int id;
+    public string id;
     public string ingredientName;
-    public IngredientCategory category;
+    public FoodCategory category;
     public int tier;
     public string description;
     public SourceType sourceType;
     public int purchasePrice;
     public int sellPrice;
     public int pirationDays;
-    public IngredientTag tag;
+    public FoodTag tag;
     public Sprite defaultImage;
+    public List<string> availableTool;
 
     public override bool Equals(object obj)
     {
-        if (obj is IngredientData other)
+        if (obj is FoodData other)
             return this.id == other.id;
         return false;
     }
