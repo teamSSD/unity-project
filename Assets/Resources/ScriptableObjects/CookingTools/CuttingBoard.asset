@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6eaa2cef611b454cb14a4059b069f1b, type: 3}
   m_Name: CuttingBoard
   m_EditorClassIdentifier: 
-  id: 1
+  id: T002
   cookerName: "\uB3C4\uB9C8"
   defaultImage: {fileID: 21300000, guid: 4be5f0ca6249d45e5b7059e01df4424a, type: 3}
-  animatorController: {fileID: 9100000, guid: 0a0d748cb6ff24fd7bcac68e2bd71bfc, type: 2}

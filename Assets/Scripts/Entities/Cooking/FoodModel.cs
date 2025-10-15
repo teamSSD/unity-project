@@ -1,38 +1,71 @@
+using System;
 using UnityEngine;
 
-[RequireComponent(typeof(FoodSchema))]
 [RequireComponent(typeof(FoodBehavior))]
 [RequireComponent(typeof(ScanColliderUtil))]
+[RequireComponent(typeof(ClickStateUtil))]
 [DisallowMultipleComponent]
-class FoodModel : MonoBehaviour
+public class FoodModel : MonoBehaviour
 {
     public FoodSchema SchemaInstance { get; private set; }
     public FoodBehavior BehaviorInstance { get; private set; }
+    public event Action<FoodModel> onDestroy;
     ScanColliderUtil scanColliderUtil;
     ClickStateUtil clickStateUtil;
+    LoadInventoryUsecase loadInventoryUsecase;
+    bool injected = false;
 
     void Awake()
     {
-        SchemaInstance = GetComponent<FoodSchema>();
         BehaviorInstance = GetComponent<FoodBehavior>();
         scanColliderUtil = GetComponent<ScanColliderUtil>();
+        clickStateUtil = GetComponent<ClickStateUtil>();
 
         clickStateUtil.OnDragEnd += AddToCookingTool;
     }
 
     void OnDestroy()
     {
+        onDestroy?.Invoke(this);
         clickStateUtil.OnDragEnd -= AddToCookingTool;
     }
 
-    void AddToCookingTool()
+    public void Inject(LoadInventoryUsecase loadInventoryUsecase, FoodData foodData, int price)
     {
+        this.loadInventoryUsecase = loadInventoryUsecase;
+        SchemaInstance = new FoodSchema(foodData, price);
+        Sprite newSprite = Resources.Load<Sprite>("driveAssets/art/item/food/" + foodData.imageName);
+        gameObject.GetComponent<SpriteRenderer>().sprite = newSprite;
+        PolygonCollider2D existingCollider = GetComponent<PolygonCollider2D>();
+        Destroy(existingCollider);
+        gameObject.AddComponent<PolygonCollider2D>();
+        injected = true;
+    }
+
+    public void AddToCookingTool()
+    {
+        if (!injected)
+        {
+            Debug.LogWarning("Interface didn't injected.");
+            return;
+        }
+
         CookingToolModel collision = scanColliderUtil.GetOverlappingWithComponent<CookingToolModel>();
+        if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData.id) <= 0)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
         if (collision != null && SchemaInstance.foodData.availableTool.Contains(collision.SchemaInstance.cookingToolData.id))
         {
-            if (collision.AddIngredient(this.SchemaInstance))
+            bool reflected = collision.AddIngredient(this.SchemaInstance);
+            if (!reflected)
             {
-                Destroy(this.gameObject);
+                loadInventoryUsecase.ConsumeFood(SchemaInstance.foodData.id, 1);
+                if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData.id) <= 0)
+                {
+                    Destroy(this.gameObject);
+                }
             }
         }
     }

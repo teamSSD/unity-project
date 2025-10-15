@@ -48,6 +48,7 @@ public class ClickStateUtil : MonoBehaviour
     {
         var cam = targetCamera != null ? targetCamera : Camera.main;
         if (cam == null) return;
+        if (col2d == null) col2d = GetComponent<Collider2D>();
 
         current = DetectState(cam);
 

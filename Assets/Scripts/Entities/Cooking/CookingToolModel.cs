@@ -11,6 +11,7 @@ public class CookingToolModel : MonoBehaviour
     [SerializeField] private CookingToolData cookingToolData;
     private PlayMinigameUsecase playMinigameUsecase;
     private SearchRecipeUsecase searchRecipeUsecase;
+    private SearchFoodUsecase searchFoodUsecase;
     public CookingToolSchema SchemaInstance { get; private set; }
     public CookingToolBehavior BehaviorInstance { get; private set; }
     private ScanColliderUtil scanColliderUtil;
@@ -18,12 +19,14 @@ public class CookingToolModel : MonoBehaviour
 
     bool injected = false;
 
-    public void InjectInterface(
+    public void Inject(
         PlayMinigameUsecase playMinigameUsecase,
-        SearchRecipeUsecase searchRecipeUsecase)
+        SearchRecipeUsecase searchRecipeUsecase,
+        SearchFoodUsecase searchFoodUsecases)
     {
         this.playMinigameUsecase = playMinigameUsecase;
         this.searchRecipeUsecase = searchRecipeUsecase;
+        this.searchFoodUsecase = searchFoodUsecases;
         injected = true;
     }
 
@@ -33,55 +36,98 @@ public class CookingToolModel : MonoBehaviour
         scanColliderUtil = GetComponent<ScanColliderUtil>();
         clickStateUtil = GetComponent<ClickStateUtil>();
 
+        SchemaInstance = new CookingToolSchema(cookingToolData);
+
         clickStateUtil.OnDragEnd += DetectTrashcan;
         clickStateUtil.OnClicked += PlayMinigame;
+        clickStateUtil.OnDragEnd += TransferIngredient;
     }
 
     void OnDestroy()
     {
         clickStateUtil.OnDragEnd -= DetectTrashcan;
         clickStateUtil.OnClicked -= PlayMinigame;
+        clickStateUtil.OnDragEnd -= TransferIngredient;
 
     }
 
     public bool AddIngredient(FoodSchema food)
     {
-        if (!injected) return false;
+        if (!injected)
+        {
+            return false;
+        }
         if (SchemaInstance.IsAddable(food))
         {
-            AddIngredient(food);
+            SchemaInstance.AddIngredient(food);
+            BehaviorInstance.AddTexture(Resources.Load<Sprite>("driveAssets/art/item/food/" + food.foodData.imageName));
             return true;
         }
         return false;
     }
 
+    public void TransferIngredient()
+    {
+        if (!injected)
+        {
+            Debug.LogWarning("Interface didn't injected.");
+            return;
+        }
+        CookingToolModel collision = scanColliderUtil.GetOverlappingWithComponent<CookingToolModel>();
+        if (collision != null)
+        {
+            bool reflected = collision.AddIngredient(SchemaInstance.GetResult());
+            if (reflected)
+            {
+                SchemaInstance.ClearIngredient();
+                BehaviorInstance.ResetTexture();
+            }
+        }
+    }
+
     private void DetectTrashcan()
     {
-        if (!injected) return;
+        if (!injected)
+        {
+            Debug.LogWarning("Interface didn't injected.");
+            return;
+        }
         if (scanColliderUtil.GetOverlappingWithTag(Tags.Trashcan.ToString()))
         {
             SchemaInstance.ClearIngredient();
+            BehaviorInstance.ResetTexture();
         }
     }
 
     private void PlayMinigame()
     {
-        if (!injected) return;
+        if (!injected)
+        {
+            Debug.LogWarning("Interface didn't injected.");
+            return;
+        }
         if (SchemaInstance.IsCookable())
         {
             SchemaInstance.MinigameStart();
-            playMinigameUsecase.PlayCoroutine(
-                (Vector2) this.gameObject.transform.position,
+
+            RecipeData response = searchRecipeUsecase.Search(
+                    SchemaInstance.Ingredients.ConvertAll(ingredient => ingredient.foodData));
+
+            StartCoroutine(playMinigameUsecase.PlayCoroutine(
+                response,
+                (Vector2)this.gameObject.transform.position,
                 SchemaInstance.Ingredients.ConvertAll(ingredient => ingredient.foodData),
-                OnMinigameEnd);
+                OnMinigameEnd));
         }
     }
 
-    private void OnMinigameEnd(float score)
-    {
+    private void OnMinigameEnd(RecipeData recipeData, float score)
+    {        
         if (!injected) return;
-        (FoodData, RecipeData) response = searchRecipeUsecase.Search(
-            SchemaInstance.Ingredients.ConvertAll(ingredient => ingredient.foodData));
-        SchemaInstance.Cook(response.Item1, response.Item2, score);
+        FoodData foodData = searchFoodUsecase.Search(recipeData.outputId);
+        SchemaInstance.Cook(foodData, recipeData, score);
+
+        BehaviorInstance.ResetTexture();
+        BehaviorInstance.AddTexture(Resources.Load<Sprite>("driveAssets/art/item/food/" + foodData.imageName));
     }
 }

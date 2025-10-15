@@ -1,0 +1,16 @@
+id,description,display,defaultPrice,tags,expirationDay
+I001,쌀이다.,LowerShelf,450,Grain,3
+I002,밟으면 소리를 지를 것 같다.,Refrigerator,12000,Vegetable,2
+I003,매콤한 맛을 내는 양념. 감칠맛이 일품이다.,UpperShelf,8500,Sause,7
+I004,용이 낳은 알. 안타깝게도 무정란이다.,Refrigerator,15000,Egg,3
+I005,가늘고 긴 밀 반죽으로 만든 식재료.,LowerShelf,600,Grain,2
+I006,은빛으로 반짝이며 모래 속을 헤엄치는 신비한 물고기.,Refrigerator,9500,Fish,3
+I007,곡물을 곱게 간 가루. 거의 모든 요리의 기본.,UpperShelf,700,Grain,5
+I008,정체를 알 수 없는 육류지만 풍미가 깊다.,Refrigerator,5200,Meat,4
+I009,불타는 비늘처럼 생긴 식물. 뜨겁게 자란다.,UpperShelf,7800,Vegetable,3
+I010,거대한 촉수. 질기지만 조리하면 고급 식감.,Refrigerator,11000,Seafood,2
+I011,달빛을 받아 자라는 꽃의 뿌리. 은은한 향이 난다.,LowerShelf,6400,Root,4
+I012,그림자콩을 발효시켜 만든 장. 깊은 풍미가 있다.,UpperShelf,8800,Sause,6
+I013,고양이들이 열광하는 식물. 진정 효과가 있다.,LowerShelf,2400,Vegetable,3
+I014,전설의 짐승으로 만든 진귀한 소시지.,Refrigerator,12500,Meat,5
+I015,모든 생명의 근원.,Refrigerator,300,Liquid,7

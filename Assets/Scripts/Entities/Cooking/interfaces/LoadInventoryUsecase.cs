@@ -2,7 +2,9 @@ using System.Collections.Generic;
 
 public interface LoadInventoryUsecase
 {
-    List<(FoodData, int)> Load();
-    void UseFood(int foodId);
-    int CheckStock(int foodId);
+    void ConsumeFood(string foodId, int amount);
+    int CheckStockAmount(string foodId);
+    List<(FoodData, IngredientData)> LoadRefrigeratorIngredient();
+    List<(FoodData, IngredientData)> LoadUpperShelfIngredient();
+    List<(FoodData, IngredientData)> LoadLowerShelfIngredient();
 }

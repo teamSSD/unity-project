@@ -19,6 +19,7 @@ public class ScanColliderUtil : MonoBehaviour
     /* null이 반환될 수 있음 */
     public T GetOverlappingWithComponent<T>() where T : Component
     {
+        if (selfCollider == null) selfCollider = GetComponent<Collider2D>();
         int hitCount = selfCollider.OverlapCollider(overlapFilter, buffer);
         return buffer
             .Take(hitCount)
@@ -29,6 +30,7 @@ public class ScanColliderUtil : MonoBehaviour
     /* null이 반환될 수 있음 */
     public GameObject GetOverlappingWithTag(string tag)
     {
+        if (selfCollider == null) selfCollider = GetComponent<Collider2D>();
         int hitCount = selfCollider.OverlapCollider(overlapFilter, buffer);
         return buffer
             .Take(hitCount)

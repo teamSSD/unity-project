@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 public class CookingToolSchema
@@ -15,11 +16,12 @@ public class CookingToolSchema
     {
         this.cookingToolData = cookingToolData;
         this.maxIngredientSize = maxIngredientSize;
+        Ingredients = new List<FoodSchema>();
     }
 
     public bool IsCookable()
     {
-        return result != null || Ingredients.Count == 0;
+        return !locked && Ingredients.Count != 0;
     }
 
     public bool IsAddable(FoodSchema food)
@@ -56,9 +58,12 @@ public class CookingToolSchema
 
     public void Cook(FoodData foodData, RecipeData recipeData, float score)
     {
-        int newPrice = (int)Ingredients
-                .ConvertAll(ingredient => ingredient.Price * (1 + recipeData.InputInfoList.Item2 * score))
-                .Sum();
+        int newPrice = (int) Ingredients.Join(
+            recipeData.inputInfoSet,
+            ingredient => ingredient.foodData.id,
+            inputInfo => inputInfo.foodId,
+            (ingredient, inputInfo) => ingredient.Price * (1 + inputInfo.foodWeight * score)
+        ).Sum();
 
         result = new FoodSchema(foodData, newPrice);
         Ingredients.Clear();

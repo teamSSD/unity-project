@@ -16,7 +16,6 @@ public class CookingToolBehavior : MonoBehaviour
     private Animator animator;
     private SpriteStackRenderer spriteStackRenderer;
     private Camera mainCamera;
-    private bool injected = false;
     void Awake()
     {
         clickStateUtil = GetComponent<ClickStateUtil>();
@@ -40,7 +39,6 @@ public class CookingToolBehavior : MonoBehaviour
 
     private void ProcessMovement(ClickState clickState)
     {
-        Debug.Log(transform.position);
         if (clickState == ClickState.Dragging)
         {
             Vector3 target = mainCamera.ScreenToWorldPoint(Input.mousePosition);

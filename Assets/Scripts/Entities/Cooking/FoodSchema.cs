@@ -1,6 +1,6 @@
 public class FoodSchema
 {
-    public readonly FoodData foodData;
+    public FoodData foodData;
     public int Price { get; private set; }
 
     public FoodSchema(FoodData foodData, int price)

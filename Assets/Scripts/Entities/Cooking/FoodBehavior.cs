@@ -4,10 +4,10 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Animator))]
 [DisallowMultipleComponent]
-class FoodBehavior : MonoBehaviour
+public class FoodBehavior : MonoBehaviour
 {
-    [SerializeField] private float speed = 10f;
-    [SerializeField] private Vector3 defaultPosition;
+    public float speed = 10f;
+    public Vector3 defaultPosition = new Vector3(0, 0, 0);
     private ClickStateUtil clickStateUtil;
     private Animator animator;
     private Camera mainCamera;
@@ -24,7 +24,6 @@ class FoodBehavior : MonoBehaviour
         ClickState clickState = clickStateUtil.getState();
         ProcessAnimation(clickState);
         ProcessMovement(clickState);
-
     }
 
     private void ProcessAnimation(ClickState clickState)

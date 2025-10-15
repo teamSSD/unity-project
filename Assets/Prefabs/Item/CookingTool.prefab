@@ -233,8 +233,8 @@ MonoBehaviour:
   rootGO: {fileID: 0}
   start: {x: 0, y: 0}
   step: {x: 0, y: 0}
-  iconScale: 0
-  baseSortingOrder: 0
+  iconScale: 0.3
+  baseSortingOrder: 1
   inheritSortingFromThis: 1
   sortingReference: {fileID: 0}
 --- !u!95 &1999603750625581274
@@ -310,3 +310,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0bf44c0e48449d2950ee5355595bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cookingToolData: {fileID: 0}

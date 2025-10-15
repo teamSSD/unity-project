@@ -8,7 +8,6 @@ public class CookingToolData : ScriptableObject
     public string id;
     public string cookerName;
     public Sprite defaultImage;
-    public AnimatorController animatorController;
 
     public void Init(Sprite defaultImage, string id, string cookerName)
     {
