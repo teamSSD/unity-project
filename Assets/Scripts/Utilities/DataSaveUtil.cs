@@ -6,7 +6,7 @@ using System;
 
 public class DataManager
 {
-    public static void SaveData<T>(T data, string path) where T : class
+    public static void SaveData<T>(T data, string path)
     {
         try
         {
@@ -19,7 +19,7 @@ public class DataManager
             string savePath = Path.Combine(filePath, nameof(data) + ".json");
             File.WriteAllText(savePath, JsonUtility.ToJson(data));
 
-            Debug.Log($"{nameof(data)}데이터를 세이브 했습니다. : {savePath}");
+            Debug.Log($"{nameof(data)}데이터를 세이브했습니다. : {savePath}");
         }
         catch (IOException e)
         {
@@ -27,24 +27,27 @@ public class DataManager
         }
     }
 
-    public static T LoadData<T>(string path) where T : class
+    public static T LoadData<T>(T data, string path)
     {
         try
         {
+            string filePath = Path.GetDirectoryName(path);
+            string loadPath = Path.Combine(filePath, nameof(data) + ".json");
             // 파일 존재 여부 확인
-            if (!File.Exists(path))
+            if (!File.Exists(loadPath))
             {
-                Debug.LogWarning($"{path}이라는 파일이 존재하지 않습니다.");
-                return null;
+                Debug.LogWarning($"{loadPath}이라는 파일이 존재하지 않습니다.");
+                return data;
             }
 
             // 데이터 불러오기
-            return JsonUtility.FromJson<T>(File.ReadAllText(path));
+            Debug.Log($"{nameof(data)}데이터를 불러왔습니다. : {loadPath}");
+            return JsonUtility.FromJson<T>(File.ReadAllText(loadPath));
         }
         catch (Exception e)
         {
             Debug.LogError($"{path} 데이터 불러오기에 실패했습니다. : {e.Message}");
-            return null;
+            return data;
         }
     }
 }
