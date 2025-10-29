@@ -42,7 +42,6 @@ public class SliceMiniGame : MiniGameAbstract
         GameObject cuttingBoard = Instantiate(cuttingBoardPrefab, this.transform);
         cuttingBoard.transform.localPosition = new Vector3(0, 0, 0);
     }
-
     public override Vector3 GetBGPosition()
     {
         bgPos = new Vector3(xPos, yPos, Camera.main.nearClipPlane);
