@@ -23,7 +23,7 @@ public class MiniGameManager : MonoBehaviour
         //GameObject miniGameObject = new GameObject("ClickMiniGame");
         //currentGame = miniGameObject.AddComponent<ClickMiniGame>();
 
-        //슬라이스/게이지미니게임 실행코드
+        //미니게임 실행코드
         GameObject go = Instantiate(MiniGamePrefab);
         currentGame = go.GetComponent<MiniGameAbstract>();
         currentGame.StartGame();

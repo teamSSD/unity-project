@@ -1,0 +1,37 @@
+id,name,description,imageName,availableTool
+I000,음쓰,너언...답도없다...,item_garbage_default,
+I001,쌀,쌀이다.,item_rice_raw,T001
+I002,맨드레이크 새싹,밟으면 소리를 지를 것 같다.,item_mandrakeSprout_raw,T002
+I003,화염장,매콤한 맛을 내는 양념. 감칠맛이 일품이다.,item_flarePaste_raw,T003
+I004,용의 달걀,용이 낳은 알. 안타깝게도 무정란이다.,item_dragonEgg_raw,T001
+I005,면,가늘고 긴 밀 반죽으로 만든 식재료.,item_noodle_raw,T001
+I006,은빛 모래 물고기,은빛으로 반짝이며 모래 속을 헤엄치는 신비한 물고기.,item_silverSandFish_raw,T001
+I007,밀가루,곡물을 곱게 간 가루. 거의 모든 요리의 기본.,item_flour_raw,T003
+I008,환상 고기,정체를 알 수 없는 육류지만 풍미가 깊다.,item_mysteryMeat_raw,T002
+I009,용의 꼬리풀,불타는 비늘처럼 생긴 식물. 뜨겁게 자란다.,item_dragonTailHerb_raw,T002
+I010,크라켄 다리 촉수,거대한 촉수. 질기지만 조리하면 고급 식감.,item_krakenTentacle_raw,T002
+I011,달꽃의 뿌리,달빛을 받아 자라는 꽃의 뿌리. 은은한 향이 난다.,item_moonflowerRoot_raw,T003
+I012,그림자콩 발효장,그림자콩을 발효시켜 만든 장. 깊은 풍미가 있다.,item_shadowBeanPaste_raw,T003
+I013,고양이풀,고양이들이 열광하는 식물. 진정 효과가 있다.,item_catnip_raw,T002
+I014,블랙메머드 소시지,전설의 짐승으로 만든 진귀한 소시지.,item_blackMammothSausage_raw,T001
+I015,물,모든 생명의 근원.,item_water_raw,T003
+I016,냄비밥,고슬고슬하게 지어진 냄비밥,item_rice_heat,T003
+I017,채썬 맨드레이크,얇게 썰린 맨드레이크,item_mandrakeSprout_cut,T003
+I018,용 달걀 프라이,고온에서 익힌 용의 달걀,item_dragonEgg_heat,T003/T002
+I019,맨드레이크 새싹 나물 비빔밥,맨드레이크의 풀향과 화염장의 불향이 어우러져 오묘한 맛을 자아낸다,item_mandrakeSproutBibimbab_main,MAIN
+I020,삶은 면,삶은 면과 같다.,item_noodle_heat,T003
+I021,은빛 모래 물고기 육수,은빛 모래 물고기를 푹 고아낸 육수,item_silverSandFish_heat,T003
+I022,용 달걀 지단,용 달걀 프라이를 얇게 썰었다.,item_dragonEgg_cut,T003
+I023,잔치국수,깊고 진한 맛이 나는 국수,item_banquetNoodle_main,T003
+I024,반죽,밀가루와 물을 섞었다.,item_dough_mix,T001
+I025,다진 환상 고기,환상 고기를 다졌다.,item_mysteryMeat_cut,T002
+I026,채썬 용의 꼬리풀,가늘게 채 썬 용의 꼬리풀,item_dragonTailHerb_cut,T002
+I027,볶은 환상 다진 고기,다진 환상 고기를 볶았다.,item_friedMysteryMeat_default,T001
+I028,만두,만두 만두만두 만두...,item_mandoo_default,T001
+I029,만둣국,만둣국 맛있겠다...,item_mandooSoup_main,MAIN
+I030,채썬 크라켄 촉수,채썬 크라켄 촉수,item_krakenTentacle_cut,T001
+I031,촉수 젓갈,촉수 젓갈,item_fermentedTentacle_sub,SUB
+I032,달꽃 뿌리 조림,달꽃 뿌리 조림,item_braisedMoonflowerRoot_sub,SUB
+I033,채썬 고양이풀,채썬 고양이풀,item_catnip_cut,T001
+I034,고양이풀 샐러드,고양이풀 샐러드,item_catnipSalad,SUB
+I035,소시지 볶음,소시지 볶음,item_friedSausage,SUB

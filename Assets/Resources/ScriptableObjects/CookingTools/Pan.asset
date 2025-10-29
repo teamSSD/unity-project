@@ -12,9 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6eaa2cef611b454cb14a4059b069f1b, type: 3}
   m_Name: Pan
   m_EditorClassIdentifier: 
-  id: 2
+  id: T001
   cookerName: "\uD32C"
-  minigames:
-  - {fileID: 11400000, guid: 070d03a26cd764e66990805a213af4f9, type: 2}
-  - {fileID: 11400000, guid: 77c6a80a887b9457c9ff1149893bdad7, type: 2}
-  availableIngredientIds: 02000000050000000600000008000000090000000d0000000f00000015000000160000001700000018000000
+  defaultImage: {fileID: 0}

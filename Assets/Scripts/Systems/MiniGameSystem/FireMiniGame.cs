@@ -19,6 +19,13 @@ FireMiniGame.cs
 
 public class  FireMiniGame : MiniGameAbstract
 {
+    [Header("게임 위치")]
+    public float xPos;
+    public float yPos;
+
+    [Header("프리팹")]
+    public GameObject fryingPanPrefab;
+
     [Header("UI 오브젝트")]
     public Image gaugeBar;           
 
@@ -27,8 +34,32 @@ public class  FireMiniGame : MiniGameAbstract
     public float decreasePerSecond = 0.8f; 
     public float targetGauge = 0.8f;       
 
-    private float currentGauge = 0f;        
+    private float currentGauge = 0f;
 
+    private Vector3 bgPos;
+    void Start()
+    {
+        GameObject firePanImage = Instantiate(fryingPanPrefab, this.transform);
+        firePanImage.transform.localPosition = new Vector3(0, 0, 0);
+
+        //게이지바 위치 맞추는 임시코드 (교체 예정)
+        Vector3 worldPos = Camera.main.ViewportToWorldPoint(new Vector3(xPos, yPos, Camera.main.nearClipPlane));
+        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, worldPos);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            gaugeBar.canvas.transform as RectTransform,
+            screenPos,
+            gaugeBar.canvas.worldCamera,
+            out Vector2 localPos);
+        gaugeBar.rectTransform.anchoredPosition = localPos + new Vector2(100f, 0f);//게이지바 위치
+    }
+
+    public override Vector3 GetBGPosition()
+    {
+        bgPos = new Vector3(xPos, yPos, Camera.main.nearClipPlane);
+
+        // (뷰포트 좌표 -> 월드 좌표로 역변환)
+        return Camera.main.ViewportToWorldPoint(bgPos);
+    }
     public override void OnUpdate()
     {
         if (!isPlaying) return;

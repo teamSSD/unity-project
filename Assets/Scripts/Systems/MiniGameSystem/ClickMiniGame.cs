@@ -14,6 +14,14 @@ public class ClickMiniGame : MiniGameAbstract
 {
     private int clickCount = 0;
     private int maxClickTarget = 20; // 20번 클릭하면 만점
+    public override Vector3 GetBGPosition()
+    {
+        // 화면에 보이는 위치 (뷰포트 좌표)
+        Vector3 viewportPos = new Vector3(0f, 0.5f, Camera.main.nearClipPlane + 5f);
+
+        // (뷰포트 좌표 -> 월드 좌표로 역변환)
+        return Camera.main.ViewportToWorldPoint(viewportPos);
+    }
     public override void OnUpdate()
     {
         if (!isPlaying) return;

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 /*
 SliceMiniGame.cs
@@ -16,7 +17,12 @@ SliceMiniGame.cs
 */
 public class SliceMiniGame : MiniGameAbstract
 {
+    [Header("게임 위치")]
+    public float xPos;     
+    public float yPos;
+
     [Header("프리팹")]
+    public GameObject cuttingBoardPrefab;      // 도마, 토마토 프리팹
     public GameObject knifePrefab;      // 칼 프리팹
     public GameObject slicePrefab;      // 토마토 조각 프리팹
 
@@ -24,11 +30,24 @@ public class SliceMiniGame : MiniGameAbstract
     public float yThreshold = 0f;       // 기준선 Y좌표
     public int maxSliceTarget = 10;
 
+    private Vector3 bgPos;   
     private Transform knifeTransform;    // 미니게임이 생성한 칼
     private bool isDragging = false;
     private Vector3 offset;
     private int sliceCount = 0;
     private bool wasAboveThreshold = true;
+
+    void Start()
+    {
+        GameObject cuttingBoard = Instantiate(cuttingBoardPrefab, this.transform);
+        cuttingBoard.transform.localPosition = new Vector3(0, 0, 0);
+    }
+    public override Vector3 GetBGPosition()
+    {
+        bgPos = new Vector3(xPos, yPos, Camera.main.nearClipPlane);
+        // (뷰포트 좌표 -> 월드 좌표로 역변환)
+        return Camera.main.ViewportToWorldPoint(bgPos);
+    }
     public override void OnUpdate()
     {
         if (!isPlaying) return;
@@ -83,7 +102,8 @@ public class SliceMiniGame : MiniGameAbstract
 
     private void SpawnKnife()
     {
-        GameObject knife = Instantiate(knifePrefab, new Vector3(0, 3, 0), Quaternion.identity);
+        GameObject knife = Instantiate(knifePrefab, this.transform);
+        knife.transform.localPosition = new Vector3(0, 0, 0);
         knifeTransform = knife.transform;
     }
     private void SpawnSlice()
@@ -91,7 +111,7 @@ public class SliceMiniGame : MiniGameAbstract
         sliceCount++;
 
         Vector3 spawnPos = knifeTransform.position + new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.2f, 0.2f), 0);
-        Instantiate(slicePrefab, spawnPos, Quaternion.identity);
+        Instantiate(slicePrefab, spawnPos, Quaternion.identity, this.transform);
         Debug.Log($"슬라이스 생성! 현재 개수: {sliceCount}");
     }
 

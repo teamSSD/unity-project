@@ -1,17 +1,24 @@
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "SO/CookingTool")]
 public class CookingToolData : ScriptableObject
 {
-    public int id;
+    public string id;
     public string cookerName;
-    public List<TempMinigameData> minigames;
-    public List<int> availableIngredientIds;
+    public Sprite defaultImage;
+
+    public void Init(Sprite defaultImage, string id, string cookerName)
+    {
+        this.defaultImage = defaultImage;
+        this.id = id;
+        this.cookerName = cookerName;
+    }
 
     public override bool Equals(object obj)
     {
-        if (obj is IngredientData other)
+        if (obj is CookingToolData other)
             return this.id == other.id;
         return false;
     }
