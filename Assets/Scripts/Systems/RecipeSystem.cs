@@ -2,8 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public class RecipeSystem : MonoBehaviour
 {
+    /*
     public List<RecipeData> recipes;
 
     public RecipeData Search(List<IngredientData> sources, int cookingToolId)
@@ -21,4 +23,5 @@ public class RecipeSystem : MonoBehaviour
                     .OrderBy(id => id)
                     .SequenceEqual(srcSig));
     }
+    */
 }

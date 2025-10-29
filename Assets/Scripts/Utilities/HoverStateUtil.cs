@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
+[DisallowMultipleComponent]
 public class HoverStateUtil : MonoBehaviour
 {
     private Camera cam;
@@ -18,6 +19,7 @@ public class HoverStateUtil : MonoBehaviour
 
     void Update()
     {
+        if (col2d == null) col2d = GetComponent<Collider2D>();
         Vector3 mouse = Input.mousePosition;
         mouse.z = Mathf.Abs(cam.transform.position.z);
         Vector2 p = cam.ScreenToWorldPoint(mouse);

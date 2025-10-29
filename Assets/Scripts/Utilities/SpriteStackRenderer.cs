@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[DisallowMultipleComponent]
 public class SpriteStackRenderer : MonoBehaviour
 {
     [Header("Root (생략 시 이 오브젝트 하위에 생성)")]
@@ -10,10 +9,11 @@ public class SpriteStackRenderer : MonoBehaviour
     private Transform root;
 
     [Header("Layout")]
-    [SerializeField] private Vector2 start = new Vector2(0f, 0.1f);
-    [SerializeField] private Vector2 step  = new Vector2(0.08f, 0.04f);
-    [SerializeField] private float iconScale = 2f;
-    [SerializeField] private int baseSortingOrder = 10;
+    [SerializeField] private Vector2 start;
+    [SerializeField] private Vector2 step;
+    [SerializeField] private float iconScale;
+    [SerializeField] private int baseSortingOrder;
+    private int currentVisibleIndex = 0;
 
     [Header("Sorting")]
     [SerializeField] private bool inheritSortingFromThis = true;
@@ -35,6 +35,7 @@ public class SpriteStackRenderer : MonoBehaviour
 
     public void Clear()
     {
+        currentVisibleIndex = 0;
         for (int i = root.childCount - 1; i >= 0; i--)
             Destroy(root.GetChild(i).gameObject);
     }
@@ -44,6 +45,7 @@ public class SpriteStackRenderer : MonoBehaviour
         Clear();
         if (sprite == null) return;
         CreateIcon(sprite, 0, name);
+        currentVisibleIndex++;
     }
 
     public void DrawMany(IEnumerable<Sprite> sprites)
@@ -51,12 +53,18 @@ public class SpriteStackRenderer : MonoBehaviour
         Clear();
         if (sprites == null) return;
 
-        int visibleIndex = 0;
         foreach (var s in sprites.Where(x => x != null))
         {
-            CreateIcon(s, visibleIndex, $"Icon_{visibleIndex}");
-            visibleIndex++;
+            CreateIcon(s, currentVisibleIndex, $"Icon_{currentVisibleIndex}");
+            currentVisibleIndex++;
         }
+    }
+
+    public void Add(Sprite sprite)
+    {
+        if (sprite == null) return;
+        CreateIcon(sprite, currentVisibleIndex, $"Icon_{currentVisibleIndex}");
+        currentVisibleIndex++;
     }
 
     private void CreateIcon(Sprite sprite, int index, string goName)

@@ -19,8 +19,6 @@ public class ClickStateUtil : MonoBehaviour
     public float clickMaxDuration = 0.18f;
     [Tooltip("Clicked로 인정되는 최대 이동(픽셀)")]
     public float clickMaxMovePx = 6f;
-
-    // 콜백: (screenPos, worldPos)
     public Action OnClicked;
     public Action OnDragStart;
     public Action OnDragging;
@@ -50,6 +48,7 @@ public class ClickStateUtil : MonoBehaviour
     {
         var cam = targetCamera != null ? targetCamera : Camera.main;
         if (cam == null) return;
+        if (col2d == null) col2d = GetComponent<Collider2D>();
 
         current = DetectState(cam);
 
