@@ -17,6 +17,13 @@ SauceMiniGame.cs
 */
 public class SauceMiniGame : MiniGameAbstract
 {
+    [Header("게임 위치")]
+    public float xPos;
+    public float yPos;
+
+    [Header("프리팹")]
+    public GameObject saucePrefab;
+
     [Header("UI 오브젝트")]
     public Image gaugeBar;               // UI Image (Fill 방식)
 
@@ -26,6 +33,31 @@ public class SauceMiniGame : MiniGameAbstract
 
     private float currentGauge = 0f;        // 현재 게이지 값 (0~1)
 
+    private Vector3 bgPos;
+    void Start()
+    {
+        GameObject sauceImage = Instantiate(saucePrefab, this.transform);
+        sauceImage.transform.localPosition = new Vector3(0, 0, 0);
+
+        //게이지바 위치 맞추는 임시코드 (교체 예정)
+        Vector3 worldPos = Camera.main.ViewportToWorldPoint(new Vector3(xPos, yPos, Camera.main.nearClipPlane));
+        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, worldPos);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            gaugeBar.canvas.transform as RectTransform,
+            screenPos,
+            gaugeBar.canvas.worldCamera,
+            out Vector2 localPos);
+        gaugeBar.rectTransform.anchoredPosition = localPos;
+    }
+
+
+    public override Vector3 GetBGPosition()
+    {
+        bgPos = new Vector3(xPos, yPos, Camera.main.nearClipPlane);
+
+        // (뷰포트 좌표 -> 월드 좌표로 역변환)
+        return Camera.main.ViewportToWorldPoint(bgPos);
+    }
     public override void OnUpdate()
     {
         if (!isPlaying) return;
@@ -49,3 +81,4 @@ public class SauceMiniGame : MiniGameAbstract
         return Mathf.Clamp01(score);
     }
 }
+

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7825094644016984173
+--- !u!1 &6518053939684660665
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4029416357777624719}
-  - component: {fileID: 1143175556418526034}
+  - component: {fileID: 3021235433857835211}
+  - component: {fileID: 5611425242418273560}
   m_Layer: 0
   m_Name: SliceMiniGame
   m_TagString: Untagged
@@ -17,13 +17,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4029416357777624719
+--- !u!4 &3021235433857835211
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7825094644016984173}
+  m_GameObject: {fileID: 6518053939684660665}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,20 +32,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1143175556418526034
+--- !u!114 &5611425242418273560
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7825094644016984173}
+  m_GameObject: {fileID: 6518053939684660665}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 048c017318e695d49985a2656251fb15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  xPos: 0.2
+  yPos: 0.5
+  cuttingBoardPrefab: {fileID: 2496899434059364737, guid: ffaf2050c313dd14ab66127dcf9f0a8c, type: 3}
   knifePrefab: {fileID: 3543435988465954468, guid: a586ce342c933194d982dc60edd86cae, type: 3}
   slicePrefab: {fileID: 1742006347137837748, guid: 2fc8ad6945458da488596a36ebd86be5, type: 3}
-  sliceParent: {fileID: 2375216150704500996, guid: 7576991e208ff9748b973fec7fc0259c, type: 3}
   yThreshold: 0
   maxSliceTarget: 10
