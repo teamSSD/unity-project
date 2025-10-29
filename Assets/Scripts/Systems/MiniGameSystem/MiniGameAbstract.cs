@@ -65,8 +65,8 @@ public abstract class MiniGameAbstract : MonoBehaviour
     }
 
     private void ShowBG()
-    { 
-        miniGameBgPrefab = Resources.Load<GameObject>("miniGameBG");
+    {
+        miniGameBgPrefab = Resources.Load<GameObject>("Prefabs/minigame/miniGameBG");
 
         Vector3 pos = GetBGPosition();
         miniGameBgPrefab = Instantiate(miniGameBgPrefab, pos, Quaternion.identity);

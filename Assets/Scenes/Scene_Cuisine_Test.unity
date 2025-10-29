@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -233,7 +232,6 @@ GameObject:
   m_Component:
   - component: {fileID: 244096690}
   - component: {fileID: 244096689}
-  - component: {fileID: 244096691}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -276,18 +274,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &244096691
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 244096688}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0d671a71b93748419460a58e0df7ff1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &382492956 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3721458004035474150, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
@@ -1265,6 +1251,18 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: c83e64c48f34847eb8ee786d8133ace0, type: 3}
+    - target: {fileID: 2263298471828913758, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2263298471828913758, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2263298471828913758, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3721458004035474150, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
       propertyPath: m_Name
       value: "\uBCF4\uC62C"
@@ -1421,8 +1419,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c04306eb7f2140efb736916bc571c14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  edgePercent: 0.1
-  panSpeed: 10
+  edgeZone: 0.1
+  moveSpeed: 10
   inputSmoothTime: 0.2
   holdKey: 0
   worldCollider: {fileID: 1686758169}
