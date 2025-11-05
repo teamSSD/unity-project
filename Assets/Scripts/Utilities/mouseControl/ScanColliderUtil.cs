@@ -20,7 +20,7 @@ public class ScanColliderUtil : MonoBehaviour
     public T GetOverlappingWithComponent<T>() where T : Component
     {
         if (selfCollider == null) selfCollider = GetComponent<Collider2D>();
-        int hitCount = selfCollider.OverlapCollider(overlapFilter, buffer);
+        int hitCount = selfCollider.Overlap(overlapFilter, buffer);
         return buffer
             .Take(hitCount)
             .Select(c => c?.GetComponentInParent<T>())
@@ -31,7 +31,7 @@ public class ScanColliderUtil : MonoBehaviour
     public GameObject GetOverlappingWithTag(string tag)
     {
         if (selfCollider == null) selfCollider = GetComponent<Collider2D>();
-        int hitCount = selfCollider.OverlapCollider(overlapFilter, buffer);
+        int hitCount = selfCollider.Overlap(overlapFilter, buffer);
         return buffer
             .Take(hitCount)
             .Select(c => c != null ? c.gameObject : null)
