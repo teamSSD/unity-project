@@ -7,7 +7,7 @@ class TempPlayMinigameUsecase : PlayMinigameUsecase
 {
     public IEnumerator<float> PlayCoroutine(RecipeData recipeData, Vector2 position, List<FoodData> ingredients, Action<RecipeData, float> onCompleted)
     {
-        float duration = 3f;
+        float duration = 0.3f;
         float elapsed = 0f;
 
         while (elapsed < duration)
