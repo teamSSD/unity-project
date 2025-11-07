@@ -11,6 +11,7 @@ public class CookingToolBehavior : MonoBehaviour
 {
     [SerializeField] private float speed = 10f;
     public Vector3 defaultPosition;
+    public bool isCookable = false;
     private ClickStateUtil clickStateUtil;
     private HoverStateUtil hoverStateUtil;
     private Animator animator;
@@ -27,13 +28,13 @@ public class CookingToolBehavior : MonoBehaviour
 
     void Update()
     {
-        ProcessAnimation(hoverStateUtil.IsHovering(), clickStateUtil.getState());
+        ProcessAnimation(hoverStateUtil.IsHovering());
         ProcessMovement(clickStateUtil.getState());
     }
 
-    private void ProcessAnimation(bool isHovering, ClickState clickState)
+    private void ProcessAnimation(bool isHovering)
     {
-        if (isHovering && clickState != ClickState.Dragging) animator.SetBool("Hovering", true);
+        if (isHovering && !Input.GetMouseButton(0) && isCookable) animator.SetBool("Hovering", true);
         else animator.SetBool("Hovering", false);
     }
 

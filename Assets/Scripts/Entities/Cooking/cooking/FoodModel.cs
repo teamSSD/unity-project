@@ -36,7 +36,7 @@ public class FoodModel : MonoBehaviour
     {
         this.loadInventoryUsecase = loadInventoryUsecase;
         SchemaInstance = new FoodSchema(foodData, price);
-        Sprite newSprite = Resources.Load<Sprite>("driveAssets/art/item/cooking/food/" + foodData.imageName);
+        Sprite newSprite = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + foodData.imageName);
         gameObject.GetComponent<SpriteRenderer>().sprite = newSprite;
         PolygonCollider2D existingCollider = GetComponent<PolygonCollider2D>();
         Destroy(existingCollider);
