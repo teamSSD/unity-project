@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(ClickStateUtil))]
-[RequireComponent(typeof(HoverStateUtil))]
 [RequireComponent(typeof(SpriteStackRenderer))]
 [DisallowMultipleComponent]
 public class BentoBehavior : MonoBehaviour
@@ -11,13 +10,11 @@ public class BentoBehavior : MonoBehaviour
     [SerializeField] private float speed = 10f;
     public Vector3 defaultPosition;
     private ClickStateUtil clickStateUtil;
-    private HoverStateUtil hoverStateUtil;
     private SpriteStackRenderer spriteStackRenderer;
     private Camera mainCamera;
     void Awake()
     {
         clickStateUtil = GetComponent<ClickStateUtil>();
-        hoverStateUtil = GetComponent<HoverStateUtil>();
         spriteStackRenderer = GetComponent<SpriteStackRenderer>();
         mainCamera = Camera.main;
     }
@@ -46,5 +43,9 @@ public class BentoBehavior : MonoBehaviour
     public void AddTexture(Sprite sprite)
     {
         spriteStackRenderer.Add(sprite);
+    }
+    public void AddTexture(Sprite sprite, Vector2 xy)
+    {
+        spriteStackRenderer.Add(sprite, xy);
     }
 }

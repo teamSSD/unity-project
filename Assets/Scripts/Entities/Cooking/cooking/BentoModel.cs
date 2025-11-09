@@ -13,6 +13,7 @@ public class BentoModel : MonoBehaviour
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
 
+    private List<Vector2> locateList = new List<Vector2>() { new Vector2(-0.4f, 0f), new Vector2(0.6f, 0.4f) , new Vector2(0.6f, 0f) , new Vector2(0.6f, -0.4f) };
     private List<FoodSchema> foodList = new List<FoodSchema>();
 
     void Awake()
@@ -25,8 +26,8 @@ public class BentoModel : MonoBehaviour
     {
         if (foodList.Count < 4)
         {
+            BehaviorInstance.AddTexture(Resources.Load<Sprite>(ResourcePaths.Art.FOOD + food.foodData.imageName), locateList[foodList.Count]);
             foodList.Add(food);
-            BehaviorInstance.AddTexture(Resources.Load<Sprite>(ResourcePaths.Art.FOOD + food.foodData.imageName));
             Debug.Log($"{food.foodData.ingredientName}을 도시락에 추가했습니다.");
             return true;
         }
