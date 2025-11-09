@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 964561688}
   - component: {fileID: 964561690}
   - component: {fileID: 964561691}
+  - component: {fileID: 964561692}
   m_Layer: 0
   m_Name: player
   m_TagString: Untagged
@@ -181,7 +182,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_Sprite: {fileID: 5497594478112546643, guid: 80e8ed1d9bbbe8f43a353293990990f4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -202,7 +203,7 @@ Transform:
   m_GameObject: {fileID: 964561687}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.2, y: -2.23, z: 0}
+  m_LocalPosition: {x: 3.35, y: -2.66, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -262,7 +263,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 964561687}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -280,7 +281,22 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
+--- !u!114 &964561692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964561687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a339bc714f2b3846a7a193f92e594eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+  minX: 3
+  maxX: 12
 --- !u!1 &1524561521
 GameObject:
   m_ObjectHideFlags: 0
@@ -595,14 +611,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2009278032}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c04306eb7f2140efb736916bc571c14, type: 3}
+  m_Script: {fileID: 11500000, guid: 52f8bdffca285fc42b3a713053c6d1f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  edgeZone: 0.1
-  moveSpeed: 10
-  inputSmoothTime: 0.2
-  holdKey: 0
-  worldCollider: {fileID: 1686758169}
+  player: {fileID: 964561689}
+  offset: {x: 0, y: 0, z: 0}
+  smoothSpeed: 0.125
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
