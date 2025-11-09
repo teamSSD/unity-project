@@ -32,8 +32,7 @@ public class OrderTicketModel : MonoBehaviour
         BentoModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoModel>();
         if (collision != null)
         {
-            Destroy(this.gameObject);
-            Destroy(collision.gameObject);
+            collision.AddOrderTicket(this);
         }
     }
 }

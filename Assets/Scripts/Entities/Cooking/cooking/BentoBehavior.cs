@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(ClickStateUtil))]
 [RequireComponent(typeof(HoverStateUtil))]
-[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(SpriteStackRenderer))]
 [DisallowMultipleComponent]
 public class BentoBehavior : MonoBehaviour
 {
@@ -12,25 +12,19 @@ public class BentoBehavior : MonoBehaviour
     public Vector3 defaultPosition;
     private ClickStateUtil clickStateUtil;
     private HoverStateUtil hoverStateUtil;
-    private Animator animator;
+    private SpriteStackRenderer spriteStackRenderer;
     private Camera mainCamera;
     void Awake()
     {
         clickStateUtil = GetComponent<ClickStateUtil>();
         hoverStateUtil = GetComponent<HoverStateUtil>();
-        animator = GetComponent<Animator>();
+        spriteStackRenderer = GetComponent<SpriteStackRenderer>();
         mainCamera = Camera.main;
     }
 
     void Update()
     {
-        ProcessAnimation(hoverStateUtil.IsHovering(), clickStateUtil.getState());
         ProcessMovement(clickStateUtil.getState());
-    }
-    private void ProcessAnimation(bool isHovering, ClickState clickState)
-    {
-        if (isHovering && clickState != ClickState.Dragging) animator.SetBool("Hovering", true);
-        else animator.SetBool("Hovering", false);
     }
     private void ProcessMovement(ClickState clickState)
     {
@@ -48,5 +42,9 @@ public class BentoBehavior : MonoBehaviour
             if (Vector3.Distance(transform.position, defaultPosition) < 0.02f)
                 transform.position = defaultPosition;
         }
+    }
+    public void AddTexture(Sprite sprite)
+    {
+        spriteStackRenderer.Add(sprite);
     }
 }
