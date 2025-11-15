@@ -63,14 +63,12 @@ public class SpriteStackRenderer : MonoBehaviour
     public void Add(Sprite sprite)
     {
         if (sprite == null) return;
-        CreateIcon(sprite, currentVisibleIndex, $"Icon_{currentVisibleIndex}");
-        currentVisibleIndex++;
+        CreateIcon(sprite, ++currentVisibleIndex, $"Icon_{currentVisibleIndex}");
     }
     public void Add(Sprite sprite, Vector2 xy)
     {
         if (sprite == null) return;
-        CreateIcon(sprite, currentVisibleIndex, $"Icon_{currentVisibleIndex}", xy);
-        currentVisibleIndex++;
+        CreateIcon(sprite, ++currentVisibleIndex, $"Icon_{currentVisibleIndex}", xy);
     }
 
     private void CreateIcon(Sprite sprite, int index, string goName)

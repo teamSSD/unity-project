@@ -21,6 +21,13 @@ public class BentoModel : MonoBehaviour
         BehaviorInstance = GetComponent<BentoBehavior>();
         scanColliderUtil = GetComponent<ScanColliderUtil>();
         clickStateUtil = GetComponent<ClickStateUtil>();
+
+        clickStateUtil.OnDragEnd += SetPosition;
+    }
+
+    private void OnDestroy()
+    {
+        clickStateUtil.OnDragEnd -= SetPosition;
     }
     public bool AddIngredient(FoodSchema food)
     {
@@ -46,5 +53,19 @@ public class BentoModel : MonoBehaviour
         }
         Debug.Log("아직 도시락이 완성되지 않았습니다.");
         return false;
+    }
+
+    public void SetPosition()
+    {
+        BentoPositionModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoPositionModel>();
+        if (collision != null && !collision.IsSet())
+        {
+            BehaviorInstance.defaultPosition = collision.transform.position;
+            collision.Setting(true);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

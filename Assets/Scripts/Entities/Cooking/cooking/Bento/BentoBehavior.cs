@@ -21,7 +21,8 @@ public class BentoBehavior : MonoBehaviour
 
     void Update()
     {
-        ProcessMovement(clickStateUtil.getState());
+        ClickState clickState = clickStateUtil.getState();
+        ProcessMovement(clickState);
     }
     private void ProcessMovement(ClickState clickState)
     {
@@ -29,7 +30,7 @@ public class BentoBehavior : MonoBehaviour
         {
             Vector3 target = mainCamera.ScreenToWorldPoint(Input.mousePosition);
             target.z = defaultPosition.z;
-            gameObject.transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * speed);
+            transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * speed);
         }
         if (clickState == ClickState.None && transform.position != defaultPosition)
         {
