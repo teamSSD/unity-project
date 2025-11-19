@@ -33,6 +33,16 @@ public class BentoModel : MonoBehaviour
     {
         if (foodList.Count < 4)
         {
+            if (foodList.Count == 0 && !(food.foodData.type == FoodType.MAIN))
+            {
+                Debug.Log("해당 음식은 메인 음식이 아닙니다.");
+                return false;
+            }
+            else if (foodList.Count > 0 && food.foodData.type != FoodType.SIDE)
+            {
+                Debug.Log("해당 음식은 사이드 음식이 아닙니다.");
+                return false;
+            }
             BehaviorInstance.AddTexture(Resources.Load<Sprite>(ResourcePaths.Art.FOOD + food.foodData.imageName), locateList[foodList.Count]);
             foodList.Add(food);
             Debug.Log($"{food.foodData.ingredientName}을 도시락에 추가했습니다.");
