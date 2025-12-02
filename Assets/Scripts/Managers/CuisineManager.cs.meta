@@ -3,7 +3,11 @@ guid: 0c04fbc36d13b407d88982b9aa3f1a70
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - refrigeratorGameObject: {instanceID: 0}
+  - upperShelfGameObject: {instanceID: 0}
+  - lowerShelfGameObject: {instanceID: 0}
+  - foodPrefab: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

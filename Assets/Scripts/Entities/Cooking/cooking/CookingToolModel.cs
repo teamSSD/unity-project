@@ -43,6 +43,11 @@ public class CookingToolModel : MonoBehaviour
         clickStateUtil.OnDragEnd += TransferIngredient;
     }
 
+    void Update()
+    {
+        BehaviorInstance.isCookable = SchemaInstance.IsCookable();
+    }
+
     void OnDestroy()
     {
         clickStateUtil.OnDragEnd -= DetectTrashcan;
@@ -60,7 +65,7 @@ public class CookingToolModel : MonoBehaviour
         if (SchemaInstance.IsAddable(food))
         {
             SchemaInstance.AddIngredient(food);
-            BehaviorInstance.AddTexture(Resources.Load<Sprite>("driveAssets/art/item/food/" + food.foodData.imageName));
+            BehaviorInstance.AddTexture(Resources.Load<Sprite>(ResourcePaths.Art.FOOD + food.foodData.imageName));
             return true;
         }
         return false;
@@ -128,6 +133,6 @@ public class CookingToolModel : MonoBehaviour
         SchemaInstance.Cook(foodData, recipeData, score);
 
         BehaviorInstance.ResetTexture();
-        BehaviorInstance.AddTexture(Resources.Load<Sprite>("driveAssets/art/item/food/" + foodData.imageName));
+        BehaviorInstance.AddTexture(Resources.Load<Sprite>(ResourcePaths.Art.FOOD + foodData.imageName));
     }
 }

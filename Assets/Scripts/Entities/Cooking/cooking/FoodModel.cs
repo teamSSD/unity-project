@@ -22,19 +22,21 @@ public class FoodModel : MonoBehaviour
         clickStateUtil = GetComponent<ClickStateUtil>();
 
         clickStateUtil.OnDragEnd += AddToCookingTool;
+        clickStateUtil.OnDragEnd += AddToBento;
     }
 
     void OnDestroy()
     {
         onDestroy?.Invoke(this);
         clickStateUtil.OnDragEnd -= AddToCookingTool;
+        clickStateUtil.OnDragEnd -= AddToBento;
     }
 
     public void Inject(LoadInventoryUsecase loadInventoryUsecase, FoodData foodData, int price)
     {
         this.loadInventoryUsecase = loadInventoryUsecase;
         SchemaInstance = new FoodSchema(foodData, price);
-        Sprite newSprite = Resources.Load<Sprite>("driveAssets/art/item/cooking/food/" + foodData.imageName);
+        Sprite newSprite = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + foodData.imageName);
         gameObject.GetComponent<SpriteRenderer>().sprite = newSprite;
         PolygonCollider2D existingCollider = GetComponent<PolygonCollider2D>();
         Destroy(existingCollider);
@@ -57,6 +59,33 @@ public class FoodModel : MonoBehaviour
             return;
         }
         if (collision != null && SchemaInstance.foodData.availableTool.Contains(collision.SchemaInstance.cookingToolData.id))
+        {
+            bool reflected = collision.AddIngredient(this.SchemaInstance);
+            if (!reflected)
+            {
+                loadInventoryUsecase.ConsumeFood(SchemaInstance.foodData.id, 1);
+                if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData.id) <= 0)
+                {
+                    Destroy(this.gameObject);
+                }
+            }
+        }
+    }
+    public void AddToBento()
+    {
+        if (!injected)
+        {
+            Debug.LogWarning("Interface didn't injected.");
+            return;
+        }
+
+        BentoModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoModel>();
+        if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData.id) <= 0)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        if (collision != null)
         {
             bool reflected = collision.AddIngredient(this.SchemaInstance);
             if (!reflected)
