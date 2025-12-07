@@ -41,6 +41,7 @@ public class CookingToolModel : MonoBehaviour
         clickStateUtil.OnDragEnd += DetectTrashcan;
         clickStateUtil.OnClicked += PlayMinigame;
         clickStateUtil.OnDragEnd += TransferIngredient;
+        clickStateUtil.OnDragEnd += AddToBento;
     }
 
     void Update()
@@ -53,7 +54,7 @@ public class CookingToolModel : MonoBehaviour
         clickStateUtil.OnDragEnd -= DetectTrashcan;
         clickStateUtil.OnClicked -= PlayMinigame;
         clickStateUtil.OnDragEnd -= TransferIngredient;
-
+        clickStateUtil.OnDragEnd -= AddToBento;
     }
 
     public bool AddIngredient(FoodSchema food)
@@ -69,6 +70,25 @@ public class CookingToolModel : MonoBehaviour
             return true;
         }
         return false;
+    }
+    public void AddToBento()
+    {
+        if (!injected)
+        {
+            Debug.LogWarning("Interface didn't injected.");
+            return;
+        }
+
+        BentoModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoModel>();
+        if (collision != null)
+        {
+            bool reflected = collision.AddIngredient(SchemaInstance.GetResult());
+            if (reflected)
+            {
+                SchemaInstance.ClearIngredient();
+                BehaviorInstance.ResetTexture();
+            }
+        }
     }
 
     public void TransferIngredient()
