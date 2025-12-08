@@ -82,11 +82,14 @@ public class CookingToolModel : MonoBehaviour
         BentoModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoModel>();
         if (collision != null)
         {
-            bool reflected = collision.AddIngredient(SchemaInstance.GetResult());
-            if (reflected)
+            if (SchemaInstance.GetResult() != null)
             {
-                SchemaInstance.ClearIngredient();
-                BehaviorInstance.ResetTexture();
+                bool reflected = collision.AddIngredient(SchemaInstance.GetResult());
+                if (reflected)
+                {
+                    SchemaInstance.ClearIngredient();
+                    BehaviorInstance.ResetTexture();
+                }
             }
         }
     }
