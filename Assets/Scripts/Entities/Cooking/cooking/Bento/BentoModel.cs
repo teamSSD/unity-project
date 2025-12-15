@@ -70,7 +70,6 @@ public class BentoModel : MonoBehaviour
         BentoPositionModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoPositionModel>();
         if (collision != null && !collision.IsSet())
         {
-            Debug.Log("Collision: " + collision.ToString());
             BehaviorInstance.defaultPosition = collision.transform.position;
             collision.Setting(true);
         }
