@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Linq;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Collider2D))]
 [DisallowMultipleComponent]
@@ -9,7 +10,7 @@ public class ScanColliderUtil : MonoBehaviour
     [SerializeField] private ContactFilter2D overlapFilter;
 
     private Collider2D selfCollider;
-    private static readonly Collider2D[] buffer = new Collider2D[16];
+    private List<Collider2D> bufferList = new List<Collider2D>(16);
 
     private void Awake()
     {
@@ -20,21 +21,33 @@ public class ScanColliderUtil : MonoBehaviour
     public T GetOverlappingWithComponent<T>() where T : Component
     {
         if (selfCollider == null) selfCollider = GetComponent<Collider2D>();
-        int hitCount = selfCollider.OverlapCollider(overlapFilter, buffer);
-        return buffer
-            .Take(hitCount)
-            .Select(c => c?.GetComponentInParent<T>())
-            .FirstOrDefault(t => t != null);
+        bufferList.Clear();
+        selfCollider.GetContacts(overlapFilter, bufferList);
+        for (int i = 0; i < bufferList.Count; i++)
+            {
+                Collider2D otherCollider = bufferList[i];
+                if (otherCollider == null || otherCollider == selfCollider) continue;
+                T component = otherCollider.GetComponentInParent<T>();
+                if (component != null) return component;
+            }
+            return default;
     }
 
     /* null이 반환될 수 있음 */
     public GameObject GetOverlappingWithTag(string tag)
     {
         if (selfCollider == null) selfCollider = GetComponent<Collider2D>();
-        int hitCount = selfCollider.OverlapCollider(overlapFilter, buffer);
-        return buffer
-            .Take(hitCount)
-            .Select(c => c != null ? c.gameObject : null)
-            .FirstOrDefault(go => go != null && go.CompareTag(tag));
+        bufferList.Clear();
+        selfCollider.GetContacts(overlapFilter, bufferList);
+        for (int i = 0; i < bufferList.Count; i++)
+        {
+            Collider2D otherCollider = bufferList[i];
+            Debug.Log(otherCollider);
+            if (otherCollider != null && otherCollider.gameObject != null)
+            {
+                if (otherCollider.CompareTag(tag)) return otherCollider.gameObject;
+            }
+        }
+        return null;
     }
 }

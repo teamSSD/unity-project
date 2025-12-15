@@ -166,7 +166,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3721458004035474150}
-  m_BodyType: 2
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -298,6 +298,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   defaultPosition: {x: 0, y: 0, z: 0}
+  isCookable: 0
 --- !u!114 &6968429833796327789
 MonoBehaviour:
   m_ObjectHideFlags: 0

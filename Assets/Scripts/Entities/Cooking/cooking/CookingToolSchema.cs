@@ -27,7 +27,7 @@ public class CookingToolSchema
     public bool IsAddable(FoodSchema food)
     {
         if (locked || food == null) return false;
-        if (Ingredients.Count == maxIngredientSize || Ingredients.Any(ingredient => ingredient.IsSameFood(food))) return false;
+        if (result != null || Ingredients.Count == maxIngredientSize || Ingredients.Any(ingredient => ingredient.IsSameFood(food))) return false;
         //if (!cookingToolData.availableIngredientIds.Contains(food.foodData.id)) return false;
         //if (result != null && !cookingToolData.availableIngredientIds.Contains(result.foodData.id)) return false;
 

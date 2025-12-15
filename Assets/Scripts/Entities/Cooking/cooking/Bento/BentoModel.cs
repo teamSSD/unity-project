@@ -35,20 +35,20 @@ public class BentoModel : MonoBehaviour
         {
             if (foodList.Count == 0 && !(food.foodData.type == FoodType.MAIN))
             {
-                Debug.Log("ÇØ´ç À½½ÄÀº ¸ŞÀÎ À½½ÄÀÌ ¾Æ´Õ´Ï´Ù.");
+                Debug.Log("í•´ë‹¹ ìŒì‹ì€ ë©”ì¸ ìŒì‹ì´ ì•„ë‹™ë‹ˆë‹¤.");
                 return false;
             }
             else if (foodList.Count > 0 && food.foodData.type != FoodType.SIDE)
             {
-                Debug.Log("ÇØ´ç À½½ÄÀº »çÀÌµå À½½ÄÀÌ ¾Æ´Õ´Ï´Ù.");
+                Debug.Log("í•´ë‹¹ ìŒì‹ì€ ì‚¬ì´ë“œ ìŒì‹ì´ ì•„ë‹™ë‹ˆë‹¤.");
                 return false;
             }
             BehaviorInstance.AddTexture(Resources.Load<Sprite>(ResourcePaths.Art.FOOD + food.foodData.imageName), locateList[foodList.Count]);
             foodList.Add(food);
-            Debug.Log($"{food.foodData.ingredientName}À» µµ½Ã¶ô¿¡ Ãß°¡Çß½À´Ï´Ù.");
+            Debug.Log($"{food.foodData.ingredientName}ì„ ë„ì‹œë½ì— ì¶”ê°€í–ˆìŠµë‹ˆë‹¤.");
             return true;
         }
-        Debug.Log("4°³ ÀÌ»ó ´ãÀ» ¼ö´Â ¾ø½À´Ï´Ù.");
+        Debug.Log("4ê°œ ì´ìƒ ë‹´ì„ ìˆ˜ëŠ” ì—†ìŠµë‹ˆë‹¤.");
         return false;
     }
 
@@ -57,11 +57,11 @@ public class BentoModel : MonoBehaviour
         if (foodList.Count >= 4) 
         {
             BehaviorInstance.AddTexture(Resources.Load<Sprite>("driveAssets/art/item/cooking/cookingTool/item_reciept_default"));
-            Debug.Log($"µµ½Ã¶ô Æ÷ÀåÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù.");
+            Debug.Log($"ë„ì‹œë½ í¬ì¥ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.");
             Destroy(orderTicket.gameObject);
             return true;
         }
-        Debug.Log("¾ÆÁ÷ µµ½Ã¶ôÀÌ ¿Ï¼ºµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+        Debug.Log("ì•„ì§ ë„ì‹œë½ì´ ì™„ì„±ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
         return false;
     }
 
@@ -70,6 +70,7 @@ public class BentoModel : MonoBehaviour
         BentoPositionModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoPositionModel>();
         if (collision != null && !collision.IsSet())
         {
+            Debug.Log("Collision: " + collision.ToString());
             BehaviorInstance.defaultPosition = collision.transform.position;
             collision.Setting(true);
         }
