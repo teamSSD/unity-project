@@ -15,7 +15,7 @@ TagManager:
   - UI
   - Item
   - Object
-  - 
+  - Customer
   - 
   - 
   - 
@@ -42,6 +42,12 @@ TagManager:
   m_SortingLayers:
   - name: Background
     uniqueID: 3469178407
+    locked: 0
+  - name: Customer
+    uniqueID: 2920343025
+    locked: 0
+  - name: Desk
+    uniqueID: 2611020339
     locked: 0
   - name: Default
     uniqueID: 0

@@ -42,7 +42,6 @@ public class ScanColliderUtil : MonoBehaviour
         for (int i = 0; i < bufferList.Count; i++)
         {
             Collider2D otherCollider = bufferList[i];
-            Debug.Log(otherCollider);
             if (otherCollider != null && otherCollider.gameObject != null)
             {
                 if (otherCollider.CompareTag(tag)) return otherCollider.gameObject;

@@ -15,6 +15,7 @@ public class BentoModel : MonoBehaviour
 
     private List<Vector2> locateList = new List<Vector2>() { new Vector2(-0.4f, 0f), new Vector2(0.6f, 0.4f) , new Vector2(0.6f, 0f) , new Vector2(0.6f, -0.4f) };
     private List<FoodSchema> foodList = new List<FoodSchema>();
+    BentoPositionModel bentoPositionModel;
 
     void Awake()
     {
@@ -28,6 +29,10 @@ public class BentoModel : MonoBehaviour
     private void OnDestroy()
     {
         clickStateUtil.OnDragEnd -= SetPosition;
+        if (bentoPositionModel != null)
+        {
+            bentoPositionModel.isSet = false;
+        }
     }
     public bool AddIngredient(FoodSchema food)
     {
@@ -54,11 +59,11 @@ public class BentoModel : MonoBehaviour
 
     public bool AddOrderTicket(OrderTicketModel orderTicket)
     {
-        if (foodList.Count >= 4) 
+        if (foodList.Count >= 4)
         {
             BehaviorInstance.AddTexture(Resources.Load<Sprite>("driveAssets/art/item/cooking/cookingTool/item_reciept_default"));
             Debug.Log($"도시락 포장이 완료되었습니다.");
-            Destroy(orderTicket.gameObject);
+            // Destroy(orderTicket.gameObject); ?
             return true;
         }
         Debug.Log("아직 도시락이 완성되지 않았습니다.");
@@ -67,15 +72,27 @@ public class BentoModel : MonoBehaviour
 
     public void SetPosition()
     {
-        BentoPositionModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoPositionModel>();
-        if (collision != null && !collision.IsSet())
+        if (bentoPositionModel == null)
         {
-            BehaviorInstance.defaultPosition = collision.transform.position;
-            collision.Setting(true);
+            bentoPositionModel = scanColliderUtil.GetOverlappingWithComponent<BentoPositionModel>();
+            if (bentoPositionModel != null && !bentoPositionModel.isSet)
+            {
+                BehaviorInstance.defaultPosition = bentoPositionModel.transform.position;
+                bentoPositionModel.isSet = true;
+            }
+            else
+            {
+                Destroy(this.gameObject);
+            }
         }
         else
         {
-            Destroy(this.gameObject);
+            GameObject gameObject = scanColliderUtil.GetOverlappingWithTag(Tags.Trashcan.ToString());
+            if (gameObject != null)
+            {
+                Destroy(this.gameObject);
+            }
         }
     }
+
 }
