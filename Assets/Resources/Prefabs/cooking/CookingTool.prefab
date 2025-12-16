@@ -312,3 +312,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cookingToolData: {fileID: 0}
+  canvas: {fileID: 0}
+  descriptionPrefab: {fileID: 8741771434616529297, guid: 1b3fec945fb144ca7adb2756960dd742, type: 3}

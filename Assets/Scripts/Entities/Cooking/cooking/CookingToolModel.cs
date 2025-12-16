@@ -1,14 +1,18 @@
 using UnityEditor.Animations;
 using UnityEngine;
+using System.Linq;
 
 [RequireComponent(typeof(CookingToolBehavior))]
 [RequireComponent(typeof(ScanColliderUtil))]
 [RequireComponent(typeof(ClickStateUtil))]
+[RequireComponent(typeof(HoverStateUtil))]
 [RequireComponent(typeof(SpriteRenderer))]
 [DisallowMultipleComponent]
 public class CookingToolModel : MonoBehaviour
 {
     [SerializeField] private CookingToolData cookingToolData;
+    [SerializeField] private Canvas canvas;
+    [SerializeField] private GameObject descriptionPrefab;
     private PlayMinigameUsecase playMinigameUsecase;
     private SearchRecipeUsecase searchRecipeUsecase;
     private SearchFoodUsecase searchFoodUsecase;
@@ -16,6 +20,11 @@ public class CookingToolModel : MonoBehaviour
     public CookingToolBehavior BehaviorInstance { get; private set; }
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
+    private HoverStateUtil hoverStateUtil;
+    private float hoverThreshold = 0.4f;
+    private GameObject descriptionObject;
+    private CookingToolDescription cookingToolDescriptionScript;
+    private float hoverClock = 0;
 
     bool injected = false;
 
@@ -35,6 +44,7 @@ public class CookingToolModel : MonoBehaviour
         BehaviorInstance = GetComponent<CookingToolBehavior>();
         scanColliderUtil = GetComponent<ScanColliderUtil>();
         clickStateUtil = GetComponent<ClickStateUtil>();
+        hoverStateUtil = GetComponent<HoverStateUtil>();
 
         SchemaInstance = new CookingToolSchema(cookingToolData);
 
@@ -44,9 +54,49 @@ public class CookingToolModel : MonoBehaviour
         clickStateUtil.OnDragEnd += AddToBento;
     }
 
+    void Start()
+    {
+        descriptionObject = Instantiate(descriptionPrefab, canvas.transform);
+        cookingToolDescriptionScript = descriptionObject.GetComponent<CookingToolDescription>();
+        cookingToolDescriptionScript.setName(SchemaInstance.cookingToolData.cookerName);
+        descriptionObject.SetActive(false);
+    }
+
     void Update()
     {
         BehaviorInstance.isCookable = SchemaInstance.IsCookable();
+
+        if (clickStateUtil.getState() == ClickState.None && hoverStateUtil.IsHovering())
+        {
+            if (hoverClock < hoverThreshold && hoverClock + Time.deltaTime >= hoverThreshold)
+            {
+                descriptionObject.SetActive(true);
+                if (SchemaInstance.GetResult() == null)
+                {
+                    var ingredientNames = SchemaInstance.Ingredients
+                        .Select(i => i.foodData.ingredientName)
+                        .ToList();
+
+                    cookingToolDescriptionScript.setIngredients(ingredientNames);
+
+                    var screenPos = Camera.main.WorldToScreenPoint(transform.position);
+                    float offsetX = screenPos.x < Screen.width * 0.5f ? 3f : -3f;
+                    descriptionObject.transform.position =
+                        Camera.main.WorldToScreenPoint(transform.position + new Vector3(offsetX, 0, 0));
+                }
+                else
+                {
+                    cookingToolDescriptionScript.setResult(SchemaInstance.GetResult().foodData.ingredientName);
+                }
+            }
+            hoverClock += Time.deltaTime;
+            return;
+        }
+        hoverClock = 0;
+        if (descriptionObject != null)
+        {
+            descriptionObject.SetActive(false);
+        }
     }
 
     void OnDestroy()
