@@ -373,6 +373,8 @@ MonoBehaviour:
   - {fileID: 382492956}
   - {fileID: 1063022470}
   - {fileID: 1044569907}
+  - {fileID: 371730916}
+  - {fileID: 934084749}
   refrigeratorGameObject: {fileID: 1552045034}
   upperShelfGameObject: {fileID: 437032608}
   lowerShelfGameObject: {fileID: 86493004}
@@ -674,6 +676,10 @@ PrefabInstance:
     - target: {fileID: 3721458004035474150, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5835594176602967571, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: overlapFilter.layerMask.m_Bits
+      value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 6968429833796327789, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
       propertyPath: canvas
@@ -1090,6 +1096,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 5835594176602967571, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: overlapFilter.layerMask.m_Bits
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 6968429833796327789, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
       propertyPath: canvas
       value: 
@@ -1226,6 +1236,10 @@ PrefabInstance:
     - target: {fileID: 3721458004035474150, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5835594176602967571, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: overlapFilter.layerMask.m_Bits
+      value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 6968429833796327789, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
       propertyPath: canvas
@@ -2589,6 +2603,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\uBCF4\uC62C"
       objectReference: {fileID: 0}
+    - target: {fileID: 5835594176602967571, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: overlapFilter.layerMask.m_Bits
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 6968429833796327789, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
       propertyPath: canvas
       value: 
@@ -3042,6 +3060,10 @@ PrefabInstance:
     - target: {fileID: 3721458004035474150, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
       propertyPath: m_Name
       value: "\uB3C4\uB9C8"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5835594176602967571, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
+      propertyPath: overlapFilter.layerMask.m_Bits
+      value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 6968429833796327789, guid: 8010e915b49134eec9608b077474cfe7, type: 3}
       propertyPath: canvas
