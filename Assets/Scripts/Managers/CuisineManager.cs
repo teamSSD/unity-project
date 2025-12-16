@@ -9,6 +9,7 @@ public class CuisineManager : MonoBehaviour
     [SerializeField] private GameObject upperShelfGameObject;
     [SerializeField] private GameObject lowerShelfGameObject;
     [SerializeField] private GameObject foodPrefab;
+    [SerializeField] private Canvas canvas;
     private PlayMinigameUsecase playMinigameUsecase;
     private SearchRecipeUsecase searchRecipeUsecase;
     private SearchFoodUsecase searchFoodUsecase;
@@ -39,36 +40,36 @@ public class CuisineManager : MonoBehaviour
 
     private void FillRefrigerator(GameObject parent)
     {
-        loadInventoryUsecase.LoadRefrigeratorIngredient().ForEach(data =>
+        loadInventoryUsecase.LoadIngredientByCategory(IngredientDisplayCategory.Refrigerator).ForEach(data =>
             {
                 GameObject ingredientInstance = Instantiate(foodPrefab, parent.transform);
                 ingredientInstance.name = data.Item1.ingredientName;
                 FoodModel foodModel = ingredientInstance.GetComponent<FoodModel>();
-                foodModel.Inject(loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
+                foodModel.Inject(canvas, loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
                 refrigerator.AddIngredients(foodModel);
             });
     }
 
     public void FillUpperShelf(GameObject parent)
     {
-        loadInventoryUsecase.LoadUpperShelfIngredient().ForEach(data =>
+        loadInventoryUsecase.LoadIngredientByCategory(IngredientDisplayCategory.UpperShelf).ForEach(data =>
             {
                 GameObject ingredientInstance = Instantiate(foodPrefab, parent.transform);
                 ingredientInstance.name = data.Item1.ingredientName;
                 FoodModel foodModel = ingredientInstance.GetComponent<FoodModel>();
-                foodModel.Inject(loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
+                foodModel.Inject(canvas, loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
                 upperShelf.AddIngredients(foodModel);
             });
     }
 
     public void FillLowerShelf(GameObject parent)
     {
-        loadInventoryUsecase.LoadLowerShelfIngredient().ForEach(data =>
+        loadInventoryUsecase.LoadIngredientByCategory(IngredientDisplayCategory.LowerShelf).ForEach(data =>
             {
                 GameObject ingredientInstance = Instantiate(foodPrefab, parent.transform);
                 ingredientInstance.name = data.Item1.ingredientName;
                 FoodModel foodModel = ingredientInstance.GetComponent<FoodModel>();
-                foodModel.Inject(loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
+                foodModel.Inject(canvas, loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
                 lowerShelf.AddIngredients(foodModel);
             });
     }

@@ -5,25 +5,47 @@ using UnityEngine;
 [RequireComponent(typeof(FoodBehavior))]
 [RequireComponent(typeof(ScanColliderUtil))]
 [RequireComponent(typeof(ClickStateUtil))]
+[RequireComponent(typeof(HoverStateUtil))]
 [DisallowMultipleComponent]
 public class FoodModel : MonoBehaviour
 {
     public FoodSchema SchemaInstance { get; private set; }
     public FoodBehavior BehaviorInstance { get; private set; }
+    public GameObject descriptionPrefab;
     public event Action<FoodModel> onDestroy;
     ScanColliderUtil scanColliderUtil;
     ClickStateUtil clickStateUtil;
+    HoverStateUtil hoverStateUtil;
     LoadInventoryUsecase loadInventoryUsecase;
     bool injected = false;
+    float hoverClock = 0;
+    float hoverThreshold = 0.4f;
+    private GameObject descriptionObject = null;
+    IngredientDescription ingredientDescriptionScript;
+    private Canvas canvas;
 
     void Awake()
     {
         BehaviorInstance = GetComponent<FoodBehavior>();
         scanColliderUtil = GetComponent<ScanColliderUtil>();
         clickStateUtil = GetComponent<ClickStateUtil>();
+        hoverStateUtil = GetComponent<HoverStateUtil>();
 
         clickStateUtil.OnDragEnd += AddToCookingTool;
         clickStateUtil.OnDragEnd += AddToBento;
+    }
+
+    void Start()
+    {
+        descriptionObject = Instantiate(descriptionPrefab, canvas.transform);
+        ingredientDescriptionScript = descriptionObject.GetComponent<IngredientDescription>();
+        ingredientDescriptionScript
+            .SetTexts(
+                SchemaInstance.foodData.ingredientName,
+                loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData.id).ToString(),
+                SchemaInstance.foodData.description
+            );
+        descriptionObject.SetActive(false);
     }
 
     void OnDestroy()
@@ -33,8 +55,9 @@ public class FoodModel : MonoBehaviour
         clickStateUtil.OnDragEnd -= AddToBento;
     }
 
-    public void Inject(LoadInventoryUsecase loadInventoryUsecase, FoodData foodData, int price)
+    public void Inject(Canvas canvas, LoadInventoryUsecase loadInventoryUsecase, FoodData foodData, int price)
     {
+        this.canvas = canvas;
         this.loadInventoryUsecase = loadInventoryUsecase;
         SchemaInstance = new FoodSchema(foodData, price);
         Sprite newSprite = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + foodData.imageName);
@@ -43,6 +66,27 @@ public class FoodModel : MonoBehaviour
         Destroy(existingCollider);
         gameObject.AddComponent<PolygonCollider2D>();
         injected = true;
+    }
+
+    public void Update()
+    {
+        if (clickStateUtil.getState() == ClickState.None && hoverStateUtil.IsHovering())
+        {
+            if (hoverClock < hoverThreshold && hoverClock + Time.deltaTime >= hoverThreshold)
+            {
+                descriptionObject.SetActive(true);
+                ingredientDescriptionScript
+                    .UpdateCount(loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData.id).ToString());
+                descriptionObject.transform.position = Camera.main.WorldToScreenPoint(this.transform.position + new Vector3(2, 0, 0));
+            }
+            hoverClock += Time.deltaTime;
+            return;
+        }
+        hoverClock = 0;
+        if (descriptionObject != null)
+        {
+            descriptionObject.SetActive(false);
+        }
     }
 
     public void AddToCookingTool()

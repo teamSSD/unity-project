@@ -30,7 +30,7 @@ I027,빛 토마토,붉은 과육 안쪽에서 은은한 광채가 새어 나오�
 I028,바람콩,푸른빛 껍질이 얇게 떠 있으며 손에 쥐면 공기 주머니처럼 가볍다.,item_windBean_raw,T001,INGREDIENT
 I029,전기꽃,노란 전기 불꽃처럼 빛나는 꽃잎. 가까이 대면 미세한 찌릿한 감각이 전해진다.,item_electricFlower_raw,T003,INGREDIENT
 I030,합성 닭고기,균일한 육질의 정육면체. 결이 일정하며 살짝 눌러도 형태를 유지한다.,item_syntheticChicken_raw,T003,INGREDIENT
-I031,인공 연어,균일한 주황빛 색조의 단면. 인공 섬유질이 가지런히 결을 이루며 광택이 일정하다.,item_artificialSalmon_raw,,INGREDIENT
+I031,인공 연어,균일한 주황빛 색조의 단면. 인공 섬유질이 가지런히 결을 이루며 광택이 일정하다.,item_artificialSalmon_raw,T003,INGREDIENT
 I032,해초 육수,,item_seaweedBroth_raw,T002,PROCESSING
 I033,새벽국 베이스,,item_dawnSoupBase_raw,T003,PROCESSING
 I034,새벽국,,item_dawnSoup_raw,,MAIN

@@ -4,44 +4,44 @@ using System.Linq;
 class TempLoadInventoryUsecase : LoadInventoryUsecase
 {
     private SearchFoodUsecase searchFoodUsecase;
-    private List<(IngredientData, int)> ingredients;
+    private Dictionary<string, (IngredientData data, int count)> ingredients;
 
     public TempLoadInventoryUsecase(SearchFoodUsecase searchFoodUsecase)
     {
         this.searchFoodUsecase = searchFoodUsecase;
 
         ingredients = CsvModelConverter.Parse<IngredientData>("driveAssets/dataTables/ingredient")
-                .ConvertAll(ingredient => (ingredient, 10));
+            .ToDictionary(
+                i => i.id,
+                i => (i, 10)
+            );
     }
 
     public void ConsumeFood(string foodId, int amount)
     {
-        (IngredientData, int) found = ingredients.Find(ingredient => ingredient.Item1.id == foodId);
-        found.Item2 = found.Item2 - amount;
+        if (!ingredients.ContainsKey(foodId)) return;
+
+        var item = ingredients[foodId];
+        item.count -= amount;
+        ingredients[foodId] = item;
     }
+    
     public int CheckStockAmount(string foodId)
     {
-        return ingredients.Find(ingredient => ingredient.Item1.id == foodId).Item2;
+        return ingredients.TryGetValue(foodId, out var item)
+            ? item.count
+            : 0;
     }
-    public List<(FoodData, IngredientData)> LoadRefrigeratorIngredient()
+    public List<(FoodData, IngredientData)> LoadIngredientByCategory(
+        IngredientDisplayCategory category
+    )
     {
-        return ingredients
-                .FindAll(ingredient => ingredient.Item1.display == IngredientDisplayCategory.Refrigerator)
-                .ConvertAll(ingredient => (searchFoodUsecase.Search(ingredient.Item1.id), ingredient.Item1))
-                .ToList();
-    }
-    public List<(FoodData, IngredientData)> LoadUpperShelfIngredient()
-    {
-        return ingredients
-                .FindAll(ingredient => ingredient.Item1.display == IngredientDisplayCategory.UpperShelf)
-                .ConvertAll(ingredient => (searchFoodUsecase.Search(ingredient.Item1.id), ingredient.Item1))
-                .ToList();
-    }
-    public List<(FoodData, IngredientData)> LoadLowerShelfIngredient()
-    {
-        return ingredients
-                .FindAll(ingredient => ingredient.Item1.display == IngredientDisplayCategory.LowerShelf)
-                .ConvertAll(ingredient => (searchFoodUsecase.Search(ingredient.Item1.id), ingredient.Item1))
-                .ToList();
+        return ingredients.Values
+            .Where(item => item.data.display == category)
+            .Select(item => (
+                searchFoodUsecase.Search(item.data.id),
+                item.data
+            ))
+            .ToList();
     }
 }
