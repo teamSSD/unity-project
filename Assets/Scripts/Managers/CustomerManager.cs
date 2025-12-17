@@ -6,6 +6,7 @@ public class CustomerManager : MonoBehaviour
     public GameObject orderingCustomerPrefab;
     public GameObject waitingCustomerPrefab;
     public GameObject takingCustomerPrefab;
+    public GameObject receiptPrefab;
     public Canvas canvas;
 
     private List<GameObject> orderingQueue;
@@ -14,6 +15,7 @@ public class CustomerManager : MonoBehaviour
     private int nextOrderingNumber = 1;
     private float whenNextVisit;
     private float timer = 0;
+    private GameObject front = null;
 
     void Awake()
     {
@@ -72,7 +74,7 @@ public class CustomerManager : MonoBehaviour
 
         if (timer < whenNextVisit) return;
         timer -= whenNextVisit;
-        whenNextVisit = RandomNormal.Get(5, 3);
+        whenNextVisit = RandomNormal.Get(45, 15);
         if (orderingQueue.Count >= 5) return;
         enQueue(GenerateCustomer());
     }
@@ -81,33 +83,44 @@ public class CustomerManager : MonoBehaviour
     {
         GameObject waiting = Instantiate(orderingCustomerPrefab);
         OrderingCustomer script = waiting.GetComponent<OrderingCustomer>();
-        script.canvas = canvas;
-        script.menuSchema = pickRandom();
-        script.onExit = () =>
+        script.menuSchema = pickRandomMenu();
+        script.onExit += () =>
         {
-            orderingQueue.RemoveAt(0);
+            orderingQueue.Remove(waiting);
             arrangeQueue();
-            registReciept(script.menuSchema);
-            addWaitingCustomer(script.menuSchema);
+            registRecieptAndWaitingCustomer(script.menuSchema);
         };
         return waiting;
     }
 
-    private void registReciept(MenuSchema menuSchema)
+    private void registRecieptAndWaitingCustomer(MenuSchema menuSchema)
     {
-        
+        GameObject receipt = Instantiate(receiptPrefab);
+        OrderTicketModel orderTicketModel = receipt.GetComponent<OrderTicketModel>();
+        Receipt recieptScript = receipt.GetComponent<Receipt>();
+        GameObject waitingCustomer = Instantiate(waitingCustomerPrefab);
+        WaitingCustomer waitingCustomerScript = waitingCustomer.GetComponent<WaitingCustomer>();
+        recieptScript.Set(menuSchema);
+        orderTicketModel.waitingCustomer = waitingCustomer;
+        orderTicketModel.menuSchema = menuSchema;
+        waitingCustomerScript.Receipt = receipt;
     }
 
-    private void addWaitingCustomer(MenuSchema menuSchema)
-    {
-        
-    }
-
-    private MenuSchema pickRandom()
+    private MenuSchema pickRandomMenu()
     {
         MenuSchema menuSchema = salesMenus[Random.Range(0, salesMenus.Count)];
         menuSchema.orderNumber = nextOrderingNumber;
         nextOrderingNumber++;
         return menuSchema;
+    }
+
+    private void customerExit()
+    {
+        
+    }
+
+    private void customerTake(MenuSchema menuSchema)
+    {
+        
     }
 }

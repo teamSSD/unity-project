@@ -47,6 +47,7 @@ public class CuisineManager : MonoBehaviour
                 FoodModel foodModel = ingredientInstance.GetComponent<FoodModel>();
                 foodModel.Inject(canvas, loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
                 refrigerator.AddIngredients(foodModel);
+                ingredientInstance.transform.position = foodModel.BehaviorInstance.defaultPosition;
             });
     }
 
@@ -59,6 +60,7 @@ public class CuisineManager : MonoBehaviour
                 FoodModel foodModel = ingredientInstance.GetComponent<FoodModel>();
                 foodModel.Inject(canvas, loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
                 upperShelf.AddIngredients(foodModel);
+                ingredientInstance.transform.position = foodModel.BehaviorInstance.defaultPosition;
             });
     }
 
@@ -71,6 +73,7 @@ public class CuisineManager : MonoBehaviour
                 FoodModel foodModel = ingredientInstance.GetComponent<FoodModel>();
                 foodModel.Inject(canvas, loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
                 lowerShelf.AddIngredients(foodModel);
+                ingredientInstance.transform.position = foodModel.BehaviorInstance.defaultPosition;
             });
     }
 }

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 152419359899377750}
   - component: {fileID: 387576120803059527}
+  - component: {fileID: 9176909708223380780}
   m_Layer: 0
   m_Name: WaitingCustomer
   m_TagString: Untagged
@@ -84,3 +85,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &9176909708223380780
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8969570347396159534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 624321d2a9235495ab572fb6207a6427, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TakingCustomerPrefab: {fileID: 3996035947841858077, guid: 64e6fcf7dd0674ea38524b6342c9cd23, type: 3}
+  Receipt: {fileID: 0}
+  stopTimer: 0

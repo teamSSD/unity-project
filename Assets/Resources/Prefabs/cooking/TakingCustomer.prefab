@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 135393800586682130}
   - component: {fileID: 1444425583236905907}
   - component: {fileID: 5234597717777447466}
-  - component: {fileID: 3420509718956043976}
+  - component: {fileID: -1773758449769851427}
   m_Layer: 0
   m_Name: TakingCustomer
   m_TagString: Untagged
@@ -559,10 +559,10 @@ MonoBehaviour:
     m_Bits: 4294967295
   requireOverCollider: 1
   requireTopMostAtPointer: 1
-  overlapBufferSize: 16
+  overlapBufferSize: 256
   clickMaxDuration: 0.18
   clickMaxMovePx: 6
---- !u!114 &3420509718956043976
+--- !u!114 &-1773758449769851427
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -571,10 +571,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3996035947841858077}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb4773f7ca384ed58e45e8e9e9ad0df, type: 3}
+  m_Script: {fileID: 11500000, guid: 7542637caefe745beb05abf0d93e6d0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speechBubblePrefab: {fileID: 2513749376465831369, guid: 5f30582c9033c48ceac57c1f982432c3, type: 3}
-  canvas: {fileID: 0}
-  readyToOrder: 0
-  menuName: 
+  speechBubblePrefab: {fileID: 8065506210693313920, guid: 7a9a481941c9347d2b25e6ed5038bf0e, type: 3}

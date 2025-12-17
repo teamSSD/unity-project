@@ -154,9 +154,19 @@ public class CookingToolModel : MonoBehaviour
         CookingToolModel collision = scanColliderUtil.GetOverlappingWithComponent<CookingToolModel>();
         if (collision != null)
         {
-            bool reflected = collision.AddIngredient(SchemaInstance.GetResult());
-            if (reflected)
+            if (SchemaInstance.GetResult() != null)
             {
+                bool reflected = collision.AddIngredient(SchemaInstance.GetResult());
+                if (reflected)
+                {
+                    SchemaInstance.ClearIngredient();
+                    BehaviorInstance.ResetTexture();
+                }
+            }
+            else if (SchemaInstance.Ingredients.Count != 0
+                    && SchemaInstance.Ingredients.All(ingredient => collision.SchemaInstance.IsAddable(ingredient)))
+            {
+                SchemaInstance.Ingredients.ForEach(ingredient =>collision.AddIngredient(ingredient));
                 SchemaInstance.ClearIngredient();
                 BehaviorInstance.ResetTexture();
             }

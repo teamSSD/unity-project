@@ -181,7 +181,7 @@ MonoBehaviour:
     m_Bits: 64
   requireOverCollider: 1
   requireTopMostAtPointer: 1
-  overlapBufferSize: 16
+  overlapBufferSize: 256
   clickMaxDuration: 0.18
   clickMaxMovePx: 6
 --- !u!114 &1981026885274398410

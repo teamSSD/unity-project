@@ -558,9 +558,9 @@ MonoBehaviour:
   pickMask:
     serializedVersion: 2
     m_Bits: 256
-  requireOverCollider: 0
+  requireOverCollider: 1
   requireTopMostAtPointer: 1
-  overlapBufferSize: 16
+  overlapBufferSize: 256
   clickMaxDuration: 0.25
   clickMaxMovePx: 10
 --- !u!114 &2796106982373093773
@@ -575,8 +575,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ceb4773f7ca384ed58e45e8e9e9ad0df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speechBubblePrefab: {fileID: 2513749376465831369, guid: 5f30582c9033c48ceac57c1f982432c3, type: 3}
-  canvas: {fileID: 0}
+  speechBubblePrefab: {fileID: 8065506210693313920, guid: 7a9a481941c9347d2b25e6ed5038bf0e, type: 3}
   readyToOrder: 0
 --- !u!50 &-2698678896364888416
 Rigidbody2D:

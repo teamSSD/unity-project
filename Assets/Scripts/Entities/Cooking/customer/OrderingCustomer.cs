@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(ClickStateUtil))]
@@ -6,10 +7,9 @@ public class OrderingCustomer : MonoBehaviour
 {
     [Header("주입해야할 필드")]
     public GameObject speechBubblePrefab;
-    public Canvas canvas;
     public bool readyToOrder;
     public MenuSchema menuSchema;
-    public Action onExit;
+    public event Action onExit;
     
     [Header("내부적 속성")]
     private ClickStateUtil clickStateUtil;
@@ -27,15 +27,6 @@ public class OrderingCustomer : MonoBehaviour
     {
         clickStateUtil.OnClicked -= clickRoutine;
         if (speechBubble != null) Destroy(speechBubble);
-        onExit.Invoke();
-    }
-
-    public void Update()
-    {
-        if (speechBubble != null)
-        {
-            speechBubble.transform.position = Camera.main.WorldToScreenPoint(this.transform.position + new Vector3(-2.5f, 4, 0));
-        }
     }
 
     public void clickRoutine()
@@ -44,14 +35,21 @@ public class OrderingCustomer : MonoBehaviour
         if (isDisplaying)
         {
             Destroy(gameObject);
+            onExit.Invoke();
             return;
         }
-        speechBubble = Instantiate(speechBubblePrefab, canvas.transform);
-
-        speechBubbleScript = speechBubble.GetComponent<SpeechBubble>();
-        speechBubbleScript.setContents("사장님, 제가 오늘 이거 먹으려고 아침부터 빌드업 해왔거든요? 고민 없이 " + menuSchema.mainMenu.ingredientName + " (으)로 직진할게요.");
-        speechBubble.transform.position = Camera.main.WorldToScreenPoint(this.transform.position + new Vector3(-2.5f, 4, 0));
+        
+        say("사장님, 제가 오늘 이거 먹으려고 아침부터 빌드업 해왔거든요? 고민 없이 " + menuSchema.mainMenu.ingredientName + " (으)로 직진할게요.");
 
         isDisplaying = true;
+    }
+
+    private void say(string message)
+    {
+        speechBubble = Instantiate(speechBubblePrefab);
+
+        speechBubbleScript = speechBubble.GetComponent<SpeechBubble>();
+        speechBubbleScript.setContents(message);
+        speechBubble.transform.position = this.transform.position + new Vector3(-2.5f, 4, 0);
     }
 }
