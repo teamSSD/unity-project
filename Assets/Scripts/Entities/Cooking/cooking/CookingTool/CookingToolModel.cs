@@ -21,7 +21,7 @@ public class CookingToolModel : MonoBehaviour
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
     private HoverStateUtil hoverStateUtil;
-    private float hoverThreshold = 0.4f;
+    private float hoverThreshold = 1.0f;
     private GameObject descriptionObject;
     private CookingToolDescription cookingToolDescriptionScript;
     private float hoverClock = 0;

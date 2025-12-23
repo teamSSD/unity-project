@@ -10,8 +10,7 @@ public class Receipt : MonoBehaviour
     private Vector3 off = new Vector3(0, -0.25f, 0);
     
     public void Set(MenuSchema menuSchema)
-    {
-        
+    {   
         GameObject main = Instantiate(linePrefab, transform);
         main.GetComponent<ReceiptLine>().Set(menuSchema.mainMenu.ingredientName, 1);
         main.transform.localPosition = std;

@@ -18,7 +18,7 @@ public class FoodModel : MonoBehaviour
     LoadInventoryUsecase loadInventoryUsecase;
     bool injected = false;
     float hoverClock = 0;
-    float hoverThreshold = 0.4f;
+    float hoverThreshold = 1.0f;
     private GameObject descriptionObject = null;
     IngredientDescription ingredientDescriptionScript;
     private Canvas canvas;

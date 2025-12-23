@@ -11,4 +11,14 @@ public static class RandomNormal
 
         return mean + stdDev * randStdNormal;
     }
+
+    public static float Range(float min, float max)
+    {
+        float randSum = UnityEngine.Random.value 
+                    + UnityEngine.Random.value 
+                    + UnityEngine.Random.value;
+        
+        float normalRandom = randSum / 3.0f;
+        return Mathf.Lerp(min, max, normalRandom);
+    }
 }

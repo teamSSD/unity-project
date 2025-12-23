@@ -16,6 +16,7 @@ class TempPlayMinigameUsecase : PlayMinigameUsecase
             yield return elapsed / duration;
         }
 
+        StatsSystem.SubStamina(1);
         onCompleted?.Invoke(recipeData, 0.8f);
     }
 }

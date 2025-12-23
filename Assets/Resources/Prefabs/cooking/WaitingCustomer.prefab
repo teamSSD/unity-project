@@ -97,6 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 624321d2a9235495ab572fb6207a6427, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gaugePrefab: {fileID: 7305421610518353914, guid: 7dc98fbbd91294b7397a6874121d3cbb, type: 3}
   TakingCustomerPrefab: {fileID: 3996035947841858077, guid: 64e6fcf7dd0674ea38524b6342c9cd23, type: 3}
   Receipt: {fileID: 0}
   stopTimer: 0

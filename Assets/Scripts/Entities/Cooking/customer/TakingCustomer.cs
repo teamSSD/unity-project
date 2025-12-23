@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class TakingCustomer : MonoBehaviour
 {
@@ -37,11 +38,12 @@ public class TakingCustomer : MonoBehaviour
 
     private void say(string message)
     {
-        GameObject speechBubble = Instantiate(speechBubblePrefab, gameObject.transform);
+        GameObject speechBubble = Instantiate(speechBubblePrefab);
+        speechBubble.transform.parent = this.gameObject.transform;
 
         SpeechBubble speechBubbleScript = speechBubble.GetComponent<SpeechBubble>();
         speechBubbleScript.setContents(message);
-        speechBubble.transform.position = this.transform.position + new Vector3(-2.5f, 4, 0);
+        speechBubble.transform.position = this.transform.position + new Vector3(-3f, 4, 0);
         Destroy(gameObject, 3f);
     }
 }

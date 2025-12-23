@@ -7,7 +7,6 @@ public class OrderingCustomer : MonoBehaviour
 {
     [Header("주입해야할 필드")]
     public GameObject speechBubblePrefab;
-    public bool readyToOrder;
     public MenuSchema menuSchema;
     public event Action onExit;
     
@@ -31,7 +30,6 @@ public class OrderingCustomer : MonoBehaviour
 
     public void clickRoutine()
     {
-        if (!readyToOrder) return;
         if (isDisplaying)
         {
             Destroy(gameObject);
@@ -39,7 +37,7 @@ public class OrderingCustomer : MonoBehaviour
             return;
         }
         
-        say("사장님, 제가 오늘 이거 먹으려고 아침부터 빌드업 해왔거든요? 고민 없이 " + menuSchema.mainMenu.ingredientName + " (으)로 직진할게요.");
+        say("사장님, 제가 오늘 이거 먹으려고 아침부터 빌드업 해왔거든요? 고민 없이 " + menuSchema.name + " (으)로 직진할게요.");
 
         isDisplaying = true;
     }

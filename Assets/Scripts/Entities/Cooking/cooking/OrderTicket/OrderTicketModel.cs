@@ -15,6 +15,9 @@ public class OrderTicketModel : MonoBehaviour
     private static System.Random rand = new System.Random();
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
+    public bool IsAttached {get; private set;} = false;
+
+    public event Action onTake = () => { };
     void Awake()
     {
         BehaviorInstance = GetComponent<OrderTicketBehavior>();
@@ -36,25 +39,29 @@ public class OrderTicketModel : MonoBehaviour
             bool affected = collision.AddOrderTicket(this);
             if (affected)
             {
+                IsAttached = true;
+                onTake.Invoke();
                 waitingCustomer.GetComponent<WaitingCustomer>().stopTimer = true;
                 FoodSchema main = collision.getFoodList()[0];
                 List<FoodSchema> sides = collision.getFoodList();
                 sides.RemoveAt(0);
                 StartCoroutine(buy(menuSchema, main, sides, getRandomNormal(0.5f, 1.5f), collision));
                 GetComponent<SpriteRenderer>().enabled = false;
+                foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = false;
             }
         }
     }
 
     private IEnumerator buy(MenuSchema menuSchema, FoodSchema mainMenu, List<FoodSchema> sideMenus, float time, BentoModel collision)
     {
+        Vector3 offset = new Vector3(0.27f, 0, 0);
         yield return new WaitForSeconds(time);
 
-        Destroy(waitingCustomer);
-        Destroy(collision.gameObject);
         GameObject generated = Instantiate(TakingCustomerPrefab);
+        generated.transform.position = collision.transform.position + offset;
+        waitingCustomer.GetComponent<WaitingCustomer>().OnExit();
+        Destroy(collision.gameObject);
         generated.GetComponent<TakingCustomer>().take(menuSchema, mainMenu, sideMenus);
-        Destroy(gameObject);
     }
 
     private float getRandomNormal(float minVal, float maxVal)
