@@ -1,37 +1,72 @@
 id,name,description,imageName,availableTool,type
-I000,음쓰,너언...답도없다...,item_garbage_default,,GARBAGE
-I001,쌀,쌀이다.,item_rice_raw,T001,INGREDIENT
-I002,맨드레이크 새싹,밟으면 소리를 지를 것 같다.,item_mandrakeSprout_raw,T002,INGREDIENT
-I003,화염장,매콤한 맛을 내는 양념. 감칠맛이 일품이다.,item_flarePaste_raw,T003,INGREDIENT
-I004,용의 달걀,용이 낳은 알. 안타깝게도 무정란이다.,item_dragonEgg_raw,T001,INGREDIENT
-I005,면,가늘고 긴 밀 반죽으로 만든 식재료.,item_noodle_raw,T001,INGREDIENT
-I006,은빛 모래 물고기,은빛으로 반짝이며 모래 속을 헤엄치는 신비한 물고기.,item_silverSandFish_raw,T001,INGREDIENT
-I007,밀가루,곡물을 곱게 간 가루. 거의 모든 요리의 기본.,item_flour_raw,T003,INGREDIENT
-I008,환상 고기,정체를 알 수 없는 육류지만 풍미가 깊다.,item_mysteryMeat_raw,T002,INGREDIENT
-I009,용의 꼬리풀,불타는 비늘처럼 생긴 식물. 뜨겁게 자란다.,item_dragonTailHerb_raw,T002,INGREDIENT
-I010,크라켄 다리 촉수,거대한 촉수. 질기지만 조리하면 고급 식감.,item_krakenTentacle_raw,T002,INGREDIENT
-I011,달꽃의 뿌리,달빛을 받아 자라는 꽃의 뿌리. 은은한 향이 난다.,item_moonflowerRoot_raw,T003,INGREDIENT
-I012,그림자콩 발효장,그림자콩을 발효시켜 만든 장. 깊은 풍미가 있다.,item_shadowBeanPaste_raw,T003,INGREDIENT
-I013,고양이풀,고양이들이 열광하는 식물. 진정 효과가 있다.,item_catnip_raw,T002,INGREDIENT
-I014,블랙메머드 소시지,전설의 짐승으로 만든 진귀한 소시지.,item_blackMammothSausage_raw,T001,INGREDIENT
-I015,물,모든 생명의 근원.,item_water_raw,T003,INGREDIENT
-I016,냄비밥,고슬고슬하게 지어진 냄비밥,item_rice_heat,T003,PROCESSING
-I017,채썬 맨드레이크,얇게 썰린 맨드레이크,item_mandrakeSprout_cut,T003,PROCESSING
-I018,용 달걀 프라이,고온에서 익힌 용의 달걀,item_dragonEgg_heat,T003/T002,PROCESSING
-I019,맨드레이크 새싹 나물 비빔밥,맨드레이크의 풀향과 화염장의 불향이 어우러져 오묘한 맛을 자아낸다,item_mandrakeSproutBibimbab_main,,MAIN
-I020,삶은 면,삶은 면과 같다.,item_noodle_heat,T003,PROCESSING
-I021,은빛 모래 물고기 육수,은빛 모래 물고기를 푹 고아낸 육수,item_silverSandFish_heat,T003,PROCESSING
-I022,용 달걀 지단,용 달걀 프라이를 얇게 썰었다.,item_dragonEgg_cut,T003,PROCESSING
-I023,잔치국수,깊고 진한 맛이 나는 국수,item_banquetNoodle_main,T003,MAIN
-I024,반죽,밀가루와 물을 섞었다.,item_dough_mix,T001,PROCESSING
-I025,다진 환상 고기,환상 고기를 다졌다.,item_mysteryMeat_cut,T002,PROCESSING
-I026,채썬 용의 꼬리풀,가늘게 채 썬 용의 꼬리풀,item_dragonTailHerb_cut,T002,PROCESSING
-I027,볶은 환상 다진 고기,다진 환상 고기를 볶았다.,item_friedMysteryMeat_default,T001,PROCESSING
-I028,만두,만두 만두만두 만두...,item_mandoo_default,T001,PROCESSING
-I029,만둣국,만둣국 맛있겠다...,item_mandooSoup_main,,MAIN
-I030,채썬 크라켄 촉수,채썬 크라켄 촉수,item_krakenTentacle_cut,T001,PROCESSING
-I031,촉수 젓갈,촉수 젓갈,item_fermentedTentacle_sub,,SIDE
-I032,달꽃 뿌리 조림,달꽃 뿌리 조림,item_braisedMoonflowerRoot_sub,,SIDE
-I033,채썬 고양이풀,채썬 고양이풀,item_catnip_cut,T001,PROCESSING
-I034,고양이풀 샐러드,고양이풀 샐러드,item_catnipSalad,,SIDE
-I035,소시지 볶음,소시지 볶음,item_friedSausage,,SIDE
+I000,음식물쓰레기,음쓰…윀…,item_foodWaste_raw,,GARBAGE
+I001,흑미,자줏빛이 감도는 짙은 흑미알이 고르게 섞인 밥. 표면에 윤기가 돌며 묵직한 향을 낸다.,item_blackRice_raw,T002,INGREDIENT
+I002,밀면,밀빛의 긴 면발. 반투명하게 빛을 반사하며 표면은 살짝 매끄럽고 차가운 감촉을 준다.,item_wheatNoodles_raw,T002,INGREDIENT
+I003,두부,창백하고 부드러운 사각형 조각. 눌렀을 때 미세한 수분이 배어나오며 가장자리가 살짝 들떠 있다.,item_tofu_raw,T003,INGREDIENT
+I004,마늘,하얗고 단단한 껍질 속에 낱알이 겹겹이 박혀 있다. 으깨면 미세한 증기가 피어오른다.,item_garlic_raw,T001,INGREDIENT
+I005,가지,보랏빛이 짙은 조각. 표면에 염분 결정이 맺혀 있으며 눌렀을 때 단단한 탄성이 있다.,item_eggplant_raw,T003,INGREDIENT
+I006,파프리카,선명한 붉은빛과 노란빛을 띠는 두꺼운 과육. 표면은 매끄럽고 광택이 있으며 단면에서는 달콤하고 싱그러운 향이 퍼져 나온다.,item_paprika_raw,,INGREDIENT
+I007,고추장,깊은 붉은빛의 걸쭉한 장. 표면에 검은 기름막이 얇게 떠 있으며 매운 향과 은근한 단맛이 뒤섞여 있다.,item_gochujang_raw,T003,INGREDIENT
+I008,레몬,밝은 노란색 껍질이 매끈하고 반짝인다. 단면에서는 향기로운 산미가 퍼져 나온다.,item_lemon_raw,T003,INGREDIENT
+I009,인공고기,균일한 적갈색 덩어리. 결이 일정하게 배열되어 있으며 눌렀다 놓으면 천천히 원래 형태로 돌아간다. 열을 가하면 은은한 금속 향과 감칠맛이 올라온다.,item_artificialMeat_raw,T004/T005,INGREDIENT
+I010,루미 계란,은백색 껍질이 희미하게 빛나며 어둠 속에서도 윤광을 발한다. 흔들면 내부에서 은은한 빛이 출렁인다.,item_lumiEgg_raw,T001/T002,INGREDIENT
+I011,홍합,검푸른 조개껍질 속에 촉촉한 주황빛 살이 자리한다. 껍질을 열면 바닷물의 짠 냄새와 함께 은은한 미끈한 감촉이 전해진다.,item_mussel_raw,,INGREDIENT
+I012,절연 버섯,하얀 갓에 회색 줄무늬가 있으며 표면은 전기를 차단하는 듯한 둔탁한 질감.,item_insulatingMushroom_raw,T002/T003/T004,INGREDIENT
+I013,새벽풀,푸른빛과 보랏빛이 섞인 가느다란 잎줄기. 잎끝에는 이슬처럼 보이는 작은 빛 알갱이가 맺혀 있으며 손에 닿으면 잠시 차가운 감각이 남는다.,item_dawnHerb_raw,T002,INGREDIENT
+I014,청유,짙은 청록빛 액체. 빛에 따라 푸른 불빛이 스며 나오며 표면에는 미세한 기포가 일렁인다.,item_azureOil_raw,T001,INGREDIENT
+I015,오징어먹물,짙은 흑색의 점성이 강한 액체. 빛에 비추면 은색의 미세한 입자가 떠다니며 특유의 바다 비린 향과 깊은 감칠맛이 묻어난다.,item_squidInk_raw,T003,INGREDIENT
+I016,건조 새우,작고 붉은빛이 도는 껍질이 단단히 마른 형태. 손으로 눌리면 바삭하고 부서지며 강렬한 해산물 향이 퍼져 나온다.,item_driedShrimp_raw,T001,INGREDIENT
+I017,스틸루트,금속광택이 도는 회색 뿌리. 손에 닿으면 서늘하며 단단한 결이 마치 강철처럼 느껴진다.,item_steelRoot_raw,T001,INGREDIENT
+I018,대파,길고 속이 빈 줄기. 겉은 짙은 녹색 속은 옅은 흰빛을 띤다.,item_greenOnion_raw,T003,INGREDIENT
+I019,검은 된장,깊은 흑갈색 덩어리 형태의 장. 표면은 약간 매끄럽고 숙성된 곡물 향과 묵직한 감칠맛이 난다.,item_blackDoenjang_raw,T003,INGREDIENT
+I020,조명 시럽,투명한 황금빛 액체로 내부에서 잔불처럼 빛이 미세하게 흔들린다.,item_luminousSyrup_raw,T003,INGREDIENT
+I021,황동소금,미세한 금빛 결정. 반짝이는 입자가 금속성 빛을 내며 혀끝에 닿으면 즉시 녹는다.,item_brassSalt_raw,T001/T005,INGREDIENT
+I022,연기잎 버터,회갈색 버터 속에 검은 잎 조각이 섞여 있다. 살짝 녹이면 연기 같은 향이 피어오른다.,item_smokeLeafButter_raw,T003/T005,INGREDIENT
+I023,건조멸치,은빛이 바랜 작은 생선. 마른 비늘이 바삭하게 부서지고 꼬리가 구부러져 있다.,item_driedAnchovy_raw,T001/T003,INGREDIENT
+I024,검은깨,작은 흑색 씨앗. 매끈하고 단단하며 손가락 사이에서 번쩍 빛난다.,item_blackSesame_raw,T001/T003,INGREDIENT
+I025,청양잎,진한 초록빛의 가느다란 잎사귀. 표면에는 미세한 돌기가 있어 손끝에 걸리는 느낌을 주며 씹으면 매운 열기가 서서히 퍼져 오른다.,item_cheongyangLeaf_raw,T001/T003,INGREDIENT
+I026,루미잎,반투명한 청록색 잎. 표면에 미세한 빛 입자가 흐르고 손끝에서 은은한 열이 난다.,item_lumiLeaf_raw,T001/T003,INGREDIENT
+I027,빛 토마토,붉은 과육 안쪽에서 은은한 광채가 새어 나오는 과실. 껍질은 매끄럽고 팽팽하며 절단면에서는 반짝이는 씨앗 방울이 흐른다.,item_lightTomato_raw,T001/T003,INGREDIENT
+I028,바람콩,푸른빛 껍질이 얇게 떠 있으며 손에 쥐면 공기 주머니처럼 가볍다.,item_windBean_raw,T001,INGREDIENT
+I029,전기꽃,노란 전기 불꽃처럼 빛나는 꽃잎. 가까이 대면 미세한 찌릿한 감각이 전해진다.,item_electricFlower_raw,T003,INGREDIENT
+I030,합성 닭고기,균일한 육질의 정육면체. 결이 일정하며 살짝 눌러도 형태를 유지한다.,item_syntheticChicken_raw,T003,INGREDIENT
+I031,인공 연어,균일한 주황빛 색조의 단면. 인공 섬유질이 가지런히 결을 이루며 광택이 일정하다.,item_artificialSalmon_raw,T003,INGREDIENT
+I032,해초 육수,,item_seaweedBroth_raw,T002,PROCESSING
+I033,새벽국 베이스,,item_dawnSoupBase_raw,T003,PROCESSING
+I034,새벽국,,item_dawnSoup_raw,,MAIN
+I035,삶은 밀면,,item_boiledWheatNoodles_raw,T001,PROCESSING
+I036,다진 절연 버섯,,item_choppedInsulatingMushroom_raw,T003,PROCESSING
+I037,다크소이,,item_darkSoy_raw,T001,PROCESSING
+I038,새우기름 베이스,,item_shrimpOilBase_raw,T001,PROCESSING
+I039,구룡면,,item_guryongNoodles_raw,,MAIN
+I040,깍둑 썬 인공고기,,item_dicedArtificialMeat_raw,T001,PROCESSING
+I041,구운 인공고기,,item_grilledArtificialMeat_raw,T001,PROCESSING
+I042,구운 스틸루트,,item_grilledSteelRoot_raw,T001,PROCESSING
+I043,장소스,,item_jangSauce_raw,T001,PROCESSING
+I044,기계장 고기정식,,item_machineRoomMeatSet_raw,,MAIN
+I045,루미 젤 베이스,,item_lumiGelBase_raw,T003,PROCESSING
+I046,루미 젤리,,item_lumiJelly_raw,,SIDE
+I047,인공고기 스테이크,,item_artificialMeatSteak_raw,T005,PROCESSING
+I048,캐러멜 토핑,,item_caramelTopping_raw,T005,PROCESSING
+I049,스트리트 스테이크 49,,item_streetSteak49_raw,,MAIN
+I050,흑미밥,,item_blackRiceBowl_raw,T003,PROCESSING
+I051,삼각형 밥,,item_triangleRice_raw,T003,PROCESSING
+I052,간장 코팅 밥,,item_soyCoatedRice_raw,T001,PROCESSING
+I053,폐건물 삼각밥,,item_abandonedBuildingRiceBall_raw,,MAIN
+I054,구운바람콩,,item_grilledWindBean_raw,T003,PROCESSING
+I055,샐러드 베이스,,item_saladBase_raw,T003,PROCESSING
+I056,네온 샐러드,,item_neonSalad_raw,,SIDE
+I057,꼬치 조합,,item_skewerSet_raw,T001,PROCESSING
+I058,전력실 꼬치,,item_powerRoomSkewer_raw,,SIDE
+I059,오믈렛 베이스,,item_omeletteBase_raw,T001,PROCESSING
+I060,옥상 오믈렛,,item_rooftopOmelette_raw,,MAIN
+I061,양념 연어,,item_seasonedSalmon_raw,T001,PROCESSING
+I062,환기구 연어구이,,item_ventGrilledSalmon_raw,,SIDE
+I063,닭뼈,희미하게 바스러지는 흰빛 골편. 가까이 대면 오래된 육향과 금속성 선홍 냄새가 미세하게 공기 속으로 스며든다.,item_chickenBone_raw,T002,INGREDIENT
+I064,해초,검푸른 실타래처럼 얽힌 식물 조직. 손가락 사이로 늘어지며 바다의 습기와 조용한 파도 냄새가 따라온다.,item_seaweed_raw,,INGREDIENT
+I065,달의 뿌리,은빛 얼룩이 스며든 길고 단단한 뿌리. 빛을 비추면 표면에서 작은 달빛 입자가 천천히 흘러내린다.,item_moonRoot_raw,T005,INGREDIENT
+I066,양파,투명한 막이 겹겹이 쌓인 둥근 구근. 칼끝이 닿으면 매운 향이 즉시 피어올라 눈물이 맺히게 한다.,item_onion_raw,T005,INGREDIENT
+I067,잿빛 간장,탁한 회색빛의 묽은 장액. 표면에 은은한 연기 무늬가 떠돌며 묵직하고 불완전한 감칠맛이 혀끝을 감싼다.,item_ashenSoySauce_raw,T003,INGREDIENT
+I068,신문지,낡은 종이 위 희미해진 글자와 잔흔. 만지면 가루처럼 바스러지며 묘하게 기름 냄새가 남는다.,item_newspaper_raw,T001,INGREDIENT
+I069,물,아무 냄새도 색도 없는 액체. 그러나 빛을 비추면 잔잔한 파문 속에서 단단한 형태가 잠시 드러난다.,item_water_raw,T002,INGREDIENT
+I070,절인 해초,짙은 초록빛 띠가 겹겹이 말려 있고 표면에는 소금 결정이 희미하게 박혀 있다.,item_pickledSeaweed_raw,T002,INGREDIENT
