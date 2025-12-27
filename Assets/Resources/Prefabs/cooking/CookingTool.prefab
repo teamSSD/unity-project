@@ -166,7 +166,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3721458004035474150}
-  m_BodyType: 2
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -203,7 +203,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   requireOverCollider: 1
   requireTopMostAtPointer: 1
-  overlapBufferSize: 16
+  overlapBufferSize: 256
   clickMaxDuration: 0.18
   clickMaxMovePx: 6
 --- !u!114 &1241388302637625775
@@ -271,8 +271,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   overlapFilter:
-    useTriggers: 0
-    useLayerMask: 0
+    useTriggers: 1
+    useLayerMask: 1
     useDepth: 0
     useOutsideDepth: 0
     useNormalAngle: 0
@@ -298,6 +298,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   defaultPosition: {x: 0, y: 0, z: 0}
+  isCookable: 0
 --- !u!114 &6968429833796327789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,3 +312,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cookingToolData: {fileID: 0}
+  canvas: {fileID: 0}
+  descriptionPrefab: {fileID: 8741771434616529297, guid: 1b3fec945fb144ca7adb2756960dd742, type: 3}

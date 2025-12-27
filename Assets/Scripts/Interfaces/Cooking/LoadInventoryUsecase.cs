@@ -5,7 +5,5 @@ public interface LoadInventoryUsecase
     (IngredientData, int) Search(string id);
     void ConsumeFood(string foodId, int amount);
     int CheckStockAmount(string foodId);
-    List<(FoodData, IngredientData)> LoadRefrigeratorIngredient();
-    List<(FoodData, IngredientData)> LoadUpperShelfIngredient();
-    List<(FoodData, IngredientData)> LoadLowerShelfIngredient();
+    List<(FoodData, IngredientData)> LoadIngredientByCategory(IngredientDisplayCategory category);
 }

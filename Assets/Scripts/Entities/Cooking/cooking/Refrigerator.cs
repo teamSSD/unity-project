@@ -16,7 +16,7 @@ public class Refrigerator : MonoBehaviour
     {
         if (ingredient == null || foodModels.Contains(ingredient)) return;
 
-        ingredient.BehaviorInstance.defaultPosition = CalculatePositionForIndex(foodModels.Count);
+        ingredient.BehaviorInstance.defaultPosition = this.transform.position + CalculatePositionForIndex(foodModels.Count);
         foodModels.Add(ingredient);
         ingredient.onDestroy += HandleFoodDestroyed;
     }

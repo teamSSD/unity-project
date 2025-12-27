@@ -4,26 +4,26 @@ using UnityEngine;
 using System.IO;
 using System;
 
-public class DataManager
+public class DataSaveUtil
 {
     public static void SaveData<T>(T data, string path)
     {
         try
         {
-            // µð·ºÅä¸® »ý¼º
+            // ï¿½ï¿½ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½
             string filePath = Path.GetDirectoryName(path);
             if (!Directory.Exists(filePath))
                 Directory.CreateDirectory(filePath);
 
-            // json ÆÄÀÏ·Î ÀúÀå
+            // json ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ï¿½
             string savePath = Path.Combine(filePath, nameof(data) + ".json");
             File.WriteAllText(savePath, JsonUtility.ToJson(data));
 
-            Debug.Log($"{nameof(data)}µ¥ÀÌÅÍ¸¦ ¼¼ÀÌºêÇß½À´Ï´Ù. : {savePath}");
+            Debug.Log($"{nameof(data)}ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½Ìºï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½. : {savePath}");
         }
         catch (IOException e)
         {
-            Debug.LogError($"{nameof(data)}µ¥ÀÌÅÍ ¼¼ÀÌºê¿¡ ½ÇÆÐÇß½À´Ï´Ù. : {e.Message}");
+            Debug.LogError($"{nameof(data)}ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºê¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½. : {e.Message}");
         }
     }
 
@@ -33,20 +33,20 @@ public class DataManager
         {
             string filePath = Path.GetDirectoryName(path);
             string loadPath = Path.Combine(filePath, nameof(data) + ".json");
-            // ÆÄÀÏ Á¸Àç ¿©ºÎ È®ÀÎ
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
             if (!File.Exists(loadPath))
             {
-                Debug.LogWarning($"{loadPath}ÀÌ¶ó´Â ÆÄÀÏÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.");
+                Debug.LogWarning($"{loadPath}ï¿½Ì¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½.");
                 return data;
             }
 
-            // µ¥ÀÌÅÍ ºÒ·¯¿À±â
-            Debug.Log($"{nameof(data)}µ¥ÀÌÅÍ¸¦ ºÒ·¯¿Ô½À´Ï´Ù. : {loadPath}");
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½
+            Debug.Log($"{nameof(data)}ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Ò·ï¿½ï¿½Ô½ï¿½ï¿½Ï´ï¿½. : {loadPath}");
             return JsonUtility.FromJson<T>(File.ReadAllText(loadPath));
         }
         catch (Exception e)
         {
-            Debug.LogError($"{path} µ¥ÀÌÅÍ ºÒ·¯¿À±â¿¡ ½ÇÆÐÇß½À´Ï´Ù. : {e.Message}");
+            Debug.LogError($"{path} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½â¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½. : {e.Message}");
             return data;
         }
     }
