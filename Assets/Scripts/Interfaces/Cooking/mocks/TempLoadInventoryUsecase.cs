@@ -16,6 +16,10 @@ class TempLoadInventoryUsecase : LoadInventoryUsecase
                 i => (i, 10)
             );
     }
+    public (IngredientData, int) Search(string id)
+    {
+        return ingredients.Find(ingredient => ingredient.Item1.id == id);
+    }
 
     public void ConsumeFood(string foodId, int amount)
     {
