@@ -13,6 +13,10 @@ class TempLoadInventoryUsecase : LoadInventoryUsecase
         ingredients = CsvModelConverter.Parse<IngredientData>("driveAssets/dataTables/ingredient")
                 .ConvertAll(ingredient => (ingredient, 10));
     }
+    public (IngredientData, int) Search(string id)
+    {
+        return ingredients.Find(ingredient => ingredient.Item1.id == id);
+    }
 
     public void ConsumeFood(string foodId, int amount)
     {

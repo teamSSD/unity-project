@@ -53,7 +53,7 @@ public class ItemShopManager : MonoBehaviour
         }
 
         instance = this;
-        totalPriceText.text = totalPrice.ToString();
+        totalPriceText.text = $"{totalPrice.ToString()}G";
         isItemShopActive = false;
         shopRoot.SetActive(false);
     }
@@ -103,5 +103,5 @@ public class ItemShopManager : MonoBehaviour
 
     public void AddPrice(int price) { totalPrice += price; }
 
-    public void UpdateTotalPrice() { totalPriceText.text = totalPrice.ToString(); }
+    public void UpdateTotalPrice() { totalPriceText.text = $"{totalPrice.ToString()}G"; }
 }
