@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 5afd3670fcb265c4882d5a117b40e36d
+guid: 6537d59d6803b3e4185afc590434f763
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3484868882621667573
-    second: bg_mall_0
+      213: -8497831820146247682
+    second: bg_meatStore_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: bg_mall_0
+      name: bg_meatStore_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 2728
-        height: 1006
+        width: 703
+        height: 532
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5f81a7df8cdbc5030800000000000000
-      internalID: 3484868882621667573
+      spriteID: ef7fb27abf2a11a80800000000000000
+      internalID: -8497831820146247682
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      bg_mall_0: 3484868882621667573
+      bg_meatStore_0: -8497831820146247682
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

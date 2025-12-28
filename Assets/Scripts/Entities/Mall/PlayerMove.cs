@@ -3,8 +3,8 @@
 public class PlayerMove : MonoBehaviour
 {
     public float moveSpeed = 5f; // 이동 속도
-    public float minX = 3f;     // 맵 왼쪽 경계
-    public float maxX = 12f;      // 맵 오른쪽 경계
+    //public float minX = 3f;     // 맵 왼쪽 경계
+    //public float maxX = 12f;      // 맵 오른쪽 경계
 
     Rigidbody2D rb;
     SpriteRenderer sr;
@@ -27,8 +27,8 @@ public class PlayerMove : MonoBehaviour
             sr.flipX = false;
 
         // X축 Clamp
-        float clampedX = Mathf.Clamp(transform.position.x, minX, maxX);
-        transform.position = new Vector3(clampedX, transform.position.y, transform.position.z);
+        //float clampedX = Mathf.Clamp(transform.position.x, minX, maxX);
+        //transform.position = new Vector3(clampedX, transform.position.y, transform.position.z);
     }
 
     void FixedUpdate()
