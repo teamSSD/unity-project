@@ -2,7 +2,7 @@ id,name,description,imageName,availableTool,type
 I000,음식물쓰레기,음쓰…윀…,item_foodWaste_raw,,GARBAGE
 I001,흑미,자줏빛이 감도는 짙은 흑미알이 고르게 섞인 밥. 표면에 윤기가 돌며 묵직한 향을 낸다.,item_blackRice_raw,T002,INGREDIENT
 I002,밀면,밀빛의 긴 면발. 반투명하게 빛을 반사하며 표면은 살짝 매끄럽고 차가운 감촉을 준다.,item_wheatNoodles_raw,T002,INGREDIENT
-I003,두부,창백하고 부드러운 사각형 조각. 눌렀을 때 미세한 수분이 배어나오며 가장자리가 살짝 들떠 있다.,item_tofu_raw,T003,INGREDIENT
+I003,두부,창백하고 부드러운 사각형 조각. 눌렀을 때 미세한 수분이 배어나오며 가장자리가 살짝 들떠 있다.,item_tofu_raw,T002,INGREDIENT
 I004,마늘,하얗고 단단한 껍질 속에 낱알이 겹겹이 박혀 있다. 으깨면 미세한 증기가 피어오른다.,item_garlic_raw,T001,INGREDIENT
 I005,가지,보랏빛이 짙은 조각. 표면에 염분 결정이 맺혀 있으며 눌렀을 때 단단한 탄성이 있다.,item_eggplant_raw,T003,INGREDIENT
 I006,파프리카,선명한 붉은빛과 노란빛을 띠는 두꺼운 과육. 표면은 매끄럽고 광택이 있으며 단면에서는 달콤하고 싱그러운 향이 퍼져 나온다.,item_paprika_raw,,INGREDIENT

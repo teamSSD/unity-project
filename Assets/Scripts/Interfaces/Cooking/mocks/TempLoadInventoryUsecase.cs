@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 class TempLoadInventoryUsecase : LoadInventoryUsecase
@@ -18,7 +19,7 @@ class TempLoadInventoryUsecase : LoadInventoryUsecase
     }
     public (IngredientData, int) Search(string id)
     {
-        return ingredients.Find(ingredient => ingredient.Item1.id == id);
+        return ingredients[id];
     }
 
     public void ConsumeFood(string foodId, int amount)
