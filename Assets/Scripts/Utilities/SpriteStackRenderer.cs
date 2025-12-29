@@ -63,8 +63,12 @@ public class SpriteStackRenderer : MonoBehaviour
     public void Add(Sprite sprite)
     {
         if (sprite == null) return;
-        CreateIcon(sprite, currentVisibleIndex, $"Icon_{currentVisibleIndex}");
-        currentVisibleIndex++;
+        CreateIcon(sprite, ++currentVisibleIndex, $"Icon_{currentVisibleIndex}");
+    }
+    public void Add(Sprite sprite, Vector2 xy)
+    {
+        if (sprite == null) return;
+        CreateIcon(sprite, ++currentVisibleIndex, $"Icon_{currentVisibleIndex}", xy);
     }
 
     private void CreateIcon(Sprite sprite, int index, string goName)
@@ -85,6 +89,29 @@ public class SpriteStackRenderer : MonoBehaviour
         sr.transform.localPosition = new Vector3(
             start.x + step.x * index,
             start.y + step.y * index,
+            -0.001f * index
+        );
+        sr.transform.localScale = Vector3.one * iconScale;
+    }
+
+    private void CreateIcon(Sprite sprite, int index, string goName, Vector2 xy)
+    {
+        var iconGO = new GameObject(goName);
+        iconGO.transform.SetParent(root, false);
+
+        var sr = iconGO.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+
+        if (sortingReference != null)
+        {
+            sr.sortingLayerID = sortingReference.sortingLayerID;
+            sr.sortingLayerName = sortingReference.sortingLayerName;
+        }
+        sr.sortingOrder = baseSortingOrder + index;
+
+        sr.transform.localPosition = new Vector3(
+            xy.x,
+            xy.y,
             -0.001f * index
         );
         sr.transform.localScale = Vector3.one * iconScale;
