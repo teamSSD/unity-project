@@ -30,16 +30,16 @@ public class ItemShopManager : MonoBehaviour
         get { return isItemShopActive; }
     }
 
-    [Header("»óÁ¡ ·çÆ® ¿ÀºêÁ§Æ®")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®")]
     [SerializeField] public GameObject shopRoot;
 
-    [Header("»óÁ¡ ¿ÀºêÁ§Æ® ÇÁ¸®ÆÕ ÀÎ½ºÅÏ½º Æ®·£½ºÆû")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] public Transform slotInstantiateTransform;
 
-    [Header("»óÁ¡ ½½·Ô ÇÁ¸®ÆÕ")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] public GameObject shopSlotPrefab;
 
-    [Header("ÃÑ °¡°Ý")]
+    [Header("ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] public TextMeshProUGUI totalPriceText;
 
     private List<ItemShopSlot> currentSlots = new List<ItemShopSlot>();
@@ -89,7 +89,7 @@ public class ItemShopManager : MonoBehaviour
         UpdateTotalPrice();
         shopRoot.SetActive(false);
 
-        // ºñÈ°¼ºÈ­ Åä±Û
+        // ï¿½ï¿½È°ï¿½ï¿½È­ ï¿½ï¿½ï¿½
         isItemShopActive = false;
     }
 
