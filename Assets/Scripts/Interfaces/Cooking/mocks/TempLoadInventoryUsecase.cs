@@ -49,4 +49,17 @@ class TempLoadInventoryUsecase : LoadInventoryUsecase
             ))
             .ToList();
     }
+
+    public void addFood(IngredientData ingredientData, int amount)
+    {
+        if (ingredients.ContainsKey(ingredientData.id))
+        {
+            (IngredientData data, int count) item = ingredients[ingredientData.id];
+            item.count += amount;
+            ingredients[ingredientData.id] = item;
+            return;
+        }
+        (IngredientData data, int count) newItem = (ingredientData, amount);
+        ingredients.Add(ingredientData.id, newItem);
+    }
 }

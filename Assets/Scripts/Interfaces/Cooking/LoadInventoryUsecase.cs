@@ -6,4 +6,5 @@ public interface LoadInventoryUsecase
     void ConsumeFood(string foodId, int amount);
     int CheckStockAmount(string foodId);
     List<(FoodData, IngredientData)> LoadIngredientByCategory(IngredientDisplayCategory category);
+    void addFood(IngredientData food, int amount);
 }
