@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class StatsSystem
+public class StatsSystem : MonoBehaviour
 {
     public static event Action<int,int> OnTimeChanged;
     public static event Action<int> OnDayChanged;
