@@ -41,6 +41,12 @@ public class CookingToolModel : MonoBehaviour
         clickStateUtil.OnDragEnd += DetectTrashcan;
         clickStateUtil.OnClicked += PlayMinigame;
         clickStateUtil.OnDragEnd += TransferIngredient;
+        clickStateUtil.OnDragEnd += AddToBento;
+    }
+
+    void Update()
+    {
+        BehaviorInstance.isCookable = SchemaInstance.IsCookable();
     }
 
     void OnDestroy()
@@ -48,7 +54,7 @@ public class CookingToolModel : MonoBehaviour
         clickStateUtil.OnDragEnd -= DetectTrashcan;
         clickStateUtil.OnClicked -= PlayMinigame;
         clickStateUtil.OnDragEnd -= TransferIngredient;
-
+        clickStateUtil.OnDragEnd -= AddToBento;
     }
 
     public bool AddIngredient(FoodSchema food)
@@ -60,10 +66,32 @@ public class CookingToolModel : MonoBehaviour
         if (SchemaInstance.IsAddable(food))
         {
             SchemaInstance.AddIngredient(food);
-            BehaviorInstance.AddTexture(Resources.Load<Sprite>("driveAssets/art/item/food/" + food.foodData.imageName));
+            BehaviorInstance.AddTexture(Resources.Load<Sprite>(ResourcePaths.Art.FOOD + food.foodData.imageName));
             return true;
         }
         return false;
+    }
+    public void AddToBento()
+    {
+        if (!injected)
+        {
+            Debug.LogWarning("Interface didn't injected.");
+            return;
+        }
+
+        BentoModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoModel>();
+        if (collision != null)
+        {
+            if (SchemaInstance.GetResult() != null)
+            {
+                bool reflected = collision.AddIngredient(SchemaInstance.GetResult());
+                if (reflected)
+                {
+                    SchemaInstance.ClearIngredient();
+                    BehaviorInstance.ResetTexture();
+                }
+            }
+        }
     }
 
     public void TransferIngredient()
@@ -128,6 +156,6 @@ public class CookingToolModel : MonoBehaviour
         SchemaInstance.Cook(foodData, recipeData, score);
 
         BehaviorInstance.ResetTexture();
-        BehaviorInstance.AddTexture(Resources.Load<Sprite>("driveAssets/art/item/food/" + foodData.imageName));
+        BehaviorInstance.AddTexture(Resources.Load<Sprite>(ResourcePaths.Art.FOOD + foodData.imageName));
     }
 }

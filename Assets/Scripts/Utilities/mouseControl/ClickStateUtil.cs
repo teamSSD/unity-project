@@ -154,6 +154,16 @@ public class ClickStateUtil : MonoBehaviour
         }
         return best == col2d;
     }
+    
+    public void ForceDragStart()
+    {
+        isDown = true;
+        dragging = true;
+        downPosPx = Input.mousePosition;
+        downTime = Time.unscaledTime;
+
+        SafeInvoke(OnDragStart);
+    }
 
     private static void SafeInvoke(Action cb)
     {
