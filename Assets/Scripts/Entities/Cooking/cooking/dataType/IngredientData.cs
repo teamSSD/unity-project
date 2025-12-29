@@ -7,7 +7,7 @@ public enum IngredientDisplayCategory
 
 public enum IngredientTag
 {
-    Grain, Powder, Liquid, Sause, Vegetable, Egg, Fish, Seafood, Root, Meat
+    Grains, Vegetables, Sauces, Meat, Liquid, Seafood, Dairy, Other
 }
 
 public class IngredientData : CsvParsable

@@ -12,7 +12,7 @@ public class ClickStateUtil : MonoBehaviour
     public LayerMask pickMask = ~0;
     public bool requireOverCollider = true;
     public bool requireTopMostAtPointer = true;
-    [Min(1)] public int overlapBufferSize = 16;
+    [Min(1)] public int overlapBufferSize = 255;
 
     [Header("클릭 판정")]
     [Tooltip("이 시간 이내에 떼고, 이동도 작으면 Clicked로 간주 (unscaled)")]

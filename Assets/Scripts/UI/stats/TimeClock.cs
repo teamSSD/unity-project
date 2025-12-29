@@ -10,10 +10,10 @@ public class TimeClock : MonoBehaviour
 
         timer += Time.deltaTime;
 
-        if (timer >= 0.1f)
+        if (timer >= 1f)
         {
             StatsSystem.AddTime(0, 1);
-            timer = 0f;
+            timer -= 1f;
         }
     }
 }

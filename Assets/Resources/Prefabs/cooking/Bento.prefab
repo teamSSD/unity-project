@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 575004255133539240}
   - component: {fileID: 8261633316724828428}
   - component: {fileID: 1358770288440104008}
+  - component: {fileID: -4369802675447004644}
   m_Layer: 6
   m_Name: Bento
   m_TagString: Untagged
@@ -108,7 +109,7 @@ MonoBehaviour:
     m_Bits: 64
   requireOverCollider: 1
   requireTopMostAtPointer: 1
-  overlapBufferSize: 16
+  overlapBufferSize: 256
   clickMaxDuration: 0.18
   clickMaxMovePx: 6
 --- !u!114 &2278790542166813793
@@ -124,15 +125,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   overlapFilter:
-    useTriggers: 0
-    useLayerMask: 0
+    useTriggers: 1
+    useLayerMask: 1
     useDepth: 0
     useOutsideDepth: 0
     useNormalAngle: 0
     useOutsideNormalAngle: 0
     layerMask:
       serializedVersion: 2
-      m_Bits: 0
+      m_Bits: 4294967295
     minDepth: 0
     maxDepth: 0
     minNormalAngle: 0
@@ -231,3 +232,30 @@ PolygonCollider2D:
       - {x: 1.265, y: -0.60499996}
       - {x: 1.265, y: 0.60499996}
   m_UseDelaunayMesh: 0
+--- !u!50 &-4369802675447004644
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3014843813634200183}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

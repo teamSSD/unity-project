@@ -14,14 +14,42 @@ public class StatsSystem : MonoBehaviour
     private static bool isTimePaused = false;
     private static Action breakAction;
     private static int breakTargetTime = -1;
-
+    private static bool initialized = false;
     
     private static BasicStats basicStats = new BasicStats();
 
-    static StatsSystem()
+    public static void Initialize()
     {
+        if (initialized) return;
+        initialized = true;
+
         DataSaveUtil.LoadData(basicStats, "stats/basic");
+
+        isTimePaused = false;
+        breakAction = null;
+        breakTargetTime = -1;
     }
+    public static void ResetEvents()
+    {
+        OnTimeChanged = null;
+        OnDayChanged = null;
+        OnStaminaChanged = null;
+        OnMoneyChanged = null;
+        OnStaminaExhausted = null;
+        OnTimePaused = null;
+        OnTimeResumed = null;
+
+        isTimePaused = false;
+        breakAction = null;
+        breakTargetTime = -1;
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void OnDomainReload()
+    {
+        StatsSystem.ResetEvents();
+    }
+
     public static int GetDay() => basicStats.day;
 
     public static void AddDay(int value)

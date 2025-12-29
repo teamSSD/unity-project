@@ -15,6 +15,7 @@ public class BentoModel : MonoBehaviour
 
     private List<Vector2> locateList = new List<Vector2>() { new Vector2(-0.4f, 0f), new Vector2(0.6f, 0.4f) , new Vector2(0.6f, 0f) , new Vector2(0.6f, -0.4f) };
     private List<FoodSchema> foodList = new List<FoodSchema>();
+    BentoPositionModel bentoPositionModel;
 
     void Awake()
     {
@@ -28,6 +29,10 @@ public class BentoModel : MonoBehaviour
     private void OnDestroy()
     {
         clickStateUtil.OnDragEnd -= SetPosition;
+        if (bentoPositionModel != null)
+        {
+            bentoPositionModel.isSet = false;
+        }
     }
     public bool AddIngredient(FoodSchema food)
     {
@@ -35,47 +40,60 @@ public class BentoModel : MonoBehaviour
         {
             if (foodList.Count == 0 && !(food.foodData.type == FoodType.MAIN))
             {
-                Debug.Log("ÇØ´ç À½½ÄÀº ¸ŞÀÎ À½½ÄÀÌ ¾Æ´Õ´Ï´Ù.");
+                Debug.Log("í•´ë‹¹ ìŒì‹ì€ ë©”ì¸ ìŒì‹ì´ ì•„ë‹™ë‹ˆë‹¤.");
                 return false;
             }
             else if (foodList.Count > 0 && food.foodData.type != FoodType.SIDE)
             {
-                Debug.Log("ÇØ´ç À½½ÄÀº »çÀÌµå À½½ÄÀÌ ¾Æ´Õ´Ï´Ù.");
+                Debug.Log("í•´ë‹¹ ìŒì‹ì€ ì‚¬ì´ë“œ ìŒì‹ì´ ì•„ë‹™ë‹ˆë‹¤.");
                 return false;
             }
             BehaviorInstance.AddTexture(Resources.Load<Sprite>(ResourcePaths.Art.FOOD + food.foodData.imageName), locateList[foodList.Count]);
             foodList.Add(food);
-            Debug.Log($"{food.foodData.ingredientName}À» µµ½Ã¶ô¿¡ Ãß°¡Çß½À´Ï´Ù.");
             return true;
         }
-        Debug.Log("4°³ ÀÌ»ó ´ãÀ» ¼ö´Â ¾ø½À´Ï´Ù.");
         return false;
     }
 
     public bool AddOrderTicket(OrderTicketModel orderTicket)
     {
-        if (foodList.Count >= 4) 
+        if (foodList.Count >= 1)
         {
             BehaviorInstance.AddTexture(Resources.Load<Sprite>("driveAssets/art/item/cooking/cookingTool/item_reciept_default"));
-            Debug.Log($"µµ½Ã¶ô Æ÷ÀåÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù.");
-            Destroy(orderTicket.gameObject);
+            Debug.Log($"ë„ì‹œë½ í¬ì¥ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.");
             return true;
         }
-        Debug.Log("¾ÆÁ÷ µµ½Ã¶ôÀÌ ¿Ï¼ºµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+        Debug.Log("ì•„ì§ ë„ì‹œë½ì´ ì™„ì„±ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
         return false;
     }
 
     public void SetPosition()
     {
-        BentoPositionModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoPositionModel>();
-        if (collision != null && !collision.IsSet())
+        if (bentoPositionModel == null)
         {
-            BehaviorInstance.defaultPosition = collision.transform.position;
-            collision.Setting(true);
+            bentoPositionModel = scanColliderUtil.GetOverlappingWithComponent<BentoPositionModel>();
+            if (bentoPositionModel != null && !bentoPositionModel.isSet)
+            {
+                BehaviorInstance.defaultPosition = bentoPositionModel.transform.position;
+                bentoPositionModel.isSet = true;
+            }
+            else
+            {
+                Destroy(this.gameObject);
+            }
         }
         else
         {
-            Destroy(this.gameObject);
+            GameObject gameObject = scanColliderUtil.GetOverlappingWithTag(Tags.Trashcan.ToString());
+            if (gameObject != null)
+            {
+                Destroy(this.gameObject);
+            }
         }
+    }
+
+    public List<FoodSchema> getFoodList()
+    {
+        return foodList;
     }
 }
