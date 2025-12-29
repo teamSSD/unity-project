@@ -2,6 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+public enum FoodType
+{
+    GARBAGE, INGREDIENT, PROCESSING, MAIN, SIDE
+}
+
 public class FoodData : CsvParsable
 {
     public string id;
@@ -9,10 +14,11 @@ public class FoodData : CsvParsable
     public string description;
     public string imageName;
     public ISet<string> availableTool;
+    public FoodType type;
 
     public void Init(string[] args)
     {
-        if (args.Length != 5) throw new CsvParsingException("length of args isn't match.");
+        if (args.Length != 6) throw new CsvParsingException("length of args isn't match.");
         try
         {
             id = args[0].Trim();
@@ -20,6 +26,7 @@ public class FoodData : CsvParsable
             description = args[2].Trim();
             imageName = args[3].Trim();
             availableTool = args[4].Split('/').ToHashSet();
+            type = (FoodType)Enum.Parse(typeof(FoodType), args[5].Trim());
         }
         catch (Exception e)
         {
@@ -28,7 +35,7 @@ public class FoodData : CsvParsable
     }
 
     public FoodData() { }
-    
+
     public FoodData(string id, string ingredientName, string description, string imageName, ISet<string> availableTool)
     {
         this.id = id;
