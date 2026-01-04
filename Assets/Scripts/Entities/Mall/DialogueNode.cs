@@ -1,17 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-[CreateAssetMenu(fileName = "DialogueNode", menuName = "Scriptable Objects/DialogueNode")]
-public class DialogueNode : ScriptableObject
+[System.Serializable]
+public class DialogueRow
 {
-    public string speaker;
-    [TextArea] public string text;
-    public List<DialogueChoice> choices;
+    public string id;
+    public string npc;
+    public string contents;
+    public string condition;
+    public string next;
+    public string branchId;
 }
 
 [System.Serializable]
-public class DialogueChoice
+public class BranchRow
 {
-    public string text;
-    public DialogueNode nextNode;
+    public string id;
+    public int order;
+    public string contents;
+    public string next;
 }

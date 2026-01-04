@@ -323,8 +323,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: blah blah blah
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 934f29d5ab91b374384363e051688e07, type: 2}
+  m_sharedMaterial: {fileID: 1469258262729985809, guid: 934f29d5ab91b374384363e051688e07, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -348,8 +348,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -663,8 +663,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  minX: 3
-  maxX: 12
 --- !u!1 &1329180351
 GameObject:
   m_ObjectHideFlags: 0
@@ -724,8 +722,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: name
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 934f29d5ab91b374384363e051688e07, type: 2}
+  m_sharedMaterial: {fileID: 1469258262729985809, guid: 934f29d5ab91b374384363e051688e07, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -905,6 +903,55 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &1431600067
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1431600068}
+  - component: {fileID: 1431600069}
+  m_Layer: 0
+  m_Name: DialogueManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1431600068
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431600067}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 17.47507, y: -0.61356, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1431600069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431600067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68891f8f18c47b74db31fd9a0e06f751, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialoguePanel: {fileID: 1817220164}
+  nameText: {fileID: 1329180353}
+  dialogueText: {fileID: 504892997}
+  choicesParent: {fileID: 178812854}
+  choiceButtonPrefab: {fileID: 8629540847257526476, guid: 64cfcccdbf696ed4184415c78302b4b3, type: 3}
 --- !u!1 &1524561521
 GameObject:
   m_ObjectHideFlags: 0
@@ -1042,8 +1089,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '*press spacebar to talk*'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1326,7 +1373,7 @@ SpriteRenderer:
   m_Size: {x: 0.97, y: 2.13}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1680137012
@@ -1403,12 +1450,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactText: {fileID: 1599601772}
-  dialoguePanel: {fileID: 1817220164}
-  nameText: {fileID: 1329180353}
-  dialogueText: {fileID: 504892997}
-  choicesParent: {fileID: 178812854}
-  choiceButtonPrefab: {fileID: 3786900930374099017, guid: 9a60153e8525ea34493e5f8475a15c16, type: 3}
-  startNode: {fileID: 11400000, guid: 0e96a0b2e1c92014ba5c7e64e2950d5a, type: 2}
 --- !u!1 &1686758168
 GameObject:
   m_ObjectHideFlags: 0
@@ -1892,3 +1933,4 @@ SceneRoots:
   - {fileID: 75469170}
   - {fileID: 1744734560}
   - {fileID: 516666700}
+  - {fileID: 1431600068}
