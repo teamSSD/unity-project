@@ -57,7 +57,7 @@ public class ItemShopManager : MonoBehaviour
         isItemShopActive = false;
         shopRoot.SetActive(false);
     }
-    public void OpenItemShop(ItemShopSlotInfo[] sellItems)
+    public void OpenItemShop(List<ItemShopSlotInfo> sellItems)
     {
         if (isItemShopActive)
         {
@@ -102,6 +102,7 @@ public class ItemShopManager : MonoBehaviour
     public int GetTotalPrice() { return totalPrice; }
 
     public void AddPrice(int price) { totalPrice += price; }
+    public void SubPrice(int price) { totalPrice -= price; }
 
     public void UpdateTotalPrice() { totalPriceText.text = $"{totalPrice.ToString()}G"; }
 }

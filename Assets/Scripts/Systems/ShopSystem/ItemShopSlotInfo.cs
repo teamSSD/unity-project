@@ -16,4 +16,9 @@ public class ItemShopSlotInfo
         this.Id = item.Id;
         this.ItemAmount = item.ItemAmount;
     }
+    public ItemShopSlotInfo(string id, int amount)
+    {
+        this.Id = id;
+        this.ItemAmount = amount;
+    }
 }

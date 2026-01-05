@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using JetBrains.Annotations;
 
 public class ItemShopSlot : MonoBehaviour
 {
     [SerializeField] private Image ItemImage;
-    [SerializeField] private TextMeshProUGUI NameLabel, LoreLabel, CostLabel;
-    [SerializeField] private Button BuyButton;
+    [SerializeField] private TextMeshProUGUI NameLabel, LoreLabel, CostLabel, CountLabel;
 
     private SearchFoodUsecase FoodUsecase;
     private LoadInventoryUsecase InventoryUsecase;
@@ -19,11 +19,17 @@ public class ItemShopSlot : MonoBehaviour
     private int currnetCount;
     public void RefreshSlot()
     {
-        NameLabel.text = foodData.ingredientName;
+        currnetCount = 0;
+        NameLabel.text = $"{foodData.ingredientName} <size=70%>({currnetCount}/{sellInfo.ItemAmount})</size>";
         LoreLabel.text = foodData.description;
         CostLabel.text = $"{ingredientData.defaultPrice}G";
-        currnetCount = 0;
-        BuyButton.GetComponentInChildren<TextMeshProUGUI>().text = currnetCount.ToString();
+        CountLabel.text = currnetCount.ToString();
+    }
+
+    private void UpdateSlot()
+    {
+        NameLabel.text = $"{foodData.ingredientName} ({currnetCount}/{sellInfo.ItemAmount})";
+        CountLabel.text = currnetCount.ToString();
     }
 
     public void InitSlot(ItemShopSlotInfo sellItem)
@@ -39,10 +45,20 @@ public class ItemShopSlot : MonoBehaviour
         ingredientData = InventoryUsecase.Search(sellInfo.Id).Item1;
         ItemImage.sprite = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + foodData.imageName);
     }
-    public void BTN_BuyItem()
+    public void BTN_PlusItem()
     {
-        BuyButton.GetComponentInChildren<TextMeshProUGUI>().text = (++currnetCount).ToString();
+        if (currnetCount >= sellInfo.ItemAmount) return;
+        currnetCount++;
+        UpdateSlot();
         ItemShopManager.Instance.AddPrice(ingredientData.defaultPrice);
+        ItemShopManager.Instance.UpdateTotalPrice();
+    }
+    public void BTN_MinusItem()
+    {
+        if (currnetCount <= 0) return;
+        currnetCount--;
+        UpdateSlot();
+        ItemShopManager.Instance.SubPrice(ingredientData.defaultPrice);
         ItemShopManager.Instance.UpdateTotalPrice();
     }
 }
