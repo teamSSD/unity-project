@@ -604,6 +604,7 @@ MonoBehaviour:
   shopRoot: {fileID: 2617817486916817936}
   slotInstantiateTransform: {fileID: 4780334028302040832}
   shopSlotPrefab: {fileID: 5745094872648187470, guid: 31c0eec71fb666740ac5a5a9bb6cedf6, type: 3}
+  specialShopSlotPrefab: {fileID: 5745094872648187470, guid: af7d0906273bdb94491943ad7fbe7bd0, type: 3}
   totalPriceText: {fileID: 2479451095735188680}
   selectButton: {fileID: 5550879046780802868}
 --- !u!1 &4061285929947052776

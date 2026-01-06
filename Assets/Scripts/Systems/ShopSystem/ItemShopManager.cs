@@ -40,6 +40,9 @@ public class ItemShopManager : MonoBehaviour
     [Header("상점 슬롯 프리팹")]
     [SerializeField] public GameObject shopSlotPrefab;
 
+    [Header("특별 상점 슬롯 프리팹")]
+    [SerializeField] public GameObject specialShopSlotPrefab;
+
     [Header("총합 가격")]
     [SerializeField] public TextMeshProUGUI totalPriceText;
 
@@ -80,7 +83,8 @@ public class ItemShopManager : MonoBehaviour
 
         foreach (ItemShopSlotInfo sellItem in sellItems)
         {
-            ItemShopSlot slot = Instantiate(shopSlotPrefab, Vector3.zero, Quaternion.identity, slotInstantiateTransform).GetComponent<ItemShopSlot>();
+            GameObject prefab = sellItem.ItemType == ProductType.Special ? specialShopSlotPrefab : shopSlotPrefab;
+            ItemShopSlot slot = Instantiate(prefab, Vector3.zero, Quaternion.identity, slotInstantiateTransform).GetComponent<ItemShopSlot>();
             slot.InitSlot(sellItem);
 
             currentSlots.Add(slot);

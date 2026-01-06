@@ -149,6 +149,7 @@ GameObject:
   - component: {fileID: 7765802237906112390}
   - component: {fileID: 941558243401959323}
   - component: {fileID: 3578300840792144481}
+  - component: {fileID: 6826353004871515923}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -196,7 +197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.92549026, g: 0.9058824, b: 0.86274517, a: 1}
+  m_Color: {r: 0.81960785, g: 0.72156864, b: 0.4509804, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -227,6 +228,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Nobi.UiRoundedCorners::Nobi.UiRoundedCorners.ImageWithRoundedCorners
   radius: 10
   image: {fileID: 941558243401959323}
+--- !u!114 &6826353004871515923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722041286041927329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0.7490196, g: 0.48235294, b: 0.34117648, a: 1}
+  m_EffectDistance: {x: 2.3, y: 2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &813634649891531288
 GameObject:
   m_ObjectHideFlags: 0
@@ -286,7 +302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5803922, g: 0.5411765, b: 0.5411765, a: 1}
+  m_Color: {r: 0.41568628, g: 0.31764707, b: 0.31764707, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -391,8 +407,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4287269524
-  m_fontColor: {r: 0.5803922, g: 0.5411765, b: 0.5411765, a: 1}
+    rgba: 4283519338
+  m_fontColor: {r: 0.41568628, g: 0.31764707, b: 0.31764707, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -512,7 +528,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5568628, g: 0.5176471, b: 0.5176471, a: 1}
+  m_Color: {r: 0.42352945, g: 0.3372549, b: 0.3372549, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -587,7 +603,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.94117653, g: 0.9490197, b: 0.7686275, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -678,8 +694,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4287269524
-  m_fontColor: {r: 0.5803922, g: 0.5411765, b: 0.5411765, a: 1}
+    rgba: 4283519338
+  m_fontColor: {r: 0.41568628, g: 0.31764707, b: 0.31764707, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -735,7 +751,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: -25.015747}
+  m_margin: {x: 0, y: 0, z: 0, w: -24.742554}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -799,7 +815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5568628, g: 0.5176471, b: 0.5176471, a: 1}
+  m_Color: {r: 0.4156863, g: 0.31764707, b: 0.31764707, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -828,6 +844,7 @@ GameObject:
   - component: {fileID: 5426241591430231972}
   - component: {fileID: 8394601483289471226}
   - component: {fileID: 679093457102576584}
+  - component: {fileID: 2405838810944500127}
   m_Layer: 5
   m_Name: Sprite_ItemImage
   m_TagString: Untagged
@@ -876,7 +893,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.9411765, g: 0.9490196, b: 0.76862746, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -907,6 +924,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Nobi.UiRoundedCorners::Nobi.UiRoundedCorners.ImageWithRoundedCorners
   radius: 10
   image: {fileID: 8394601483289471226}
+--- !u!114 &2405838810944500127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4149996467309817150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0.7490196, g: 0.48235294, b: 0.34117648, a: 1}
+  m_EffectDistance: {x: 2.3, y: 2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &4725712250766098846
 GameObject:
   m_ObjectHideFlags: 0
@@ -1193,6 +1225,7 @@ GameObject:
   - component: {fileID: 6982841209566713554}
   - component: {fileID: 3560829368468928193}
   - component: {fileID: 7418832953628127712}
+  - component: {fileID: 4991957073120424367}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -1240,7 +1273,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.9411765, g: 0.9490196, b: 0.76862746, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1271,6 +1304,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Nobi.UiRoundedCorners::Nobi.UiRoundedCorners.ImageWithRoundedCorners
   radius: 10
   image: {fileID: 3560829368468928193}
+--- !u!114 &4991957073120424367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5459932979541083720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0.7490196, g: 0.48235294, b: 0.34117648, a: 1}
+  m_EffectDistance: {x: 2.3, y: 2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &5745094872648187470
 GameObject:
   m_ObjectHideFlags: 0
@@ -1284,7 +1332,7 @@ GameObject:
   - component: {fileID: 5560575553704342222}
   - component: {fileID: 4140394825154909565}
   m_Layer: 5
-  m_Name: ItemShopSlot
+  m_Name: SpecialItemShopSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1306,13 +1354,13 @@ RectTransform:
   - {fileID: 8670944015045043499}
   - {fileID: 4544172091014109954}
   - {fileID: 7268962949495331840}
+  - {fileID: 4715704379267408677}
   - {fileID: 9043908065641119554}
   - {fileID: 8147285100755784390}
   - {fileID: 1778520902277607037}
   - {fileID: 8597515813370852506}
   - {fileID: 7714930946982921046}
   - {fileID: 8378654756021392256}
-  - {fileID: 4715704379267408677}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -1433,7 +1481,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5803922, g: 0.5411765, b: 0.5411765, a: 1}
+  m_Color: {r: 0.41568628, g: 0.31764707, b: 0.31764707, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1512,7 +1560,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.89019614, g: 0.8705883, b: 0.8313726, a: 1}
+  m_Color: {r: 0.8196079, g: 0.72156864, b: 0.45098042, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1659,8 +1707,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4287269524
-  m_fontColor: {r: 0.5803922, g: 0.5411765, b: 0.5411765, a: 1}
+    rgba: 4283519338
+  m_fontColor: {r: 0.41568628, g: 0.31764707, b: 0.31764707, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1783,7 +1831,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.89019614, g: 0.8705883, b: 0.8313726, a: 1}
+  m_Color: {r: 0.8196079, g: 0.72156864, b: 0.45098042, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1914,7 +1962,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5568628, g: 0.5176471, b: 0.5176471, a: 1}
+  m_Color: {r: 0.4156863, g: 0.31764707, b: 0.31764707, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

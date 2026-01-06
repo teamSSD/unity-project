@@ -16,12 +16,13 @@ public class ItemShopButton : MonoBehaviour
     {
         foreach (var p in RandomGeneral.Pick(searchProductUsecase.GetSpecial(), 4))
         {
-            sellItemList.Add(new ItemShopSlotInfo(p.id, 10));
+            sellItemList.Add(new ItemShopSlotInfo(p.id, 10, ProductType.Special));
         }
         foreach (var p in searchProductUsecase.GetGeneral())
         {
-            sellItemList.Add(new ItemShopSlotInfo(p.id, 999));
+            sellItemList.Add(new ItemShopSlotInfo(p.id, 999, ProductType.General));
         }
         ItemShopManager.Instance.OpenItemShop(sellItemList);
+        sellItemList.Clear();
     }
 }
