@@ -28,7 +28,7 @@ public class ItemShopSlot : MonoBehaviour
 
     private void UpdateSlot()
     {
-        NameLabel.text = $"{foodData.ingredientName} ({currnetCount}/{sellInfo.ItemAmount})";
+        NameLabel.text = $"{foodData.ingredientName} <size=70%>({currnetCount}/{sellInfo.ItemAmount})</size>";
         CountLabel.text = currnetCount.ToString();
     }
 
@@ -50,15 +50,19 @@ public class ItemShopSlot : MonoBehaviour
         if (currnetCount >= sellInfo.ItemAmount) return;
         currnetCount++;
         UpdateSlot();
+        ItemShopManager.Instance.AddProduct(ingredientData);
         ItemShopManager.Instance.AddPrice(ingredientData.defaultPrice);
         ItemShopManager.Instance.UpdateTotalPrice();
+        ItemShopManager.Instance.CheckMoneyOver();
     }
     public void BTN_MinusItem()
     {
         if (currnetCount <= 0) return;
         currnetCount--;
         UpdateSlot();
+        ItemShopManager.Instance.SubProduct(ingredientData);
         ItemShopManager.Instance.SubPrice(ingredientData.defaultPrice);
         ItemShopManager.Instance.UpdateTotalPrice();
+        ItemShopManager.Instance.CheckMoneyOver();
     }
 }

@@ -424,6 +424,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 609025694909155646, guid: 78f89bda0c4aa414fb7c305d5e63d816, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 609025694909155646, guid: 78f89bda0c4aa414fb7c305d5e63d816, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 609025694909155646, guid: 78f89bda0c4aa414fb7c305d5e63d816, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2617817486916817936, guid: 78f89bda0c4aa414fb7c305d5e63d816, type: 3}
       propertyPath: m_Name
       value: ShopDialog_Prefab
@@ -671,27 +683,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 381f679d38802bc4d96204d2d048df06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sellItemList:
-  - Id: I001
-    ItemAmount: 0
-  - Id: I002
-    ItemAmount: 0
-  - Id: I003
-    ItemAmount: 0
-  - Id: I004
-    ItemAmount: 0
-  - Id: I005
-    ItemAmount: 0
-  - Id: I006
-    ItemAmount: 0
-  - Id: I007
-    ItemAmount: 0
-  - Id: I008
-    ItemAmount: 0
-  - Id: I009
-    ItemAmount: 0
-  - Id: I010
-    ItemAmount: 0
+  sellItemList: []
 --- !u!1 &1050191466
 GameObject:
   m_ObjectHideFlags: 0
