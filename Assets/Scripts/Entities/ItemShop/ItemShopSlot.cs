@@ -13,7 +13,7 @@ public class ItemShopSlot : MonoBehaviour
     private SearchFoodUsecase FoodUsecase;
     private LoadInventoryUsecase InventoryUsecase;
 
-    private FoodData foodData;
+    private FoodData foodData = new FoodData();
     private IngredientData ingredientData;
     private ItemShopSlotInfo sellInfo;
     private int currnetCount;
@@ -41,7 +41,8 @@ public class ItemShopSlot : MonoBehaviour
             InventoryUsecase = new TempLoadInventoryUsecase(FoodUsecase);
         // 정보 가져오기
         sellInfo = sellItem;
-        foodData = FoodUsecase.Search(sellInfo.Id);
+        if (FoodUsecase.Search(sellInfo.Id) is FoodData)
+            foodData = FoodUsecase.Search(sellInfo.Id);
         ingredientData = InventoryUsecase.Search(sellInfo.Id).Item1;
         ItemImage.sprite = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + foodData.imageName);
     }
