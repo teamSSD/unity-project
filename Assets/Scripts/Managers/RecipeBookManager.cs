@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using static ResourcePaths;
 
 public class RecipeBookManager : MonoBehaviour
 {
@@ -28,17 +30,20 @@ public class RecipeBookManager : MonoBehaviour
         get { return isRecipeBookActive; }
     }
 
-    [Header("레시피북 루트 오프젝트")]
+    [Header("Recipe Book Root")]
     [SerializeField] public GameObject bookRoot;
 
-    [Header("일지 페이지")]
+    [Header("Diary Page")]
     [SerializeField] public GameObject diary;
 
-    [Header("메인메뉴 페이지")]
+    [Header("Main Menu Page")]
     [SerializeField] public GameObject mainMenu;
 
-    [Header("사이드메뉴 페이지")]
+    [Header("Side Menu Page")]
     [SerializeField] public GameObject sideMenu;
+
+    [Header("Menu Card")]
+    [SerializeField] public GameObject menuCard;
 
     private void Awake()
     {
@@ -61,6 +66,8 @@ public class RecipeBookManager : MonoBehaviour
         }
 
         bookRoot.SetActive(true);
+        foreach (MenuSlot slot in GetComponentsInChildren<MenuSlot>())
+            slot.InitSlot();
         OpenDiary();
 
         isRecipeBookActive = true;
@@ -78,11 +85,16 @@ public class RecipeBookManager : MonoBehaviour
         sideMenu.transform.SetAsLastSibling();
     }
 
+    public void OpenMenuCard(string id)
+    {
+        MenuCard card = Instantiate(menuCard, Vector3.zero, Quaternion.identity).GetComponent<MenuCard>();
+        card.InitSlot(id);
+    }
+
     public void CloseRecipeBook()
     {
         bookRoot.SetActive(false);
 
-        // 비활성화 토글
         isRecipeBookActive = false;
     }
 }
