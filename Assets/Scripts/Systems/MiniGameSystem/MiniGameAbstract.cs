@@ -26,6 +26,7 @@ public abstract class MiniGameAbstract : MonoBehaviour
     protected bool isPlaying;
     protected float duration = 5f;  // 게임 진행 시간 (초)
     protected float elapsedTime = 0f;
+    public string minigameId { get; protected set; }
 
     protected GameObject miniGameBgPrefab;
     public void StartGame()

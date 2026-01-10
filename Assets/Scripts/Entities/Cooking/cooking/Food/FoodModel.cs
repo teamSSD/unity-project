@@ -41,7 +41,7 @@ public class FoodModel : MonoBehaviour
         ingredientDescriptionScript
             .SetTexts(
                 SchemaInstance.foodData.ingredientName,
-                loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData.id).ToString(),
+                loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData).ToString(),
                 SchemaInstance.foodData.description
             );
         descriptionObject.SetActive(false);
@@ -59,7 +59,7 @@ public class FoodModel : MonoBehaviour
         this.canvas = canvas;
         this.loadInventoryUsecase = loadInventoryUsecase;
         SchemaInstance = new FoodSchema(foodData, price);
-        Sprite newSprite = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + foodData.imageName);
+        Sprite newSprite = foodData.image;
         gameObject.GetComponent<SpriteRenderer>().sprite = newSprite;
         PolygonCollider2D existingCollider = GetComponent<PolygonCollider2D>();
         Destroy(existingCollider);
@@ -75,7 +75,7 @@ public class FoodModel : MonoBehaviour
             {
                 descriptionObject.SetActive(true);
                 ingredientDescriptionScript
-                    .UpdateCount(loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData.id).ToString());
+                    .UpdateCount(loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData).ToString());
                 descriptionObject.transform.position = Camera.main.WorldToScreenPoint(this.transform.position + new Vector3(2, 0, 0));
             }
             hoverClock += Time.deltaTime;
@@ -97,18 +97,18 @@ public class FoodModel : MonoBehaviour
         }
 
         CookingToolModel collision = scanColliderUtil.GetOverlappingWithComponent<CookingToolModel>();
-        if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData.id) <= 0)
+        if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData) <= 0)
         {
             Destroy(this.gameObject);
             return;
         }
-        if (collision != null && SchemaInstance.foodData.availableTool.Contains(collision.SchemaInstance.cookingToolData.id))
+        if (collision != null && SchemaInstance.foodData.availableTools.Contains(collision.SchemaInstance.cookingToolData.id))
         {
             bool reflected = collision.AddIngredient(this.SchemaInstance);
             if (!reflected)
             {
-                loadInventoryUsecase.ConsumeFood(SchemaInstance.foodData.id, 1);
-                if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData.id) <= 0)
+                loadInventoryUsecase.ConsumeFood(SchemaInstance.foodData, 1);
+                if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData) <= 0)
                 {
                     Destroy(this.gameObject);
                 }
@@ -124,7 +124,7 @@ public class FoodModel : MonoBehaviour
         }
 
         BentoModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoModel>();
-        if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData.id) <= 0)
+        if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData) <= 0)
         {
             Destroy(this.gameObject);
             return;
@@ -134,8 +134,8 @@ public class FoodModel : MonoBehaviour
             bool reflected = collision.AddIngredient(this.SchemaInstance);
             if (!reflected)
             {
-                loadInventoryUsecase.ConsumeFood(SchemaInstance.foodData.id, 1);
-                if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData.id) <= 0)
+                loadInventoryUsecase.ConsumeFood(SchemaInstance.foodData, 1);
+                if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData) <= 0)
                 {
                     Destroy(this.gameObject);
                 }

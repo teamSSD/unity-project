@@ -10,7 +10,6 @@ public class ItemShopSlot : MonoBehaviour
     [SerializeField] private TextMeshProUGUI NameLabel, LoreLabel, CostLabel;
     [SerializeField] private Button BuyButton;
 
-    private SearchFoodUsecase FoodUsecase;
     private LoadInventoryUsecase InventoryUsecase;
 
     private FoodData foodData;
@@ -28,16 +27,13 @@ public class ItemShopSlot : MonoBehaviour
 
     public void InitSlot(ItemShopSlotInfo sellItem)
     {
-        if (FoodUsecase == null)
-            FoodUsecase = new TempSearchFoodUsecase();
-
         if (InventoryUsecase == null)
-            InventoryUsecase = new TempLoadInventoryUsecase(FoodUsecase);
-        // Á¤º¸ °¡Á®¿À±â
+            InventoryUsecase = new TempLoadInventoryUsecase();
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         sellInfo = sellItem;
-        foodData = FoodUsecase.Search(sellInfo.Id);
-        ingredientData = InventoryUsecase.Search(sellInfo.Id).Item1;
-        ItemImage.sprite = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + foodData.imageName);
+        //foodData = FoodUsecase.Search(sellInfo.Id);
+        ingredientData = foodData.ingredient;
+        ItemImage.sprite = foodData.image;
     }
     public void BTN_BuyItem()
     {

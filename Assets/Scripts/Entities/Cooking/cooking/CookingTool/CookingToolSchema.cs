@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using UnityEngine;
 
 public class CookingToolSchema
 {
@@ -31,8 +32,9 @@ public class CookingToolSchema
         {
             return false;
         }
-        if (result != null && !result.foodData.availableTool.Contains(cookingToolData.id))
+        if (result != null && !result.foodData.availableTools.Contains(cookingToolData.id))
         {
+            Debug.Log(result.foodData.ingredientName + "\n" + String.Join(", ", result.foodData.availableTools) + "\n" + cookingToolData.id);
             return false;
         }
         
@@ -69,9 +71,9 @@ public class CookingToolSchema
     public void Cook(FoodData foodData, RecipeData recipeData, float score)
     {
         int newPrice = (int) Ingredients.Join(
-            recipeData.inputInfoSet,
-            ingredient => ingredient.foodData.id,
-            inputInfo => inputInfo.foodId,
+            recipeData.inputs,
+            ingredient => ingredient.foodData,
+            inputInfo => inputInfo.food,
             (ingredient, inputInfo) => ingredient.Price * (1 + inputInfo.foodWeight * score)
         ).Sum();
 

@@ -12,7 +12,6 @@ public class CuisineManager : MonoBehaviour
     [SerializeField] private Canvas canvas;
     private PlayMinigameUsecase playMinigameUsecase;
     private SearchRecipeUsecase searchRecipeUsecase;
-    private SearchFoodUsecase searchFoodUsecase;
     private LoadInventoryUsecase loadInventoryUsecase;
     private Refrigerator refrigerator;
     private UpperShelf upperShelf;
@@ -20,14 +19,13 @@ public class CuisineManager : MonoBehaviour
 
     void Start()
     {
-        playMinigameUsecase = new TempPlayMinigameUsecase();
+        playMinigameUsecase = gameObject.GetComponent<MiniGameManager>();
         searchRecipeUsecase = new TempSearchRecipeUsecase();
-        searchFoodUsecase = new TempSearchFoodUsecase();
-        loadInventoryUsecase = new TempLoadInventoryUsecase(searchFoodUsecase);
+        loadInventoryUsecase = new TempLoadInventoryUsecase();
 
         cookingTools.ForEach(tool =>
                 tool.GetComponent<CookingToolModel>()
-                        .Inject(playMinigameUsecase, searchRecipeUsecase, searchFoodUsecase));
+                        .Inject(playMinigameUsecase, searchRecipeUsecase));
 
         refrigerator = refrigeratorGameObject.GetComponent<Refrigerator>();
         upperShelf = upperShelfGameObject.GetComponent<UpperShelf>();
@@ -40,7 +38,7 @@ public class CuisineManager : MonoBehaviour
 
     private void FillRefrigerator(GameObject parent)
     {
-        loadInventoryUsecase.LoadIngredientByCategory(IngredientDisplayCategory.Refrigerator).ForEach(data =>
+        loadInventoryUsecase.LoadIngredientsByCategory(IngredientDisplayCategory.Refrigerator).ForEach(data =>
             {
                 GameObject ingredientInstance = Instantiate(foodPrefab, parent.transform);
                 ingredientInstance.name = data.Item1.ingredientName;
@@ -53,7 +51,7 @@ public class CuisineManager : MonoBehaviour
 
     public void FillUpperShelf(GameObject parent)
     {
-        loadInventoryUsecase.LoadIngredientByCategory(IngredientDisplayCategory.UpperShelf).ForEach(data =>
+        loadInventoryUsecase.LoadIngredientsByCategory(IngredientDisplayCategory.UpperShelf).ForEach(data =>
             {
                 GameObject ingredientInstance = Instantiate(foodPrefab, parent.transform);
                 ingredientInstance.name = data.Item1.ingredientName;
@@ -66,7 +64,7 @@ public class CuisineManager : MonoBehaviour
 
     public void FillLowerShelf(GameObject parent)
     {
-        loadInventoryUsecase.LoadIngredientByCategory(IngredientDisplayCategory.LowerShelf).ForEach(data =>
+        loadInventoryUsecase.LoadIngredientsByCategory(IngredientDisplayCategory.LowerShelf).ForEach(data =>
             {
                 GameObject ingredientInstance = Instantiate(foodPrefab, parent.transform);
                 ingredientInstance.name = data.Item1.ingredientName;

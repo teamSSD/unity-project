@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 /*
 MiniGameManager.cs
 ==================
@@ -12,25 +14,49 @@ MiniGameManager.cs
 사용법:
 - MiniGameAbstract를 상속한 미니게임을 생성 후 StartMiniGame() 호출
 */
-public class MiniGameManager : MonoBehaviour
+public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
 {
     private MiniGameAbstract currentGame;
-    public GameObject MiniGamePrefab;
 
-    private void Start() //***테스트용 임시코드 - 이후 Start()함수 삭제할 것***
+    [SerializeField] private GameObject BakeMinigamePrefab;
+    [SerializeField] private GameObject BoilMinigamePrefab;
+    
+    [SerializeField] private GameObject MixMinigamePrefab;
+    
+    [SerializeField] private GameObject SauseMinigamePrefab;
+    
+    [SerializeField] private GameObject CutMinigamePrefab;
+    
+    [SerializeField] private GameObject GrillMinigamePrefab;
+
+    public IEnumerator<float> PlayCoroutine(RecipeData recipeData, Vector2 position, List<FoodData> ingredients, Action<RecipeData, float> onCompleted)
     {
-        //클릭미니게임 실행코드
-        //GameObject miniGameObject = new GameObject("ClickMiniGame");
-        //currentGame = miniGameObject.AddComponent<ClickMiniGame>();
+        if (recipeData.minigameId == "M001") executeMinigame(BakeMinigamePrefab);
+        else if (recipeData.minigameId == "M002") executeMinigame(BoilMinigamePrefab);
+        else if (recipeData.minigameId == "M004") executeMinigame(MixMinigamePrefab);
+        else if (recipeData.minigameId == "M005") executeMinigame(SauseMinigamePrefab);
+        else if (recipeData.minigameId == "M006") executeMinigame(CutMinigamePrefab);
+        else if (recipeData.minigameId == "M007") executeMinigame(GrillMinigamePrefab);
+        else
+        {
+            float duration = 0.3f;
+            float elapsed = 0f;
 
-        //미니게임 실행코드
-        GameObject go = Instantiate(MiniGamePrefab);
-        currentGame = go.GetComponent<MiniGameAbstract>();
-        currentGame.StartGame();
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                yield return elapsed / duration;
+            }
+
+            StatsSystem.SubStamina(1);
+            onCompleted?.Invoke(recipeData, 0.8f);
+            }
     }
-    public void StartMiniGame(MiniGameAbstract game)
+
+    private void executeMinigame(GameObject prefab)
     {
-        currentGame = game;
+        GameObject go = Instantiate(prefab);
+        currentGame = go.GetComponent<MiniGameAbstract>();
         currentGame.StartGame();
     }
 }
