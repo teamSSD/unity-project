@@ -32,8 +32,7 @@ public class MenuCard : MonoBehaviour
     [SerializeField] private GameObject RecipeLorePage;
     [SerializeField] private GameObject IngredientLorePage;
 
-    private SearchFoodUsecase FoodUsecase;
-    private FoodData foodData = new FoodData();
+    private FoodData foodData;
     private Color enableButton, enableText, disableButton, disableText;
     private Image ingredientButton, recipeButton;
     private TextMeshProUGUI ingredientLabel, recipeLabel;
@@ -62,14 +61,13 @@ public class MenuCard : MonoBehaviour
 
     public void InitSlot(string id)
     {
-        if (FoodUsecase == null)
-            FoodUsecase = new TempSearchFoodUsecase();
+        foodData = ScriptableObject.CreateInstance<FoodData>();
 
         // Get Info
-        if (FoodUsecase.Search(id) is FoodData)
-            foodData = FoodUsecase.Search(id);
+        if (SearchDataUtil.GetFoodDataById(id) is FoodData)
+            foodData = SearchDataUtil.GetFoodDataById(id);
         NameLabel.text = foodData.ingredientName;
-        MenuImage.sprite = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + foodData.imageName);
+        MenuImage.sprite = foodData.image;
 
         isMenuCardActive = true;
     }

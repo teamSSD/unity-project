@@ -49,19 +49,12 @@ public class ItemShopManager : MonoBehaviour
     [Header("확인 버튼")]
     [SerializeField] public Button selectButton;
 
-    private SearchFoodUsecase FoodUsecase;
-    private LoadInventoryUsecase InventoryUsecase;
+    private LoadInventoryUsecase loadInventoryUsecase;
     private List<ItemShopSlot> currentSlots = new List<ItemShopSlot>();
-    private Dictionary<IngredientData, int> purchaseList = new Dictionary<IngredientData, int>();
+    private Dictionary<FoodData, int> purchaseList = new Dictionary<FoodData, int>();
     private int totalPrice = 0;
     private void Awake()
     {
-        if (FoodUsecase == null)
-            FoodUsecase = new TempSearchFoodUsecase();
-
-        if (InventoryUsecase == null)
-            InventoryUsecase = new TempLoadInventoryUsecase(FoodUsecase);
-
         if (instance != null && instance != this)
         {
             Destroy(gameObject);
@@ -117,7 +110,7 @@ public class ItemShopManager : MonoBehaviour
 
         StatsSystem.SubMoney(totalPrice);
         foreach (var item in purchaseList)
-            InventoryUsecase.addFood(item.Key, item.Value);
+            loadInventoryUsecase.AddFood(item.Key, item.Value);
         CloseItemShop();
     }
 
@@ -153,12 +146,12 @@ public class ItemShopManager : MonoBehaviour
         }
     }
 
-    public void AddProduct(IngredientData item)
+    public void AddProduct(FoodData item)
     {
         if (purchaseList.ContainsKey(item)) purchaseList[item]++;
         else purchaseList.Add(item, 1);
     }
-    public void SubProduct(IngredientData item)
+    public void SubProduct(FoodData item)
     {
         if (purchaseList.ContainsKey(item) && purchaseList[item] == 1) purchaseList.Remove(item);
         else purchaseList[item]--;

@@ -9,20 +9,17 @@ public class MenuSlot : MonoBehaviour
     [Header("Menu ID")]
     [SerializeField] public string Id;
 
-    private SearchFoodUsecase FoodUsecase;
-
-    private FoodData foodData = new FoodData();
+    private FoodData foodData;
 
     public void InitSlot()
     {
-        if (FoodUsecase == null)
-            FoodUsecase = new TempSearchFoodUsecase();
+        foodData = ScriptableObject.CreateInstance<FoodData>();
 
         // Get Info
-        if (FoodUsecase.Search(Id) is FoodData)
-            foodData = FoodUsecase.Search(Id);
+        if (SearchDataUtil.GetFoodDataById(Id) is FoodData)
+            foodData = SearchDataUtil.GetFoodDataById(Id);
         NameLabel.text = foodData.ingredientName;
-        MenuImage.sprite = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + foodData.imageName);
+        MenuImage.sprite = foodData.image;
     }
     public void OpenMenuCardL()
     {

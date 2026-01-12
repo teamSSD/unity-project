@@ -1,19 +1,17 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
-using JetBrains.Annotations;
 
 public class ItemShopSlot : MonoBehaviour
 {
     [SerializeField] private Image ItemImage;
     [SerializeField] private TextMeshProUGUI NameLabel, LoreLabel, CostLabel, CountLabel;
 
-    private SearchFoodUsecase FoodUsecase;
-    private LoadInventoryUsecase InventoryUsecase;
-
-    private FoodData foodData = new FoodData();
+    private FoodData foodData;
     private IngredientData ingredientData;
     private ItemShopSlotInfo sellInfo;
     private int currnetCount;
@@ -34,24 +32,21 @@ public class ItemShopSlot : MonoBehaviour
 
     public void InitSlot(ItemShopSlotInfo sellItem)
     {
-        if (FoodUsecase == null)
-            FoodUsecase = new TempSearchFoodUsecase();
+        foodData = ScriptableObject.CreateInstance<FoodData>();
 
-        if (InventoryUsecase == null)
-            InventoryUsecase = new TempLoadInventoryUsecase(FoodUsecase);
         // 정보 가져오기
         sellInfo = sellItem;
-        if (FoodUsecase.Search(sellInfo.Id) is FoodData)
-            foodData = FoodUsecase.Search(sellInfo.Id);
-        ingredientData = InventoryUsecase.Search(sellInfo.Id).Item1;
-        ItemImage.sprite = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + foodData.imageName);
+        if (SearchDataUtil.GetFoodDataById(sellInfo.Id) is FoodData)
+            foodData = SearchDataUtil.GetFoodDataById(sellInfo.Id);
+        ingredientData = SearchDataUtil.GetIngredientDataById(sellInfo.Id);
+        ItemImage.sprite = foodData.image;
     }
     public void BTN_PlusItem()
     {
         if (currnetCount >= sellInfo.ItemAmount) return;
         currnetCount++;
         UpdateSlot();
-        ItemShopManager.Instance.AddProduct(ingredientData);
+        ItemShopManager.Instance.AddProduct(foodData);
         ItemShopManager.Instance.AddPrice(ingredientData.defaultPrice);
         ItemShopManager.Instance.UpdateTotalPrice();
         ItemShopManager.Instance.CheckMoneyOver();
@@ -61,7 +56,7 @@ public class ItemShopSlot : MonoBehaviour
         if (currnetCount <= 0) return;
         currnetCount--;
         UpdateSlot();
-        ItemShopManager.Instance.SubProduct(ingredientData);
+        ItemShopManager.Instance.SubProduct(foodData);
         ItemShopManager.Instance.SubPrice(ingredientData.defaultPrice);
         ItemShopManager.Instance.UpdateTotalPrice();
         ItemShopManager.Instance.CheckMoneyOver();
