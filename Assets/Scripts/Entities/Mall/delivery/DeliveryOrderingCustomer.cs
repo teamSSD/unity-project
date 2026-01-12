@@ -36,7 +36,6 @@ public class DeliveryOrderingCustomer : MonoBehaviour
 
     public void clickRoutine()
     {
-        Debug.Log("클릭했구나~");
         if (isDisplaying)
         {
             Destroy(gameObject);
