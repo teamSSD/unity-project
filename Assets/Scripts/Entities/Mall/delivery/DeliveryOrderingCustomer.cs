@@ -28,12 +28,15 @@ public class DeliveryOrderingCustomer : MonoBehaviour
         //clickStateUtil.OnClicked -= clickRoutine;
         if (speechBubble != null) Destroy(speechBubble);
     }
-    void OnMouseDown()
+    void OnTriggerEnter2D(Collider2D other)//클릭 잘 안돼서 잠시 충돌로 대체 (임시)
     {
-        clickRoutine();
+        if (!other.CompareTag("Player")) return;
+        clickRoutine(); 
     }
+
     public void clickRoutine()
     {
+        Debug.Log("클릭했구나~");
         if (isDisplaying)
         {
             Destroy(gameObject);
