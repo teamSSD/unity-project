@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 class TempSearchFoodUsecase : SearchFoodUsecase
 {
@@ -9,7 +9,7 @@ class TempSearchFoodUsecase : SearchFoodUsecase
         foodDatas = CsvModelConverter.Parse<FoodData>("driveAssets/dataTables/food");
     }
 
-    /* null을 반환할 수 있음*/
+    /* null??諛섑솚?????덉쓬*/
     public FoodData Search(string id)
     {
         return foodDatas.Find(foodData => foodData.id == id);
