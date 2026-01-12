@@ -34,14 +34,13 @@ public class DeliveryOrderingCustomer : MonoBehaviour
     }
     public void clickRoutine()
     {
-        Debug.Log("클릭했구나! 클릭했구나! 클릭했구나!");
         if (isDisplaying)
         {
             Destroy(gameObject);
             onExit.Invoke();
             return;
         }
-        say("사장님, 제가 오늘 이거 먹으려고 아침부터 빌드업 해왔거든요? 고민 없이 " + menuSchema.name + " (으)로 직진할게요.");
+        say("배달주문이요! " + menuSchema.name + " 하나 부탁드릴게요");
 
         isDisplaying = true;
     }
