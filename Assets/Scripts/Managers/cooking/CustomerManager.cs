@@ -26,19 +26,17 @@ public class CustomerManager : MonoBehaviour
     {
         waitingCustomers = new List<EntryDto>();
 
-        TempSearchFoodUsecase tempSearchFoodUsecase = new TempSearchFoodUsecase();
-
         salesMenus = new List<MenuSchema>
         {
             new MenuSchema(
                 "도시락 정식 A",
                 -1,
-                tempSearchFoodUsecase.Search("I034"),
+                Resources.Load<FoodData>("ScriptableObjects/FoodData/I034"),
                 new List<FoodData>
                 {
-                    tempSearchFoodUsecase.Search("I046"),
-                    tempSearchFoodUsecase.Search("I058"),
-                    tempSearchFoodUsecase.Search("I062")
+                    Resources.Load<FoodData>("ScriptableObjects/FoodData/I046"),
+                    Resources.Load<FoodData>("ScriptableObjects/FoodData/I058"),
+                    Resources.Load<FoodData>("ScriptableObjects/FoodData/I062")
                 }
             ),
         };

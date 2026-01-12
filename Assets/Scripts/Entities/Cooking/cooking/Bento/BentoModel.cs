@@ -48,7 +48,7 @@ public class BentoModel : MonoBehaviour
                 Debug.Log("해당 음식은 사이드 음식이 아닙니다.");
                 return false;
             }
-            BehaviorInstance.AddTexture(Resources.Load<Sprite>(ResourcePaths.Art.FOOD + food.foodData.imageName), locateList[foodList.Count]);
+            BehaviorInstance.AddTexture(food.foodData.image, locateList[foodList.Count]);
             foodList.Add(food);
             return true;
         }

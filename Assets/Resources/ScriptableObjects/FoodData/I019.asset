@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e6faed1582df4141a504255d9b78dfe, type: 3}
+  m_Name: I019
+  m_EditorClassIdentifier: 
+  id: I019
+  ingredientName: "\uAC80\uC740 \uB41C\uC7A5"
+  description: "\uAE4A\uC740 \uD751\uAC08\uC0C9 \uB369\uC5B4\uB9AC \uD615\uD0DC\uC758
+    \uC7A5. \uD45C\uBA74\uC740 \uC57D\uAC04 \uB9E4\uB044\uB7FD\uACE0 \uC219\uC131\uB41C
+    \uACE1\uBB3C \uD5A5\uACFC \uBB35\uC9C1\uD55C \uAC10\uCE60\uB9DB\uC774 \uB09C\uB2E4."
+  image: {fileID: 21300000, guid: e4b07603f9bbc44f4bee83765313f302, type: 3}
+  ingredient: {fileID: 11400000, guid: bef77a6b316e640c89a8562f48bc7161, type: 2}
+  availableTools:
+  - T003
+  type: 1

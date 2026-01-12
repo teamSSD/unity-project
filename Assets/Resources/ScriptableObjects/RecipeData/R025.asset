@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec3a06c6d6e7464f92fab99ec220969, type: 3}
+  m_Name: R025
+  m_EditorClassIdentifier: 
+  id: R025
+  outputFood: {fileID: 11400000, guid: 947de3c0660b9458e9efd8d908ede4b4, type: 2}
+  minigameId: M004
+  inputs:
+  - food: {fileID: 11400000, guid: d025f92d06a7a4520958db73d97ecb9a, type: 2}
+    foodWeight: 1.2
+  - food: {fileID: 11400000, guid: 6f94c99bb03d2419eaba64f0f437ef2a, type: 2}
+    foodWeight: 1.2
+  - food: {fileID: 11400000, guid: 6e865bb4924c44f87832087c2a43e91b, type: 2}
+    foodWeight: 1.2
+  - food: {fileID: 11400000, guid: 5cffb544e31874325ad539da7e2a87c6, type: 2}
+    foodWeight: 1.2
+  - food: {fileID: 11400000, guid: 25fefbdb3dc6042a9b3ab66ab5d513f8, type: 2}
+    foodWeight: 1.2

@@ -15,7 +15,6 @@ public class CookingToolModel : MonoBehaviour
     [SerializeField] private GameObject descriptionPrefab;
     private PlayMinigameUsecase playMinigameUsecase;
     private SearchRecipeUsecase searchRecipeUsecase;
-    private SearchFoodUsecase searchFoodUsecase;
     public CookingToolSchema SchemaInstance { get; private set; }
     public CookingToolBehavior BehaviorInstance { get; private set; }
     private ScanColliderUtil scanColliderUtil;
@@ -30,12 +29,10 @@ public class CookingToolModel : MonoBehaviour
 
     public void Inject(
         PlayMinigameUsecase playMinigameUsecase,
-        SearchRecipeUsecase searchRecipeUsecase,
-        SearchFoodUsecase searchFoodUsecases)
+        SearchRecipeUsecase searchRecipeUsecase)
     {
         this.playMinigameUsecase = playMinigameUsecase;
         this.searchRecipeUsecase = searchRecipeUsecase;
-        this.searchFoodUsecase = searchFoodUsecases;
         injected = true;
     }
 
@@ -116,7 +113,7 @@ public class CookingToolModel : MonoBehaviour
         if (SchemaInstance.IsAddable(food))
         {
             SchemaInstance.AddIngredient(food);
-            BehaviorInstance.AddTexture(Resources.Load<Sprite>(ResourcePaths.Art.FOOD + food.foodData.imageName));
+            BehaviorInstance.AddTexture(food.foodData.image);
             return true;
         }
         return false;
@@ -199,7 +196,8 @@ public class CookingToolModel : MonoBehaviour
             SchemaInstance.MinigameStart();
 
             RecipeData response = searchRecipeUsecase.Search(
-                    SchemaInstance.Ingredients.ConvertAll(ingredient => ingredient.foodData));
+                SchemaInstance.cookingToolData.id,
+                SchemaInstance.Ingredients.ConvertAll(ingredient => ingredient.foodData));
 
             StartCoroutine(playMinigameUsecase.PlayCoroutine(
                 response,
@@ -210,12 +208,12 @@ public class CookingToolModel : MonoBehaviour
     }
 
     private void OnMinigameEnd(RecipeData recipeData, float score)
-    {        
+    {
         if (!injected) return;
-        FoodData foodData = searchFoodUsecase.Search(recipeData.outputId);
+        FoodData foodData = recipeData.outputFood;
         SchemaInstance.Cook(foodData, recipeData, score);
 
         BehaviorInstance.ResetTexture();
-        BehaviorInstance.AddTexture(Resources.Load<Sprite>(ResourcePaths.Art.FOOD + foodData.imageName));
+        BehaviorInstance.AddTexture(foodData.image);
     }
 }
