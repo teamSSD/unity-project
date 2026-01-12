@@ -45,6 +45,12 @@ public class RecipeBookManager : MonoBehaviour
     [Header("Menu Card")]
     [SerializeField] public GameObject menuCard;
 
+    [Header("Card Instantiate Transform (L)")]
+    [SerializeField] public Transform cardInstantiateTransform_L;
+
+    [Header("Card Instantiate Transform (R)")]
+    [SerializeField] public Transform cardInstantiateTransform_R;
+
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -55,6 +61,7 @@ public class RecipeBookManager : MonoBehaviour
 
         instance = this;
         isRecipeBookActive = false;
+
         bookRoot.SetActive(false);
     }
     public void OpenRecipeBook()
@@ -85,9 +92,14 @@ public class RecipeBookManager : MonoBehaviour
         sideMenu.transform.SetAsLastSibling();
     }
 
-    public void OpenMenuCard(string id)
+    public void OpenMenuCardL(string id)
     {
-        MenuCard card = Instantiate(menuCard, Vector3.zero, Quaternion.identity).GetComponent<MenuCard>();
+        MenuCard card = Instantiate(menuCard, cardInstantiateTransform_L).GetComponent<MenuCard>();
+        card.InitSlot(id);
+    }
+    public void OpenMenuCardR(string id)
+    {
+        MenuCard card = Instantiate(menuCard, cardInstantiateTransform_R).GetComponent<MenuCard>();
         card.InitSlot(id);
     }
 

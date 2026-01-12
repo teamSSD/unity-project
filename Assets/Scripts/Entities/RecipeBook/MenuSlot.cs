@@ -24,8 +24,12 @@ public class MenuSlot : MonoBehaviour
         NameLabel.text = foodData.ingredientName;
         MenuImage.sprite = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + foodData.imageName);
     }
-    public void OpenMenuCard()
+    public void OpenMenuCardL()
     {
-        RecipeBookManager.Instance.OpenMenuCard(Id);
+        RecipeBookManager.Instance.OpenMenuCardL(Id);
+    }
+    public void OpenMenuCardR()
+    {
+        RecipeBookManager.Instance.OpenMenuCardR(Id);
     }
 }

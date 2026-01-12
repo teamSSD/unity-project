@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8515446772961301253}
   - component: {fileID: 8958880717747778954}
   - component: {fileID: 9170297255774717650}
+  - component: {fileID: 5508411271214315889}
   m_Layer: 5
   m_Name: IngredientLore
   m_TagString: Untagged
@@ -76,6 +77,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5508411271214315889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 628909485766314386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109c41f08973846429af681aea0a30c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Nobi.UiRoundedCorners::Nobi.UiRoundedCorners.ImageWithIndependentRoundedCorners
+  r: {x: 0, y: 5, z: 5, w: 5}
+  rect2props: {x: -1.2499847, y: 1.2499695, z: 183.49422, w: 181.72646}
+  image: {fileID: 9170297255774717650}
 --- !u!1 &736866445418481613
 GameObject:
   m_ObjectHideFlags: 0
@@ -112,7 +128,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 111, y: 190}
+  m_AnchoredPosition: {x: 160, y: 250}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3189703500065442948
@@ -130,7 +146,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 736866445418481613}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -358,7 +374,7 @@ GameObject:
   - component: {fileID: 5201650969398176897}
   - component: {fileID: 5605783462867949487}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text_Recipe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -494,6 +510,7 @@ GameObject:
   - component: {fileID: 3585561354543795681}
   - component: {fileID: 8583699446258286712}
   - component: {fileID: 2475083555035696718}
+  - component: {fileID: 1048185560431965948}
   m_Layer: 5
   m_Name: RecipeLore
   m_TagString: Untagged
@@ -559,6 +576,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1048185560431965948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2903356143282551450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109c41f08973846429af681aea0a30c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Nobi.UiRoundedCorners::Nobi.UiRoundedCorners.ImageWithIndependentRoundedCorners
+  r: {x: 0, y: 5, z: 5, w: 5}
+  rect2props: {x: -1.2499847, y: 1.2499695, z: 183.49422, w: 181.72646}
+  image: {fileID: 2475083555035696718}
 --- !u!1 &3764083642908159967
 GameObject:
   m_ObjectHideFlags: 0
@@ -626,8 +658,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uBA54\uB274\uC774\uB984"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c29c61909e8f5d74eb5b1cd692007b61, type: 2}
-  m_sharedMaterial: {fileID: -3902675560372360881, guid: c29c61909e8f5d74eb5b1cd692007b61, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 0545ace1e04104948bd80ac2267053bf, type: 2}
+  m_sharedMaterial: {fileID: -456126712835312690, guid: 0545ace1e04104948bd80ac2267053bf, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -708,6 +740,7 @@ GameObject:
   - component: {fileID: 3235183245618571087}
   - component: {fileID: 2815133429279042366}
   - component: {fileID: 5816593171026027334}
+  - component: {fileID: 1778245424533878664}
   m_Layer: 5
   m_Name: Button_Ingredient
   m_TagString: Untagged
@@ -732,7 +765,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -6, y: 120}
+  m_AnchoredPosition: {x: -60, y: 120}
   m_SizeDelta: {x: 68, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3235183245618571087
@@ -788,6 +821,62 @@ MonoBehaviour:
   r: {x: 10, y: 10, z: 0, w: 0}
   rect2props: {x: 0.0000038146973, y: -5, z: 26.162952, w: 26.162952}
   image: {fileID: 2815133429279042366}
+--- !u!114 &1778245424533878664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4012650380946459850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 2815133429279042366}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6973747822488684834}
+        m_TargetAssemblyTypeName: MenuCard, Game.Runtime
+        m_MethodName: OpenIngredient
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4070193307277320960
 GameObject:
   m_ObjectHideFlags: 0
@@ -799,6 +888,7 @@ GameObject:
   - component: {fileID: 2936060166713131575}
   - component: {fileID: 3846119472296340231}
   - component: {fileID: 1321646215822347196}
+  - component: {fileID: 4405032774872349265}
   m_Layer: 5
   m_Name: IMAGE_Menu
   m_TagString: Untagged
@@ -864,6 +954,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4405032774872349265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4070193307277320960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adb30198aa32dd140b5750692dd48104, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Nobi.UiRoundedCorners::Nobi.UiRoundedCorners.ImageWithRoundedCorners
+  radius: 5
+  image: {fileID: 1321646215822347196}
 --- !u!1 &4191325316212020079
 GameObject:
   m_ObjectHideFlags: 0
@@ -899,7 +1003,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 300, y: 186}
+  m_SizeDelta: {x: 186, y: 186}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6344045530024428425
 CanvasRenderer:
@@ -951,6 +1055,7 @@ GameObject:
   - component: {fileID: 3307745153761808950}
   - component: {fileID: 6415912394713446283}
   - component: {fileID: 9000394765690035586}
+  - component: {fileID: 1947076554775661339}
   m_Layer: 5
   m_Name: Button_Recipe
   m_TagString: Untagged
@@ -1031,6 +1136,62 @@ MonoBehaviour:
   r: {x: 10, y: 10, z: 0, w: 0}
   rect2props: {x: 0.0000038146973, y: -5, z: 26.162952, w: 26.162952}
   image: {fileID: 6415912394713446283}
+--- !u!114 &1947076554775661339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5743350104368308945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 6415912394713446283}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6973747822488684834}
+        m_TargetAssemblyTypeName: MenuCard, Game.Runtime
+        m_MethodName: OpenRecipe
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6369935193998173056
 GameObject:
   m_ObjectHideFlags: 0
@@ -1043,7 +1204,7 @@ GameObject:
   - component: {fileID: 5331135288490810576}
   - component: {fileID: 8641150755406839373}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text_Ingredient
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1179,6 +1340,7 @@ GameObject:
   - component: {fileID: 1529189458645261379}
   - component: {fileID: 5789847621292645065}
   - component: {fileID: 112493544941755582}
+  - component: {fileID: 1483843113738692717}
   m_Layer: 5
   m_Name: LABEL_MenuName
   m_TagString: Untagged
@@ -1244,6 +1406,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1483843113738692717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6547351469784191383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adb30198aa32dd140b5750692dd48104, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Nobi.UiRoundedCorners::Nobi.UiRoundedCorners.ImageWithRoundedCorners
+  radius: 5
+  image: {fileID: 112493544941755582}
 --- !u!1 &6569790602054141221
 GameObject:
   m_ObjectHideFlags: 0
@@ -1256,6 +1432,7 @@ GameObject:
   - component: {fileID: 1758760408958004035}
   - component: {fileID: 8109855593968491088}
   - component: {fileID: 6973747822488684834}
+  - component: {fileID: 1869250451815797093}
   m_Layer: 5
   m_Name: MenuCard
   m_TagString: Untagged
@@ -1339,3 +1516,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::MenuCard
   MenuImage: {fileID: 1423513456630418846}
   NameLabel: {fileID: 7183039613065990975}
+  RecipeLorePage: {fileID: 2903356143282551450}
+  IngredientLorePage: {fileID: 628909485766314386}
+--- !u!114 &1869250451815797093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6569790602054141221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adb30198aa32dd140b5750692dd48104, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Nobi.UiRoundedCorners::Nobi.UiRoundedCorners.ImageWithRoundedCorners
+  radius: 10
+  image: {fileID: 8109855593968491088}
