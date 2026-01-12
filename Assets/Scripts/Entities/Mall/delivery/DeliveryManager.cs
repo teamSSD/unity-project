@@ -1,45 +1,79 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class DeliveryManager : MonoBehaviour
 {
-    public GameObject receiptPrefab;
+    public GameObject deliveryCustomerPrefab;
+    public bool isOpen = true;
+    public int deliveryOrderCount = 3;
 
-    private int deliveryNum = 3;
+    private List<MenuSchema> salesMenus;
+    private int nextOrderingNumber = 1;
 
-    private void Start()
+
+    void Awake()
     {
-        //완전 임시 테스트용@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         TempSearchFoodUsecase tempSearchFoodUsecase = new TempSearchFoodUsecase();
 
-        CreateReceipt(new MenuSchema(
-            "도시락 정식 A",
-            -1,
-            tempSearchFoodUsecase.Search("I034"),
-            new List<FoodData>
-            {
-                            tempSearchFoodUsecase.Search("I046"),
-                            tempSearchFoodUsecase.Search("I058"),
-                            tempSearchFoodUsecase.Search("I062")
-            }
-        ));
-        Debug.Log("완전임시코드 수행함!!!");
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        salesMenus = new List<MenuSchema>
+        {
+            new MenuSchema(
+                "임시정식 A",
+                -1,
+                tempSearchFoodUsecase.Search("I034"),
+                new List<FoodData>
+                {
+                    tempSearchFoodUsecase.Search("I046"),
+                    tempSearchFoodUsecase.Search("I058"),
+                    tempSearchFoodUsecase.Search("I062")
+                }
+            ),
+        };
+    }
 
-        //GenerateDeliveryCustomers();
+    void Start()
+    {
+        if (!isOpen) return;
+
+        // 호출되자마자 배달주문손님들 생성
+        for (int i = 0; i < deliveryOrderCount; i++)
+        {
+            GenerateCustomer();
+        }
+    }
+
+    private void GenerateCustomer()
+    {
+        Vector3 spawnPos = new Vector3(
+            Random.Range(0f, 20f), // x: 0~20 랜덤
+            -3f,                  // y: 바닥 좌표대로 고정
+            0f                   
+        );
+
+        GameObject ordering = Instantiate(
+            deliveryCustomerPrefab,
+            spawnPos,
+            Quaternion.identity
+        );
+
+        DeliveryOrderingCustomer script = ordering.GetComponent<DeliveryOrderingCustomer>();
+        script.menuSchema = pickRandomMenu();
+
+        // 주문 완료 → 즉시 퇴장
+        script.onExit += () =>
+        {
+            Destroy(ordering);
+        };
     }
 
 
-    public GameObject CreateReceipt(MenuSchema menuSchema)
+    private MenuSchema pickRandomMenu()
     {
-        GameObject receipt = Instantiate(receiptPrefab);
-
-        Receipt receiptUI = receipt.GetComponent<Receipt>();
-        OrderTicketModel ticket = receipt.GetComponent<OrderTicketModel>();
-
-        receiptUI.Set(menuSchema);
-        ticket.menuSchema = menuSchema;
-
-        return receipt;
+        MenuSchema menuSchema = salesMenus[Random.Range(0, salesMenus.Count)];
+        menuSchema.orderNumber = nextOrderingNumber;
+        nextOrderingNumber++;
+        return menuSchema;
     }
 }

@@ -16,12 +16,13 @@ public class DeliveryOrderingCustomer : MonoBehaviour
     private GameObject speechBubble;
     SpeechBubble speechBubbleScript;
 
+    /*
     public void Awake()
     {
-        //clickStateUtil = GetComponent<ClickStateUtil>();
-        //clickStateUtil.OnClicked += clickRoutine;
+        clickStateUtil = GetComponent<ClickStateUtil>();
+        clickStateUtil.OnClicked += clickRoutine;
     }
-
+    */
     public void OnDestroy()
     {
         //clickStateUtil.OnClicked -= clickRoutine;
