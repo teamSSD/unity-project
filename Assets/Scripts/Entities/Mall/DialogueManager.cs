@@ -124,7 +124,6 @@ public class DialogueManager : MonoBehaviour
     }
     public void EndDialogue()
     {
-        Debug.Log("대화종료");
         dialoguePanel.SetActive(false);
         ClearChoices();
 

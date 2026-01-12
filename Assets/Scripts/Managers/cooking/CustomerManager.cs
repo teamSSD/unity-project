@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,7 +31,7 @@ public class CustomerManager : MonoBehaviour
         salesMenus = new List<MenuSchema>
         {
             new MenuSchema(
-                "도시락 정식 A",
+                "?꾩떆???뺤떇 A",
                 -1,
                 tempSearchFoodUsecase.Search("I034"),
                 new List<FoodData>
@@ -72,7 +72,7 @@ public class CustomerManager : MonoBehaviour
 
         if (timer < whenNextVisit) return;
         timer -= whenNextVisit;
-        whenNextVisit = RandomNormal.Get(5, 3); // 실제 - 45, 15
+        whenNextVisit = RandomNormal.Get(5, 3); // ?ㅼ젣 - 45, 15
         if (orderingCustomer != null || waitingCustomers.Count >= 5) return;
         orderingCustomer = GenerateCustomer();
     }
@@ -181,8 +181,8 @@ public class CustomerManager : MonoBehaviour
 
     IEnumerator RunNextFrame(Action action)
     {
-        yield return null; // 1프레임 대기
-        action?.Invoke();  // 원래 함수 실행
+        yield return null; // 1?꾨젅???湲?
+        action?.Invoke();  // ?먮옒 ?⑥닔 ?ㅽ뻾
     }
 
     private class EntryDto
