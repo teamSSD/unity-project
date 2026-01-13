@@ -70,8 +70,12 @@ public class DeliveryManager : MonoBehaviour
         script.onExit += () =>
         {
             orderingCustomer = null;
+
+            int orderIndex = OrderManager.Instance.AddOrder(script.menuSchema);
+
             registRecieptAndWaitingCustomer(script.menuSchema);
         };
+
         return ordering;
     }
 
