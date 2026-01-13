@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class DeliveryManager : MonoBehaviour
@@ -9,7 +10,7 @@ public class DeliveryManager : MonoBehaviour
     public GameObject deliveryCustomerPrefab;
     public GameObject receiptPrefab;
     public GameObject waitingCustomerPrefab;
-    public bool isOpen = true;
+    public bool isDeliveryOpen = true;
     public int deliveryOrderCount = 3;
 
     private List<EntryDto> waitingCustomers;
@@ -41,7 +42,7 @@ public class DeliveryManager : MonoBehaviour
 
     void Start()
     {
-        if (!isOpen) return;
+        if (!isDeliveryOpen) return;
 
         // 호출되자마자 배달주문손님들 생성
         for (int i = 0; i < deliveryOrderCount; i++)
@@ -49,7 +50,21 @@ public class DeliveryManager : MonoBehaviour
             GenerateCustomer();
         }
     }
+    void Update()
+    {
+        if (!isDeliveryOpen) return;
 
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            CloseDeliveryAndGoCooking();
+        }
+    }
+
+    void CloseDeliveryAndGoCooking()//x키 누르면 배달주문 그만 받고 요리씬으로 넘어감
+    {
+        isDeliveryOpen = false;
+        SceneManager.LoadScene("Scene_Cuisine_Test");
+    }
     private GameObject GenerateCustomer()
     {
         Vector3 spawnPos = new Vector3(
