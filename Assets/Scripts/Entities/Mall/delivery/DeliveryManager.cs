@@ -78,6 +78,7 @@ public class DeliveryManager : MonoBehaviour
     private void registRecieptAndWaitingCustomer(MenuSchema menuSchema)
     {
         GameObject receipt = Instantiate(receiptPrefab);
+
         OrderTicketModel orderTicketModel = receipt.GetComponent<OrderTicketModel>();
         Receipt recieptScript = receipt.GetComponent<Receipt>();
 
