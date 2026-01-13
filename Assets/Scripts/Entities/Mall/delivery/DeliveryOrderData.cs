@@ -13,6 +13,7 @@ public enum DeliveryOrderState
 [Serializable]
 public class DeliveryOrderData
 {
+    public string questId;
     public int orderNumber;
     public MenuSchema menuSchema;
     public DeliveryOrderState state;
