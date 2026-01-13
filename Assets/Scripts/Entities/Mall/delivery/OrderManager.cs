@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class OrderManager : MonoBehaviour, IOrder
+public class OrderManager : MonoBehaviour,
+    IOrderReader,
+    IOrderCommand
 {
     public static OrderManager Instance;
 
-    public List<DeliveryOrderData> orders = new();
+    [SerializeField]
+    private List<DeliveryOrderData> orders = new();
 
     void Awake()
     {
@@ -19,33 +22,49 @@ public class OrderManager : MonoBehaviour, IOrder
         DontDestroyOnLoad(gameObject);
     }
 
-    public int GenerateOrder(MenuSchema menu, string questId)
+    // =====================
+    // 조회
+    // =====================
+    public IReadOnlyList<DeliveryOrderData> GetOrders()
     {
-        var order = new DeliveryOrderData
+        return orders;
+    }
+
+    public DeliveryOrderData GetOrder(string questId)
+    {
+        return orders.Find(o => o.questId == questId);
+    }
+
+    // =====================
+    // 명령, 수정
+    // =====================
+    public void GenerateOrder(MenuSchema menu, string questId)
+    {
+        orders.Add(new DeliveryOrderData
         {
             questId = questId,
             orderNumber = menu.orderNumber,
             menuSchema = menu,
             state = DeliveryOrderState.Ordered
-        };
-
-        orders.Add(order);
-        return orders.Count - 1;
+        });
     }
 
-    public bool IsOrderComplete(string questId)
+    public bool TryMarkCooked(string questId)
     {
-        return orders.Exists(o =>
-            o.questId == questId &&
-            o.state == DeliveryOrderState.Cooked);
+        var order = GetOrder(questId);
+        if (order == null) return false;
+        if (order.state != DeliveryOrderState.Ordered) return false;
+
+        order.state = DeliveryOrderState.Cooked;
+        return true;
     }
 
     public int ConsumeBento(string questId)
     {
-        var order = orders.Find(o => o.questId == questId);
+        var order = GetOrder(questId);
         if (order == null) return 0;
 
         orders.Remove(order);
-        return 10000;//order.menuSchema.price;//@@@@@@@@@@@@@@@
+        return 10000;
     }
 }

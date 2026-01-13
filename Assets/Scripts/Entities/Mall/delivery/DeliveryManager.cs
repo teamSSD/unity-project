@@ -87,7 +87,7 @@ public class DeliveryManager : MonoBehaviour
             orderingCustomer = null;
 
             string questId = System.Guid.NewGuid().ToString();
-            int orderIndex = OrderManager.Instance.GenerateOrder(script.menuSchema, questId);
+            OrderManager.Instance.GenerateOrder(script.menuSchema, questId);
 
             registRecieptAndWaitingCustomer(script.menuSchema);
         };
