@@ -9,7 +9,7 @@ public class DeliveryManager : MonoBehaviour
 {
     public GameObject deliveryCustomerPrefab;
     public GameObject receiptPrefab;
-    public GameObject waitingCustomerPrefab;
+    //public GameObject waitingCustomerPrefab;
     public bool isDeliveryOpen = true;
     public int deliveryOrderCount = 3;
 
@@ -101,10 +101,10 @@ public class DeliveryManager : MonoBehaviour
         OrderTicketModel orderTicketModel = receipt.GetComponent<OrderTicketModel>();
         Receipt recieptScript = receipt.GetComponent<Receipt>();
 
-        GameObject waitingCustomer = Instantiate(waitingCustomerPrefab);
+        //GameObject waitingCustomer = Instantiate(waitingCustomerPrefab);
 
         recieptScript.Set(menuSchema);
-        orderTicketModel.waitingCustomer = waitingCustomer;
+        //orderTicketModel.waitingCustomer = waitingCustomer;
         orderTicketModel.menuSchema = menuSchema;
         orderTicketModel.onTake += () => StartCoroutine(RunNextFrame(() =>
         {
