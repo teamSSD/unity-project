@@ -671,6 +671,7 @@ RectTransform:
   m_Children:
   - {fileID: 9183663862718432611}
   - {fileID: 5018730245562611494}
+  - {fileID: 6955771489346203308}
   m_Father: {fileID: 3056498811700948839}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -1469,6 +1470,66 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!1 &6336577009250444041
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6955771489346203308}
+  - component: {fileID: 3367332426253175349}
+  m_Layer: 5
+  m_Name: RecipeList
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6955771489346203308
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6336577009250444041}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3585561354543795681}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 300, y: 224}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &3367332426253175349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6336577009250444041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GridLayoutGroup
+  m_Padding:
+    m_Left: 16
+    m_Right: 16
+    m_Top: 40
+    m_Bottom: 20
+  m_ChildAlignment: 0
+  m_StartCorner: 0
+  m_StartAxis: 1
+  m_CellSize: {x: 268, y: 20}
+  m_Spacing: {x: 0, y: 10}
+  m_Constraint: 1
+  m_ConstraintCount: 1
 --- !u!1 &6369935193998173056
 GameObject:
   m_ObjectHideFlags: 0
@@ -1795,8 +1856,9 @@ MonoBehaviour:
   NameLabel: {fileID: 7183039613065990975}
   RecipeLorePage: {fileID: 2903356143282551450}
   IngredientLorePage: {fileID: 628909485766314386}
-  instantiateListTransform: {fileID: 7728568625061366934}
-  ingredientTextPrefab: {fileID: 5121503102883207764, guid: 375b5fcd7fbae304b9337f88e472db09, type: 3}
+  recipeListTransform: {fileID: 6955771489346203308}
+  ingredientListTransform: {fileID: 7728568625061366934}
+  textPrefab: {fileID: 5121503102883207764, guid: 375b5fcd7fbae304b9337f88e472db09, type: 3}
 --- !u!114 &1869250451815797093
 MonoBehaviour:
   m_ObjectHideFlags: 0
