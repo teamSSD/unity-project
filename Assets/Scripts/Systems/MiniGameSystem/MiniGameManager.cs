@@ -20,43 +20,51 @@ public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
 
     [SerializeField] private GameObject BakeMinigamePrefab;
     [SerializeField] private GameObject BoilMinigamePrefab;
-    
     [SerializeField] private GameObject MixMinigamePrefab;
-    
     [SerializeField] private GameObject SauseMinigamePrefab;
-    
     [SerializeField] private GameObject CutMinigamePrefab;
-    
     [SerializeField] private GameObject GrillMinigamePrefab;
 
-    public IEnumerator<float> PlayCoroutine(RecipeData recipeData, Vector2 position, List<FoodData> ingredients, Action<RecipeData, float> onCompleted)
+    private static Vector2 offset = new Vector2(0, 2);
+
+    public IEnumerator<float> PlayCoroutine(string toolId, RecipeData recipeData, Vector2 position, List<FoodData> ingredients, Action<RecipeData, float> onCompleted)
     {
-        if (recipeData.minigameId == "M001") executeMinigame(BakeMinigamePrefab);
-        else if (recipeData.minigameId == "M002") executeMinigame(BoilMinigamePrefab);
-        else if (recipeData.minigameId == "M004") executeMinigame(MixMinigamePrefab);
-        else if (recipeData.minigameId == "M005") executeMinigame(SauseMinigamePrefab);
-        else if (recipeData.minigameId == "M006") executeMinigame(CutMinigamePrefab);
-        else if (recipeData.minigameId == "M007") executeMinigame(GrillMinigamePrefab);
-        else
-        {
-            float duration = 0.3f;
-            float elapsed = 0f;
+        GameObject prefab = GetPrefab(toolId, recipeData);
+        if (prefab == null) yield break;
 
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                yield return elapsed / duration;
-            }
+        bool isFinished = false;
+        float finalScore = 0f;
 
-            StatsSystem.SubStamina(1);
-            onCompleted?.Invoke(recipeData, 0.8f);
-            }
-    }
-
-    private void executeMinigame(GameObject prefab)
-    {
         GameObject go = Instantiate(prefab);
         currentGame = go.GetComponent<MiniGameAbstract>();
+        currentGame.OnGameFinished += (score) =>
+        {
+            finalScore = score;
+            isFinished = true;
+        };
         currentGame.StartGame();
+        while (!isFinished)
+        {
+            yield return 0f;
+        }
+        onCompleted?.Invoke(recipeData, finalScore);
+    }
+
+    private GameObject GetPrefab(string toolId, RecipeData recipeData)
+    {
+        if (recipeData.minigameId == "M001") return BakeMinigamePrefab;
+        if (recipeData.minigameId == "M002") return BoilMinigamePrefab;
+        if (recipeData.minigameId == "M004") return MixMinigamePrefab;
+        if (recipeData.minigameId == "M005") return SauseMinigamePrefab;
+        if (recipeData.minigameId == "M006") return CutMinigamePrefab;
+        if (recipeData.minigameId == "M007") return GrillMinigamePrefab;
+
+        if (toolId == "T001") return BakeMinigamePrefab;
+        if (toolId == "T002") return BoilMinigamePrefab;
+        if (toolId == "T003") return MixMinigamePrefab;
+        if (toolId == "T004") return CutMinigamePrefab;
+        if (toolId == "T005") return GrillMinigamePrefab;
+
+        return null;
     }
 }

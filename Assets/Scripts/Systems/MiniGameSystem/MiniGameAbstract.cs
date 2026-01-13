@@ -23,6 +23,7 @@ MiniGameAbstract.cs
 */
 public abstract class MiniGameAbstract : MonoBehaviour
 {
+    public event Action<float> OnGameFinished;
     protected bool isPlaying;
     protected float duration = 5f;  // 게임 진행 시간 (초)
     protected float elapsedTime = 0f;
@@ -62,15 +63,17 @@ public abstract class MiniGameAbstract : MonoBehaviour
 
         float score = CalculateScore();
         Debug.Log($"{GetType().Name} 종료! 점수: {score:F2}");
-        Destroy(this.gameObject);
+        
+        OnGameFinished?.Invoke(score);
+        Destroy(gameObject);
     }
 
     private void ShowBG()
     {
         miniGameBgPrefab = Resources.Load<GameObject>("Prefabs/minigame/miniGameBG");
 
-        Vector3 pos = GetBGPosition();
-        miniGameBgPrefab = Instantiate(miniGameBgPrefab, pos, Quaternion.identity);
+        miniGameBgPrefab = Instantiate(miniGameBgPrefab);
+        miniGameBgPrefab.transform.parent = this.gameObject.transform;
     }
     private void RemoveBG()
     {

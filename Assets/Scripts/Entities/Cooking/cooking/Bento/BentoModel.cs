@@ -10,6 +10,7 @@ using UnityEngine;
 public class BentoModel : MonoBehaviour
 {
     public BentoBehavior BehaviorInstance { get; private set; }
+    [SerializeField] private AudioClip bentoPutSfx;
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
 
@@ -76,6 +77,7 @@ public class BentoModel : MonoBehaviour
             {
                 BehaviorInstance.defaultPosition = bentoPositionModel.transform.position;
                 bentoPositionModel.isSet = true;
+                SoundManager.Instance.Play2DSFX(bentoPutSfx, 0.4f);
             }
             else
             {

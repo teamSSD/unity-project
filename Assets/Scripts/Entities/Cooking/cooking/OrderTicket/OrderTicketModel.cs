@@ -12,6 +12,7 @@ public class OrderTicketModel : MonoBehaviour
     public GameObject TakingCustomerPrefab;
     public GameObject waitingCustomer;
     public MenuSchema menuSchema;
+    [SerializeField] private AudioClip attachSfx;
     private static System.Random rand = new System.Random();
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
@@ -25,6 +26,11 @@ public class OrderTicketModel : MonoBehaviour
         clickStateUtil = GetComponent<ClickStateUtil>();
 
         clickStateUtil.OnDragEnd += AddToBento;
+    }
+
+    void Start()
+    {
+        SoundManager.Instance.Play2DSFX(attachSfx, 0.4f);
     }
 
     void OnDestroy()
@@ -48,6 +54,8 @@ public class OrderTicketModel : MonoBehaviour
                 StartCoroutine(buy(menuSchema, main, sides, getRandomNormal(0.5f, 1.5f), collision));
                 GetComponent<SpriteRenderer>().enabled = false;
                 foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = false;
+
+                SoundManager.Instance.Play2DSFX(attachSfx, 0.4f);
             }
         }
     }

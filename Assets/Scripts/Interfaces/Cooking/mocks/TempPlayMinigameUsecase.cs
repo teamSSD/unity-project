@@ -5,7 +5,7 @@ using UnityEngine;
 
 class TempPlayMinigameUsecase : PlayMinigameUsecase
 {
-    public IEnumerator<float> PlayCoroutine(RecipeData recipeData, Vector2 position, List<FoodData> ingredients, Action<RecipeData, float> onCompleted)
+    public IEnumerator<float> PlayCoroutine(string cookingToolId, RecipeData recipeData, Vector2 position, List<FoodData> ingredients, Action<RecipeData, float> onCompleted)
     {
         float duration = 0.3f;
         float elapsed = 0f;

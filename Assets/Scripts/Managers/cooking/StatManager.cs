@@ -7,9 +7,11 @@ using UnityEngine;
 public class StatManager : MonoBehaviour
 {
     public event Action onTimeEnd = () => {};
+    [SerializeField] private AudioClip tickingSfx;
     private CustomerManager customerManager;
     private float time = 0;
-    private float threshold = 1.5f;
+    private float threshold = 1f;
+
     void OnEnable()
     {
         StatsSystem.Initialize();
@@ -36,6 +38,7 @@ public class StatManager : MonoBehaviour
         {
             time -= threshold;
             StatsSystem.AddTime(0, 1);
+            SoundManager.Instance.Play2DSFX(tickingSfx, 0.5f);
         }
     }
 

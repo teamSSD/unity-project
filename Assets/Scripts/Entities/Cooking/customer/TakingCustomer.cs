@@ -1,11 +1,12 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
 public class TakingCustomer : MonoBehaviour
 {
     public GameObject speechBubblePrefab;
+    [SerializeField] private AudioClip takeSoundEffect;
 
     public void exit()
     {
@@ -44,6 +45,8 @@ public class TakingCustomer : MonoBehaviour
         SpeechBubble speechBubbleScript = speechBubble.GetComponent<SpeechBubble>();
         speechBubbleScript.setContents(message);
         speechBubble.transform.position = this.transform.position + new Vector3(-3f, 4, 0);
-        Destroy(gameObject, 3f);
+        
+        SoundManager.Instance.Play2DSFX(takeSoundEffect, 0.3f);
+        Destroy(gameObject);
     }
 }

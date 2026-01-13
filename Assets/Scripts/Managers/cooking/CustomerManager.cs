@@ -13,6 +13,7 @@ public class CustomerManager : MonoBehaviour
     public Canvas canvas;
     public Canvas worldCanvas;
     public bool isOpen = true;
+    [SerializeField] private AudioClip doorSfx;
 
     private List<EntryDto> waitingCustomers;
     private List<int> waitingPoses = new List<int> {0, 1, 2, 3, 4};
@@ -73,6 +74,7 @@ public class CustomerManager : MonoBehaviour
         whenNextVisit = RandomNormal.Get(5, 3); // 실제 - 45, 15
         if (orderingCustomer != null || waitingCustomers.Count >= 5) return;
         orderingCustomer = GenerateCustomer();
+        SoundManager.Instance.Play2DSFX(doorSfx, 0.7f);
     }
 
     private GameObject GenerateCustomer()

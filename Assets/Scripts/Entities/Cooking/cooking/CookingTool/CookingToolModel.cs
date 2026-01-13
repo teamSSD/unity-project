@@ -13,6 +13,8 @@ public class CookingToolModel : MonoBehaviour
     [SerializeField] private CookingToolData cookingToolData;
     [SerializeField] private Canvas canvas;
     [SerializeField] private GameObject descriptionPrefab;
+    [SerializeField] private string toolId;
+    [SerializeField] private AudioClip trashcanSfx;
     private PlayMinigameUsecase playMinigameUsecase;
     private SearchRecipeUsecase searchRecipeUsecase;
     public CookingToolSchema SchemaInstance { get; private set; }
@@ -181,6 +183,8 @@ public class CookingToolModel : MonoBehaviour
         {
             SchemaInstance.ClearIngredient();
             BehaviorInstance.ResetTexture();
+
+            SoundManager.Instance.Play2DSFX(trashcanSfx, 0.6f);
         }
     }
 
@@ -200,6 +204,7 @@ public class CookingToolModel : MonoBehaviour
                 SchemaInstance.Ingredients.ConvertAll(ingredient => ingredient.foodData));
 
             StartCoroutine(playMinigameUsecase.PlayCoroutine(
+                toolId,
                 response,
                 (Vector2)this.gameObject.transform.position,
                 SchemaInstance.Ingredients.ConvertAll(ingredient => ingredient.foodData),
