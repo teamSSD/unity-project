@@ -82,25 +82,26 @@ public class RecipeBookManager : MonoBehaviour
     public void OpenDiary()
     {
         diary.transform.SetAsLastSibling();
+        CloseMenuCard();
     }
     public void OpenMainMenu()
     {
         mainMenu.transform.SetAsLastSibling();
+        CloseMenuCard();
     }
     public void OpenSideMenu()
     {
         sideMenu.transform.SetAsLastSibling();
+        CloseMenuCard();
     }
 
     public void OpenMenuCardL(string id)
     {
-        MenuCard card = Instantiate(menuCard, cardInstantiateTransform_L).GetComponent<MenuCard>();
-        card.InitSlot(id);
+        OpenMenuCard(id, cardInstantiateTransform_L);
     }
     public void OpenMenuCardR(string id)
     {
-        MenuCard card = Instantiate(menuCard, cardInstantiateTransform_R).GetComponent<MenuCard>();
-        card.InitSlot(id);
+        OpenMenuCard(id, cardInstantiateTransform_R);
     }
 
     public void CloseRecipeBook()
@@ -108,5 +109,24 @@ public class RecipeBookManager : MonoBehaviour
         bookRoot.SetActive(false);
 
         isRecipeBookActive = false;
+    }
+
+    public void OpenMenuCard(string id, Transform form)
+    {
+        if (MenuCard.Instance != null)
+        {
+            MenuCard.Instance.ClearMenuCard();
+            MenuCard.Instance.InitSlot(id);
+            return;
+        }
+        MenuCard card = Instantiate(menuCard, form).GetComponent<MenuCard>();
+        card.InitSlot(id);
+    }
+    public void CloseMenuCard()
+    {
+        if (MenuCard.Instance != null)
+        {
+            MenuCard.Instance.CloseMenuCard();
+        }
     }
 }
