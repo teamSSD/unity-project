@@ -579,7 +579,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deliveryCustomerPrefab: {fileID: 7591288982533269628, guid: e56587a16d54c2f428e2a04cf648bf7b, type: 3}
   receiptPrefab: {fileID: 7370412938016546202, guid: e8630fd82922840cd82bfd70f99652e4, type: 3}
-  waitingCustomerPrefab: {fileID: 8969570347396159534, guid: 3fbb9dc477031407bae0f52625707b8e, type: 3}
   isDeliveryOpen: 1
   deliveryOrderCount: 3
 --- !u!1 &964561687

@@ -60,11 +60,33 @@ public class OrderManager : MonoBehaviour,
     }
 
     public int ConsumeBento(string questId)
-    {
+    {/*
         var order = GetOrder(questId);
         if (order == null) return 0;
 
-        orders.Remove(order);
-        return 10000;
+        MenuSchema menuSchema = order.menuSchema;
+        FoodData mainMenu = menuSchema.mainMenu;
+        List<FoodData> sideMenus = menuSchema.sideMenus;
+
+        int totalPrice = 0;
+       totalPrice += mainMenu.Price;
+       sideMenus.ForEach(menu => totalPrice += menu.Price);
+
+       int matchCount = 0;
+       if (menuSchema.mainMenu.id == mainMenu.foodData.id) matchCount++;
+       List<string> ids = sideMenus.Select(menu => menu.foodData.id).ToList();
+       menuSchema.sideMenus.ForEach(menu =>
+       {
+           if (ids.Contains(menu.id)) matchCount++;
+       });
+
+       if (matchCount == menuSchema.sideMenus.Count + 1)
+        {
+            StatsSystem.AddMoney(totalPrice);
+            return;
+        }
+        StatsSystem.AddMoney((int) (totalPrice * 0.7f));
+        */
+        return 1000;
     }
 }
