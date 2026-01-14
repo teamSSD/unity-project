@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -81,8 +82,8 @@ public class MenuCard : MonoBehaviour
 
         foreach (RecipeIngredient item in recipeData.inputs)
             AddIngredient(item.food.id);
-        foreach (RecipeData recipe in recipeList)
-            AddRecipe(recipe);
+        for (int i = recipeList.Count - 1; i >= 0; i--)
+            AddRecipe(recipeList[i]);
 
         isMenuCardActive = true;
     }
@@ -153,8 +154,8 @@ public class MenuCard : MonoBehaviour
         TextMeshProUGUI recipeText = Instantiate(textPrefab, recipeListTransform).GetComponent<TextMeshProUGUI>();
         for (int i = 0; i < recipe.inputs.Count; i++)
         {
-            if (i == recipe.inputs.Count - 1) recipeText.text += $"{recipe.inputs[i].food.ingredientName} -({GetCookingProcess(recipe.minigameId)})-> {recipe.outputFood.ingredientName}";
-            else recipeText.text += $"{recipe.inputs[i].food.ingredientName} + ";
+            if (i == recipe.inputs.Count - 1) recipeText.text += $"<sprite name={recipe.inputs[i].food.image.name}> -({GetCookingProcess(recipe.minigameId)})-> <sprite name={recipe.outputFood.image.name}>";
+            else recipeText.text += $"<sprite name={recipe.inputs[i].food.image.name}> + ";
         }
         recipeTextList.Add(recipeText);
     }

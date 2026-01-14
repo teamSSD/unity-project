@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f1d49fb768c0943beb67eff314b604fa, type: 3}
   m_Name: I019
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Game.Runtime::IngredientData
   id: I019
   description: "\uAE4A\uC740 \uD751\uAC08\uC0C9 \uB369\uC5B4\uB9AC \uD615\uD0DC\uC758
     \uC7A5. \uD45C\uBA74\uC740 \uC57D\uAC04 \uB9E4\uB044\uB7FD\uACE0 \uC219\uC131\uB41C

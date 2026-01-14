@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2e6faed1582df4141a504255d9b78dfe, type: 3}
   m_Name: I010
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Game.Runtime::FoodData
   id: I010
   ingredientName: "\uB8E8\uBBF8 \uACC4\uB780"
   description: "\uC740\uBC31\uC0C9 \uAECD\uC9C8\uC774 \uD76C\uBBF8\uD558\uAC8C \uBE5B\uB098\uBA70

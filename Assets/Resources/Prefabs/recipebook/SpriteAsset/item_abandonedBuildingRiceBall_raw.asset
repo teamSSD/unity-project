@@ -1,0 +1,176 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84a92b25f83d49b9bc132d206b370281, type: 3}
+  m_Name: item_abandonedBuildingRiceBall_raw
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TMP_SpriteAsset
+  m_Version: 1.1.0
+  m_FaceInfo:
+    m_FaceIndex: 0
+    m_FamilyName: 
+    m_StyleName: 
+    m_PointSize: 0
+    m_Scale: 0
+    m_UnitsPerEM: 0
+    m_LineHeight: 0
+    m_AscentLine: 0
+    m_CapLine: 0
+    m_MeanLine: 0
+    m_Baseline: 0
+    m_DescentLine: 0
+    m_SuperscriptOffset: 0
+    m_SuperscriptSize: 0
+    m_SubscriptOffset: 0
+    m_SubscriptSize: 0
+    m_UnderlineOffset: 0
+    m_UnderlineThickness: 0
+    m_StrikethroughOffset: 0
+    m_StrikethroughThickness: 0
+    m_TabWidth: 0
+  m_Material: {fileID: 4880099493654181965}
+  spriteSheet: {fileID: 2800000, guid: bd546d55da2e14ba8bf1c720ec9c00b8, type: 3}
+  m_SpriteCharacterTable:
+  - m_ElementType: 2
+    m_Unicode: 65534
+    m_GlyphIndex: 0
+    m_Scale: 1
+    m_Name: item_abandonedBuildingRiceBall_raw
+  m_GlyphTable:
+  - m_Index: 0
+    m_Metrics:
+      m_Width: 1024
+      m_Height: 1024
+      m_HorizontalBearingX: 0
+      m_HorizontalBearingY: 924.8
+      m_HorizontalAdvance: 1024
+    m_GlyphRect:
+      m_X: 0
+      m_Y: 0
+      m_Width: 1024
+      m_Height: 1024
+    m_Scale: 1
+    m_AtlasIndex: 0
+    m_ClassDefinitionType: 0
+    sprite: {fileID: 21300000, guid: bd546d55da2e14ba8bf1c720ec9c00b8, type: 3}
+  spriteInfoList: []
+  fallbackSpriteAssets:
+  - {fileID: 11400000, guid: 2b081cbd7d64afc4d8d64d78bdf30c44, type: 2}
+  - {fileID: 11400000, guid: 932ad08ad16d47e488c877108d366cf3, type: 2}
+  - {fileID: 11400000, guid: 6ecb781b11df0b84bb4a0c5f3e2389f3, type: 2}
+  - {fileID: 11400000, guid: 871e3d378d61c72479934fc59f349142, type: 2}
+  - {fileID: 11400000, guid: d09e34562884eac4d87887f6ead8f849, type: 2}
+  - {fileID: 11400000, guid: a9393f0287ca02b46923bb320dbc4d9a, type: 2}
+  - {fileID: 11400000, guid: 38055f340cceaf64cbbe856efd4ba115, type: 2}
+  - {fileID: 11400000, guid: 06cc2fc408914564fb493d563dd02e59, type: 2}
+  - {fileID: 11400000, guid: 0f0a460e889dab640bffb59ea16c0098, type: 2}
+  - {fileID: 11400000, guid: c54c3468c1abdb143a0fc122bbb5f5cb, type: 2}
+  - {fileID: 11400000, guid: d9834456efdeef541bec554fa41cad45, type: 2}
+  - {fileID: 11400000, guid: db2736bc61ff31246ace8cbdade745a4, type: 2}
+  - {fileID: 11400000, guid: 9a1819c5622dc214c9e4706660d03748, type: 2}
+  - {fileID: 11400000, guid: 797517e948dbb354ab398b7f307a1db4, type: 2}
+  - {fileID: 11400000, guid: 2b49c39a835986846a2a799322960a53, type: 2}
+  - {fileID: 11400000, guid: 80f49dc8ff6aac645a29173285772a90, type: 2}
+  - {fileID: 11400000, guid: cd9ca6f12380e7c4ba7a0eaafe237f99, type: 2}
+  - {fileID: 11400000, guid: c618e9eb6facc2c4087cdffedd4d9b3c, type: 2}
+  - {fileID: 11400000, guid: 609a43099b12a8d45a6b092fbf66799e, type: 2}
+  - {fileID: 11400000, guid: a0e87e605c3f57e4bb8e5095f06c129b, type: 2}
+  - {fileID: 11400000, guid: d2e622023bb319145a1f828c7fb57f96, type: 2}
+  - {fileID: 11400000, guid: d3a0fcb55db22d542bac89ba94f1cdba, type: 2}
+  - {fileID: 11400000, guid: a580205d1a58c694888772d6e2a50338, type: 2}
+  - {fileID: 11400000, guid: 6fde99b900f70c746967e807301b91cc, type: 2}
+  - {fileID: 11400000, guid: 03886bfba59260b439fb6cfa8663b4d9, type: 2}
+  - {fileID: 11400000, guid: 259dc1a2aa5f97845b653f22eecf0bdf, type: 2}
+  - {fileID: 11400000, guid: 410e0568dd179a042b39a57099be7c79, type: 2}
+  - {fileID: 11400000, guid: 11842ea3506d0494aabb93d8968eb038, type: 2}
+  - {fileID: 11400000, guid: fdd01825dfe003b43965beaaa58d29f4, type: 2}
+  - {fileID: 11400000, guid: 3cf061c0e1fb552408e8e93f3274882c, type: 2}
+  - {fileID: 11400000, guid: ca6e8923a8101a345b3b002355b2139f, type: 2}
+  - {fileID: 11400000, guid: a561a4ce7181abf48853979bfb5f31cd, type: 2}
+  - {fileID: 11400000, guid: 733177629eeab9e40b3cbbaf2b50ec92, type: 2}
+  - {fileID: 11400000, guid: 7ab966d12fdd2334f82745561024d19e, type: 2}
+  - {fileID: 11400000, guid: fc1a6e5cbb5f3d7428d466de5be697ce, type: 2}
+  - {fileID: 11400000, guid: 9043232084b560c47920d7b3d4ade3be, type: 2}
+  - {fileID: 11400000, guid: 1285b927028b5404e9863ea1a9d1c67b, type: 2}
+  - {fileID: 11400000, guid: 31e98848917954b42a1be7cc779fce28, type: 2}
+  - {fileID: 11400000, guid: 5e5bbb593a0a60f4b837b25734308048, type: 2}
+  - {fileID: 11400000, guid: e621f36ab47e1a342a636225881f3b53, type: 2}
+  - {fileID: 11400000, guid: 946beeded9d757540a3fb57a8e405d20, type: 2}
+  - {fileID: 11400000, guid: b2665cd73b00d334ba4ba4ce7846b2be, type: 2}
+  - {fileID: 11400000, guid: 9ad82bc55c312c149ad989f5cf62a3a2, type: 2}
+  - {fileID: 11400000, guid: b6df8b0d533f1cd4ba6ea628d77c51d7, type: 2}
+  - {fileID: 11400000, guid: 8bb5a01b5938efa4080e62d17726807a, type: 2}
+  - {fileID: 11400000, guid: c1cb10ac4a237d148a334c4d25f120fc, type: 2}
+  - {fileID: 11400000, guid: 182adaaa56c02e142be982f45e5f00a3, type: 2}
+  - {fileID: 11400000, guid: f343ac94b70e6eb4cb15e50952ce6ab4, type: 2}
+  - {fileID: 11400000, guid: 7a11813ae4cbb084594db79bc8ebc7bb, type: 2}
+  - {fileID: 11400000, guid: 3cb2ae112ff4e3a40b8885dd5c1eb28a, type: 2}
+  - {fileID: 11400000, guid: 51bc69a3a4accb845935d864c3644edf, type: 2}
+  - {fileID: 11400000, guid: 333c54c043b52b445a5d759b9bb28fb5, type: 2}
+  - {fileID: 11400000, guid: 2351330439ce1364d9f4c0c42e4ed938, type: 2}
+  - {fileID: 11400000, guid: 4b665be665e58634fbed50354707f807, type: 2}
+  - {fileID: 11400000, guid: b3c8206576371f746af9195a541d2917, type: 2}
+  - {fileID: 11400000, guid: de6f21ee1d438894f9885710d8d45b7e, type: 2}
+  - {fileID: 11400000, guid: 9ed07fef1c9ec974ab2b6b2b8b530c69, type: 2}
+  - {fileID: 11400000, guid: 6f4e5d0e6780fe04eb8e1f40073e7ebc, type: 2}
+  - {fileID: 11400000, guid: 66c26bd6e3a5a71489bda76429435664, type: 2}
+  - {fileID: 11400000, guid: e46f3262f5200804f8104904c8f7ee2b, type: 2}
+  - {fileID: 11400000, guid: 15a2f949a4701cc4abc54f761b1025b2, type: 2}
+  - {fileID: 11400000, guid: e2ddf86758f40474ea4ee7ab64727710, type: 2}
+  - {fileID: 11400000, guid: 40c452eefa3c2674680f24bf2878e021, type: 2}
+  - {fileID: 11400000, guid: fea16740767541a47a93c16087720e2a, type: 2}
+  - {fileID: 11400000, guid: dc1624c9c267da94e8c98deb393477fa, type: 2}
+  - {fileID: 11400000, guid: fb37dcce14f99374489fc88528f06f47, type: 2}
+  - {fileID: 11400000, guid: f11a0445ed8d8004bbee02b9f282950b, type: 2}
+  - {fileID: 11400000, guid: 14c60c8b2e0ae64479babddbd2e547da, type: 2}
+  - {fileID: 11400000, guid: 34f2a296e391b234c99ba3c58da6c77b, type: 2}
+  - {fileID: 11400000, guid: 4adb901a3cfe67c41917afd4e2a5ce31, type: 2}
+--- !u!21 &4880099493654181965
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: item_abandonedBuildingRiceBall_raw Material
+  m_Shader: {fileID: 4800000, guid: cf81c85f95fe47e1a27f6ae460cf182c, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: bd546d55da2e14ba8bf1c720ec9c00b8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _ColorMask: 15
+    - _CullMode: 0
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _UseUIAlphaClip: 0
+    m_Colors:
+    - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

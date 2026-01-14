@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ec3a06c6d6e7464f92fab99ec220969, type: 3}
   m_Name: R028
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Game.Runtime::RecipeData
   id: R028
   outputFood: {fileID: 11400000, guid: eb75e7a58cb4e4123b840b49e0c4e120, type: 2}
   minigameId: M001
