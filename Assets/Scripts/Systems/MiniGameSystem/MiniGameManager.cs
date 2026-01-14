@@ -25,18 +25,20 @@ public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
     [SerializeField] private GameObject CutMinigamePrefab;
     [SerializeField] private GameObject GrillMinigamePrefab;
 
-    private static Vector2 offset = new Vector2(0, 2);
+    private static Vector2 offset = new Vector2(3, 3);
 
     public IEnumerator<float> PlayCoroutine(string toolId, RecipeData recipeData, Vector2 position, List<FoodData> ingredients, Action<RecipeData, float> onCompleted)
     {
         GameObject prefab = GetPrefab(toolId, recipeData);
         if (prefab == null) yield break;
+        prefab.transform.position = position + offset;
 
         bool isFinished = false;
         float finalScore = 0f;
 
         GameObject go = Instantiate(prefab);
         currentGame = go.GetComponent<MiniGameAbstract>();
+        currentGame.SetIngredients(ingredients);
         currentGame.OnGameFinished += (score) =>
         {
             finalScore = score;

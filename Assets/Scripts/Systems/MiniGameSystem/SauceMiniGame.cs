@@ -49,15 +49,7 @@ public class SauceMiniGame : MiniGameAbstract
             out Vector2 localPos);
         gaugeBar.rectTransform.anchoredPosition = localPos;
     }
-
-
-    public override Vector3 GetBGPosition()
-    {
-        bgPos = new Vector3(xPos, yPos, Camera.main.nearClipPlane);
-
-        // (뷰포트 좌표 -> 월드 좌표로 역변환)
-        return Camera.main.ViewportToWorldPoint(bgPos);
-    }
+    
     public override void OnUpdate()
     {
         if (!isPlaying) return;

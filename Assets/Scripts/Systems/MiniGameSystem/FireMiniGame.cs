@@ -1,103 +1,136 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using System.Linq;
 
-/*
-FireMiniGame.cs
-====================================
-설명:
-- 스페이스바를 누를 때마다 게이지가 오른쪽으로 채워지며, 안누르는 동안은 왼쪽으로 감소함  (UI Image Fill 사용)
-- 게임 종료 시 게이지가 목표구간(예: 80%)에 가까울수록 점수가 높음
-- FireMiniGame 이라는 프리팹은 게이지바를 위한 Canvas와 UI Image를 자식으로 포함하도록 통째로 프리팹으로 제작해두었음.
-- 녹색->노랑->빨강으로 게이지바 색상 변화
-
-사용법:
-- FireMiniGame 이라는 프리팹을 만들어두었으니 아래 3줄로 미니게임실행 하면됨
-- GameObject go = Instantiate(sliceMiniGamePrefab);// Prefab에서 오브젝트 생성
-  currentGame = go.GetComponent<MiniGameAbstract>();// 미니게임 스크립트 가져오기
-  currentGame.StartGame();// 게임 시작
-*/
-
-public class  FireMiniGame : MiniGameAbstract
+public class FireMiniGame : MiniGameAbstract
 {
-    [Header("게임 위치")]
-    public float xPos;
-    public float yPos;
-
-    [Header("프리팹")]
-    public GameObject fryingPanPrefab;
-
-    [Header("UI 오브젝트")]
-    public Image gaugeBar;           
+    [Header("오브젝트 설정")]
+    [SerializeField] private RectTransform gaugeBar;
+    [SerializeField] private Transform arrowTransform;
+    [SerializeField] private Animator spaceBarAnimator;
+    [SerializeField] private SpriteStackRenderer stackRenderer;
+    
+    [Header("게이지 설정")]
+    [SerializeField] private Vector3 gaugePosition = new Vector3(-2f, 0.33f, 0);
+    [SerializeField] private float safeZoneRatio = 0.25f;
+    [SerializeField] private float xOffset = 0.5f;
 
     [Header("게임 설정")]
-    public float increasePerSecond = 0.6f;  
-    public float decreasePerSecond = 0.8f; 
-    public float targetGauge = 0.8f;       
+    public float gameDuration = 3.0f; 
+    public float coldStartTime = 0.5f;
+    public float acceleration = 2.0f;
+    public float maxVelocity = 1.0f;
 
-    private float currentGauge = 0f;
+    private float timer = 0f;
+    private float elapsedSinceStart = 0f;
+    private float arrowValue = 0.5f;
+    private float velocity = 0f;
 
-    private Vector3 bgPos;
+    [Header("계산치")]
+    private float gaugeHeight;
+    private float safeHalf;
+    private float maxPenaltyDist;
+    private float normalizationDivisor;
+    private float accScore;
+
+    private readonly int isPressedHash = Animator.StringToHash("IsPressed");
+
     void Start()
     {
-        GameObject firePanImage = Instantiate(fryingPanPrefab, this.transform);
-        firePanImage.transform.localPosition = new Vector3(0, 0, 0);
+        if (gaugeBar != null)
+        {
+            // 게이지 위치 초기화
+            gaugeBar.localPosition = gaugePosition;
+        }
 
-        //게이지바 위치 맞추는 임시코드 (교체 예정)
-        Vector3 worldPos = Camera.main.ViewportToWorldPoint(new Vector3(xPos, yPos, Camera.main.nearClipPlane));
-        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, worldPos);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            gaugeBar.canvas.transform as RectTransform,
-            screenPos,
-            gaugeBar.canvas.worldCamera,
-            out Vector2 localPos);
-        gaugeBar.rectTransform.anchoredPosition = localPos + new Vector2(100f, 0f);//게이지바 위치
+        timer = gameDuration;
+        elapsedSinceStart = 0f;
+
+        arrowValue = 0.5f;
+        velocity = 0f;
+        accScore = 0f;
+        
+        gaugeHeight = gaugeBar.rect.height;
+        safeHalf = safeZoneRatio * 0.5f;
+        maxPenaltyDist = 0.5f - safeHalf;
+        normalizationDivisor = Mathf.Pow(maxPenaltyDist, 2);
+
+        UpdateArrowPosition();
     }
 
-    public override Vector3 GetBGPosition()
-    {
-        bgPos = new Vector3(xPos, yPos, Camera.main.nearClipPlane);
-
-        // (뷰포트 좌표 -> 월드 좌표로 역변환)
-        return Camera.main.ViewportToWorldPoint(bgPos);
-    }
     public override void OnUpdate()
     {
         if (!isPlaying) return;
 
-        // 스페이스바 누르는 동안 게이지 증가
+        timer -= Time.deltaTime;
+        if (timer <= 0)
+        {
+            EndGame();
+            return;
+        }
+
+        spaceBarAnimator.SetBool(isPressedHash, Input.GetKey(KeyCode.Space));
+
+        elapsedSinceStart += Time.deltaTime;
+        float rampFactor = Mathf.Clamp01(elapsedSinceStart / coldStartTime);
+
+        float currentAcc = acceleration * rampFactor;
+        float currentMaxVel = maxVelocity * rampFactor;
+
         if (Input.GetKey(KeyCode.Space))
+            velocity += (currentAcc + Mathf.Abs(velocity) * 1.5f) * Time.deltaTime;
+        else
+            velocity -= (currentAcc + Mathf.Abs(velocity) * 1.5f) * Time.deltaTime;
+
+        velocity = Mathf.Clamp(velocity, -currentMaxVel, currentMaxVel);
+        arrowValue += velocity * Time.deltaTime;
+
+        if (arrowValue <= 0 || arrowValue >= 1)
         {
-            currentGauge += increasePerSecond * Time.deltaTime;
-        }
-        else // 스페이스바 떼면 게이지 감소
-        {
-            currentGauge -= decreasePerSecond * Time.deltaTime;
+            arrowValue = Mathf.Clamp01(arrowValue);
+            velocity = 0;
         }
 
-        currentGauge = Mathf.Clamp01(currentGauge); // 0~1 범위 제한
+        UpdateArrowPosition();
 
-        if (gaugeBar != null)
+        float currentFrameScore = CalculateFrameScore();
+        accScore += currentFrameScore * (Time.deltaTime / gameDuration);
+    }
+
+    private void UpdateArrowPosition()
+    {
+        if (arrowTransform != null && gaugeBar != null)
         {
-            gaugeBar.fillAmount = currentGauge;
-
-            // 색상 변화: 0~0.5 = 녹색 → 노랑, 0.5~1 = 노랑 → 빨강
-            if (currentGauge <= 0.5f)
-            {
-                float t = currentGauge / 0.5f;
-                gaugeBar.color = Color.Lerp(Color.green, Color.yellow, t);
-            }
-            else
-            {
-                float t = (currentGauge - 0.5f) / 0.5f;
-                gaugeBar.color = Color.Lerp(Color.yellow, Color.red, t);
-            }
+            float targetY = gaugeBar.localPosition.y + (arrowValue - 0.5f) * gaugeHeight;
+            
+            float targetX = gaugeBar.localPosition.x + xOffset;
+            
+            arrowTransform.localPosition = new Vector3(targetX, targetY, gaugeBar.localPosition.z);
         }
+    }
+
+    private float CalculateFrameScore()
+    {
+        float distFromCenter = Mathf.Abs(arrowValue - 0.5f);
+        float diff = distFromCenter - safeHalf;
+
+        if (diff <= 0) return 1.0f;
+
+        float penalty = Mathf.Pow(diff, 2) / normalizationDivisor;
+        return Mathf.Max(0, 1.0f - penalty);
     }
 
     public override float CalculateScore()
     {
-        float diff = Mathf.Abs(currentGauge - targetGauge);
-        float score = 1f - diff / targetGauge;
-        return Mathf.Clamp01(score);
+        return Mathf.Clamp01(accScore);
+    }
+
+    public override void SetIngredients(List<FoodData> ingredients)
+    {
+        if (stackRenderer != null && ingredients != null)
+        {
+            var sprites = ingredients.Select(x => x.image); 
+            stackRenderer.DrawMany(sprites);
+        }
     }
 }

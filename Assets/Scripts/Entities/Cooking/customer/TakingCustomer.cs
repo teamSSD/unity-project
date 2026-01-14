@@ -47,6 +47,6 @@ public class TakingCustomer : MonoBehaviour
         speechBubble.transform.position = this.transform.position + new Vector3(-3f, 4, 0);
         
         SoundManager.Instance.Play2DSFX(takeSoundEffect, 0.3f);
-        Destroy(gameObject);
+        Destroy(gameObject, 3f);
     }
 }

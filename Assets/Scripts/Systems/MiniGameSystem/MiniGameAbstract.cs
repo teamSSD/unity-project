@@ -36,7 +36,6 @@ public abstract class MiniGameAbstract : MonoBehaviour
         elapsedTime = 0f;
         Debug.Log($"{GetType().Name} 시작!");
         ShowBG();
-        this.transform.position = miniGameBgPrefab.transform.position;
     }
 
     protected virtual void Update()
@@ -74,12 +73,14 @@ public abstract class MiniGameAbstract : MonoBehaviour
 
         miniGameBgPrefab = Instantiate(miniGameBgPrefab);
         miniGameBgPrefab.transform.parent = this.gameObject.transform;
+        miniGameBgPrefab.transform.localPosition = Vector3.zero;
     }
     private void RemoveBG()
     {
         if (miniGameBgPrefab != null) Destroy(miniGameBgPrefab);
     }
-    public abstract Vector3 GetBGPosition();
     public abstract void OnUpdate();
     public abstract float CalculateScore();
+
+    public virtual void SetIngredients(List<FoodData> ingredients) { }
 }

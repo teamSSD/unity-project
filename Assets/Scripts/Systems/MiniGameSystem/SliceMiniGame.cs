@@ -42,12 +42,7 @@ public class SliceMiniGame : MiniGameAbstract
         GameObject cuttingBoard = Instantiate(cuttingBoardPrefab, this.transform);
         cuttingBoard.transform.localPosition = new Vector3(0, 0, 0);
     }
-    public override Vector3 GetBGPosition()
-    {
-        bgPos = new Vector3(xPos, yPos, Camera.main.nearClipPlane);
-        // (뷰포트 좌표 -> 월드 좌표로 역변환)
-        return Camera.main.ViewportToWorldPoint(bgPos);
-    }
+    
     public override void OnUpdate()
     {
         if (!isPlaying) return;
