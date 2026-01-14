@@ -5,21 +5,26 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.TextCore;
 
-public class SpriteAssetAlignWithText : EditorWindow
+public class SpriteAssetSelectionAdjuster : EditorWindow
 {
-    private float newBX = 0f;
-    private float newBY = 0.903125f;
+    [Header("수정할 BX/BY 값")]
+    public float newBX = 0f;
+    public float newBY = 0f;
 
-    [MenuItem("Tools/TMP/Selected SpriteAssets Align With Text")]
+    [MenuItem("Tools/TMP/Selected SpriteAssets BX BY Adjuster")]
     static void Init()
     {
-        SpriteAssetAlignWithText window = (SpriteAssetAlignWithText)GetWindow(typeof(SpriteAssetAlignWithText));
+        SpriteAssetSelectionAdjuster window = (SpriteAssetSelectionAdjuster)GetWindow(typeof(SpriteAssetSelectionAdjuster));
         window.titleContent = new GUIContent("TMP Selected BX/BY Adjuster");
         window.Show();
     }
 
     private void OnGUI()
     {
+        GUILayout.Label("선택된 Asset들의 BX/BY 수정", EditorStyles.boldLabel);
+        newBX = EditorGUILayout.FloatField("BX (horiBearingX)", newBX);
+        newBY = EditorGUILayout.FloatField("BY (horiBearingY)", newBY);
+
         if (GUILayout.Button("선택 Asset 수정"))
         {
             AdjustSelectedAssets();
@@ -55,7 +60,7 @@ public class SpriteAssetAlignWithText : EditorWindow
 
                 GlyphMetrics metrics = glyph.metrics;
                 metrics.horizontalBearingX = newBX;
-                metrics.horizontalBearingY = metrics.height*newBY;
+                metrics.horizontalBearingY = newBY;
                 glyph.metrics = metrics;
 
                 int glyphTableIndex = asset.spriteGlyphTable.IndexOf(glyph);
