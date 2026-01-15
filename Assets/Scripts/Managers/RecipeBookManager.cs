@@ -64,8 +64,10 @@ public class RecipeBookManager : MonoBehaviour
 
         bookRoot.SetActive(false);
     }
-    public void OpenRecipeBook()
+    public void OpenRecipeBook(bool active)
     {
+        bookRoot.transform.Find("Button_Close").GetComponentInChildren<Button>().gameObject.SetActive(active);
+
         if (isRecipeBookActive)
         {
             Debug.LogWarning("RecipeBook is already open.");
@@ -78,6 +80,12 @@ public class RecipeBookManager : MonoBehaviour
         OpenDiary();
 
         isRecipeBookActive = true;
+    }
+    public void CloseRecipeBook()
+    {
+        bookRoot.SetActive(false);
+
+        isRecipeBookActive = false;
     }
     public void OpenDiary()
     {
@@ -102,13 +110,6 @@ public class RecipeBookManager : MonoBehaviour
     public void OpenMenuCardR(string id)
     {
         OpenMenuCard(id, cardInstantiateTransform_R);
-    }
-
-    public void CloseRecipeBook()
-    {
-        bookRoot.SetActive(false);
-
-        isRecipeBookActive = false;
     }
 
     public void OpenMenuCard(string id, Transform form)
