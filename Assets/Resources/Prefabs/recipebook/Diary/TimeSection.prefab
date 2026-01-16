@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3007776437884666398}
   - component: {fileID: 8276747623525268649}
+  - component: {fileID: 7260326829991874886}
+  - component: {fileID: 1799879180488370562}
   m_Layer: 5
   m_Name: ToggleList
   m_TagString: Untagged
@@ -61,6 +63,33 @@ MonoBehaviour:
   m_Spacing: {x: 40, y: 0}
   m_Constraint: 2
   m_ConstraintCount: 1
+--- !u!114 &7260326829991874886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6838788062934145274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ToggleGroup
+  m_AllowSwitchOff: 1
+--- !u!114 &1799879180488370562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6838788062934145274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fda957a4ecd615742b5b9edb7ae67d36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Runtime::ToggleList
+  toggleGroup: {fileID: 7260326829991874886}
+  selectedAction: 0
 --- !u!1 &8148404434914786110
 GameObject:
   m_ObjectHideFlags: 0

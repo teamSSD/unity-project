@@ -36,6 +36,9 @@ public class RecipeBookManager : MonoBehaviour
     [Header("Diary Page")]
     [SerializeField] public GameObject diary;
 
+    [Header("Diary Menu Slot")]
+    [SerializeField] public GameObject menuSlot;
+
     [Header("Main Menu Page")]
     [SerializeField] public GameObject mainMenu;
 
