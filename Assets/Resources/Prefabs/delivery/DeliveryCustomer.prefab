@@ -80,7 +80,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 56863949946da497abf485a99294afaa, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -88,7 +88,7 @@ SpriteRenderer:
   m_Size: {x: 9.482652, y: 24.93}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!60 &6876424287588002464
@@ -582,6 +582,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speechBubblePrefab: {fileID: 8065506210693313920, guid: 7a9a481941c9347d2b25e6ed5038bf0e, type: 3}
   receiptPrefab: {fileID: 7370412938016546202, guid: e8630fd82922840cd82bfd70f99652e4, type: 3}
+  characterSprite: {fileID: 21300000, guid: abf29a9650d8840c18c2605252f968df, type: 3}
+  spriteRenderer: {fileID: 6006967568991646642}
 --- !u!50 &1247301030541515827
 Rigidbody2D:
   serializedVersion: 5
