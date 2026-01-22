@@ -581,6 +581,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speechBubblePrefab: {fileID: 8065506210693313920, guid: 7a9a481941c9347d2b25e6ed5038bf0e, type: 3}
+  receiptPrefab: {fileID: 7370412938016546202, guid: e8630fd82922840cd82bfd70f99652e4, type: 3}
 --- !u!50 &1247301030541515827
 Rigidbody2D:
   serializedVersion: 5
