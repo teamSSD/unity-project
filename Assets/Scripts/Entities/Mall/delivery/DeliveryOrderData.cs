@@ -16,7 +16,5 @@ public class DeliveryOrderData
     public string questId;
     public int orderNumber;
     public MenuSchema menuSchema;
-    public Vector2 loacation;
-    public string characterSpriteName;
     public DeliveryOrderState state;
 }

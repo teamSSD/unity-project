@@ -23,8 +23,7 @@ public class DeliveryNpcSpawner : MonoBehaviour
 
         foreach (var data in npcDatas)
         {
-            // 수령 완료는 안 보여줄 수도 있음
-            if (data.state == DeliveryNpcState.Completed)
+            if (data.state == DeliveryNpcState.Completed)// 수령 완료인 npc는 생성안하게 해둠
                 continue;
 
             DeliveryNpcView npc =

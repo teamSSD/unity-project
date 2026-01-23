@@ -38,15 +38,13 @@ public class OrderManager : MonoBehaviour,
     // =====================
     // 명령, 수정
     // =====================
-    public void GenerateOrder(MenuSchema menu, string questId,Vector2 location, string characterSpriteName)
+    public void GenerateOrder(MenuSchema menu, string questId)
     {
         orders.Add(new DeliveryOrderData
         {
             questId = questId,
             orderNumber = menu.orderNumber,
             menuSchema = menu,
-            loacation = location,
-            characterSpriteName = characterSpriteName,
             state = DeliveryOrderState.Ordered
         });
     }

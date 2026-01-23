@@ -9,7 +9,6 @@ public class DeliveryOrderingCustomer : MonoBehaviour
     [Header("프리팹")]
     public GameObject speechBubblePrefab;
     public GameObject receiptPrefab;
-    public Sprite characterSprite;
 
     [Header("상태")]
     private bool isDisplaying = false;
@@ -20,14 +19,9 @@ public class DeliveryOrderingCustomer : MonoBehaviour
 
     private static int nextOrderingNumber = 1;
 
-    public SpriteRenderer spriteRenderer;
-
     void Awake()
     {
         menuSchema = GenerateRandomMenu();
-
-        if (spriteRenderer != null && characterSprite != null)
-            spriteRenderer.sprite = characterSprite;
     }
 
     void OnDestroy()
@@ -60,13 +54,11 @@ public class DeliveryOrderingCustomer : MonoBehaviour
     {
         string questId = Guid.NewGuid().ToString();
 
-        Vector2 location = transform.position;
-        string characterSpriteName = characterSprite.name;
-        OrderManager.Instance.GenerateOrder(menuSchema, questId, location, characterSpriteName);
+        OrderManager.Instance.GenerateOrder(menuSchema, questId);
         CreateReceipt();
     }
 
-    private void CreateReceipt()
+    private void CreateReceipt()//@@@@@@@@@@@@@이런건 좀 분리 필요해보이긴 한다.....******
     {
         GameObject receipt = Instantiate(receiptPrefab);
 
