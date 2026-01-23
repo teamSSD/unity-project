@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5846308647432798024}
   - component: {fileID: 1440958719514279088}
   - component: {fileID: 1247301030541515827}
+  - component: {fileID: 2795013970010846687}
   m_Layer: 0
   m_Name: DeliveryCustomer
   m_TagString: Untagged
@@ -611,3 +612,16 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &2795013970010846687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7591288982533269628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7db18b6b2c84a8458b0ea7339689d7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 6006967568991646642}
