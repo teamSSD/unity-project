@@ -10,11 +10,13 @@ public class DeliveryNpcOrderInteraction
     private bool isDisplaying = false;
 
     private MenuSchema menuSchema;
+    private DeliveryNpcView npcView;
 
     private static int nextOrderingNumber = 1;
     private void Awake()
     {
         context = GetComponent<DeliveryNpcContext>();
+        npcView = GetComponent<DeliveryNpcView>();
 
         menuSchema = GenerateRandomMenu();
 
@@ -44,7 +46,7 @@ public class DeliveryNpcOrderInteraction
     {
         string questId = Guid.NewGuid().ToString();
 
-        OrderManager.Instance.GenerateOrder(menuSchema, questId);
+        OrderManager.Instance.GenerateOrder(menuSchema, questId, npcView.NpcId);
         CreateReceipt();
     }
 

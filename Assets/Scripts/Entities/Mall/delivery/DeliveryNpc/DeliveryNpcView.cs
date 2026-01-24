@@ -3,6 +3,9 @@
 public class DeliveryNpcView : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private string npcId;
+
+    public string NpcId => npcId;
 
     public void Init(DeliveryNpcCsvData data)
     {
@@ -10,10 +13,10 @@ public class DeliveryNpcView : MonoBehaviour
             Resources.Load<Sprite>(data.spritePath);
 
         transform.position = data.position;
+        npcId = data.npcId;
 
         ApplyState(data.state);
     }
-
     private void ApplyState(DeliveryNpcState state)
     {
         var interactionRoot = GetComponent<DeliveryNpcInteraction>();

@@ -38,14 +38,15 @@ public class OrderManager : MonoBehaviour,
     // =====================
     // 명령, 수정
     // =====================
-    public void GenerateOrder(MenuSchema menu, string questId)
+    public void GenerateOrder(MenuSchema menu, string questId, string npcId)//퀘스트ID는 npc가 생성후 여기로 넘기는게 아니라 여기서 생성하는게 나을듯
     {
         orders.Add(new DeliveryOrderData
         {
             questId = questId,
             orderNumber = menu.orderNumber,
             menuSchema = menu,
-            state = DeliveryOrderState.Ordered
+            state = DeliveryOrderState.Ordered,
+            npcId = npcId
         });
     }
 

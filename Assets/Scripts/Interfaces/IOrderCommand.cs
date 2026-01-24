@@ -3,7 +3,7 @@ using UnityEngine;
 
 public interface IOrderCommand
 {
-    void GenerateOrder(MenuSchema menu, string questId);
+    void GenerateOrder(MenuSchema menu, string questId, string npcId);
     bool TryMarkCooked(string questId);
     int ConsumeBento(string questId);
 }

@@ -9,6 +9,7 @@ public class DeliveryNpcReceiptInteraction
     {
         if (hasReceived) return;
 
+        //if(나의 npcId로 등록된 주문이 있고 그것이 성공적으로 완성된 음식이라면)
         //OrderManager.Instance.ConsumeBento(questID);
 
         Say("아 잘 먹을게요!");
