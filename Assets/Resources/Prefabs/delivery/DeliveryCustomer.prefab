@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 5846308647432798024}
   - component: {fileID: 1247301030541515827}
   - component: {fileID: 2795013970010846687}
-  - component: {fileID: 3154481641341228317}
-  - component: {fileID: 1308351559312557089}
+  - component: {fileID: -7662549701576587868}
+  - component: {fileID: -439551471439370967}
   m_Layer: 0
   m_Name: DeliveryCustomer
   m_TagString: Untagged
@@ -610,7 +610,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 6006967568991646642}
---- !u!114 &3154481641341228317
+--- !u!114 &-7662549701576587868
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -619,11 +619,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7591288982533269628}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a10af542aa8b6c0478a92e0a5c763dd3, type: 3}
+  m_Script: {fileID: 11500000, guid: c65f43ad0dbddc04aa62c61d7b554016, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speechBubblePrefab: {fileID: 8065506210693313920, guid: 7a9a481941c9347d2b25e6ed5038bf0e, type: 3}
---- !u!114 &1308351559312557089
+--- !u!114 &-439551471439370967
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -632,10 +631,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7591288982533269628}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b427ad623a9f45a41862d13901b8e6cf, type: 3}
+  m_Script: {fileID: 11500000, guid: 0aa7e0036301f1247a1632be84bd6168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   speechBubblePrefab: {fileID: 8065506210693313920, guid: 7a9a481941c9347d2b25e6ed5038bf0e, type: 3}
   receiptPrefab: {fileID: 7370412938016546202, guid: e8630fd82922840cd82bfd70f99652e4, type: 3}
-  characterSprite: {fileID: 0}
-  spriteRenderer: {fileID: 0}
+  speechBubble: {fileID: 0}
+  speechBubbleScript: {fileID: 0}
