@@ -5,7 +5,7 @@ public class ToggleList : MonoBehaviour
 {
     public ToggleGroup toggleGroup;
     public ActionType selectedAction = ActionType.None;
-    private void Start()
+    private void Awake()
     {
         foreach (Toggle t in toggleGroup.GetComponentsInChildren<Toggle>())
         {
