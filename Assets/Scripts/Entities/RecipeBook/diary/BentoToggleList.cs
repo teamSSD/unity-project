@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -5,8 +6,26 @@ using UnityEngine.UI;
 
 public class Bento
 {
-    public string mainId = "";
-    public List<string> sideId;
+    private GameObject mainMenu;
+    private List<GameObject> sideMenu;
+
+    public string GetMainId() { return mainMenu.GetComponent<MenuSlot>().Id; }
+    public List<string> GetSideIds()
+    { 
+        return sideMenu
+            .Where(go => go != null)
+            .Select(go => go.GetComponent<MenuSlot>())
+            .Where(slot => slot != null && !string.IsNullOrEmpty(slot.Id))
+            .Select(slot => slot.Id)
+            .ToList();
+    }
+
+    public void SetMainMenu(GameObject m) { mainMenu = m; }
+    public GameObject GetMainMenu() { return mainMenu; }
+    public void SetSideMenu(List<GameObject> s) { sideMenu = s; }
+    public void AddSideMenu(GameObject s) { sideMenu.Add(s); }
+    public void RemoveSideMenu(GameObject s) { sideMenu.Remove(s); }
+    public List<GameObject> GetSideMenu() { return sideMenu; }
 }
 
 public class BentoToggleList : MonoBehaviour
@@ -21,7 +40,7 @@ public class BentoToggleList : MonoBehaviour
                 instance = FindObjectOfType<BentoToggleList>();
                 if (instance == null)
                 {
-                    Debug.LogError("RecipeBookManager instance not found in scene.");
+                    Debug.LogError("BentoToggleList instance not found in scene.");
                 }
             }
             return instance;
@@ -37,7 +56,7 @@ public class BentoToggleList : MonoBehaviour
         for (int i = 0; i < bentos.Length; i++)
         {
             bentos[i] = new Bento();
-            bentos[i].sideId = new List<string>();
+            bentos[i].SetSideMenu(new List<GameObject>());
         }
     }
 
@@ -56,36 +75,40 @@ public class BentoToggleList : MonoBehaviour
         {
             if (SearchDataUtil.GetFoodDataById(id).type == FoodType.MAIN)
             {
-                bentos[currentIndex].mainId = "";
+                bentos[currentIndex].SetMainMenu(null);
             }
             else if (SearchDataUtil.GetFoodDataById(id).type == FoodType.SIDE)
             {
-                bentos[currentIndex].sideId.Remove(id);
+                bentos[currentIndex].RemoveSideMenu(toggle.gameObject);
             }
             return;
         }
 
         if (SearchDataUtil.GetFoodDataById(id).type == FoodType.MAIN)
         {
-            bentos[currentIndex].mainId = id;
+            if (bentos[currentIndex].GetMainMenu() != null)
+                bentos[currentIndex].GetMainMenu().GetComponent<Toggle>().isOn = false;
+            bentos[currentIndex].SetMainMenu(toggle.gameObject);
         }
         else if (SearchDataUtil.GetFoodDataById(id).type == FoodType.SIDE)
         {
-            bentos[currentIndex].sideId.Add(id);
+            bentos[currentIndex].AddSideMenu(toggle.gameObject);
         }
     }
 
-    public void ClearToggle()
-    {
-        foreach (Toggle t in toggleRoot.GetComponentsInChildren<Toggle>())
-        {
-            t.isOn = false;
-        }
-    }
+    public Bento[] GetBentoList() { return bentos; }
 
     public void SetPreset(int index)
     {
         ignoreToggleEvent = true;
+
+        if (bentos[index] == null)
+        {
+            ignoreToggleEvent = false;
+            return;
+        }
+
+        string mainMenuId = bentos[index].GetMainMenu()?.GetComponent<MenuSlot>()?.Id;
 
         List<GameObject> menus = toggleRoot
             .GetComponentsInChildren<Transform>(true)
@@ -95,23 +118,27 @@ public class BentoToggleList : MonoBehaviour
 
         foreach (GameObject t in menus)
         {
-            t.gameObject.GetComponent<Toggle>().isOn = false;
+            Toggle toggle = t.GetComponent<Toggle>();
+            MenuSlot slot = t.GetComponent<MenuSlot>();
 
-            if (t.gameObject.GetComponentInChildren<MenuSlot>().Id == bentos[index].mainId)
+            if (toggle == null || slot == null)
+                continue;
+
+            toggle.isOn = false;
+
+            if (!string.IsNullOrEmpty(mainMenuId) && slot.Id == mainMenuId)
             {
-                t.gameObject.GetComponent<Toggle>().isOn = true;
+                toggle.isOn = true;
             }
-            foreach (string to in bentos[index].sideId)
+            else if (bentos[index].GetSideIds().Contains(slot.Id))
             {
-                if (t.gameObject.GetComponentInChildren<MenuSlot>().Id == to)
-                {
-                    t.gameObject.GetComponent<Toggle>().isOn = true;
-                }
+                toggle.isOn = true;
             }
         }
 
         ignoreToggleEvent = false;
     }
+
 
     public void ChangeIndex_1(bool isOn)
     {
@@ -119,7 +146,6 @@ public class BentoToggleList : MonoBehaviour
         {
             currentIndex = 0;
             SetPreset(currentIndex);
-            Debug.Log($"mainId = [{bentos[currentIndex].mainId}]");
         }
     }
     public void ChangeIndex_2(bool isOn)
@@ -128,7 +154,6 @@ public class BentoToggleList : MonoBehaviour
         {
             currentIndex = 1;
             SetPreset(currentIndex);
-            Debug.Log($"mainId = [{bentos[currentIndex].mainId}]");
         }
     }
     public void ChangeIndex_3(bool isOn)
@@ -137,7 +162,6 @@ public class BentoToggleList : MonoBehaviour
         {
             currentIndex = 2;
             SetPreset(currentIndex);
-            Debug.Log($"mainId = [{bentos[currentIndex].mainId}]");
         }
     }
 }

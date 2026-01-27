@@ -19,7 +19,5 @@ public class ToggleList : MonoBehaviour
 
         ActionToggle actionToggle = toggle.GetComponent<ActionToggle>();
         selectedAction = actionToggle.actionType;
-
-        Debug.Log($"{gameObject.name} º±≈√µ : {selectedAction}");
     }
 }
