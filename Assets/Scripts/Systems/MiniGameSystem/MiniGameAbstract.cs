@@ -34,7 +34,6 @@ public abstract class MiniGameAbstract : MonoBehaviour
     {
         isPlaying = true;
         elapsedTime = 0f;
-        Debug.Log($"{GetType().Name} 시작!");
         ShowBG();
     }
 
@@ -61,7 +60,7 @@ public abstract class MiniGameAbstract : MonoBehaviour
         RemoveBG();
 
         float score = CalculateScore();
-        Debug.Log($"{GetType().Name} 종료! 점수: {score:F2}");
+        Debug.Log($"{GetType().Name} - 점수: {score:F2}");
         
         OnGameFinished?.Invoke(score);
         Destroy(gameObject);

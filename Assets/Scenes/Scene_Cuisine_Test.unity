@@ -422,11 +422,19 @@ MonoBehaviour:
   statManager: {fileID: 244096688}
   orderingCustomerPrefab: {fileID: 5010039828341752296, guid: e0d4b23b4c90c4732a67307ca3da4d05, type: 3}
   waitingCustomerPrefab: {fileID: 8969570347396159534, guid: 3fbb9dc477031407bae0f52625707b8e, type: 3}
+  TakingCustomerPrefab: {fileID: 3996035947841858077, guid: 64e6fcf7dd0674ea38524b6342c9cd23, type: 3}
   receiptPrefab: {fileID: 7370412938016546202, guid: e8630fd82922840cd82bfd70f99652e4, type: 3}
   canvas: {fileID: 624301223}
   worldCanvas: {fileID: 843411935}
-  isOpen: 0
   doorSfx: {fileID: 8300000, guid: baa552c71d8c24141bb0e3ecd451ca22, type: 3}
+  customerDataList:
+  - {fileID: 11400000, guid: e9032e26783ef449598e21b435767710, type: 2}
+  - {fileID: 11400000, guid: 0b908daf1729645e7963ff543016c14b, type: 2}
+  - {fileID: 11400000, guid: af91bcfacf6204b189e83f3b1ce750e0, type: 2}
+  - {fileID: 11400000, guid: 3e058b5ad379143dea3bfa2e64bad419, type: 2}
+  - {fileID: 11400000, guid: e2bf173eeaee14b3592b76b624153793, type: 2}
+  - {fileID: 11400000, guid: 1a9614cf0c2794fa4a5883b1caea1170, type: 2}
+  - {fileID: 11400000, guid: 9643d5d79c6d149c7b00ace24d0132d3, type: 2}
 --- !u!114 &244096692
 MonoBehaviour:
   m_ObjectHideFlags: 0

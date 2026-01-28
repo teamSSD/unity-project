@@ -15,8 +15,8 @@ public class Refrigerator : MonoBehaviour
     public void AddIngredients(FoodModel ingredient)
     {
         if (ingredient == null || foodModels.Contains(ingredient)) return;
-
-        ingredient.BehaviorInstance.defaultPosition = this.transform.position + CalculatePositionForIndex(foodModels.Count);
+        
+        ingredient.SetDefaultPosition(transform.position + CalculatePositionForIndex(foodModels.Count));
         foodModels.Add(ingredient);
         ingredient.onDestroy += HandleFoodDestroyed;
     }
@@ -37,7 +37,7 @@ public class Refrigerator : MonoBehaviour
     {
         for (int i = 0; i < foodModels.Count; i++)
         {
-            foodModels[i].BehaviorInstance.defaultPosition = CalculatePositionForIndex(i);
+            foodModels[i].SetDefaultPosition(CalculatePositionForIndex(i));
         }
     }
     

@@ -15,15 +15,15 @@ public class csvReadSearch : MonoBehaviour
 
     void Start()
     {
-        // Resources Æú´õ¿¡¼­ CSV ÆÄÀÏ ºÒ·¯¿À±â
-        TextAsset csvFile = Resources.Load<TextAsset>("data"); // "data.csv" -> "data"·Î È®ÀåÀÚ Á¦¿Ü
+        // Resources ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CSV ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½
+        TextAsset csvFile = Resources.Load<TextAsset>("data"); // "data.csv" -> "data"ï¿½ï¿½ È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-        string[] lines = csvFile.text.Split('\n'); // ÁÙ ´ÜÀ§·Î ºÐ¸®
+        string[] lines = csvFile.text.Split('\n'); // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¸ï¿½
 
-        // Ã¹ ¹øÂ° ÁÙÀº Çì´õÀÌ¹Ç·Î i = 1ºÎÅÍ ½ÃÀÛ
+        // Ã¹ ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ì¹Ç·ï¿½ i = 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         for (int i = 1; i < lines.Length; i++)
         {
-            if (string.IsNullOrWhiteSpace(lines[i])) continue; // ºó ÁÙ °Ç³Ê¶Ù±â
+            if (string.IsNullOrWhiteSpace(lines[i])) continue; // ï¿½ï¿½ ï¿½ï¿½ ï¿½Ç³Ê¶Ù±ï¿½
 
             string[] values = lines[i].Split(',');
 
@@ -35,15 +35,15 @@ public class csvReadSearch : MonoBehaviour
             playerList.Add(pd);
         }
 
-        // ÀÐ±â ÄÚµå
+        // ï¿½Ð±ï¿½ ï¿½Úµï¿½
         foreach (var p in playerList)
-            Debug.Log($"ÀÐ±â ÄÚµå: {p.Name} - {p.Score} - {p.Level}");
+            Debug.Log($"ï¿½Ð±ï¿½ ï¿½Úµï¿½: {p.Name} - {p.Score} - {p.Level}");
 
-        // °Ë»ö ÄÚµå (Á¡¼ö 100Á¡ ÀÌ»ó¸¸)
+        // ï¿½Ë»ï¿½ ï¿½Úµï¿½ (ï¿½ï¿½ï¿½ï¿½ 100ï¿½ï¿½ ï¿½Ì»ï¿½)
         List<PlayerData> filteredList = playerList.FindAll(p => p.Score >= 100); 
 
         foreach (var p in filteredList) 
-            Debug.Log($"°Ë»ö ÄÚµå: {p.Name} - {p.Score} - {p.Level}"); 
+            Debug.Log($"ï¿½Ë»ï¿½ ï¿½Úµï¿½: {p.Name} - {p.Score} - {p.Level}"); 
 
 
 

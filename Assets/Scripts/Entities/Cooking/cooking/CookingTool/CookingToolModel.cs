@@ -17,8 +17,8 @@ public class CookingToolModel : MonoBehaviour
     [SerializeField] private AudioClip trashcanSfx;
     private PlayMinigameUsecase playMinigameUsecase;
     private SearchRecipeUsecase searchRecipeUsecase;
-    public CookingToolSchema SchemaInstance { get; private set; }
-    public CookingToolBehavior BehaviorInstance { get; private set; }
+    private CookingToolSchema SchemaInstance;
+    private CookingToolBehavior BehaviorInstance;
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
     private HoverStateUtil hoverStateUtil;
@@ -172,6 +172,11 @@ public class CookingToolModel : MonoBehaviour
         }
     }
 
+    public string GetToolId()
+    {
+        return SchemaInstance.cookingToolData.id;
+    }
+
     private void DetectTrashcan()
     {
         if (!injected)
@@ -190,6 +195,7 @@ public class CookingToolModel : MonoBehaviour
 
     private void PlayMinigame()
     {
+        BehaviorInstance.locked = true;
         if (!injected)
         {
             Debug.LogWarning("Interface didn't injected.");
@@ -215,6 +221,7 @@ public class CookingToolModel : MonoBehaviour
     private void OnMinigameEnd(RecipeData recipeData, float score)
     {
         if (!injected) return;
+        BehaviorInstance.locked = false;
         FoodData foodData = recipeData.outputFood;
         SchemaInstance.Cook(foodData, recipeData, score);
 

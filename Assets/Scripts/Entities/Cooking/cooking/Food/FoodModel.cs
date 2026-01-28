@@ -8,8 +8,8 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class FoodModel : MonoBehaviour
 {
-    public FoodSchema SchemaInstance { get; private set; }
-    public FoodBehavior BehaviorInstance { get; private set; }
+    private FoodSchema SchemaInstance;
+    private FoodBehavior BehaviorInstance;
     public GameObject descriptionPrefab;
     public event Action<FoodModel> onDestroy;
     ScanColliderUtil scanColliderUtil;
@@ -102,7 +102,7 @@ public class FoodModel : MonoBehaviour
             Destroy(this.gameObject);
             return;
         }
-        if (collision != null && SchemaInstance.foodData.availableTools.Contains(collision.SchemaInstance.cookingToolData.id))
+        if (collision != null && SchemaInstance.foodData.availableTools.Contains(collision.GetToolId()))
         {
             bool reflected = collision.AddIngredient(this.SchemaInstance);
             if (!reflected)
@@ -141,5 +141,15 @@ public class FoodModel : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void SetDefaultPosition(Vector3 position)
+    {
+        BehaviorInstance.defaultPosition = position;
+    }
+
+    public Vector3 GetDefaultPosition()
+    {
+        return BehaviorInstance.defaultPosition;
     }
 }

@@ -7,14 +7,15 @@ public class OrderingCustomer : MonoBehaviour
 {
     [Header("주입해야할 필드")]
     public GameObject speechBubblePrefab;
-    public MenuSchema menuSchema;
     public event Action onExit;
     
     [Header("내부적 속성")]
     private ClickStateUtil clickStateUtil;
     private bool isDisplaying = false;
     private GameObject speechBubble;
-    SpeechBubble speechBubbleScript;
+    private SpeechBubble speechBubbleScript;
+    private MenuSchema menuSchema;
+    private CustomerData customerData;
 
     public void Awake()
     {
@@ -28,17 +29,20 @@ public class OrderingCustomer : MonoBehaviour
         if (speechBubble != null) Destroy(speechBubble);
     }
 
+    public void Inject(MenuSchema menuSchema, CustomerData customerData)
+    {
+        this.menuSchema = menuSchema;
+        this.customerData = customerData;
+    }
+
     public void clickRoutine()
     {
         if (isDisplaying)
         {
-            Destroy(gameObject);
             onExit.Invoke();
             return;
         }
-        
-        say("사장님, 제가 오늘 이거 먹으려고 아침부터 빌드업 해왔거든요? 고민 없이 " + menuSchema.name + " (으)로 직진할게요.");
-
+        say(string.Format(customerData.orderingMessage, menuSchema.name));
         isDisplaying = true;
     }
 
@@ -49,5 +53,10 @@ public class OrderingCustomer : MonoBehaviour
         speechBubbleScript = speechBubble.GetComponent<SpeechBubble>();
         speechBubbleScript.setContents(message);
         speechBubble.transform.position = this.transform.position + new Vector3(-2.5f, 4, 0);
+    }
+
+    public void DestroyObject()
+    {
+        Destroy(gameObject);
     }
 }

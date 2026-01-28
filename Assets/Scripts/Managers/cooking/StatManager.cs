@@ -22,8 +22,6 @@ public class StatManager : MonoBehaviour
 
         StatsSystem.SetTime(11, 00);
         StatsSystem.RegisterBreakPoint(15, 00, OnTimeEnd);
-
-        customerManager.isOpen = true;
     }
 
     void OnDisable()
@@ -49,7 +47,6 @@ public class StatManager : MonoBehaviour
 
     private void OnTimeEnd()
     {
-        customerManager.isOpen = false;
         Debug.Log("시간 다됨");
         onTimeEnd.Invoke();
     }

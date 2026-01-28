@@ -1,8 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public static class RandomGeneral
 {
+    private static System.Random rand = new System.Random();
+    
     public static T Pick<T>(List<T> list)
     {
         if (list == null || list.Count == 0) 
@@ -39,5 +42,20 @@ public static class RandomGeneral
         }
 
         return copyList.GetRange(0, countToPick);
+    }
+
+    // 대충 Gemini로 코드 짜둠, 나중에 수정하셔도 되요 정상 작동하면 주석 지워주시구요
+    public static float getRandomNormal(float minVal, float maxVal)
+    {
+        double mean = (minVal + maxVal) / 2.0;
+        double stdDev = (maxVal - minVal) / 6.0;
+
+        double u1 = 1.0 - rand.NextDouble(); 
+        double u2 = 1.0 - rand.NextDouble();
+        
+        double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
+        double val = mean + stdDev * randStdNormal;
+
+        return UnityEngine.Mathf.Clamp((float)val, minVal, maxVal);
     }
 }

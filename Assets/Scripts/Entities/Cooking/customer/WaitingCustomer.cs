@@ -5,8 +5,6 @@ using System;
 public class WaitingCustomer : MonoBehaviour
 {
     [SerializeField] private GameObject gaugePrefab;
-    public GameObject TakingCustomerPrefab;
-    public GameObject Receipt;
     public event Action onExit = () => {};
     public bool stopTimer = false;
     private float timer = 0;
@@ -38,20 +36,26 @@ public class WaitingCustomer : MonoBehaviour
         }
         guageScript.SetProgress(timer, timeLimit);
         if (!stopTimer) timer += Time.deltaTime;
-        if (timer > timeLimit) OnExit();
+        if (timer > timeLimit)
+        {
+            OnExit();
+            stopTimer = true;
+            timeLimit = timer + 1;
+        }
     }
 
     public void OnExit()
     {
-        Vector3 offset = new Vector3(0, -0.45f, 0);
-        Destroy(gaugeUI);
-        Destroy(Receipt);
-        GameObject generated = Instantiate(TakingCustomerPrefab);
-        
-        generated.transform.position = Receipt.gameObject.transform.position + offset;
-        generated.GetComponent<TakingCustomer>().exit();
-
-        Destroy(this.gameObject);
         onExit.Invoke();
+    }
+
+    public void DestroyObject()
+    {
+        Destroy(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        Destroy(gaugeUI);
     }
 }

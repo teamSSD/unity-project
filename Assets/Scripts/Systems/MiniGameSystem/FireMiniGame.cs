@@ -7,7 +7,6 @@ public class FireMiniGame : MiniGameAbstract
     [Header("오브젝트 설정")]
     [SerializeField] private RectTransform gaugeBar;
     [SerializeField] private Transform arrowTransform;
-    [SerializeField] private Animator spaceBarAnimator;
     [SerializeField] private SpriteStackRenderer stackRenderer;
     
     [Header("게이지 설정")]
@@ -32,8 +31,6 @@ public class FireMiniGame : MiniGameAbstract
     private float maxPenaltyDist;
     private float normalizationDivisor;
     private float accScore;
-
-    private readonly int isPressedHash = Animator.StringToHash("IsPressed");
 
     void Start()
     {
@@ -68,8 +65,6 @@ public class FireMiniGame : MiniGameAbstract
             EndGame();
             return;
         }
-
-        spaceBarAnimator.SetBool(isPressedHash, Input.GetKey(KeyCode.Space));
 
         elapsedSinceStart += Time.deltaTime;
         float rampFactor = Mathf.Clamp01(elapsedSinceStart / coldStartTime);

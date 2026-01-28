@@ -40,12 +40,9 @@ public class CuisineManager : MonoBehaviour
     {
         loadInventoryUsecase.LoadIngredientsByCategory(IngredientDisplayCategory.Refrigerator).ForEach(data =>
             {
-                GameObject ingredientInstance = Instantiate(foodPrefab, parent.transform);
-                ingredientInstance.name = data.Item1.ingredientName;
-                FoodModel foodModel = ingredientInstance.GetComponent<FoodModel>();
-                foodModel.Inject(canvas, loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
+                GameObject ingredientInstance = instantiateFood(parent, data.Item1.ingredientName);
+                FoodModel foodModel = settingFoodModel(ingredientInstance, data.Item1, data.Item2);
                 refrigerator.AddIngredients(foodModel);
-                ingredientInstance.transform.position = foodModel.BehaviorInstance.defaultPosition;
             });
     }
 
@@ -53,12 +50,9 @@ public class CuisineManager : MonoBehaviour
     {
         loadInventoryUsecase.LoadIngredientsByCategory(IngredientDisplayCategory.UpperShelf).ForEach(data =>
             {
-                GameObject ingredientInstance = Instantiate(foodPrefab, parent.transform);
-                ingredientInstance.name = data.Item1.ingredientName;
-                FoodModel foodModel = ingredientInstance.GetComponent<FoodModel>();
-                foodModel.Inject(canvas, loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
+                GameObject ingredientInstance = instantiateFood(parent, data.Item1.ingredientName);
+                FoodModel foodModel = settingFoodModel(ingredientInstance, data.Item1, data.Item2);
                 upperShelf.AddIngredients(foodModel);
-                ingredientInstance.transform.position = foodModel.BehaviorInstance.defaultPosition;
             });
     }
 
@@ -66,12 +60,24 @@ public class CuisineManager : MonoBehaviour
     {
         loadInventoryUsecase.LoadIngredientsByCategory(IngredientDisplayCategory.LowerShelf).ForEach(data =>
             {
-                GameObject ingredientInstance = Instantiate(foodPrefab, parent.transform);
-                ingredientInstance.name = data.Item1.ingredientName;
-                FoodModel foodModel = ingredientInstance.GetComponent<FoodModel>();
-                foodModel.Inject(canvas, loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
+                GameObject ingredientInstance = instantiateFood(parent, data.Item1.ingredientName);
+                FoodModel foodModel = settingFoodModel(ingredientInstance, data.Item1, data.Item2);
                 lowerShelf.AddIngredients(foodModel);
-                ingredientInstance.transform.position = foodModel.BehaviorInstance.defaultPosition;
             });
+    }
+
+    private GameObject instantiateFood(GameObject parent, string ingredientName)
+    {
+        GameObject ingredientInstance = Instantiate(foodPrefab, parent.transform);
+        ingredientInstance.name = ingredientName;
+        return ingredientInstance;
+    }
+
+    private FoodModel settingFoodModel(GameObject instance, FoodData food, IngredientData data)
+    {
+        FoodModel foodModel = instance.GetComponent<FoodModel>();
+        foodModel.Inject(canvas, loadInventoryUsecase, food, data.defaultPrice);
+        instance.transform.position = foodModel.GetDefaultPosition();
+        return foodModel;
     }
 }
