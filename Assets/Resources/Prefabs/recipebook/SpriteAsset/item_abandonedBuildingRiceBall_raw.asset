@@ -132,6 +132,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 14c60c8b2e0ae64479babddbd2e547da, type: 2}
   - {fileID: 11400000, guid: 34f2a296e391b234c99ba3c58da6c77b, type: 2}
   - {fileID: 11400000, guid: 4adb901a3cfe67c41917afd4e2a5ce31, type: 2}
+  - {fileID: 11400000, guid: 0d67887bc913a9c45bba12d1d85d4a3b, type: 2}
+  - {fileID: 11400000, guid: 59f876f205cb7c54a8140c244d64643f, type: 2}
+  - {fileID: 11400000, guid: 7fd3c410945b11649872a3065b141b2f, type: 2}
 --- !u!21 &4880099493654181965
 Material:
   serializedVersion: 8
