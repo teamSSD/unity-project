@@ -154,7 +154,7 @@ public class MenuCard : MonoBehaviour
         TextMeshProUGUI recipeText = Instantiate(textPrefab, recipeListTransform).GetComponent<TextMeshProUGUI>();
         for (int i = 0; i < recipe.inputs.Count; i++)
         {
-            if (i == recipe.inputs.Count - 1) recipeText.text += $"<sprite name={recipe.inputs[i].food.image.name}> -({GetCookingProcess(recipe.minigameId)})-> <sprite name={recipe.outputFood.image.name}>";
+            if (i == recipe.inputs.Count - 1) recipeText.text += $"<sprite name={recipe.inputs[i].food.image.name}> -><sprite name={GetCookingProcess(recipe.minigameId)}>-> <sprite name={recipe.outputFood.image.name}>";
             else recipeText.text += $"<sprite name={recipe.inputs[i].food.image.name}> + ";
         }
         recipeTextList.Add(recipeText);
@@ -165,19 +165,19 @@ public class MenuCard : MonoBehaviour
         switch (id)
         {
             case "M001":
-                return "±Á±â";
+                return "item_pan_default";
             case "M002":
-                return "»î±â";
+                return "item_pan_default";
             case "M003":
                 return "?";
             case "M004":
-                return "ºñºñ±â";
+                return "item_bowl_default";
             case "M005":
                 return "¼Ò½º »Ñ¸®±â";
             case "M006":
-                return "½ä±â";
+                return "item_cuttingSet_default";
             case "M007":
-                return "±Á±â";
+                return "item_pan_default";
             default:
                 return "";
 
