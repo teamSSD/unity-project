@@ -9,8 +9,8 @@ public class ScrollViewButtonControl : MonoBehaviour
 
     [Header("Scroll Settings")]
     [Range(0.01f, 1f)]
-    public float scrollStep = 0.2f; // 버튼 한 번 클릭 시 이동 비율
-    public float scrollDuration = 0.3f; // 부드럽게 이동 시간
+    public float scrollStep = 0.2f; // rate of movement with one click of a button
+    public float scrollDuration = 0.3f; // smooth move time
 
     public void ScrollRight()
     {

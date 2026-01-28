@@ -92,8 +92,15 @@ public class BentoToggleList : MonoBehaviour
         }
         else if (SearchDataUtil.GetFoodDataById(id).type == FoodType.SIDE)
         {
+            if (bentos[currentIndex].GetSideMenu().Count() >= 3)
+            {
+                ignoreToggleEvent = true;
+                toggle.isOn = false;
+            }
             bentos[currentIndex].AddSideMenu(toggle.gameObject);
         }
+
+        ignoreToggleEvent = false;
     }
 
     public Bento[] GetBentoList() { return bentos; }
