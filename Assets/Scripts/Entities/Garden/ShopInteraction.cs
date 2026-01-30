@@ -29,19 +29,22 @@ public class ShopInteraction : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
-        {
-            isPlayerNear = true;
-            interactText.SetActive(true);
-        }
+        if (!collision.CompareTag("Player")) return;
+        if (GardenShopManager.IsItemShopActive) return;
+
+        isPlayerNear = true;
+
+        interactText.SetActive(true);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
-        {
-            isPlayerNear = false;
-            interactText.SetActive(false);
-        }
+        if (!collision.CompareTag("Player")) return;
+
+        if (GardenShopManager.IsItemShopActive) return;
+
+        isPlayerNear = false;
+
+        interactText.SetActive(false);
     }
 }
