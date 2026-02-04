@@ -105,12 +105,13 @@ public class FoodModel : MonoBehaviour
         if (collision != null && SchemaInstance.foodData.availableTools.Contains(collision.GetToolId()))
         {
             bool reflected = collision.AddIngredient(this.SchemaInstance);
-            if (!reflected)
+            if (reflected)
             {
                 loadInventoryUsecase.ConsumeFood(SchemaInstance.foodData, 1);
+                gameObject.transform.position = BehaviorInstance.defaultPosition;
                 if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData) <= 0)
                 {
-                    Destroy(this.gameObject);
+                    Destroy(gameObject);
                 }
             }
         }

@@ -462,10 +462,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BakeMinigamePrefab: {fileID: 3355533741195455621, guid: c5e59880eb93d1743a36f6d766cce00a, type: 3}
   BoilMinigamePrefab: {fileID: 3355533741195455621, guid: c5e59880eb93d1743a36f6d766cce00a, type: 3}
-  MixMinigamePrefab: {fileID: 2899877712096204643, guid: f380a74e24aa4ae48b5efb3bd8cb8bac, type: 3}
+  MixMinigamePrefab: {fileID: 890071109634879636, guid: e7bbce7d910964fb9b0f4399943b4c9d, type: 3}
   SauseMinigamePrefab: {fileID: 2899877712096204643, guid: f380a74e24aa4ae48b5efb3bd8cb8bac, type: 3}
   CutMinigamePrefab: {fileID: 6518053939684660665, guid: fc721a31c732d5e4b9ad64ed5f6ce067, type: 3}
   GrillMinigamePrefab: {fileID: 3355533741195455621, guid: c5e59880eb93d1743a36f6d766cce00a, type: 3}
+  MinigameResultPrefab: {fileID: 5058520501755347154, guid: 3d32c5ae1d8e545918e845b30fbdcacc, type: 3}
 --- !u!114 &244096695
 MonoBehaviour:
   m_ObjectHideFlags: 0

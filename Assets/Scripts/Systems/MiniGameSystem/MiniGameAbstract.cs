@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.UI;
 
 /*
 MiniGameAbstract.cs
@@ -29,7 +28,9 @@ public abstract class MiniGameAbstract : MonoBehaviour
     protected float elapsedTime = 0f;
     public string minigameId { get; protected set; }
 
+    public GameObject scoringPrefab;
     protected GameObject miniGameBgPrefab;
+
     public void StartGame()
     {
         isPlaying = true;
@@ -39,7 +40,14 @@ public abstract class MiniGameAbstract : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (!isPlaying) return;
+        if (!isPlaying)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Destroy(gameObject);
+            }
+            return;
+        }
 
         elapsedTime += Time.deltaTime;
 
@@ -54,16 +62,26 @@ public abstract class MiniGameAbstract : MonoBehaviour
     public void EndGame()
     {
         if (!isPlaying) return;
-
         isPlaying = false;
 
-        RemoveBG();
-
         float score = CalculateScore();
-        Debug.Log($"{GetType().Name} - 점수: {score:F2}");
-        
+
+        // 스코어링 생성
+        getScoringInstance(score);
+
         OnGameFinished?.Invoke(score);
-        Destroy(gameObject);
+        Destroy(gameObject, 1f);
+        RemoveBG(1f);
+    }
+
+    public void getScoringInstance(float score)
+    {
+        if (scoringPrefab == null) return;
+        
+        GameObject prefab = Instantiate(scoringPrefab);
+        prefab.transform.parent = gameObject.transform;
+        prefab.transform.localPosition = new Vector3(0.5f, 0.3f);
+        prefab.GetComponent<MinigameResult>()?.SetScore(score);
     }
 
     private void ShowBG()
@@ -74,9 +92,9 @@ public abstract class MiniGameAbstract : MonoBehaviour
         miniGameBgPrefab.transform.parent = this.gameObject.transform;
         miniGameBgPrefab.transform.localPosition = Vector3.zero;
     }
-    private void RemoveBG()
+    private void RemoveBG(float time)
     {
-        if (miniGameBgPrefab != null) Destroy(miniGameBgPrefab);
+        if (miniGameBgPrefab != null) Destroy(miniGameBgPrefab, time);
     }
     public abstract void OnUpdate();
     public abstract float CalculateScore();

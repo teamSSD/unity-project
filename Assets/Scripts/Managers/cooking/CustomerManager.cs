@@ -155,7 +155,7 @@ public class CustomerManager : MonoBehaviour
             GameObject waitingCustomer = Instantiate(waitingCustomerPrefab);
             WaitingCustomer waitingCustomerScript = waitingCustomer.GetComponent<WaitingCustomer>();
             waitingCustomer.transform.position = getNewWaitingPos(index);
-            waitingCustomerScript.inject(worldCanvas);
+            waitingCustomerScript.inject(worldCanvas, customerData);
 
             return waitingCustomerScript;
         }

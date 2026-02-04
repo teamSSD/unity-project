@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: grumbling
   m_EditorClassIdentifier: 
   type: grumbling
-  characterImage: {fileID: 21300000, guid: 56863949946da497abf485a99294afaa, type: 3}
+  characterImage: {fileID: -49323233470411945, guid: e8d6905f1eb424a0ebeb978f28add38b, type: 3}
   orderingMessage: "{0} \uD558\uB098\uC694"
   satisfiedMessage: "\uC5D0\uC774, \uBB50\u2026 \uC0DD\uAC01\uBCF4\uB2E4 \uB0AB\uB124."
   unsatisfiedMessage: "\uC774 \uAC00\uACA9\uC774\uBA74 \uC880 \uC544\uC27D\uC9C0."

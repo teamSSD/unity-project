@@ -17,60 +17,79 @@ SauceMiniGame.cs
 */
 public class SauceMiniGame : MiniGameAbstract
 {
-    [Header("게임 위치")]
-    public float xPos;
-    public float yPos;
-
-    [Header("프리팹")]
-    public GameObject saucePrefab;
-
     [Header("UI 오브젝트")]
     public Image gaugeBar;               // UI Image (Fill 방식)
 
     [Header("게임 설정")]
-    public float increasePerPress = 0.1f;  // 스페이스바 당 게이지 증가량 (0~1)
-    public float targetGauge = 0.8f;        // 목표 게이지 (80%)
-
-    private float currentGauge = 0f;        // 현재 게이지 값 (0~1)
-
-    private Vector3 bgPos;
-    void Start()
-    {
-        GameObject sauceImage = Instantiate(saucePrefab, this.transform);
-        sauceImage.transform.localPosition = new Vector3(0, 0, 0);
-
-        //게이지바 위치 맞추는 임시코드 (교체 예정)
-        Vector3 worldPos = Camera.main.ViewportToWorldPoint(new Vector3(xPos, yPos, Camera.main.nearClipPlane));
-        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, worldPos);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            gaugeBar.canvas.transform as RectTransform,
-            screenPos,
-            gaugeBar.canvas.worldCamera,
-            out Vector2 localPos);
-        gaugeBar.rectTransform.anchoredPosition = localPos;
-    }
+    public float decreasePerPress = 2.5f;  // 스페이스바 당 게이지 증가량
+    public float targetGauge = 63;        // 목표 게이지
+    public GameObject upperArrow;
+    public GameObject lowerArrow;
+    public float coldStart = 1.5f;
     
+    private GuidedButtonAnimator upperArrowAnim;
+    private GuidedButtonAnimator lowerArrowAnim;
+    private bool isUpperTurn = true;
+    private float currentGauge = 100;
+
+    //타이머로 시간 재고 꺼버리면 끝
+    private float waitingTime = 0f;
+    private float waitingThreshold = 0.7f;
+    private int tolerance = 2;
+
+    private void Awake()
+    {
+        upperArrowAnim = upperArrow.GetComponent<GuidedButtonAnimator>();
+        lowerArrowAnim = lowerArrow.GetComponent<GuidedButtonAnimator>();
+        
+        upperArrowAnim.Guide();
+        
+    }
+
     public override void OnUpdate()
     {
         if (!isPlaying) return;
+         elapsedTime = 0;
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (currentGauge <= 0)
         {
-            currentGauge += increasePerPress;
-            currentGauge = Mathf.Clamp01(currentGauge); // 0~1 범위 제한
+            EndGame();
         }
 
-        if (gaugeBar != null)
+        coldStart -= Time.deltaTime;
+        gaugeBar.fillAmount = currentGauge / 100;
+
+        if (isUpperTurn && Input.GetKeyDown(KeyCode.UpArrow))
         {
-            gaugeBar.fillAmount = currentGauge;
+            lowerArrowAnim.Guide();
+            waitingTime = 0;
+            currentGauge -= decreasePerPress;
+            isUpperTurn = false;
+            return;
+        }
+        if (!isUpperTurn && Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            upperArrowAnim.Guide();
+            waitingTime = 0;
+            currentGauge -= decreasePerPress;
+            isUpperTurn = true;
+            return;
+        }
+        
+        waitingTime += Time.deltaTime;
+        if (coldStart < 0 && waitingTime >= waitingThreshold)
+        {
+            EndGame();
         }
     }
 
     public override float CalculateScore()
     {
+        Debug.Log("Cal1!!!!");
+        float maxPossibleDiff = Mathf.Max(targetGauge, 100f - targetGauge);;
         float diff = Mathf.Abs(currentGauge - targetGauge);
-        float score = 1f - diff / targetGauge;
+        float penaltyDiff = Mathf.Max(0, diff - tolerance);
+        float score = 1.0f - (penaltyDiff / (maxPossibleDiff - tolerance));
         return Mathf.Clamp01(score);
     }
 }
-

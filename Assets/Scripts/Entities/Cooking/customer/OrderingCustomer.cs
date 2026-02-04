@@ -33,6 +33,7 @@ public class OrderingCustomer : MonoBehaviour
     {
         this.menuSchema = menuSchema;
         this.customerData = customerData;
+        gameObject.GetComponent<SpriteRenderer>().sprite = customerData.characterImage;
     }
 
     public void clickRoutine()

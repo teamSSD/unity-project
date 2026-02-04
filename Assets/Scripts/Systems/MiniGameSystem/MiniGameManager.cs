@@ -24,12 +24,15 @@ public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
     [SerializeField] private GameObject SauseMinigamePrefab;
     [SerializeField] private GameObject CutMinigamePrefab;
     [SerializeField] private GameObject GrillMinigamePrefab;
+    [SerializeField] private GameObject MinigameResultPrefab;
 
-    private static Vector2 offset = new Vector2(3, 3);
+    private static Vector2 offset = new Vector2(-0.8f, 3);
 
     public IEnumerator<float> PlayCoroutine(string toolId, RecipeData recipeData, Vector2 position, List<FoodData> ingredients, Action<RecipeData, float> onCompleted)
     {
         GameObject prefab = GetPrefab(toolId, recipeData);
+        prefab.GetComponent<MiniGameAbstract>().scoringPrefab = MinigameResultPrefab;
+
         if (prefab == null) yield break;
         prefab.transform.position = position + offset;
 
@@ -63,7 +66,7 @@ public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
 
         if (toolId == "T001") return BakeMinigamePrefab;
         if (toolId == "T002") return BoilMinigamePrefab;
-        if (toolId == "T003") return MixMinigamePrefab;
+        if (toolId == "T003") return SauseMinigamePrefab;
         if (toolId == "T004") return CutMinigamePrefab;
         if (toolId == "T005") return GrillMinigamePrefab;
 

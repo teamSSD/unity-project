@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: cynical
   m_EditorClassIdentifier: 
   type: cynical
-  characterImage: {fileID: 21300000, guid: 56863949946da497abf485a99294afaa, type: 3}
+  characterImage: {fileID: 4615541287749387004, guid: 9e25fb68e8de2479496dda36f4744015, type: 3}
   orderingMessage: "{0} \uD558\uB098\uC694"
   satisfiedMessage: "\uD6C4\u2026 \uC624\uB298\uC740 \uB2F9\uCCA8\uC774\uB124."
   unsatisfiedMessage: "\uAE30\uB300\uB294 \uC548 \uD588\uB294\uB370, \uC5ED\uC2DC\uB124."

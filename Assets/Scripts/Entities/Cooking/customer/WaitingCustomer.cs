@@ -13,13 +13,14 @@ public class WaitingCustomer : MonoBehaviour
     private GaugeUI guageScript;
     private bool injected = false;
 
-    public void inject(Canvas worldCanvas)
+    public void inject(Canvas worldCanvas, CustomerData customerData)
     {
         Vector3 offset = new Vector3(0, 2.3f, 0);
 
         gaugeUI.transform.SetParent(worldCanvas.transform);
         gaugeUI.transform.position = this.gameObject.transform.position + offset;
         injected = true;
+        gameObject.GetComponent<SpriteRenderer>().sprite = customerData.characterImage;
     }
 
     void Awake()

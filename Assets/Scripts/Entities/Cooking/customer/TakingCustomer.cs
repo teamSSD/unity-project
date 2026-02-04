@@ -11,6 +11,7 @@ public class TakingCustomer : MonoBehaviour
 
     public void exit()
     {
+        gameObject.GetComponent<SpriteRenderer>().sprite = customerData.characterImage;
         say(customerData.escapeMessage);
     }
 

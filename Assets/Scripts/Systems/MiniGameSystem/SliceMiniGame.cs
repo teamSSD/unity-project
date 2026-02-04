@@ -1,117 +1,137 @@
-﻿using UnityEngine;
-using static UnityEditor.PlayerSettings;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
-/*
-SliceMiniGame.cs
-==================
-설명:
-- 미니게임 시작 시 칼 스프라이트 생성
-- 칼 드래그 제어 및 기준선 통과 시 슬라이스 생성
-- 슬라이스 10개 = 만점
-
-사용법:
-- SliceMiniGame 이라는 프리팹을 만들어두었으니 아래 3줄로 미니게임실행 하면됨
-- GameObject go = Instantiate(sliceMiniGamePrefab);// Prefab에서 오브젝트 생성
-  currentGame = go.GetComponent<MiniGameAbstract>();// 미니게임 스크립트 가져오기
-  currentGame.StartGame();// 게임 시작
-*/
 public class SliceMiniGame : MiniGameAbstract
 {
-    [Header("게임 위치")]
-    public float xPos;     
-    public float yPos;
+    [SerializeField] private SliceVisualizer visualizer;
 
-    [Header("프리팹")]
-    public GameObject cuttingBoardPrefab;      // 도마, 토마토 프리팹
-    public GameObject knifePrefab;      // 칼 프리팹
-    public GameObject slicePrefab;      // 토마토 조각 프리팹
+    [Header("Prefabs")]
+    public GameObject cuttingBoard;
+    public GameObject activeKnife;
+    public GameObject slicePrefab;
+    public GameObject mouseHintPrefab;
+    public GameObject Ingredient;
 
-    [Header("게임 설정")]
-    public float yThreshold = 0f;       // 기준선 Y좌표
-    public int maxSliceTarget = 10;
+    [Header("Settings")]
+    public int totalSlices = 6;
+    public int segmentsPerSlice = 20;
+    public float sliceRangeY = 4f;
+    public float sliceAreaWidth = 5f;
+    public float tolerance = 0.1f;
+    public float hintMoveSpeed = 15f;
 
-    private Vector3 bgPos;   
-    private Transform knifeTransform;    // 미니게임이 생성한 칼
-    private bool isDragging = false;
-    private Vector3 offset;
-    private int sliceCount = 0;
-    private bool wasAboveThreshold = true;
+    [Header("Visuals")]
+    public Sprite maskSprite;
 
-    void Start()
+    private SliceScorer _scorer;
+    private int _currentSliceIndex = 0;
+    private bool _isSlicing = false;
+    private bool[] _segmentChecked;
+
+    // --- 계산 프로퍼티 (에러 해결용) ---
+    private float CenterX => Ingredient.transform.position.x;
+    private float StartY => Ingredient.transform.position.y + (sliceRangeY / 2f);
+    private float EndY => Ingredient.transform.position.y - (sliceRangeY / 2f);
+    private float ActualWidth => Ingredient.GetComponent<SpriteRenderer>().bounds.size.x;
+    private float LeftEdgeX => CenterX - (sliceAreaWidth / 2f);
+    private float CurrentTargetX 
     {
-        GameObject cuttingBoard = Instantiate(cuttingBoardPrefab, this.transform);
-        cuttingBoard.transform.localPosition = new Vector3(0, 0, 0);
+        get {
+            if (totalSlices <= 1) return CenterX;
+            float spacing = sliceAreaWidth / (totalSlices - 1);
+            return LeftEdgeX + (spacing * _currentSliceIndex);
+        }
     }
-    
+
+    public override void SetIngredients(List<FoodData> ingredients)
+    {
+        if (ingredients.Count <= 0) return;
+        
+        _scorer = new SliceScorer(totalSlices, segmentsPerSlice);
+        var renderer = Ingredient.GetComponent<SpriteRenderer>();
+        renderer.sprite = ingredients[0].image;
+        renderer.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
+        
+        visualizer.SetupMask(renderer, maskSprite);
+        RefreshState();
+        Cursor.visible = false;
+    }
+
     public override void OnUpdate()
     {
+        UpdateKnifeTransform();
         if (!isPlaying) return;
+        elapsedTime = 0;
+        
+        HandleInput();
+        visualizer.ManageHint(mouseHintPrefab, CurrentTargetX, StartY, _isSlicing, EndY, hintMoveSpeed);
+    }
 
-        // 칼이 없으면 생성
-        if (knifeTransform == null)
-        {
-            SpawnKnife();
-            return;
+    private void HandleInput()
+    {
+        Vector3 pos = GetMouseWorldPos();
+
+        if (Input.GetMouseButtonDown(0) && IsAtStart(pos)) {
+            _isSlicing = true;
+            _segmentChecked = new bool[segmentsPerSlice];
         }
-
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorld.z = 0;
-
-        // 드래그 시작
-        if (Input.GetMouseButtonDown(0))
-        {
-            Collider2D col = knifeTransform.GetComponent<Collider2D>();
-            if (col != null && col.OverlapPoint(mouseWorld))
-            {
-                isDragging = true;
-                offset = knifeTransform.position - mouseWorld;
-            }
-
-            // 기준선 상태 초기화
-            wasAboveThreshold = knifeTransform.position.y > yThreshold;
+        else if (_isSlicing && Input.GetMouseButton(0)) {
+            ProceedSlice(pos);
         }
+        else if (_isSlicing && Input.GetMouseButtonUp(0)) {
+            FinishSlice();
+        }
+    }
 
-        // 드래그 중
-        if (isDragging && Input.GetMouseButton(0))
-        {
-            knifeTransform.position = mouseWorld + offset;
-
-            // 기준선 통과 체크
-            if (wasAboveThreshold && knifeTransform.position.y < yThreshold)
-            {
-                SpawnSlice();
-                wasAboveThreshold = false;
-            }
-            else if (knifeTransform.position.y > yThreshold)
-            {
-                wasAboveThreshold = true;
+    private void ProceedSlice(Vector3 pos) {
+        float relY = StartY - pos.y;
+        int segIdx = Mathf.FloorToInt(relY / (sliceRangeY / segmentsPerSlice));
+        
+        for (int i = 0; i <= segIdx; i++) {
+            if (i >= 0 && i < segmentsPerSlice && !_segmentChecked[i]) {
+                _scorer.RecordSegment(_currentSliceIndex, i, pos.x, CurrentTargetX, tolerance);
+                _segmentChecked[i] = true;
             }
         }
-
-        // 드래그 종료
-        if (Input.GetMouseButtonUp(0))
-        {
-            isDragging = false;
-        }
     }
 
-    private void SpawnKnife()
-    {
-        GameObject knife = Instantiate(knifePrefab, this.transform);
-        knife.transform.localPosition = new Vector3(0, 0, 0);
-        knifeTransform = knife.transform;
-    }
-    private void SpawnSlice()
-    {
-        sliceCount++;
-
-        Vector3 spawnPos = knifeTransform.position + new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.2f, 0.2f), 0);
-        Instantiate(slicePrefab, spawnPos, Quaternion.identity, this.transform);
-        Debug.Log($"슬라이스 생성! 현재 개수: {sliceCount}");
+    private void FinishSlice() {
+        _isSlicing = false;
+        visualizer.UpdateMask(CurrentTargetX, LeftEdgeX, Ingredient.transform.position.y, sliceRangeY);
+        SpawnPiece();
+        
+        _currentSliceIndex++;
+        visualizer.ClearHint();
+        
+        if (_currentSliceIndex < totalSlices) RefreshState();
+        else EndGame();
     }
 
-    public override float CalculateScore()
-    {
-        return Mathf.Min(1f, (float)sliceCount / maxSliceTarget);
+    private void SpawnPiece() {
+        if (slicePrefab == null) return;
+        var piece = Instantiate(slicePrefab, new Vector3(CurrentTargetX, Ingredient.transform.position.y, -0.2f), Quaternion.identity);
+        piece.transform.localScale = Ingredient.transform.localScale;
     }
+
+    private void RefreshState() => visualizer.UpdateGuide(CurrentTargetX, StartY, EndY);
+
+    private void UpdateKnifeTransform() {
+        if (activeKnife != null) activeKnife.transform.position = GetMouseWorldPos();
+    }
+
+    // --- 유틸리티 메서드 (에러 해결용) ---
+    private Vector3 GetMouseWorldPos() {
+        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        pos.z = 0;
+        return pos;
+    }
+
+    private bool IsAtStart(Vector3 pos) {
+        return Mathf.Abs(pos.x - CurrentTargetX) < tolerance * 2 && Mathf.Abs(pos.y - StartY) < 0.5f;
+    }
+
+    public override float CalculateScore() => _scorer != null ? _scorer.GetFinalScore() : 0f;
+
+    private void OnDestroy() => Cursor.visible = true;
 }
