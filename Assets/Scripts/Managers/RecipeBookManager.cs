@@ -1,0 +1,136 @@
+using System.Collections.Generic;
+using TMPro;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UI;
+using static ResourcePaths;
+
+public class RecipeBookManager : MonoBehaviour
+{
+    private static RecipeBookManager instance;
+    public static RecipeBookManager Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<RecipeBookManager>();
+                if (instance == null)
+                {
+                    Debug.LogError("RecipeBookManager instance not found in scene.");
+                }
+            }
+            return instance;
+        }
+    }
+
+    private static bool isRecipeBookActive = false;
+    public static bool IsRecipeBookActive
+    {
+        get { return isRecipeBookActive; }
+    }
+
+    [Header("Recipe Book Root")]
+    [SerializeField] public GameObject bookRoot;
+
+    [Header("Diary Page")]
+    [SerializeField] public GameObject diary;
+
+    [Header("Diary Menu Slot")]
+    [SerializeField] public GameObject menuSlot;
+
+    [Header("Main Menu Page")]
+    [SerializeField] public GameObject mainMenu;
+
+    [Header("Side Menu Page")]
+    [SerializeField] public GameObject sideMenu;
+
+    [Header("Menu Card")]
+    [SerializeField] public GameObject menuCard;
+
+    [Header("Card Instantiate Transform (L)")]
+    [SerializeField] public Transform cardInstantiateTransform_L;
+
+    [Header("Card Instantiate Transform (R)")]
+    [SerializeField] public Transform cardInstantiateTransform_R;
+
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+        isRecipeBookActive = false;
+
+        bookRoot.SetActive(false);
+    }
+    public void OpenRecipeBook(bool active)
+    {
+        bookRoot.transform.Find("Button_Close").GetComponentInChildren<Button>().gameObject.SetActive(active);
+
+        if (isRecipeBookActive)
+        {
+            Debug.LogWarning("RecipeBook is already open.");
+            return;
+        }
+
+        bookRoot.SetActive(true);
+        foreach (MenuSlot slot in GetComponentsInChildren<MenuSlot>())
+            slot.InitSlot();
+        OpenDiary();
+
+        isRecipeBookActive = true;
+    }
+    public void CloseRecipeBook()
+    {
+        bookRoot.SetActive(false);
+
+        isRecipeBookActive = false;
+    }
+    public void OpenDiary()
+    {
+        diary.transform.SetAsLastSibling();
+        CloseMenuCard();
+    }
+    public void OpenMainMenu()
+    {
+        mainMenu.transform.SetAsLastSibling();
+        CloseMenuCard();
+    }
+    public void OpenSideMenu()
+    {
+        sideMenu.transform.SetAsLastSibling();
+        CloseMenuCard();
+    }
+
+    public void OpenMenuCardL(string id)
+    {
+        OpenMenuCard(id, cardInstantiateTransform_L);
+    }
+    public void OpenMenuCardR(string id)
+    {
+        OpenMenuCard(id, cardInstantiateTransform_R);
+    }
+
+    public void OpenMenuCard(string id, Transform form)
+    {
+        if (MenuCard.Instance != null)
+        {
+            MenuCard.Instance.ClearMenuCard();
+            MenuCard.Instance.InitSlot(id);
+            return;
+        }
+        MenuCard card = Instantiate(menuCard, form).GetComponent<MenuCard>();
+        card.InitSlot(id);
+    }
+    public void CloseMenuCard()
+    {
+        if (MenuCard.Instance != null)
+        {
+            MenuCard.Instance.CloseMenuCard();
+        }
+    }
+}

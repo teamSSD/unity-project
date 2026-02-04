@@ -143,6 +143,7 @@ public class StatsSystem : MonoBehaviour
         OnMoneyChanged?.Invoke(basicStats.money);
     }
     public static void AddMoney(int value) { SetMoney(basicStats.money + value); }
+    public static void SubMoney(int value) { SetMoney(basicStats.money - value); }
 
     public static void flush()
     {
