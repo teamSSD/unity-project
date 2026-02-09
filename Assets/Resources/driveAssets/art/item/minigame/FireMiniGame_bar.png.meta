@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      FireMiniGame_bar_0: 3637679144618051272
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

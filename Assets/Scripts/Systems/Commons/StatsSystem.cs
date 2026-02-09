@@ -17,7 +17,7 @@ public class StatsSystem : MonoBehaviour
     private static bool initialized = false;
     
     private static BasicStats basicStats = new BasicStats();
-
+    
     public static void Initialize()
     {
         if (initialized) return;

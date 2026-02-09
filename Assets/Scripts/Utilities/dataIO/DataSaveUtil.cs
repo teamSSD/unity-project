@@ -50,4 +50,20 @@ public class DataSaveUtil
             return data;
         }
     }
+
+    public static bool HasFile<T>(string path)
+{
+    try
+    {
+        string filePath = Path.GetDirectoryName(path);
+        string targetPath = Path.Combine(filePath, "data.json"); 
+
+        return File.Exists(targetPath);
+    }
+    catch (Exception e)
+    {
+        Debug.LogError($"파일 확인 중 오류 발생: {e.Message}");
+        return false;
+    }
+}
 }
