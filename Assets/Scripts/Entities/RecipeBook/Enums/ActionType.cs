@@ -7,5 +7,5 @@ public enum ActionType
     Rest,
     Shopping,
     MenuSelect,
-    Delivery,
+    PrepareIngredients,
 }
