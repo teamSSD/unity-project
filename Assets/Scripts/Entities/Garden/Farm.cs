@@ -5,14 +5,16 @@ public class Farm : MonoBehaviour
 {
     public CropData cropData;
     public TextMeshProUGUI actionPrompt;
+    public int farmIndex;
     private FarmTile tile;
     private TimePhaseProvider phaseProvider;
 
     private bool playerIn = false;
+    public bool IsLocked => farmIndex >= FarmUpgradeManager.Instance.GetCurrentTileCount();
 
     private void Start()
     {
-        phaseProvider = new TempTimePhaseProvider();
+        phaseProvider = TempTimePhaseProvider.Instance;
         tile = new FarmTile(phaseProvider);
 
         UpdatePrompt();
@@ -21,15 +23,27 @@ public class Farm : MonoBehaviour
     {
         if (playerIn && Input.GetKeyDown(KeyCode.Space))
         {
-            if (tile.IsHarvestable())
+            if (IsLocked)
             {
-                tile.Harvest();
-                Debug.Log("Crop harvested!");
+                Debug.Log("This Fram is locked!");
             }
-            else
+            else if (tile.IsEmpty())
             {
                 tile.Plant(cropData);
                 Debug.Log("Crop planted!");
+            }
+            else if (tile.IsHarvestable())
+            {
+                if (tile.Harvest(out string id, out int crops, out int seeds))
+                {
+                    Debug.Log("Crop harvested!");
+                    Debug.Log($"Crop harvested! {crops} [{id}] Crop, {seeds} Seeds get");
+                    // TODO. Chain Inventory System
+                }
+            }
+            else
+            {
+                Debug.Log("Crop is still growing...");
             }
 
             UpdatePrompt();
@@ -58,12 +72,15 @@ public class Farm : MonoBehaviour
     {
         if (!playerIn || actionPrompt == null) return;
 
+
+        if (IsLocked)
+            actionPrompt.text = "This Fram is locked";
         if (tile.IsHarvestable())
             actionPrompt.text = "Press [Space] to Harvest";
         else if (tile.IsEmpty())
             actionPrompt.text = "Press [Space] to Plant";
         else
-            actionPrompt.text = "";
+            actionPrompt.text = "Growing...";
     }
 
     public void NextPhase()

@@ -21,18 +21,26 @@ public class FarmTile
     {
         if(crop == null) return false;
 
-        int passed = (phaseProvider.CurrentPhaseIndex - plantedPhase + phaseProvider.TotalPhaseCount) % phaseProvider.TotalPhaseCount;
+        int passed = phaseProvider.CurrentPhaseIndex - plantedPhase;
         return passed >= crop.growPhaseCount;
     }
 
-    public void Harvest()
+    public bool Harvest(out string harvestedCropId, out int harvestedCrops, out int returnedSeeds)
     {
-        if (!IsHarvestable()) return;
+        harvestedCropId = "";
+        harvestedCrops = 0;
+        returnedSeeds = 0;
 
-        //Inventory.Add(crop.cropId, crop.harvestCount);
-        //Inventory.Add(crop.cropId + "_Seed", crop.seedReturnCount);
+        if (!IsHarvestable()) return false;
+
+        harvestedCropId = crop.cropId;
+
+        harvestedCrops = FarmUpgradeManager.Instance.GetCurrentHarvestCount();
+
+        returnedSeeds = crop.seedReturnCount;
 
         crop = null;
+        return true;
     }
 
     public bool IsEmpty()

@@ -30,7 +30,7 @@ public class ShopInteraction : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!collision.CompareTag("Player")) return;
-        if (GardenShopManager.IsItemShopActive) return;
+        if (GardenShopManager.isItemShopActive) return;
 
         isPlayerNear = true;
 
@@ -41,7 +41,7 @@ public class ShopInteraction : MonoBehaviour
     {
         if (!collision.CompareTag("Player")) return;
 
-        if (GardenShopManager.IsItemShopActive) return;
+        if (GardenShopManager.isItemShopActive) return;
 
         isPlayerNear = false;
 

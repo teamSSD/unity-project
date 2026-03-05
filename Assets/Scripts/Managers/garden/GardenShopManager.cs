@@ -6,6 +6,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum FarmUpgradeType
+{
+    TileCount,
+    TimeReduction,
+    HarvestCount
+}
+
 public class GardenShopManager : MonoBehaviour
 {
     private static GardenShopManager instance;
@@ -24,12 +31,7 @@ public class GardenShopManager : MonoBehaviour
             return instance;
         }
     }
-
-    private static bool isItemShopActive = false;
-    public static bool IsItemShopActive
-    {
-        get { return isItemShopActive; }
-    }
+    public static bool isItemShopActive { get; private set; } = false;
 
     [Header("상점 루트 오프젝트")]
     [SerializeField] public GameObject shopRoot;
@@ -39,6 +41,8 @@ public class GardenShopManager : MonoBehaviour
 
     [Header("상점 슬롯 프리팹")]
     [SerializeField] public GameObject shopSlotPrefab;
+
+    private List<GardenShopSlot> currentSlots = new List<GardenShopSlot>();
 
     private void Awake()
     {
@@ -62,6 +66,11 @@ public class GardenShopManager : MonoBehaviour
 
         shopRoot.SetActive(true);
 
+        if (currentSlots.Count == 0)
+        {
+            CreateSlots();
+        }
+
         RefreshSlots();
 
         isItemShopActive = true;
@@ -75,14 +84,52 @@ public class GardenShopManager : MonoBehaviour
         isItemShopActive = false;
     }
 
-    public void BuyUpgrade()
+    private void CreateSlots()
     {
+        CreateSingleSlot(FarmUpgradeType.TileCount);
+        CreateSingleSlot(FarmUpgradeType.TimeReduction);
+        CreateSingleSlot(FarmUpgradeType.HarvestCount);
+    }
+
+    private void CreateSingleSlot(FarmUpgradeType type)
+    {
+        GameObject slotObj = Instantiate(shopSlotPrefab, slotInstantiateTransform);
+        GardenShopSlot slotScript = slotObj.GetComponent<GardenShopSlot>();
+
+        slotScript.SetupSlot(type);
+        currentSlots.Add(slotScript);
+    }
+
+    public void BuyUpgrade(FarmUpgradeType type)
+    {
+        // int currentGold = InventoryManager.Instance.GetGold();
+        int currentGold = 50000; // 임시 골드
+        bool isSuccess = false;
+
+        switch (type)
+        {
+            case FarmUpgradeType.TileCount:
+                isSuccess = FarmUpgradeManager.Instance.TryUpgradeTileCount(currentGold);
+                break;
+            case FarmUpgradeType.TimeReduction:
+                isSuccess = FarmUpgradeManager.Instance.TryUpgradeTimeReduction(currentGold);
+                break;
+            case FarmUpgradeType.HarvestCount:
+                isSuccess = FarmUpgradeManager.Instance.TryUpgradeHarvestCount(currentGold);
+                break;
+        }
+
+        if (isSuccess)
+        {
+            RefreshSlots();
+            CheckMoneyOver();
+        }
     }
 
     public void RefreshSlots()
     {
-        //foreach (ItemShopSlot slot in currentSlots)
-        //    slot.RefreshSlot();
+        foreach (GardenShopSlot slot in currentSlots)
+            slot.RefreshSlot();
     }
 
     public void CheckMoneyOver()

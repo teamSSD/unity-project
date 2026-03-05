@@ -1027,6 +1027,7 @@ GameObject:
   - component: {fileID: 6360793831822111958}
   - component: {fileID: 5560575553704342222}
   - component: {fileID: 4140394825154909565}
+  - component: {fileID: 3162563117232757092}
   m_Layer: 5
   m_Name: GardenShopSlot
   m_TagString: Untagged
@@ -1115,6 +1116,22 @@ MonoBehaviour:
   LoreLabel: {fileID: 186314923289687556}
   CostLabel: {fileID: 2996186696781339887}
   CountLabel: {fileID: 3309443682104885629}
+--- !u!114 &3162563117232757092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5745094872648187470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 558be0b6d08cbe14592f104183007b37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Runtime::GardenShopSlot
+  buyButton: {fileID: 2041839023452775983}
+  titleText: {fileID: 2818759673208584278}
+  loreText: {fileID: 186314923289687556}
+  costText: {fileID: 2996186696781339887}
 --- !u!1 &6938950947396659067
 GameObject:
   m_ObjectHideFlags: 0
