@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::RecipeData
   id: R011
   outputFood: {fileID: 11400000, guid: 542459db24a9b4b3e85aa257dea00dc6, type: 2}
-  minigameId: M007
+  minigameId: M001
   inputs:
   - food: {fileID: 11400000, guid: 5281961d7e6994980b0815f8914c32e2, type: 2}
     foodWeight: 1.2

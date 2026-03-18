@@ -49,7 +49,6 @@ public class ItemShopManager : MonoBehaviour
     [Header("확인 버튼")]
     [SerializeField] public Button selectButton;
 
-    private LoadInventoryUsecase loadInventoryUsecase;
     private List<ItemShopSlot> currentSlots = new List<ItemShopSlot>();
     private Dictionary<FoodData, int> purchaseList = new Dictionary<FoodData, int>();
     private int totalPrice = 0;
@@ -110,7 +109,9 @@ public class ItemShopManager : MonoBehaviour
 
         StatsSystem.SubMoney(totalPrice);
         foreach (var item in purchaseList)
-            loadInventoryUsecase.AddFood(item.Key, item.Value);
+            InventoryManager.Instance?.AddFood(item.Key, item.Value);
+
+        InventoryManager.Instance?.flush();
         CloseItemShop();
     }
 

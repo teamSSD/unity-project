@@ -16,6 +16,7 @@ public class ClockUI : MonoBehaviour
     void OnEnable()
     {
         StatsSystem.OnTimeChanged += SetTargetTime;
+        SetTargetTime(StatsSystem.GetHour(), StatsSystem.GetMinute());
     }
 
     void OnDisable()

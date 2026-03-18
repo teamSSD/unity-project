@@ -20,8 +20,8 @@ public class CuisineManager : MonoBehaviour
     void Start()
     {
         playMinigameUsecase = gameObject.GetComponent<MiniGameManager>();
-        searchRecipeUsecase = new TempSearchRecipeUsecase();
-        loadInventoryUsecase = new TempLoadInventoryUsecase();
+        searchRecipeUsecase = RecipeDataManager.Instance;
+        loadInventoryUsecase = InventoryManager.Instance;
 
         cookingTools.ForEach(tool =>
                 tool.GetComponent<CookingToolModel>()

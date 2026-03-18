@@ -3,9 +3,7 @@ using UnityEngine;
 public enum ActionType
 {
     None,
-    Work,
-    Rest,
-    Shopping,
-    MenuSelect,
-    PrepareIngredients,
+    Work,      // 영업
+    Rest,      // 휴식
+    Shopping   // 상가 이동
 }

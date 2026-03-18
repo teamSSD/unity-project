@@ -1,248 +1,345 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
+/// <summary>
+/// Manages customer flow in the cooking scene
+/// Refactored to use component-based architecture with CustomerSpawner,
+/// OrderTicketController, and CustomerLifecycle
+/// </summary>
+[RequireComponent(typeof(CustomerSpawner))]
+[RequireComponent(typeof(OrderTicketController))]
 public class CustomerManager : MonoBehaviour
 {
-    public GameObject statManager;
-    public GameObject orderingCustomerPrefab;
-    public GameObject waitingCustomerPrefab;
-    public GameObject TakingCustomerPrefab;
-    public GameObject receiptPrefab;
-    public Canvas canvas;
-    public Canvas worldCanvas;
-    public static bool isOpen = true;
+    [Header("References")]
+    [SerializeField] private GameObject statManager;
     [SerializeField] private AudioClip doorSfx;
     [SerializeField] private List<CustomerData> customerDataList;
 
-    private static int waitingCustomerCount = 0;
-    private static List<int> waitingPoses = new List<int> {0, 1, 2, 3, 4};
+    [Header("Prefabs")]
+    [SerializeField] private GameObject orderingCustomerPrefab;
+    [SerializeField] private GameObject waitingCustomerPrefab;
+    [SerializeField] private GameObject takingCustomerPrefab;
+    [SerializeField] private GameObject receiptPrefab;
+    [SerializeField] private Canvas worldCanvas;
+
+    [Header("Spawn Settings")]
+    [SerializeField] private float baseSpawnInterval = 5f;
+    [SerializeField] private float spawnIntervalVariance = 3f;
+
+    // Components
+    private CustomerSpawner spawner;
+    private OrderTicketController ticketController;
+
+    // State
     private List<MenuSchema> salesMenus;
-    private int nextOrderingNumber = 1;
-    private float whenNextVisit;
+    private List<CustomerLifecycle> activeCustomers = new List<CustomerLifecycle>();
+    private int nextOrderNumber = 1;
+    private bool isOpen = true;
+
+    // Session statistics
+    private int totalOrders = 0;
+    private int perfectOrders = 0;
+    private float totalAccuracyScore = 0f;
+    private int totalEarnings = 0;
+
+    // Spawn timing
     private float timer = 0;
-    private GameObject orderingCustomer;
+    private float nextSpawnTime;
+    private GameObject currentOrderingCustomer;
+
+    // Events
+    public event Action OnGameEnd;
 
     void Awake()
     {
-        ISelectMenu iSelectMenu = new MockMenuProvider();
-        salesMenus = iSelectMenu.GetTodaysMenu();
+        // Get components
+        spawner = GetComponent<CustomerSpawner>();
+        ticketController = GetComponent<OrderTicketController>();
 
+        // Inject prefab dependencies
+        spawner.Inject(orderingCustomerPrefab, waitingCustomerPrefab, takingCustomerPrefab, worldCanvas);
+        ticketController.Inject(receiptPrefab);
+
+        // Load today's menu
+        ISelectMenu menuProvider = new RecipeBookMenuProvider();
+        salesMenus = menuProvider.GetTodaysMenu();
+
+        if (salesMenus.Count == 0)
+        {
+            Debug.LogError("[CustomerManager] No menus available! Cannot start cooking scene without menu selection.");
+            isOpen = false;
+            return;
+        }
+
+        // Setup
         StatsSystem.SetStamina(100);
 
-        statManager.GetComponent<StatManager>().onTimeEnd += () => 
+        // Listen to time end event
+        if (statManager != null)
         {
-            isOpen = false;
-            if (orderingCustomer != null) Destroy(orderingCustomer);
-        };
+            statManager.GetComponent<StatManager>().onTimeEnd += OnTimeEnd;
+        }
 
-        CustomerEntry.orderingCustomerPrefab = orderingCustomerPrefab;
-        CustomerEntry.receiptPrefab = receiptPrefab;
-        CustomerEntry.waitingCustomerPrefab = waitingCustomerPrefab;
-        CustomerEntry.TakingCustomerPrefab = TakingCustomerPrefab;
-        CustomerEntry.worldCanvas = worldCanvas;
-        CustomerEntry.OnGameEnd += gameEnd;
+        Debug.Log($"[CustomerManager] Initialized with {salesMenus.Count} menus");
     }
 
     void Start()
     {
-        whenNextVisit = RandomNormal.Get(5, 3);
+        nextSpawnTime = RandomNormal.Get(baseSpawnInterval, spawnIntervalVariance);
     }
 
     void Update()
     {
-        if (isOpen)
-        {
-            handleOrderingCustomers();
-        }
+        if (!isOpen) return;
+
+        HandleCustomerSpawning();
     }
 
-    private void handleOrderingCustomers()
+    /// <summary>
+    /// Handle spawning of new customers based on timer
+    /// </summary>
+    private void HandleCustomerSpawning()
     {
         timer += Time.deltaTime;
-        if (timer < whenNextVisit) return;
-        timer -= whenNextVisit;
-        whenNextVisit = RandomNormal.Get(5, 3); // 실제 - 45, 15
-        
-        if (orderingCustomer != null || waitingCustomerCount >= 5) return;
-        CustomerEntry customerEntry = new CustomerEntry(pickRandomMenu(), pickRandomCustomerData());
-        orderingCustomer = customerEntry.GenerateCustomer();
-        SoundManager.Instance.Play2DSFX(doorSfx, 0.7f);
+
+        if (timer < nextSpawnTime) return;
+
+        timer -= nextSpawnTime;
+        nextSpawnTime = RandomNormal.Get(baseSpawnInterval, spawnIntervalVariance);
+
+        // Don't spawn if there's already an ordering customer or waiting queue is full
+        if (currentOrderingCustomer != null || spawner.IsWaitingQueueFull())
+        {
+            return;
+        }
+
+        // Pick random menu and customer
+        MenuSchema menu = PickRandomMenu();
+        if (menu == null) return;
+
+        CustomerData customerData = PickRandomCustomerData();
+
+        // Create customer lifecycle
+        CustomerLifecycle lifecycle = new CustomerLifecycle(
+            menu,
+            customerData,
+            spawner,
+            ticketController
+        );
+
+        // Setup events
+        lifecycle.OnCustomerServed += (validation) => OnCustomerServed(lifecycle, validation);
+        lifecycle.OnCustomerLeft += () => OnCustomerLeft(lifecycle);
+
+        // Start customer order
+        currentOrderingCustomer = lifecycle.StartOrder();
+        activeCustomers.Add(lifecycle);
+
+        // Play door sound
+        if (doorSfx != null)
+        {
+            SoundManager.Instance.Play2DSFX(doorSfx, 0.7f);
+        }
+
+        Debug.Log($"[CustomerManager] Spawned customer #{menu.orderNumber}");
     }
 
-    public static int PickWaitingPosition()
+    /// <summary>
+    /// Called when customer is served with food
+    /// </summary>
+    private void OnCustomerServed(CustomerLifecycle lifecycle, MenuValidator.ValidationResult validation)
     {
-        int index = RandomGeneral.Pick(waitingPoses);
-        waitingPoses.Remove(index);
-        return index;
+        // Track statistics
+        totalOrders++;
+        totalAccuracyScore += validation.AccuracyScore;
+
+        if (validation.AccuracyScore >= 1.0f)
+        {
+            perfectOrders++;
+        }
+
+        int reward = MenuValidator.CalculateReward(null, validation.AccuracyScore);
+        totalEarnings += reward;
+
+        Debug.Log($"[CustomerManager] Order served - Grade: {MenuValidator.GetGrade(validation.AccuracyScore)} " +
+                  $"({validation.AccuracyScore:F2}) - Total Orders: {totalOrders}");
+
+        // Show visual feedback
+        if (ValidationFeedbackUI.Instance != null)
+        {
+            ValidationFeedbackUI.Instance.ShowFeedback(
+                MenuValidator.GetGrade(validation.AccuracyScore),
+                validation.AccuracyScore,
+                reward,
+                validation.FeedbackMessage
+            );
+        }
+
+        // Cleanup lifecycle
+        OnCustomerCompleted(lifecycle);
     }
 
-    public static void ReleaseWaitingPosition(int index)
+    /// <summary>
+    /// Called when customer leaves without food (timeout)
+    /// </summary>
+    private void OnCustomerLeft(CustomerLifecycle lifecycle)
     {
-        waitingPoses.Add(index);
+        Debug.Log("[CustomerManager] Customer left without food");
+        OnCustomerCompleted(lifecycle);
     }
 
-    private MenuSchema pickRandomMenu()
+    /// <summary>
+    /// Called when customer lifecycle completes (served or left)
+    /// </summary>
+    private void OnCustomerCompleted(CustomerLifecycle lifecycle)
     {
-        MenuSchema menuSchema = salesMenus[Random.Range(0, salesMenus.Count)];
-        menuSchema.orderNumber = nextOrderingNumber;
-        nextOrderingNumber++;
-        return menuSchema;
+        lifecycle.Cleanup();
+        activeCustomers.Remove(lifecycle);
+
+        // Clear ordering customer reference if it was from this lifecycle
+        currentOrderingCustomer = null;
+
+        // Check for game end
+        CheckGameEnd();
+
+        Debug.Log($"[CustomerManager] Customer completed. Active: {activeCustomers.Count}");
     }
 
-    private CustomerData pickRandomCustomerData()
+    /// <summary>
+    /// Pick a random menu from available menus
+    /// </summary>
+    private MenuSchema PickRandomMenu()
     {
+        if (salesMenus.Count == 0)
+        {
+            Debug.LogError("[CustomerManager] Cannot pick menu - salesMenus is empty!");
+            return null;
+        }
+
+        MenuSchema menu = salesMenus[Random.Range(0, salesMenus.Count)];
+        menu.orderNumber = nextOrderNumber;
+        nextOrderNumber++;
+
+        return menu;
+    }
+
+    /// <summary>
+    /// Pick a random customer data
+    /// </summary>
+    private CustomerData PickRandomCustomerData()
+    {
+        if (customerDataList.Count == 0)
+        {
+            Debug.LogWarning("[CustomerManager] No customer data available!");
+            return null;
+        }
+
         return customerDataList[Random.Range(0, customerDataList.Count)];
     }
 
-    private void gameEnd()
+    /// <summary>
+    /// Called when time ends
+    /// </summary>
+    private void OnTimeEnd()
     {
-        Debug.Log("Game End");
+        isOpen = false;
+
+        // Destroy current ordering customer if exists
+        if (currentOrderingCustomer != null)
+        {
+            Destroy(currentOrderingCustomer);
+            currentOrderingCustomer = null;
+        }
+
+        CheckGameEnd();
+
+        Debug.Log("[CustomerManager] Shop closed");
     }
 
-    private class CustomerEntry
+    /// <summary>
+    /// Check if game should end (shop closed + no active tickets)
+    /// </summary>
+    private void CheckGameEnd()
     {
-        public static GameObject orderingCustomerPrefab;
-        public static GameObject receiptPrefab;
-        public static GameObject waitingCustomerPrefab;
-        public static GameObject TakingCustomerPrefab;
-        public static Canvas worldCanvas;
-        public static event Action OnGameEnd;
-
-        private MenuSchema menuSchema;
-        private CustomerData customerData;
-        private static List<OrderTicketModel> reciepts = new List<OrderTicketModel>();
-        
-        public CustomerEntry (MenuSchema menuSchema, CustomerData customerData)
+        if (!isOpen && !ticketController.HasActiveTickets())
         {
-            this.menuSchema = menuSchema;
-            this.customerData = customerData;
+            Debug.Log("[CustomerManager] Game End");
+            LogSessionSummary();
+            OnGameEnd?.Invoke();
         }
+    }
 
-        public GameObject GenerateCustomer()
+    /// <summary>
+    /// Cleanup on destroy
+    /// </summary>
+    private void OnDestroy()
+    {
+        // Cleanup all active customers
+        foreach (var lifecycle in activeCustomers)
         {
-            CustomerEntry customerEntry = new CustomerEntry(menuSchema, customerData);
-
-            GameObject ordering = Instantiate(orderingCustomerPrefab);
-            OrderingCustomer script = ordering.GetComponent<OrderingCustomer>();
-            script.Inject(customerEntry.menuSchema, customerEntry.customerData);
-            
-            script.onExit += customerEntry.OnOrder;
-            script.onExit += () => Destroy(ordering);
-            return ordering;
+            lifecycle.Cleanup();
         }
+        activeCustomers.Clear();
 
-        private OrderTicketModel GenerateReciept()
+        // Unsubscribe from events
+        if (statManager != null)
         {
-            GameObject receipt = Instantiate(receiptPrefab);
-            OrderTicketModel orderTicketModel = receipt.GetComponent<OrderTicketModel>();
-            Receipt recieptScript = receipt.GetComponent<Receipt>();
-            orderTicketModel.SetMenu(menuSchema);
-            recieptScript.Set(menuSchema);
-            reciepts.Add(orderTicketModel);
-            Vector3 newPos = getNewRecieptPos(reciepts.Count-1);
-            orderTicketModel.SetDefaultPosition(newPos);
-            receipt.transform.position = newPos + new Vector3(0, -2f, 0);
-
-            return orderTicketModel;
-        }
-
-        private WaitingCustomer GenerateWaitingCustomer(int index)
-        {
-            GameObject waitingCustomer = Instantiate(waitingCustomerPrefab);
-            WaitingCustomer waitingCustomerScript = waitingCustomer.GetComponent<WaitingCustomer>();
-            waitingCustomer.transform.position = getNewWaitingPos(index);
-            waitingCustomerScript.inject(worldCanvas, customerData);
-
-            return waitingCustomerScript;
-        }
-
-        private void checkEnd()
-        {
-            if (!isOpen && reciepts.Count == 0)
+            var statMgr = statManager.GetComponent<StatManager>();
+            if (statMgr != null)
             {
-                OnGameEnd?.Invoke();
+                statMgr.onTimeEnd -= OnTimeEnd;
             }
         }
+    }
 
-        private void OnOrder()
-        {
-            int index = PickWaitingPosition();
-            waitingCustomerCount++;
+    /// <summary>
+    /// Get active customer count (for debugging/UI)
+    /// </summary>
+    public int GetActiveCustomerCount()
+    {
+        return activeCustomers.Count;
+    }
 
-            WaitingCustomer waitingCustomer = GenerateWaitingCustomer(index);
-            OrderTicketModel reciept = GenerateReciept();
-            Action arrange = () => {
-                reciepts.Remove(reciept);
-                waitingCustomer.DestroyObject();
-                reciept.DestroyObject();
-                arangeWaiting(index);
-                checkEnd();
-            };
-            waitingCustomer.onExit += () =>
-            {
-                arrange();
-                OnExit();
-            };
-            reciept.OnAttached += () => waitingCustomer.stopTimer = true;
-            reciept.onTake += (main, sides, position) => {
-                arrange();
-                OnTake(main, sides, position);
-            };
-        }
+    /// <summary>
+    /// Get waiting queue status (for debugging/UI)
+    /// </summary>
+    public int GetWaitingQueueSize()
+    {
+        return spawner.MaxWaitingCustomers - spawner.AvailableWaitingSlots;
+    }
 
-        private void arangeWaiting(int index)
-        {
-            ReleaseWaitingPosition(index);
-            
-            for (int i = 0; i < reciepts.Count; i++)
-            {
-                reciepts[i].SetDefaultPosition(getNewRecieptPos(i));
-            }
-        }
+    /// <summary>
+    /// Check if shop is open
+    /// </summary>
+    public bool IsShopOpen()
+    {
+        return isOpen;
+    }
 
-        private void OnExit()
-        {
-            GameObject takingCustomer = Instantiate(TakingCustomerPrefab);
-            takingCustomer.transform.position = new Vector3(-11.63f, -0.85f, 0);
-            TakingCustomer script = takingCustomer.GetComponent<TakingCustomer>();
-            script.customerData = customerData;
-            script.exit();
-            Destroy(takingCustomer, 3f);
-        }
+    /// <summary>
+    /// Get session statistics
+    /// </summary>
+    public (int total, int perfect, float avgScore, int earnings) GetSessionStats()
+    {
+        float avgScore = totalOrders > 0 ? totalAccuracyScore / totalOrders : 0f;
+        return (totalOrders, perfectOrders, avgScore, totalEarnings);
+    }
 
-        private void OnTake(FoodSchema mainMenu, List<FoodSchema> sideMenus, Vector3 position)
-        {
-            GameObject takingCustomer = Instantiate(TakingCustomerPrefab);
-            takingCustomer.transform.position = position + new Vector3(0,0,0);
-            TakingCustomer script = takingCustomer.GetComponent<TakingCustomer>();
-            script.customerData = customerData;
-            script.take(menuSchema, mainMenu, sideMenus);
-            Destroy(takingCustomer, 3f);
-        }
+    /// <summary>
+    /// Log session summary
+    /// </summary>
+    private void LogSessionSummary()
+    {
+        float avgScore = totalOrders > 0 ? totalAccuracyScore / totalOrders : 0f;
+        float perfectRate = totalOrders > 0 ? (float)perfectOrders / totalOrders * 100f : 0f;
 
-        private Vector3 getNewWaitingPos(int index)
-        {
-            Vector3 std = new Vector3(-11.37f, 0.5f, 0);
-            Vector3 offset = new Vector3(2, 0, 0);
-            Vector3 difference = new Vector3(0.8f, 0.5f, 0);
-            Vector3 randomVector = new Vector3(
-                    difference.x * RandomNormal.Range(-1, 1), 
-                    difference.y * RandomNormal.Range(-1, 1), 
-                    0
-            );
-
-            return std + offset * index + randomVector;
-        }
-
-        private Vector3 getNewRecieptPos(int index)
-        {
-            Vector3 std = new Vector3(7.65f,0.94f, 0);
-            Vector3 off = new Vector3(0, -2.38f, 0);
-            return std + off * index;
-        }
+        Debug.Log("========== Session Summary ==========");
+        Debug.Log($"Total Orders: {totalOrders}");
+        Debug.Log($"Perfect Orders: {perfectOrders} ({perfectRate:F1}%)");
+        Debug.Log($"Average Score: {avgScore:F2} ({MenuValidator.GetGrade(avgScore)})");
+        Debug.Log($"Total Earnings: {totalEarnings}원");
+        Debug.Log("=====================================");
     }
 }

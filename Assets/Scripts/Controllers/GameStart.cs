@@ -10,33 +10,120 @@ public class GameStart : MonoBehaviour
     
     void Start()
     {
-        ContinueButton.interactable = ProgressSystem.instance.IsLoadable();
+        // Manager 초기화 (없으면 생성)
+        EnsureUnlockedFoodManager();
+        EnsureInventoryManager();
+        EnsureRecipeDataManager();
 
-        ContinueButton.onClick.AddListener(ProcessContinue);
-        NewGameButton.onClick.AddListener(NewGame);
-        Settings.onClick.AddListener(OpenSetting);
+        // Continue 버튼 활성화/비활성화
+        bool hasSaveData = ProgressSystem.instance?.IsLoadable() ?? false;
+
+        if (ContinueButton != null)
+        {
+            ContinueButton.interactable = hasSaveData;
+
+            // 비활성화 시 색상 변경 (어두운 회색)
+            if (!hasSaveData)
+            {
+                var colors = ContinueButton.colors;
+                colors.disabledColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+                ContinueButton.colors = colors;
+            }
+        }
+
+        // 버튼 이벤트 연결
+        if (NewGameButton != null)
+            NewGameButton.onClick.AddListener(NewGame);
+
+        if (ContinueButton != null)
+            ContinueButton.onClick.AddListener(ProcessContinue);
+
+        if (Settings != null)
+            Settings.onClick.AddListener(OpenSetting);
     }
 
     private void ProcessContinue()
     {
+        // 저장된 데이터 로드
         StatsSystem.Initialize();
         ProgressSystem.instance.Initialize();
-        SceneManager.LoadScene("Cuisine");
+        InventoryManager.Instance?.Initialize();
+        RecipeDataManager.Instance?.Initialize();
+
+        // Scene_Mall 씬 로드 (메뉴 선택 → Idle)
+        SceneManager.LoadScene("Scene_Mall");
     }
     private void NewGame()
     {
+        // StatsSystem 초기화
         StatsSystem.Initialize();
-        StatsSystem.SetMoney(10000);
-        StatsSystem.SetStamina(100);
+
+        // 초기 상태 설정 (D+0, 영업준비 05:00, 돈 3000, 스태미나 100)
+        StatsSystem.SetTime(5, 0);       // 05:00 (영업준비 시작)
+        StatsSystem.SetMoney(3000);      // 3000원
+        StatsSystem.SetStamina(100);     // 100
+
+        // ProgressSystem 초기화
         ProgressSystem.instance.Initialize();
-        
+
+        // PhaseData.Day를 0으로 설정 (기본값 1 → 0)
+        ProgressSystem.instance.phaseData.Day = 0;
+
+        // 저장
         StatsSystem.flush();
         ProgressSystem.instance.flush();
-        
-        SceneManager.LoadScene("Cuisine");
+
+        // Manager 초기화
+        InventoryManager.Instance?.Initialize();
+        RecipeDataManager.Instance?.Initialize();
+
+        // Scene_Mall 씬 로드 (메뉴 선택 → Idle)
+        SceneManager.LoadScene("Scene_Mall");
     }
     private void OpenSetting()
     {
         // 세팅창 열기~
+    }
+
+    private void EnsureUnlockedFoodManager()
+    {
+        if (UnlockedFoodManager.Instance == null)
+        {
+            GameObject managerObj = new GameObject("UnlockedFoodManager");
+            managerObj.AddComponent<UnlockedFoodManager>();
+            Debug.Log("[GameStart] Created UnlockedFoodManager");
+        }
+        else
+        {
+            Debug.Log("[GameStart] UnlockedFoodManager already exists");
+        }
+    }
+
+    private void EnsureInventoryManager()
+    {
+        if (InventoryManager.Instance == null)
+        {
+            GameObject managerObj = new GameObject("InventoryManager");
+            managerObj.AddComponent<InventoryManager>();
+            Debug.Log("[GameStart] Created InventoryManager");
+        }
+        else
+        {
+            Debug.Log("[GameStart] InventoryManager already exists");
+        }
+    }
+
+    private void EnsureRecipeDataManager()
+    {
+        if (RecipeDataManager.Instance == null)
+        {
+            GameObject managerObj = new GameObject("RecipeDataManager");
+            managerObj.AddComponent<RecipeDataManager>();
+            Debug.Log("[GameStart] Created RecipeDataManager");
+        }
+        else
+        {
+            Debug.Log("[GameStart] RecipeDataManager already exists");
+        }
     }
 }

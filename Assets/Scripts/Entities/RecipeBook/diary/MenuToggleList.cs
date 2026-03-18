@@ -23,9 +23,6 @@ public class MenuToggleList : MonoBehaviour
     // Dependency Injection으로 전환
     private IBentoToggle bentoToggle;
 
-    // DiaryModel 의존성 추가 (이벤트 구독용)
-    private DiaryModel diaryModel;
-
     private void Awake()
     {
         mainMenuList = new List<string>();
@@ -59,50 +56,24 @@ public class MenuToggleList : MonoBehaviour
 
     private void OnEnable()
     {
-        // Play 모드에서 RecipeBook이 열릴 때 자동으로 초기화
-        if (Application.isPlaying && foodProvider == null)
-        {
-            var uiController = FindFirstObjectByType<DiaryUIController>();
-            if (uiController != null)
-            {
-                Initialize(uiController);
-            }
-        }
+        // RecipeDataManager에서 직접 초기화는 필요 없음
+        // 외부에서 Initialize() 호출하여 사용
     }
 
-    /// <summary>
-    /// 이벤트 구독 해제
-    /// </summary>
-    private void OnDestroy()
-    {
-        if (diaryModel != null)
-        {
-            diaryModel.OnBentoLockedChanged -= OnBentoLockStateChanged;
-        }
-    }
 
     [ContextMenu("Manually Initialize (Editor)")]
     private void ManuallyInitialize()
     {
-        if (DiaryUIController.Instance != null)
-        {
-            Initialize(DiaryUIController.Instance);
-            Debug.Log($"[MenuToggleList] Manually initialized in editor with {toggleRoot?.transform.childCount ?? 0} toggles.");
-        }
-        else
-        {
-            Debug.LogWarning("[MenuToggleList] Cannot initialize: DiaryUIController instance not found.");
-        }
+        Debug.LogWarning("[MenuToggleList] Manual initialization removed. Use Initialize(IUnlockedFoodProvider) instead.");
     }
 
     /// <summary>
-    /// DiaryModel 의존성 주입 추가 (이벤트 구독)
+    /// 의존성 주입으로 초기화
     /// </summary>
-    public void Initialize(IUnlockedFoodProvider provider, IBentoToggle bentoToggle, DiaryModel model)
+    public void Initialize(IUnlockedFoodProvider provider, IBentoToggle bentoToggle)
     {
         foodProvider = provider;
         this.bentoToggle = bentoToggle;
-        this.diaryModel = model;
 
         if (toggleRoot == null || togglePrefab == null)
         {
@@ -110,26 +81,12 @@ public class MenuToggleList : MonoBehaviour
             return;
         }
 
-        // 이벤트 구독
-        if (diaryModel != null)
-        {
-            diaryModel.OnBentoLockedChanged += OnBentoLockStateChanged;
-            Debug.Log($"[MenuToggleList] Subscribed to OnBentoLockedChanged event");
-        }
-
         ClearExistingToggles();
         GenerateTogglesFromUnlockedFoods();
 
-        Debug.Log($"[MenuToggleList] Initialized with DiaryModel dependency injection.");
+        Debug.Log($"[MenuToggleList] Initialized with dependency injection.");
     }
 
-    /// <summary>
-    /// IBentoToggle 의존성 주입 (Backward compatibility)
-    /// </summary>
-    public void Initialize(IUnlockedFoodProvider provider, IBentoToggle bentoToggle)
-    {
-        Initialize(provider, bentoToggle, null);
-    }
 
     /// <summary>
     /// Legacy Initialize method for backward compatibility
@@ -318,32 +275,4 @@ public class MenuToggleList : MonoBehaviour
         return null;
     }
 
-    // ────────────────────────────────────────────────────────────
-    // 이벤트 핸들러
-    // ────────────────────────────────────────────────────────────
-
-    /// <summary>
-    /// 도시락 잠금 상태 변경 이벤트 핸들러
-    /// </summary>
-    private void OnBentoLockStateChanged(bool isLocked)
-    {
-        Debug.Log($"[MenuToggleList] OnBentoLockStateChanged: {isLocked}");
-        SetMenuSelectionInteractable(!isLocked);
-    }
-
-    /// <summary>
-    /// 메뉴 선택 토글들의 인터랙션 활성화/비활성화
-    /// </summary>
-    private void SetMenuSelectionInteractable(bool interactable)
-    {
-        if (toggleRoot == null) return;
-
-        // toggleRoot 하위의 모든 Toggle 컴포넌트를 찾아서 interactable 설정
-        foreach (Toggle toggle in toggleRoot.GetComponentsInChildren<Toggle>())
-        {
-            toggle.interactable = interactable;
-        }
-
-        Debug.Log($"[MenuToggleList] Set menu selection interactable: {interactable}");
-    }
 }

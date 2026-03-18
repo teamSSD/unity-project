@@ -11,6 +11,16 @@ public enum FoodType
 [CreateAssetMenu(fileName = "NewFoodData", menuName = "Data/Food Data")]
 public class FoodData : ScriptableObject, CsvParsable
 {
+    // Tool ID to tool type mapping
+    private static readonly Dictionary<string, string> toolIdToType = new Dictionary<string, string>
+    {
+        { "T001", "pan" },
+        { "T002", "pot" },
+        { "T003", "bowl" },
+        { "T004", "cut" },
+        { "T005", "plate" }
+    };
+
     public string id;
     public string ingredientName;
     public string description;
@@ -38,5 +48,35 @@ public class FoodData : ScriptableObject, CsvParsable
         {
             throw new CsvParsingException($"Exception occured during parsing \nmessage : {e.Message}");
         }
+    }
+
+    /// <summary>
+    /// Get the appropriate sprite for this ingredient when used with a specific tool
+    /// </summary>
+    /// <param name="toolId">Tool ID like "T001", "T002", etc.</param>
+    /// <returns>Sprite variant for the tool type</returns>
+    public Sprite GetImageForTool(string toolId)
+    {
+        if (!toolIdToType.TryGetValue(toolId, out string toolType))
+        {
+            Debug.LogError($"[FoodData] Unknown tool ID: {toolId} for ingredient {ingredientName} ({id})");
+            return image; // Fallback to raw if unknown tool
+        }
+
+        // Get base name without _raw suffix
+        string baseName = image.name.Replace("_raw", "");
+        string variantName = $"{baseName}_{toolType}";
+
+        // Load variant image
+        string variantPath = ResourcePaths.Art.FOOD + variantName;
+        Sprite variant = Resources.Load<Sprite>(variantPath);
+
+        if (variant == null)
+        {
+            Debug.LogError($"[FoodData] Missing variant image: {variantPath} for ingredient {ingredientName} ({id})");
+            return image; // Fallback to raw if variant missing
+        }
+
+        return variant;
     }
 }

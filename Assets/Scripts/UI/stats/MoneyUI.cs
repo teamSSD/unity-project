@@ -17,6 +17,9 @@ public class SmoothMoneyText : MonoBehaviour
     void OnEnable()
     {
         StatsSystem.OnMoneyChanged += SetTargetValue;
+        int currentMoney = StatsSystem.GetMoney();
+        SetTargetValue(currentMoney);
+        currentDisplayValue = currentMoney;
     }
 
     void OnDisable()

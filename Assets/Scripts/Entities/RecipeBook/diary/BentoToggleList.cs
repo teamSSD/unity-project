@@ -9,33 +9,27 @@ public class BentoToggleList : MonoBehaviour, IBentoValidator, IBentoToggle
     public GameObject toggleRoot;
     private int currentIndex = 0;
     private bool ignoreToggleEvent = false;
-    private DiaryModel diaryModel;
+    private bool isReadOnlyMode = false;
 
     public void Initialize(IUnlockedFoodProvider foodProvider)
     {
     }
 
-    public void Initialize(DiaryModel model)
+    public void Initialize()
     {
-        this.diaryModel = model;
-
-        if (diaryModel != null)
-        {
-            diaryModel.OnBentoFoodAdded += OnFoodAdded;
-            diaryModel.OnBentoFoodRemoved += OnFoodRemoved;
-            diaryModel.OnBentoLockedChanged += OnLockStateChanged;
-        }
-
-        Debug.Log("[BentoToggleList] DiaryModel injected and events subscribed");
+        // RecipeDataManager는 Singleton이므로 별도 Initialize 불필요
+        Debug.Log("[BentoToggleList] Initialized");
     }
 
-    private void OnDestroy()
+    private void Update()
     {
-        if (diaryModel != null)
+        // 읽기 전용일 때 상호작용 비활성화 (RecipeBook은 항상 읽기 전용)
+        bool shouldDisable = RecipeBookManager.IsReadOnly;
+
+        if (shouldDisable != isReadOnlyMode)
         {
-            diaryModel.OnBentoFoodAdded -= OnFoodAdded;
-            diaryModel.OnBentoFoodRemoved -= OnFoodRemoved;
-            diaryModel.OnBentoLockedChanged -= OnLockStateChanged;
+            isReadOnlyMode = shouldDisable;
+            SetInteractivity(!isReadOnlyMode);
         }
     }
 
@@ -78,25 +72,60 @@ public class BentoToggleList : MonoBehaviour, IBentoValidator, IBentoToggle
 
     public void RemoveFood(FoodData food)
     {
-        if (diaryModel != null)
+        if (RecipeDataManager.Instance == null) return;
+
+        var menu = RecipeDataManager.Instance.GetMenu(currentIndex);
+        if (menu != null)
         {
-            diaryModel.RemoveBentoFood(food);
+            if (menu.MainMenu == food)
+            {
+                menu.MainMenu = null;
+            }
+            else
+            {
+                menu.RemoveSide(food);
+            }
         }
     }
 
     public void AddFood(FoodData food)
     {
-        if (diaryModel != null)
+        if (RecipeDataManager.Instance == null) return;
+
+        var menu = RecipeDataManager.Instance.GetMenu(currentIndex);
+        if (menu != null && food != null)
         {
-            diaryModel.AddBentoFood(food);
+            if (food.type == FoodType.MAIN)
+            {
+                menu.SetMain(food);
+            }
+            else
+            {
+                menu.AddSide(food);
+            }
         }
     }
 
     private bool AddFood(Toggle toggle, FoodData food)
     {
-        if (diaryModel != null)
+        if (RecipeDataManager.Instance == null) return false;
+
+        var menu = RecipeDataManager.Instance.GetMenu(currentIndex);
+        if (menu == null || food == null) return false;
+
+        if (food.type == FoodType.MAIN)
         {
-            return diaryModel.AddBentoFood(currentIndex, food);
+            menu.SetMain(food);
+            return true;
+        }
+        else if (food.type == FoodType.SIDE)
+        {
+            if (menu.SideMenus.Count < 3)
+            {
+                menu.AddSide(food);
+                return true;
+            }
+            return false; // 사이드 메뉴 최대 3개
         }
         return false;
     }
@@ -132,13 +161,13 @@ public class BentoToggleList : MonoBehaviour, IBentoValidator, IBentoToggle
         FoodData mainMenu = null;
         List<FoodData> sideMenus = new List<FoodData>();
 
-        if (diaryModel != null)
+        if (RecipeDataManager.Instance != null)
         {
-            var bento = diaryModel.GetBentoForDisplay(index);
-            if (bento != null)
+            var menu = RecipeDataManager.Instance.GetMenu(index);
+            if (menu != null)
             {
-                mainMenu = bento.MainMenu;
-                sideMenus = bento.SideMenus;
+                mainMenu = menu.MainMenu;
+                sideMenus = menu.SideMenus;
             }
         }
 
@@ -220,14 +249,14 @@ public class BentoToggleList : MonoBehaviour, IBentoValidator, IBentoToggle
     {
         ignoreToggleEvent = true;
 
-        if (diaryModel == null || toggleRoot == null)
+        if (RecipeDataManager.Instance == null || toggleRoot == null)
         {
             ignoreToggleEvent = false;
             return;
         }
 
-        var bento = diaryModel.GetBentoForDisplay(bentoIndex);
-        if (bento == null || (bento.MainMenu == null && bento.SideMenus.Count == 0))
+        var menu = RecipeDataManager.Instance.GetMenu(bentoIndex);
+        if (menu == null || (menu.MainMenu == null && menu.SideMenus.Count == 0))
         {
             ignoreToggleEvent = false;
             return;
@@ -247,11 +276,11 @@ public class BentoToggleList : MonoBehaviour, IBentoValidator, IBentoToggle
 
             if (toggle == null || slot == null) continue;
 
-            if (bento.MainMenu != null && slot.Id == bento.MainMenu.id)
+            if (menu.MainMenu != null && slot.Id == menu.MainMenu.id)
             {
                 toggle.isOn = false;
             }
-            else if (bento.SideMenus.Any(f => f.id == slot.Id))
+            else if (menu.SideMenus.Any(f => f.id == slot.Id))
             {
                 toggle.isOn = false;
             }
@@ -262,9 +291,9 @@ public class BentoToggleList : MonoBehaviour, IBentoValidator, IBentoToggle
 
     public bool HasAnySelection()
     {
-        if (diaryModel != null)
+        if (RecipeDataManager.Instance != null)
         {
-            return diaryModel.HasAnyBentoSelection();
+            return RecipeDataManager.Instance.HasAnySelection();
         }
         return false;
     }
@@ -302,19 +331,22 @@ public class BentoToggleList : MonoBehaviour, IBentoValidator, IBentoToggle
 
     public override string ToString()
     {
-        if (diaryModel != null)
+        if (RecipeDataManager.Instance != null)
         {
             var lines = new List<string>();
-            for (int i = 0; i < diaryModel.GetBentoCount(); i++)
+            for (int i = 0; i < 3; i++) // 3 menus: breakfast, lunch, dinner
             {
-                var bento = diaryModel.GetBentoForDisplay(i);
-                string mainName = bento.MainMenu?.ingredientName ?? "None";
-                string sideNames = string.Join(", ", bento.SideMenus.Select(f => f.ingredientName));
-                lines.Add($"{bento.Name}: Main={mainName}, Sides=[{sideNames}]");
+                var menu = RecipeDataManager.Instance.GetMenu(i);
+                if (menu != null)
+                {
+                    string mainName = menu.MainMenu?.ingredientName ?? "None";
+                    string sideNames = string.Join(", ", menu.SideMenus.Select(f => f.ingredientName));
+                    lines.Add($"{menu.Name}: Main={mainName}, Sides=[{sideNames}]");
+                }
             }
             return string.Join("\n", lines);
         }
 
-        return "No DiaryModel available";
+        return "No RecipeDataManager available";
     }
 }

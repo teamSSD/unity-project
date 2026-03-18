@@ -1,47 +1,18 @@
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
-public class Refrigerator : MonoBehaviour
+/// <summary>
+/// Refrigerator storage with grid layout (multiple rows)
+/// Items are arranged in a grid: 3 items per row, with vertical spacing
+/// </summary>
+public class Refrigerator : BaseStorage
 {
-    [SerializeField] float xOffset = 0f;
-    [SerializeField] float yOffset = 0f;
-    [SerializeField] float xInterval = 1f;
-    [SerializeField] float yInterval = 1f;
-    [SerializeField] int linePerEntity = 3;
-    private List<FoodModel> foodModels = new List<FoodModel>();
+    [SerializeField] private float xOffset = 0f;
+    [SerializeField] private float yOffset = 0f;
+    [SerializeField] private float xInterval = 1f;
+    [SerializeField] private float yInterval = 1f;
+    [SerializeField] private int linePerEntity = 3;
 
-    public void AddIngredients(FoodModel ingredient)
-    {
-        if (ingredient == null || foodModels.Contains(ingredient)) return;
-        
-        ingredient.SetDefaultPosition(transform.position + CalculatePositionForIndex(foodModels.Count));
-        foodModels.Add(ingredient);
-        ingredient.onDestroy += HandleFoodDestroyed;
-    }
-
-    public void AddIngredients(List<FoodModel> ingredients)
-    {
-        ingredients.ForEach(ingredient => AddIngredients(ingredients));
-    }
-
-    public void HandleFoodDestroyed(FoodModel destroyedFood)
-    {
-        foodModels.Remove(destroyedFood);
-        destroyedFood.onDestroy -= HandleFoodDestroyed;
-        RefreshPosition();
-    }
-
-    public void RefreshPosition()
-    {
-        for (int i = 0; i < foodModels.Count; i++)
-        {
-            foodModels[i].SetDefaultPosition(CalculatePositionForIndex(i));
-        }
-    }
-    
-    private Vector3 CalculatePositionForIndex(int index)
+    protected override Vector3 CalculatePositionForIndex(int index)
     {
         return new Vector3(
             xOffset + (index % linePerEntity) * xInterval,

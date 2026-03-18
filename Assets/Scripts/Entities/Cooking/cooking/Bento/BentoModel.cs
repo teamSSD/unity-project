@@ -10,13 +10,24 @@ using UnityEngine;
 public class BentoModel : MonoBehaviour
 {
     public BentoBehavior BehaviorInstance { get; private set; }
+
+    [Header("Bento Settings")]
+    [SerializeField] private int maxFoodSlots = 4;
+    [SerializeField] private List<Vector2> foodPositions = new List<Vector2>()
+    {
+        new Vector2(-0.4f, 0f),   // Main dish position
+        new Vector2(0.6f, 0.4f),  // Side 1
+        new Vector2(0.6f, 0f),    // Side 2
+        new Vector2(0.6f, -0.4f)  // Side 3
+    };
+
+    [Header("Audio")]
     [SerializeField] private AudioClip bentoPutSfx;
+
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
-
-    private List<Vector2> locateList = new List<Vector2>() { new Vector2(-0.4f, 0f), new Vector2(0.6f, 0.4f) , new Vector2(0.6f, 0f) , new Vector2(0.6f, -0.4f) };
     private List<FoodSchema> foodList = new List<FoodSchema>();
-    BentoPositionModel bentoPositionModel;
+    private BentoPositionModel bentoPositionModel;
 
     void Awake()
     {
@@ -37,7 +48,7 @@ public class BentoModel : MonoBehaviour
     }
     public bool AddIngredient(FoodSchema food)
     {
-        if (foodList.Count < 4)
+        if (foodList.Count < maxFoodSlots)
         {
             if (foodList.Count == 0 && !(food.foodData.type == FoodType.MAIN))
             {
@@ -49,7 +60,15 @@ public class BentoModel : MonoBehaviour
                 Debug.Log("해당 음식은 사이드 음식이 아닙니다.");
                 return false;
             }
-            BehaviorInstance.AddTexture(food.foodData.image, locateList[foodList.Count]);
+
+            // Use position from list if available
+            Vector2 position = foodList.Count < foodPositions.Count
+                ? foodPositions[foodList.Count]
+                : Vector2.zero;
+
+            // Bento uses bowl variant for display
+            Sprite variantSprite = food.foodData.GetImageForTool("T003"); // T003 = bowl
+            BehaviorInstance.AddTexture(variantSprite, position);
             foodList.Add(food);
             return true;
         }

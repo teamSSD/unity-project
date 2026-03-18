@@ -8,6 +8,20 @@ using static ResourcePaths;
 public class RecipeBookManager : MonoBehaviour
 {
     private static RecipeBookManager instance;
+
+    /// <summary>
+    /// RecipeBookManager 인스턴스가 존재하는지 확인 (에러 로그 없음)
+    /// </summary>
+    public static bool HasInstance
+    {
+        get
+        {
+            if (instance != null) return true;
+            instance = FindObjectOfType<RecipeBookManager>();
+            return instance != null;
+        }
+    }
+
     public static RecipeBookManager Instance
     {
         get
@@ -29,6 +43,9 @@ public class RecipeBookManager : MonoBehaviour
     {
         get { return isRecipeBookActive; }
     }
+
+    // RecipeBook은 이제 항상 읽기 전용 (View Mode만 지원)
+    public static bool IsReadOnly => true;
 
     [Header("Recipe Book Root")]
     [SerializeField] public GameObject bookRoot;
@@ -63,8 +80,30 @@ public class RecipeBookManager : MonoBehaviour
         }
 
         instance = this;
-        isRecipeBookActive = false;
 
+        // DontDestroyOnLoad는 루트 GameObject에만 작동
+        if (transform.parent != null)
+        {
+            Debug.LogWarning($"[RecipeBookManager] GameObject is not root, converting to independent Canvas");
+
+            // Canvas 컴포넌트가 없으면 추가 (UI 렌더링을 위해 필수)
+            if (GetComponent<Canvas>() == null)
+            {
+                var canvas = gameObject.AddComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                canvas.sortingOrder = 100; // 다른 UI 위에 표시
+
+                gameObject.AddComponent<UnityEngine.UI.CanvasScaler>();
+                gameObject.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+
+                Debug.Log("[RecipeBookManager] Added Canvas components");
+            }
+
+            transform.SetParent(null);
+        }
+
+        DontDestroyOnLoad(gameObject);
+        isRecipeBookActive = false;
         bookRoot.SetActive(false);
     }
     public void OpenRecipeBook(bool active)
@@ -132,5 +171,23 @@ public class RecipeBookManager : MonoBehaviour
         {
             MenuCard.Instance.CloseMenuCard();
         }
+    }
+
+    /// <summary>
+    /// 레시피북 열기 (읽기 전용)
+    /// </summary>
+    public void Open()
+    {
+        OpenRecipeBook(true); // Close button enabled
+        Debug.Log("[RecipeBookManager] Opened (Read-only)");
+    }
+
+    /// <summary>
+    /// 레시피북 닫기
+    /// </summary>
+    public void Close()
+    {
+        CloseRecipeBook();
+        Debug.Log("[RecipeBookManager] Closed");
     }
 }

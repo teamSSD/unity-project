@@ -6,12 +6,11 @@ public class ProgressSystem : MonoBehaviour
     public static ProgressSystem instance {get; private set;}
     public PhaseData phaseData{get; private set;}
 
-    private readonly string path = "progress";
+    private readonly string path = "saves/progress";
 
     public bool IsLoadable()
     {
-        string filePath = Path.GetDirectoryName(path);
-        return DataSaveUtil.HasFile<PhaseData>(filePath);
+        return DataSaveUtil.HasFile<PhaseData>(path);
     }
 
     private void Awake()
@@ -32,6 +31,17 @@ public class ProgressSystem : MonoBehaviour
             phaseData = new PhaseData();
         }
         DataSaveUtil.LoadData(phaseData, path);
+
+        // UnlockedFoodManager 초기화 (해금 데이터 로드)
+        if (UnlockedFoodManager.Instance != null)
+        {
+            UnlockedFoodManager.Instance.LoadUnlocksFromProgress();
+        }
+        else
+        {
+            Debug.LogWarning("[ProgressSystem] UnlockedFoodManager not found during initialization");
+        }
+
         // 여기서 딱 아침으로 초기화하면 될듯
     }
 
@@ -53,7 +63,11 @@ public class ProgressSystem : MonoBehaviour
         phaseData.Day++;
         phaseData.Phase = PhaseType.Preparation;
         OnPhaseChanged?.Invoke(phaseData.Phase);
+
+        // 하루 단위로 저장
+        flush();
         StatsSystem.flush();
+        InventoryManager.Instance?.flush();
     }
 
     public void Die()

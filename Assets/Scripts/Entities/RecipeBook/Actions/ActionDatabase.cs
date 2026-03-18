@@ -10,32 +10,7 @@ public static class ActionDatabase
     private static readonly Dictionary<ActionType, ActionInfo> _actions = new()
     {
         // ========================================
-        // 영업 준비 (Preparation Phase)
-        // ========================================
-        {
-            ActionType.MenuSelect,
-            new ActionInfo(
-                displayName: "메뉴 선정하기",
-                description: "",
-                initialState: ActionState.Disavailable,
-                targetSceneName: "",
-                commandId: "SELECT_MENU"
-            )
-        },
-        {
-            ActionType.PrepareIngredients,
-            new ActionInfo(
-                displayName: "재료 수급하기",
-                description: "",
-                initialState: ActionState.Available,
-                targetSceneName: "Scene_Delivery",
-                commandId: ""
-            )
-        },
-
-        // ========================================
-        // 아침/점심/저녁/밤 (Morning/Afternoon/Evening/Night)
-        // 모든 시간대에서 동일하게 사용
+        // 액션 선택 UI에서 사용 (아침/점심/저녁)
         // ========================================
         {
             ActionType.Work,
@@ -43,7 +18,7 @@ public static class ActionDatabase
                 displayName: "영업",
                 description: "가게를 엽니다",
                 initialState: ActionState.Available,
-                targetSceneName: "Scene_Shop",
+                targetSceneName: "Cooking",
                 commandId: ""
             )
         },
@@ -63,7 +38,7 @@ public static class ActionDatabase
                 displayName: "상가 이동",
                 description: "상가로 이동합니다",
                 initialState: ActionState.Available,
-                targetSceneName: "Scene_Market",
+                targetSceneName: "Scene_Shop",
                 commandId: ""
             )
         }

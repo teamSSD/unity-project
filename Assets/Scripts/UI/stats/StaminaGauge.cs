@@ -19,6 +19,7 @@ public class LinearGauge : MonoBehaviour
     void OnEnable()
     {
         StatsSystem.OnStaminaChanged += UpdateGauge;
+        UpdateGauge(StatsSystem.GetStamina());
     }
 
     void OnDisable()
