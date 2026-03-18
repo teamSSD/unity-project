@@ -221,18 +221,68 @@ public static class MenuValidator
     }
 
     /// <summary>
-    /// Calculate money reward based on accuracy
+    /// Calculate money reward based on actual food prices and order matching
+    /// 메뉴당 배율: 주문 포함 100%, 미포함 70%
+    /// 기본 배율: 100% + (일치 사이드 개수 × 10%)
+    /// 추가 배율: 모두일치 130%, 메인일치 100%, 메인불일치 70%
     /// </summary>
-    public static int CalculateReward(MenuSchema order, float accuracyScore)
+    public static int CalculateReward(MenuSchema order, FoodSchema providedMain, List<FoodSchema> providedSides)
     {
-        if (order == null) return 0;
+        if (order == null || providedMain == null) return 0;
 
-        // Base price from order (could be stored in MenuSchema or calculated from dishes)
-        int baseReward = 1000; // TODO: Calculate from actual dish prices
+        // 1. 각 음식별 가격 계산
+        float totalPrice = 0f;
 
-        // Apply accuracy multiplier
-        float multiplier = Mathf.Lerp(0.5f, 1.5f, accuracyScore);
+        // 메인 메뉴 가격
+        bool mainMatches = order.mainMenu.id == providedMain.foodData.id;
+        float mainPrice = providedMain.Price * (mainMatches ? 1.0f : 0.7f);
+        totalPrice += mainPrice;
 
-        return Mathf.RoundToInt(baseReward * multiplier);
+        // 사이드 메뉴 가격 및 일치 개수 계산
+        int matchingSidesCount = 0;
+        var expectedSideIds = new HashSet<string>(order.sideMenus.Select(s => s.id));
+
+        if (providedSides != null)
+        {
+            foreach (var side in providedSides)
+            {
+                if (side == null || side.foodData == null) continue;
+
+                bool sideMatches = expectedSideIds.Contains(side.foodData.id);
+                if (sideMatches) matchingSidesCount++;
+
+                float sidePrice = side.Price * (sideMatches ? 1.0f : 0.7f);
+                totalPrice += sidePrice;
+            }
+        }
+
+        // 2. 기본 배율 적용 (100% + 일치 사이드 개수 × 10%)
+        float baseMultiplier = 1.0f + (matchingSidesCount * 0.1f);
+        totalPrice *= baseMultiplier;
+
+        // 3. 추가 배율 적용
+        int expectedSideCount = order.sideMenus?.Count ?? 0;
+        int providedSideCount = providedSides?.Count ?? 0;
+        bool allMatch = mainMatches &&
+                        matchingSidesCount == expectedSideCount &&
+                        providedSideCount == expectedSideCount;
+
+        float finalMultiplier;
+        if (allMatch)
+        {
+            finalMultiplier = 1.3f; // 모두 일치: 30% 증가
+        }
+        else if (mainMatches)
+        {
+            finalMultiplier = 1.0f; // 메인만 일치: 그대로
+        }
+        else
+        {
+            finalMultiplier = 0.7f; // 메인 불일치: 30% 감소
+        }
+
+        totalPrice *= finalMultiplier;
+
+        return Mathf.RoundToInt(totalPrice);
     }
 }

@@ -28,6 +28,14 @@ public class CookingToolSchema
     public bool IsAddable(FoodSchema food)
     {
         if (locked || food == null) return false;
+
+        // Check if incoming food supports this cooking tool
+        if (!food.foodData.availableTools.Contains(cookingToolData.id))
+        {
+            Debug.LogWarning($"[CookingToolSchema] Cannot add {food.foodData.ingredientName} to {cookingToolData.cookerName}: not in availableTools");
+            return false;
+        }
+
         if (result == null && (Ingredients.Count == maxIngredientSize || Ingredients.Any(ingredient => ingredient.IsSameFood(food))))
         {
             return false;
@@ -37,7 +45,7 @@ public class CookingToolSchema
             Debug.Log(result.foodData.ingredientName + "\n" + String.Join(", ", result.foodData.availableTools) + "\n" + cookingToolData.id);
             return false;
         }
-        
+
         return true;
     }
 

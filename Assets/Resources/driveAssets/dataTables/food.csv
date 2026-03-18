@@ -34,33 +34,32 @@ I031,인공 연어,균일한 주황빛 색조의 단면. 인공 섬유질이 가
 I032,해초 육수,,item_seaweedBroth_raw,T002,PROCESSING
 I033,새벽국 베이스,,item_dawnSoupBase_raw,T002,PROCESSING
 I034,새벽국,,item_dawnSoup_raw,,MAIN
-I035,삶은 밀면,,item_boiledWheatNoodles_raw,T001,PROCESSING
-I036,다진 절연 버섯,,item_choppedInsulatingMushroom_raw,T003,PROCESSING
-I037,다크소이,,item_darkSoy_raw,T001,PROCESSING
+I035,삶은 밀면,,item_boiledWheatNoodles_raw,T002/T001,PROCESSING
+I036,다진 절연 버섯,,item_choppedInsulatingMushroom_raw,T004/T003,PROCESSING
+I037,다크소이,,item_darkSoy_raw,T003/T001,PROCESSING
 I038,새우기름 베이스,,item_shrimpOilBase_raw,T001,PROCESSING
 I039,구룡면,,item_guryongNoodles_raw,,MAIN
-I040,깍둑 썬 인공고기,,item_dicedArtificialMeat_raw,T001,PROCESSING
-I041,구운 인공고기,,item_grilledArtificialMeat_raw,T001,PROCESSING
+I040,깍둑 썬 인공고기,,item_dicedArtificialMeat_raw,T004/T001,PROCESSING
 I042,구운 스틸루트,,item_grilledSteelRoot_raw,T001,PROCESSING
-I043,장소스,,item_jangSauce_raw,T001,PROCESSING
+I043,장소스,,item_jangSauce_raw,T003/T001,PROCESSING
 I044,기계장 고기정식,,item_machineRoomMeatSet_raw,,MAIN
-I045,루미 젤 베이스,,item_lumiGelBase_raw,T003,PROCESSING
+I045,루미 젤 베이스,,item_lumiGelBase_raw,T002/T003,PROCESSING
 I046,루미 젤리,,item_lumiJelly_raw,,SIDE
 I047,인공고기 스테이크,,item_artificialMeatSteak_raw,T005,PROCESSING
-I048,캐러멜 토핑,,item_caramelTopping_raw,T005,PROCESSING
+I048,캐러멜 토핑,,item_caramelTopping_raw,T001/T005,PROCESSING
 I049,스트리트 스테이크 49,,item_streetSteak49_raw,,MAIN
-I050,흑미밥,,item_blackRiceBowl_raw,T003,PROCESSING
+I050,흑미밥,,item_blackRiceBowl_raw,T002/T003,PROCESSING
 I051,삼각형 밥,,item_triangleRice_raw,T003,PROCESSING
-I052,간장 코팅 밥,,item_soyCoatedRice_raw,T001,PROCESSING
+I052,간장 코팅 밥,,item_soyCoatedRice_raw,T003/T005,PROCESSING
 I053,폐건물 삼각밥,,item_abandonedBuildingRiceBall_raw,,MAIN
-I054,구운바람콩,,item_grilledWindBean_raw,T003,PROCESSING
+I054,구운바람콩,,item_grilledWindBean_raw,T001/T003,PROCESSING
 I055,샐러드 베이스,,item_saladBase_raw,T003,PROCESSING
 I056,네온 샐러드,,item_neonSalad_raw,,SIDE
-I057,꼬치 조합,,item_skewerSet_raw,T001,PROCESSING
+I057,꼬치 조합,,item_skewerSet_raw,T003/T001,PROCESSING
 I058,전력실 꼬치,,item_powerRoomSkewer_raw,,SIDE
 I059,오믈렛 베이스,,item_omeletteBase_raw,T001,PROCESSING
 I060,옥상 오믈렛,,item_rooftopOmelette_raw,,MAIN
-I061,양념 연어,,item_seasonedSalmon_raw,T001,PROCESSING
+I061,양념 연어,,item_seasonedSalmon_raw,T003/T001,PROCESSING
 I062,환기구 연어구이,,item_ventGrilledSalmon_raw,,SIDE
 I065,달의 뿌리,은빛 얼룩이 스며든 길고 단단한 뿌리. 빛을 비추면 표면에서 작은 달빛 입자가 천천히 흘러내린다.,item_moonRoot_raw,T005,INGREDIENT
 I066,양파,투명한 막이 겹겹이 쌓인 둥근 구근. 칼끝이 닿으면 매운 향이 즉시 피어올라 눈물이 맺히게 한다.,item_onion_raw,T005,INGREDIENT

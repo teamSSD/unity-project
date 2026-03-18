@@ -225,6 +225,8 @@ public class CookingToolModel : MonoBehaviour
         SchemaInstance.Cook(foodData, recipeData, score);
 
         BehaviorInstance.ResetTexture();
-        BehaviorInstance.AddTexture(foodData.image);
+        string toolId = SchemaInstance.cookingToolData.id;
+        Sprite variantSprite = foodData.GetImageForTool(toolId);
+        BehaviorInstance.AddTexture(variantSprite);
     }
 }

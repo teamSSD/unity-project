@@ -17,7 +17,7 @@ public class CustomerLifecycle
     private OrderTicketModel orderTicket;
     private int waitingPositionIndex = -1;
 
-    public event Action<MenuValidator.ValidationResult> OnCustomerServed;
+    public event Action<MenuValidator.ValidationResult, int> OnCustomerServed; // ValidationResult + reward
     public event Action OnCustomerLeft;
 
     public CustomerLifecycle(
@@ -95,8 +95,8 @@ public class CustomerLifecycle
                   $"Score: {validation.AccuracyScore:F2} ({MenuValidator.GetGrade(validation.AccuracyScore)}) - " +
                   $"{validation.FeedbackMessage}");
 
-        // Calculate and award money
-        int reward = MenuValidator.CalculateReward(menuSchema, validation.AccuracyScore);
+        // Calculate and award money (using actual food prices)
+        int reward = MenuValidator.CalculateReward(menuSchema, mainMenu, sideMenus);
         StatsSystem.AddMoney(reward);
 
         Debug.Log($"[CustomerLifecycle] Reward: {reward}원 (Score: {validation.AccuracyScore:F2})");
@@ -132,8 +132,8 @@ public class CustomerLifecycle
             isExit: false
         );
 
-        // Notify completion with validation result
-        OnCustomerServed?.Invoke(validation);
+        // Notify completion with validation result and reward
+        OnCustomerServed?.Invoke(validation, reward);
     }
 
     /// <summary>

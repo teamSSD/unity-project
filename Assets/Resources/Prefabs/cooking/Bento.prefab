@@ -156,7 +156,7 @@ MonoBehaviour:
   rootGO: {fileID: 0}
   start: {x: 0, y: 0}
   step: {x: 0, y: 0}
-  iconScale: 0.3
+  iconScale: 1
   baseSortingOrder: 1
   inheritSortingFromThis: 1
   sortingReference: {fileID: 0}

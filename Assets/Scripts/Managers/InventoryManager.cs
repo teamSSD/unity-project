@@ -55,14 +55,11 @@ public class InventoryManager : MonoBehaviour, LoadInventoryUsecase
     private void InitializeDefaultInventory()
     {
         string[] startingIngredients = {
-            "I070", // 절인 해초 (새벽국)
-            "I012", // 절연 버섯 (새벽국)
-            "I069", // 물 (새벽국)
-            "I013", // 새벽풀 (새벽국)
-            "I003", // 두부 (새벽국)
-            "I010", // 루미 계란 (루미젤리)
-            "I020", // 조명 시럽 (루미젤리)
-            "I008"  // 레몬 (루미젤리)
+            "I010", // 루미 계란 (옥상 오믈렛, 루미 젤리)
+            "I026", // 루미잎 (옥상 오믈렛)
+            "I027", // 빛 토마토 (옥상 오믈렛)
+            "I020", // 조명 시럽 (루미 젤리)
+            "I008"  // 레몬 (루미 젤리)
         };
 
         foreach (var ingredientId in startingIngredients)
@@ -74,7 +71,7 @@ public class InventoryManager : MonoBehaviour, LoadInventoryUsecase
             }
         }
         flush();
-        Debug.Log($"[InventoryManager] Initialized default inventory with {inventory.Count} ingredients (새벽국 5개 + 루미젤리 5개 재료)");
+        Debug.Log($"[InventoryManager] Initialized default inventory with {inventory.Count} ingredients (옥상 오믈렛 + 루미 젤리 재료)");
     }
 
     public void flush()

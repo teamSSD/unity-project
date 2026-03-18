@@ -130,7 +130,7 @@ public class CustomerManager : MonoBehaviour
         );
 
         // Setup events
-        lifecycle.OnCustomerServed += (validation) => OnCustomerServed(lifecycle, validation);
+        lifecycle.OnCustomerServed += (validation, reward) => OnCustomerServed(lifecycle, validation, reward);
         lifecycle.OnCustomerLeft += () => OnCustomerLeft(lifecycle);
 
         // Start customer order
@@ -149,7 +149,7 @@ public class CustomerManager : MonoBehaviour
     /// <summary>
     /// Called when customer is served with food
     /// </summary>
-    private void OnCustomerServed(CustomerLifecycle lifecycle, MenuValidator.ValidationResult validation)
+    private void OnCustomerServed(CustomerLifecycle lifecycle, MenuValidator.ValidationResult validation, int reward)
     {
         // Track statistics
         totalOrders++;
@@ -160,7 +160,6 @@ public class CustomerManager : MonoBehaviour
             perfectOrders++;
         }
 
-        int reward = MenuValidator.CalculateReward(null, validation.AccuracyScore);
         totalEarnings += reward;
 
         Debug.Log($"[CustomerManager] Order served - Grade: {MenuValidator.GetGrade(validation.AccuracyScore)} " +

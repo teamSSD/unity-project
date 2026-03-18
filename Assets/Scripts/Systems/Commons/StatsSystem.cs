@@ -23,7 +23,7 @@ public class StatsSystem : MonoBehaviour
         if (initialized) return;
         initialized = true;
 
-        DataSaveUtil.LoadData(basicStats, "stats/basic");
+        DataSaveUtil.LoadData(basicStats, Application.persistentDataPath + "/saves/stats");
 
         isTimePaused = false;
         breakAction = null;
@@ -147,6 +147,6 @@ public class StatsSystem : MonoBehaviour
 
     public static void flush()
     {
-        DataSaveUtil.SaveData(basicStats, "stats/basic");
+        DataSaveUtil.SaveData(basicStats, Application.persistentDataPath + "/saves/stats");
     }
 }

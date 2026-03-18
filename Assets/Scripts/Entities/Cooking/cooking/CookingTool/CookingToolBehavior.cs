@@ -1,11 +1,9 @@
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 
 [RequireComponent(typeof(ClickStateUtil))]
 [RequireComponent(typeof(HoverStateUtil))]
 [RequireComponent(typeof(SpriteStackRenderer))]
-[RequireComponent(typeof(Animator))]
 [DisallowMultipleComponent]
 public class CookingToolBehavior : MonoBehaviour
 {
@@ -14,7 +12,6 @@ public class CookingToolBehavior : MonoBehaviour
     public bool isCookable = false;
     private ClickStateUtil clickStateUtil;
     private HoverStateUtil hoverStateUtil;
-    private Animator animator;
     private SpriteStackRenderer spriteStackRenderer;
     private Camera mainCamera;
     public bool locked = false;
@@ -23,20 +20,12 @@ public class CookingToolBehavior : MonoBehaviour
         clickStateUtil = GetComponent<ClickStateUtil>();
         hoverStateUtil = GetComponent<HoverStateUtil>();
         spriteStackRenderer = GetComponent<SpriteStackRenderer>();
-        animator = GetComponent<Animator>();
         mainCamera = Camera.main;
     }
 
     void Update()
     {
-        ProcessAnimation(hoverStateUtil.IsHovering());
         ProcessMovement(clickStateUtil.getState());
-    }
-
-    private void ProcessAnimation(bool isHovering)
-    {
-        if (isHovering && !Input.GetMouseButton(0) && isCookable) animator.SetBool("Hovering", true);
-        else animator.SetBool("Hovering", false);
     }
 
     private void ProcessMovement(ClickState clickState)

@@ -6,10 +6,9 @@ public class ProgressSystem : MonoBehaviour
     public static ProgressSystem instance {get; private set;}
     public PhaseData phaseData{get; private set;}
 
-    private readonly string path = "saves/progress";
-
     public bool IsLoadable()
     {
+        string path = Application.persistentDataPath + "/saves/progress";
         return DataSaveUtil.HasFile<PhaseData>(path);
     }
 
@@ -30,6 +29,7 @@ public class ProgressSystem : MonoBehaviour
         {
             phaseData = new PhaseData();
         }
+        string path = Application.persistentDataPath + "/saves/progress";
         DataSaveUtil.LoadData(phaseData, path);
 
         // UnlockedFoodManager 초기화 (해금 데이터 로드)
@@ -78,6 +78,7 @@ public class ProgressSystem : MonoBehaviour
     
     public void flush()
     {
+        string path = Application.persistentDataPath + "/saves/progress";
         DataSaveUtil.SaveData(phaseData, path);
     }
 }
