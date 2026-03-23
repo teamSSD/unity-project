@@ -264,6 +264,7 @@ MonoBehaviour:
   cropData: {fileID: 0}
   actionPrompt: {fileID: 6727544678558968937}
   cropSpriteRenderer: {fileID: 8902883799851120429}
+  uiOffsetY: 0.5
   growthGauge: {fileID: 5187733872457309906}
   gaugeCanvas: {fileID: 6731764904303601443}
   farmIndex: 0

@@ -13,6 +13,8 @@ public class Farm : MonoBehaviour
     [Tooltip("작물 이미지를 띄워줄 SpriteRenderer를 연결")]
     public SpriteRenderer cropSpriteRenderer;
 
+    public float uiOffsetY = 0.5f;
+
     [Header("성장 게이지 UI")]
     public GaugeUI growthGauge;
     public GameObject gaugeCanvas;
@@ -127,6 +129,8 @@ public class Farm : MonoBehaviour
             else
                 growthGauge.SetProgress(passed, currentCrop.growPhaseCount);
         }
+
+        AdjustUIPosition();
     }
 
     private void UpdatePrompt()
@@ -142,6 +146,19 @@ public class Farm : MonoBehaviour
             actionPrompt.text = "Press [Space] to Plant";
         else
             actionPrompt.text = "Growing...";
+    }
+
+    private void AdjustUIPosition()
+    {
+        if (cropSpriteRenderer.sprite == null || gaugeCanvas == null) return;
+
+        Bounds bounds = cropSpriteRenderer.bounds;
+
+        float topY = bounds.max.y;
+
+        Vector3 newPos = gaugeCanvas.transform.position;
+        newPos.y = topY + uiOffsetY;
+        gaugeCanvas.transform.position = newPos;
     }
 
     public void NextPhase()
