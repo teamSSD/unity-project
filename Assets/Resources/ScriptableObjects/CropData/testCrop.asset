@@ -16,3 +16,7 @@ MonoBehaviour:
   growPhaseCount: 2
   harvestCount: 2
   seedReturnCount: 3
+  growthSprites:
+  - {fileID: 21300000, guid: 0a6ffb835683c466991174b702e072a2, type: 3}
+  - {fileID: 21300000, guid: 199f8d6e1792b472badf39f5fb340c12, type: 3}
+  - {fileID: 21300000, guid: b36c20e9887eb49caa3bd27faabdd2e8, type: 3}

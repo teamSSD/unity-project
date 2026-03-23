@@ -47,4 +47,15 @@ public class FarmTile
     {
         return crop == null;
     }
+
+    public CropData GetCurrentCrop()
+    {
+        return crop;
+    }
+
+    public int GetPassedPhases()
+    {
+        if (crop == null) return 0;
+        return phaseProvider.CurrentPhaseIndex - plantedPhase;
+    }
 }

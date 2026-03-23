@@ -1,10 +1,18 @@
 using TMPro;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteStackRenderer))]
+[RequireComponent(typeof(Collider2D))]
 public class Farm : MonoBehaviour
 {
+    [Header("설정")]
     public CropData cropData;
     public TextMeshProUGUI actionPrompt;
+
+    [Header("시각적 요소")]
+    [Tooltip("작물 이미지를 띄워줄 SpriteRenderer를 연결")]
+    public SpriteRenderer cropSpriteRenderer;
+    
     public int farmIndex;
     private FarmTile tile;
     private TimePhaseProvider phaseProvider;
@@ -15,10 +23,28 @@ public class Farm : MonoBehaviour
     private void Start()
     {
         phaseProvider = TempTimePhaseProvider.Instance;
-        tile = new FarmTile(phaseProvider);
+        if (phaseProvider == null)
+        {
+            Debug.LogError("No TempTimePhaseProvider in this Scene");
+        }
+        else
+        {
+            tile = new FarmTile(phaseProvider);
 
-        UpdatePrompt();
+            TempTimePhaseProvider.Instance.OnPhaseChanged += OnTimePassed;
+        }
+
+        OnTimePassed();
     }
+
+    private void OnDestroy()
+    {
+        if (TempTimePhaseProvider.Instance != null)
+        {
+            TempTimePhaseProvider.Instance.OnPhaseChanged -= OnTimePassed;
+        }
+    }
+
     void Update()
     {
         if (playerIn && Input.GetKeyDown(KeyCode.Space))
@@ -46,7 +72,7 @@ public class Farm : MonoBehaviour
                 Debug.Log("Crop is still growing...");
             }
 
-            UpdatePrompt();
+            OnTimePassed();
         }
     }
 
@@ -68,6 +94,27 @@ public class Farm : MonoBehaviour
         }
     }
 
+    public void UpdateVisuals()
+    {
+        if (cropSpriteRenderer == null) return;
+
+        CropData currentCrop = tile.GetCurrentCrop();
+
+        if (currentCrop == null || currentCrop.growthSprites == null || currentCrop.growthSprites.Length == 0)
+        {
+            cropSpriteRenderer.sprite = null;
+            return;
+        }
+
+        int passed = tile.GetPassedPhases();
+
+        int maxIndex = currentCrop.growthSprites.Length - 1;
+        int spriteIndex = Mathf.Clamp(passed, 0, maxIndex);
+        Debug.Log($"[이미지 갱신] 경과 페이즈: {passed} => 표시할 이미지 번호: [{spriteIndex}]");
+
+        cropSpriteRenderer.sprite = currentCrop.growthSprites[spriteIndex];
+    }
+
     private void UpdatePrompt()
     {
         if (!playerIn || actionPrompt == null) return;
@@ -87,5 +134,11 @@ public class Farm : MonoBehaviour
     {
         phaseProvider.NextPhase();
         Debug.Log("Next Phase");
+    }
+
+    private void OnTimePassed()
+    {
+        UpdateVisuals();
+        UpdatePrompt();
     }
 }
