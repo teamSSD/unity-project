@@ -12,7 +12,11 @@ public class Farm : MonoBehaviour
     [Header("시각적 요소")]
     [Tooltip("작물 이미지를 띄워줄 SpriteRenderer를 연결")]
     public SpriteRenderer cropSpriteRenderer;
-    
+
+    [Header("성장 게이지 UI")]
+    public GaugeUI growthGauge;
+    public GameObject gaugeCanvas;
+
     public int farmIndex;
     private FarmTile tile;
     private TimePhaseProvider phaseProvider;
@@ -103,16 +107,26 @@ public class Farm : MonoBehaviour
         if (currentCrop == null || currentCrop.growthSprites == null || currentCrop.growthSprites.Length == 0)
         {
             cropSpriteRenderer.sprite = null;
+            if (gaugeCanvas != null) gaugeCanvas.SetActive(false);
+
             return;
         }
 
+        if (gaugeCanvas != null) gaugeCanvas.SetActive(true);
+
         int passed = tile.GetPassedPhases();
+        int maxSpriteIndex = currentCrop.growthSprites.Length - 1;
+        int spriteIndex = Mathf.Clamp(passed, 0, maxSpriteIndex);
 
-        int maxIndex = currentCrop.growthSprites.Length - 1;
-        int spriteIndex = Mathf.Clamp(passed, 0, maxIndex);
-        Debug.Log($"[이미지 갱신] 경과 페이즈: {passed} => 표시할 이미지 번호: [{spriteIndex}]");
+        if (cropSpriteRenderer != null) cropSpriteRenderer.sprite = currentCrop.growthSprites[spriteIndex];
 
-        cropSpriteRenderer.sprite = currentCrop.growthSprites[spriteIndex];
+        if (growthGauge != null)
+        {
+            if (passed == 0)
+                growthGauge.SnapTo(0, currentCrop.growPhaseCount);
+            else
+                growthGauge.SetProgress(passed, currentCrop.growPhaseCount);
+        }
     }
 
     private void UpdatePrompt()

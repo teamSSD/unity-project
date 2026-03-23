@@ -25,4 +25,19 @@ public class GaugeUI : MonoBehaviour
         if (progress > 1) progress = 1;
         targetFillAmount = Mathf.Clamp01(progress);
     }
+
+    public void SnapTo(float current, float max)
+    {
+        if (max == 0) return;
+        float progress = current / max;
+        if (progress < 0) progress = 0;
+        if (progress > 1) progress = 1;
+
+        targetFillAmount = Mathf.Clamp01(progress);
+
+        if (fillImage != null)
+        {
+            fillImage.fillAmount = targetFillAmount;
+        }
+    }
 }
