@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: -4821110391656568136}
   - component: {fileID: -2251638618292681068}
   - component: {fileID: 5874270422761378925}
+  - component: {fileID: -7676850369306672212}
   m_Layer: 6
   m_Name: Receipt
   m_TagString: Untagged
@@ -276,6 +277,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   defaultPosition: {x: 0, y: 0, z: 0}
+--- !u!114 &-7676850369306672212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7370412938016546202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe6d87a0b6fa14fe5b81550f05dad488, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  linePrefab: {fileID: 0}
+  orderNumber: {fileID: 0}
 --- !u!1 &7662601099363739462
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,4 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 public class Receipt : MonoBehaviour
@@ -22,6 +22,6 @@ public class Receipt : MonoBehaviour
             side.transform.localPosition = std + off * (i+1);
         }
 
-        orderNumber.text = "주문번호 : " + menuSchema.orderNumber;
+        orderNumber.text = "二쇰Ц踰덊샇 : " + menuSchema.orderNumber;
     }
 }
