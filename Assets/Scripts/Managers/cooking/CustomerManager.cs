@@ -74,7 +74,8 @@ public class CustomerManager : MonoBehaviour
         }
 
         // Setup
-        StatsSystem.SetStamina(100);
+        // Stamina는 GameStart의 StatsSystem.Initialize()에서 로드됨
+        // CustomerManager는 stamina를 초기화하지 않음
 
         // Listen to time end event
         if (statManager != null)

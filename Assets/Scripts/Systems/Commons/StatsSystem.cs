@@ -23,7 +23,9 @@ public class StatsSystem : MonoBehaviour
         if (initialized) return;
         initialized = true;
 
-        DataSaveUtil.LoadData(basicStats, Application.persistentDataPath + "/saves/stats");
+        basicStats = DataSaveUtil.LoadData(basicStats, Application.persistentDataPath + "/saves/stats");
+
+        Debug.Log($"[StatsSystem] Initialized - Stamina: {basicStats.stamina}, Money: {basicStats.money}, Day: {basicStats.day}, Time: {basicStats.time}");
 
         isTimePaused = false;
         breakAction = null;

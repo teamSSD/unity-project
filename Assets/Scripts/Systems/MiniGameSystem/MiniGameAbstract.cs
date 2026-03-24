@@ -64,6 +64,8 @@ public abstract class MiniGameAbstract : MonoBehaviour
         if (!isPlaying) return;
         isPlaying = false;
 
+        StatsSystem.SubStamina(1);
+
         float score = CalculateScore();
 
         // 스코어링 생성

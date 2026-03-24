@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: 917c39a97fdf9964dbde823e600d7b38
+guid: cc6bff079dc21433e89e207abcbf6a35
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5325014006326161429
-    second: bento_0
+      213: 5147395127667382187
+    second: item_choppedInsulatingMushroom_cut_0
+  - first:
+      213: -4463945738554692462
+    second: item_choppedInsulatingMushroom_cut_1
+  - first:
+      213: 1539551342868631010
+    second: item_choppedInsulatingMushroom_cut_2
+  - first:
+      213: 4878650812214748548
+    second: item_choppedInsulatingMushroom_cut_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +60,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 400
+  spritePixelsToUnits: 250
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -100,13 +109,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: bento_0
+      name: item_choppedInsulatingMushroom_cut_0
       rect:
         serializedVersion: 2
-        x: 233
-        y: 289
-        width: 975
-        height: 408
+        x: 594
+        y: 562
+        width: 29
+        height: 38
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +124,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 510fc0f860046e940800000000000000
-      internalID: 5325014006326161429
+      spriteID: ba7d037b8983f6740800000000000000
+      internalID: 5147395127667382187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_choppedInsulatingMushroom_cut_1
+      rect:
+        serializedVersion: 2
+        x: 616
+        y: 485
+        width: 102
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29c24d47001ec02c0800000000000000
+      internalID: -4463945738554692462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_choppedInsulatingMushroom_cut_2
+      rect:
+        serializedVersion: 2
+        x: 629
+        y: 572
+        width: 29
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ed09291ac59d5510800000000000000
+      internalID: 1539551342868631010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_choppedInsulatingMushroom_cut_3
+      rect:
+        serializedVersion: 2
+        x: 573
+        y: 525
+        width: 29
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4852b35c01374b340800000000000000
+      internalID: 4878650812214748548
       vertices: []
       indices: 
       edges: []
@@ -135,7 +210,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      bento_0: 5325014006326161429
+      item_choppedInsulatingMushroom_cut_0: 5147395127667382187
+      item_choppedInsulatingMushroom_cut_1: -4463945738554692462
+      item_choppedInsulatingMushroom_cut_2: 1539551342868631010
+      item_choppedInsulatingMushroom_cut_3: 4878650812214748548
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

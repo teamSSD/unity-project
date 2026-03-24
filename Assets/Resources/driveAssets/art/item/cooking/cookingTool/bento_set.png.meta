@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ac74191ac52a0104082e5cf73a9ebf88
+guid: e49b203b51f8b4455b15b06dbba53413
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 338405256886959084
-    second: bento_set_0
+      213: 5875545346480103091
+    second: bento_set3_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,12 +100,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: bento_set_0
+      name: bento_set3_0
       rect:
         serializedVersion: 2
-        x: 232
-        y: 288
-        width: 977
+        x: 401
+        y: 283
+        width: 608
         height: 778
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ceb3fd6c9c142b400800000000000000
-      internalID: 338405256886959084
+      spriteID: 3be55a6dc512a8150800000000000000
+      internalID: 5875545346480103091
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      bento_set_0: 338405256886959084
+      bento_set3_0: 5875545346480103091
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

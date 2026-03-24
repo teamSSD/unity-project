@@ -66,8 +66,8 @@ public class BentoModel : MonoBehaviour
                 ? foodPositions[foodList.Count]
                 : Vector2.zero;
 
-            // MAIN/SIDE dishes use raw image (no tool variants)
-            Sprite displaySprite = food.foodData.image;
+            // MAIN/SIDE dishes use bento variant image
+            Sprite displaySprite = food.foodData.GetBentoImage();
             BehaviorInstance.AddTexture(displaySprite, position);
             foodList.Add(food);
             return true;

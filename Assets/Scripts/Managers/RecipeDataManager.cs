@@ -70,6 +70,7 @@ public class RecipeDataManager : MonoBehaviour, SearchRecipeUsecase
         InitializeMenus();
         LoadAllRecipes();
         BuildLookupTable();
+        LoadMenusFromProgress(); // 저장된 메뉴 데이터 로드
     }
 
     private void InitializeMenus()
@@ -137,6 +138,12 @@ public class RecipeDataManager : MonoBehaviour, SearchRecipeUsecase
     /// </summary>
     public bool HasAnySelection()
     {
+        if (menuSelections == null)
+        {
+            InitializeMenus();  // Create if needed
+            return false;  // Empty menu = no selection
+        }
+
         foreach (var menu in menuSelections)
         {
             if (menu.HasSelection())
@@ -248,6 +255,91 @@ public class RecipeDataManager : MonoBehaviour, SearchRecipeUsecase
             }
             return false;
         }).ToList();
+    }
+
+    /// <summary>
+    /// 선택된 메뉴 데이터를 ProgressSystem에 저장
+    /// </summary>
+    public void flush()
+    {
+        if (ProgressSystem.instance?.phaseData == null)
+        {
+            Debug.LogWarning("[RecipeDataManager] Cannot flush: ProgressSystem not available");
+            return;
+        }
+
+        // menuSelections를 직렬화하여 저장
+        var selectedMenuData = new List<string>();
+
+        for (int i = 0; i < menuSelections.Length; i++)
+        {
+            var menu = menuSelections[i];
+            if (menu.HasSelection())
+            {
+                // 형식: "MainMenuId|Side1,Side2,Side3"
+                string mainId = menu.MainMenu?.id ?? "";
+                string sidesIds = string.Join(",", menu.SideMenus.ConvertAll(f => f.id));
+                selectedMenuData.Add($"{mainId}|{sidesIds}");
+            }
+            else
+            {
+                selectedMenuData.Add(""); // 빈 메뉴
+            }
+        }
+
+        ProgressSystem.instance.phaseData.SelectedMenus = selectedMenuData;
+        // 저장은 PassDay()에서만 수행 (여기서는 phaseData에 데이터만 넣음)
+
+        Debug.Log($"[RecipeDataManager] Menu data prepared for save: {string.Join(" / ", selectedMenuData)}");
+    }
+
+    /// <summary>
+    /// ProgressSystem에서 메뉴 데이터 로드
+    /// </summary>
+    public void LoadMenusFromProgress()
+    {
+        if (ProgressSystem.instance?.phaseData?.SelectedMenus == null)
+        {
+            Debug.Log("[RecipeDataManager] No saved menu data to load");
+            return;
+        }
+
+        var savedMenus = ProgressSystem.instance.phaseData.SelectedMenus;
+
+        for (int i = 0; i < Mathf.Min(savedMenus.Count, menuSelections.Length); i++)
+        {
+            string menuData = savedMenus[i];
+            if (string.IsNullOrEmpty(menuData)) continue;
+
+            // 파싱: "MainMenuId|Side1,Side2,Side3"
+            string[] parts = menuData.Split('|');
+            if (parts.Length != 2) continue;
+
+            string mainId = parts[0];
+            string[] sideIds = parts[1].Split(new[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
+
+            // 메인 메뉴 설정
+            if (!string.IsNullOrEmpty(mainId))
+            {
+                FoodData mainFood = Resources.Load<FoodData>($"ScriptableObjects/FoodData/{mainId}");
+                if (mainFood != null)
+                {
+                    menuSelections[i].SetMain(mainFood);
+                }
+            }
+
+            // 사이드 메뉴 설정
+            foreach (string sideId in sideIds)
+            {
+                FoodData sideFood = Resources.Load<FoodData>($"ScriptableObjects/FoodData/{sideId}");
+                if (sideFood != null)
+                {
+                    menuSelections[i].AddSide(sideFood);
+                }
+            }
+        }
+
+        Debug.Log($"[RecipeDataManager] Loaded menu data from progress");
     }
 
     private void OnDestroy()

@@ -51,6 +51,19 @@ public class FoodData : ScriptableObject, CsvParsable
     }
 
     /// <summary>
+    /// Get the bento variant sprite for this food (e.g., item_xxx_raw → item_xxx_bento)
+    /// Falls back to default image if bento variant doesn't exist
+    /// </summary>
+    public Sprite GetBentoImage()
+    {
+        string baseName = image.name.Replace("_raw", "");
+        string bentoPath = ResourcePaths.Art.FOOD + baseName + "_bento";
+        Sprite bento = Resources.Load<Sprite>(bentoPath);
+        Debug.Log($"[FoodData] GetBentoImage: image.name={image.name}, baseName={baseName}, bentoPath={bentoPath}, found={bento != null}");
+        return bento != null ? bento : image;
+    }
+
+    /// <summary>
     /// Get the appropriate sprite for this ingredient when used with a specific tool
     /// </summary>
     /// <param name="toolId">Tool ID like "T001", "T002", etc.</param>

@@ -78,7 +78,7 @@ public class MenuCard : MonoBehaviour
             recipeData = SearchDataUtil.GetRecipeDataByFoodId(id);
 
         NameLabel.text = foodData.ingredientName;
-        MenuImage.sprite = foodData.image;
+        MenuImage.sprite = foodData.GetBentoImage();
 
         foreach (RecipeIngredient item in recipeData.inputs)
             AddIngredient(item.food.id);
@@ -173,7 +173,7 @@ public class MenuCard : MonoBehaviour
             case "M004":
                 return "item_bowl_default";
             case "M005":
-                return "¼Ò½º »Ñ¸®±â";
+                return "ï¿½Ò½ï¿½ ï¿½Ñ¸ï¿½ï¿½ï¿½";
             case "M006":
                 return "item_cuttingSet_default";
             case "M007":

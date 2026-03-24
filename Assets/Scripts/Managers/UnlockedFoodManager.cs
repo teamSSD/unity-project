@@ -33,7 +33,16 @@ public class UnlockedFoodManager : MonoBehaviour, IUnlockedFoodProvider
         instance = this;
         DontDestroyOnLoad(gameObject);
 
+        Debug.Log("[UnlockedFoodManager] Awake completed");
+    }
+
+    /// <summary>
+    /// 표준 초기화 메서드 (GameStart에서 호출)
+    /// </summary>
+    public void Initialize()
+    {
         LoadAllFoodData();
+        LoadUnlocksFromProgress();
         Debug.Log("[UnlockedFoodManager] Initialized");
     }
 
@@ -149,8 +158,8 @@ public class UnlockedFoodManager : MonoBehaviour, IUnlockedFoodProvider
         if (ProgressSystem.instance?.phaseData != null)
         {
             ProgressSystem.instance.phaseData.UnlockedRecipes = unlockedRecipeIds.ToList();
-            ProgressSystem.instance.flush();
-            Debug.Log($"[UnlockedFoodManager] Saved {unlockedRecipeIds.Count} unlocked recipes");
+            // 저장은 PassDay()에서만 수행 (여기서는 phaseData에 데이터만 넣음)
+            Debug.Log($"[UnlockedFoodManager] Unlocked recipe data prepared for save: {unlockedRecipeIds.Count} recipes");
         }
     }
 

@@ -59,7 +59,7 @@ I057,꼬치 조합,,item_skewerSet_raw,T003/T001,PROCESSING
 I058,전력실 꼬치,,item_powerRoomSkewer_raw,,SIDE
 I059,오믈렛 베이스,,item_omeletteBase_raw,T001,PROCESSING
 I060,옥상 오믈렛,,item_rooftopOmelette_raw,,MAIN
-I061,양념 연어,,item_seasonedSalmon_raw,T003/T001,PROCESSING
+I061,양념 연어,,item_seasonedSalmon_raw,T001,PROCESSING
 I062,환기구 연어구이,,item_ventGrilledSalmon_raw,,SIDE
 I065,달의 뿌리,은빛 얼룩이 스며든 길고 단단한 뿌리. 빛을 비추면 표면에서 작은 달빛 입자가 천천히 흘러내린다.,item_moonRoot_raw,T005,INGREDIENT
 I066,양파,투명한 막이 겹겹이 쌓인 둥근 구근. 칼끝이 닿으면 매운 향이 즉시 피어올라 눈물이 맺히게 한다.,item_onion_raw,T005,INGREDIENT

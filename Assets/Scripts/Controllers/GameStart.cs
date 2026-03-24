@@ -47,12 +47,19 @@ public class GameStart : MonoBehaviour
         // 저장된 데이터 로드
         StatsSystem.Initialize();
         ProgressSystem.instance.Initialize();
+        UnlockedFoodManager.Instance?.Initialize();
         InventoryManager.Instance?.Initialize();
         RecipeDataManager.Instance?.Initialize();
 
         // Scene_Mall 씬 로드 (메뉴 선택 → Idle)
         SceneManager.LoadScene("Scene_Mall");
     }
+    /// <summary>
+    /// 새 게임을 시작합니다.
+    ///
+    /// ⚠️ 경고: 게임 시작 시 초기 데이터를 저장합니다!
+    /// 저장은 여기와 PassDay()에서만 수행됩니다!
+    /// </summary>
     private void NewGame()
     {
         // StatsSystem 초기화
@@ -69,13 +76,18 @@ public class GameStart : MonoBehaviour
         // PhaseData.Day를 0으로 설정 (기본값 1 → 0)
         ProgressSystem.instance.phaseData.Day = 0;
 
-        // 저장
+        // Manager 초기화 (New Game이므로 초기값으로 리셋)
+        UnlockedFoodManager.Instance?.Initialize();
+        InventoryManager.Instance?.ResetToDefault();
+        RecipeDataManager.Instance?.Initialize();
+
+        // ⚠️ 모든 게임 데이터 초기값 저장 (New Game과 PassDay()에서만 저장!)
         StatsSystem.flush();
         ProgressSystem.instance.flush();
+        InventoryManager.Instance?.flush();
+        RecipeDataManager.Instance?.flush();
 
-        // Manager 초기화
-        InventoryManager.Instance?.Initialize();
-        RecipeDataManager.Instance?.Initialize();
+        Debug.Log("[GameStart] New Game - 초기 데이터 저장 완료");
 
         // Scene_Mall 씬 로드 (메뉴 선택 → Idle)
         SceneManager.LoadScene("Scene_Mall");

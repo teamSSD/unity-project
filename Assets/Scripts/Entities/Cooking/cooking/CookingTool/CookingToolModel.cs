@@ -81,12 +81,11 @@ public class CookingToolModel : MonoBehaviour
 
             cookingToolDescriptionScript.setIngredients(ingredientNames);
 
-            // Position tooltip based on screen location
-            var screenPos = tooltipController.CalculateTooltipPosition(Vector3.zero);
+            // Position tooltip based on screen location (adaptive left/right)
+            Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, transform.position);
             float offsetX = screenPos.x < Screen.width * 0.5f ? 3f : -3f;
 
-            var tooltipObj = tooltipController.GetTooltipObject();
-            tooltipObj.transform.position = tooltipController.CalculateTooltipPosition(new Vector3(offsetX, 0, 0));
+            tooltipController.PositionTooltip(new Vector3(offsetX, 0, 0));
         }
         else
         {

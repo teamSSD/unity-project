@@ -111,7 +111,7 @@ public class ItemShopManager : MonoBehaviour
         foreach (var item in purchaseList)
             InventoryManager.Instance?.AddFood(item.Key, item.Value);
 
-        InventoryManager.Instance?.flush();
+        // 저장은 PassDay()에서만 수행
         CloseItemShop();
     }
 

@@ -187,8 +187,7 @@ public class FoodModel : MonoBehaviour
                 SchemaInstance.foodData.description
             );
 
-            var tooltipObj = tooltipController.GetTooltipObject();
-            tooltipObj.transform.position = tooltipController.CalculateTooltipPosition(new Vector3(2, 0, 0));
+            tooltipController.PositionTooltip(new Vector3(2, 0, 0));
         }
     }
 

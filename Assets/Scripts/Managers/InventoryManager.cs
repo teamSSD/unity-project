@@ -29,6 +29,16 @@ public class InventoryManager : MonoBehaviour, LoadInventoryUsecase
         LoadInventoryFromDisk();
     }
 
+    /// <summary>
+    /// New Game 전용: 기존 세이브 무시하고 초기 인벤토리로 리셋
+    /// </summary>
+    public void ResetToDefault()
+    {
+        LoadAllFoodData();
+        inventory.Clear();
+        InitializeDefaultInventory();
+    }
+
     private void LoadAllFoodData()
     {
         FoodData[] foods = Resources.LoadAll<FoodData>("ScriptableObjects/FoodData");
@@ -54,24 +64,16 @@ public class InventoryManager : MonoBehaviour, LoadInventoryUsecase
 
     private void InitializeDefaultInventory()
     {
-        string[] startingIngredients = {
-            "I010", // 루미 계란 (옥상 오믈렛, 루미 젤리)
-            "I026", // 루미잎 (옥상 오믈렛)
-            "I027", // 빛 토마토 (옥상 오믈렛)
-            "I020", // 조명 시럽 (루미 젤리)
-            "I008"  // 레몬 (루미 젤리)
-        };
-
-        foreach (var ingredientId in startingIngredients)
+        // 모든 INGREDIENT 타입 재료를 99개씩 지급
+        foreach (FoodData food in allFoodData)
         {
-            FoodData food = allFoodData.Find(f => f.id == ingredientId);
-            if (food != null)
+            if (food.type == FoodType.INGREDIENT)
             {
-                inventory[food] = 5;
+                inventory[food] = 99;
             }
         }
         flush();
-        Debug.Log($"[InventoryManager] Initialized default inventory with {inventory.Count} ingredients (옥상 오믈렛 + 루미 젤리 재료)");
+        Debug.Log($"[InventoryManager] Initialized default inventory with {inventory.Count} ingredients (all x99)");
     }
 
     public void flush()

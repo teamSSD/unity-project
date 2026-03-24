@@ -22,7 +22,7 @@ public class IdleSceneController : MonoBehaviour
 
         Debug.Log("[IdleSceneController] Idle scene started");
 
-        // MenuSelectionUI는 Scene_Mall에서 열리고, 확인 후 Idle로 전환됨
+        // BentoSelectionController는 Scene_Mall에서 열리고, 확인 후 Idle로 전환됨
     }
 
     /// <summary>
@@ -33,13 +33,7 @@ public class IdleSceneController : MonoBehaviour
         Debug.Log($"[IdleSceneController] Scene transition: {sceneName}");
 
         // RecipeBook은 항상 View Mode이므로 리셋 불필요
-
-        // 진행 상태 저장
-        if (ProgressSystem.instance != null)
-        {
-            ProgressSystem.instance.flush();
-        }
-        StatsSystem.flush();
+        // flush()는 PassPhase() 또는 PassDay()에서만 호출 (씬 전환마다 저장 불필요)
 
         // 씬 로드
         SceneManager.LoadScene(sceneName);

@@ -22,10 +22,11 @@ public class SubSceneController : MonoBehaviour
     {
         Debug.Log($"[SubSceneController] Returning to {returnSceneName}");
 
-        // 페이즈 진행 (메뉴 선택 완료 후)
+        // 페이즈 진행 (저장은 PassDay()에서만 수행)
         if (ProgressSystem.instance != null)
         {
             ProgressSystem.instance.PassPhase();
+            // 저장은 PassDay()에서만 수행
         }
 
         SceneManager.LoadScene(returnSceneName);

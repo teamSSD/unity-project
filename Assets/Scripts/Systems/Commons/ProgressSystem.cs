@@ -30,24 +30,14 @@ public class ProgressSystem : MonoBehaviour
             phaseData = new PhaseData();
         }
         string path = Application.persistentDataPath + "/saves/progress";
-        DataSaveUtil.LoadData(phaseData, path);
+        phaseData = DataSaveUtil.LoadData(phaseData, path);
 
-        // UnlockedFoodManager 초기화 (해금 데이터 로드)
-        if (UnlockedFoodManager.Instance != null)
-        {
-            UnlockedFoodManager.Instance.LoadUnlocksFromProgress();
-        }
-        else
-        {
-            Debug.LogWarning("[ProgressSystem] UnlockedFoodManager not found during initialization");
-        }
-
-        // 여기서 딱 아침으로 초기화하면 될듯
+        Debug.Log("[ProgressSystem] Initialized");
     }
 
     public event System.Action<PhaseType> OnPhaseChanged;
 
-    public void PassPhase() // 시간 처리 누락
+    public void PassPhase()
     {
         if (phaseData.Phase == PhaseType.Night)
         {
@@ -55,19 +45,48 @@ public class ProgressSystem : MonoBehaviour
             return;
         }
         phaseData.Phase++;
+        SetPhaseTime(phaseData.Phase);
         OnPhaseChanged?.Invoke(phaseData.Phase);
     }
 
-    public void PassDay() // 시간 처리 누락
+    private void SetPhaseTime(PhaseType phase)
+    {
+        switch (phase)
+        {
+            case PhaseType.Preparation: StatsSystem.SetTime(5, 0);  break;
+            case PhaseType.Morning:     StatsSystem.SetTime(7, 0);  break;
+            case PhaseType.Afternoon:   StatsSystem.SetTime(12, 0); break;
+            case PhaseType.Evening:     StatsSystem.SetTime(17, 0); break;
+            case PhaseType.Night:       StatsSystem.SetTime(22, 0); break;
+        }
+    }
+
+    /// <summary>
+    /// 하루가 지날 때 호출됩니다.
+    ///
+    /// ⚠️ 경고: 이 함수에서만 모든 게임 데이터를 저장합니다!
+    /// 다른 곳에서 flush()를 호출하지 마세요!
+    ///
+    /// 저장되는 데이터:
+    /// - ProgressSystem (Day, Phase, UnlockedRecipes, SelectedMenus)
+    /// - StatsSystem (stamina, day, time, money)
+    /// - InventoryManager (inventory)
+    /// - RecipeDataManager (menus)
+    /// </summary>
+    public void PassDay()
     {
         phaseData.Day++;
         phaseData.Phase = PhaseType.Preparation;
+        SetPhaseTime(phaseData.Phase);
         OnPhaseChanged?.Invoke(phaseData.Phase);
 
-        // 하루 단위로 저장
+        // ⚠️ 모든 게임 데이터 저장 (New Game 시작 시와 여기서만 저장!)
         flush();
         StatsSystem.flush();
         InventoryManager.Instance?.flush();
+        RecipeDataManager.Instance?.flush();
+
+        Debug.Log($"[ProgressSystem] PassDay - Day {phaseData.Day} 시작, 모든 데이터 저장 완료");
     }
 
     public void Die()

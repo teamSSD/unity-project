@@ -103,6 +103,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -241,6 +242,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -302,6 +304,7 @@ GameObject:
   - component: {fileID: 8568853115023702265}
   - component: {fileID: 4574805515405498288}
   - component: {fileID: 6213701819813416938}
+  - component: {fileID: 5345656493344422982}
   m_Layer: 5
   m_Name: CookingToolDescription
   m_TagString: Untagged
@@ -422,3 +425,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameText: {fileID: 7871159232692834761}
   contentText: {fileID: 5555600242103968443}
+--- !u!210 &5345656493344422982
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8741771434616529297}
+  m_Enabled: 1
+  m_SortingLayerID: 1155474177
+  m_SortingLayer: 5
+  m_SortingOrder: 40
+  m_SortAtRoot: 1
+  m_Sort3DAs2D: 0

@@ -10,14 +10,13 @@ using UnityEngine;
 public class TooltipController : MonoBehaviour
 {
     [Header("Tooltip Settings")]
-    [SerializeField] private GameObject tooltipPrefab;
-    [SerializeField] private Canvas canvas;
     [SerializeField] private float hoverThreshold = 1.0f;
 
     private HoverStateUtil hoverStateUtil;
     private ClickStateUtil clickStateUtil;
     private GameObject tooltipObject;
     private float hoverClock = 0f;
+    private bool ownsTooltip = false; // 현재 이 컨트롤러가 툴팁을 소유하고 있는지
 
     private Action updateTooltipContent;
 
@@ -35,31 +34,39 @@ public class TooltipController : MonoBehaviour
     public GameObject GetTooltipObject() => tooltipObject;
 
     /// <summary>
-    /// Calculate screen position for tooltip with world space offset
+    /// Position tooltip in world space with offset
     /// </summary>
-    public Vector3 CalculateTooltipPosition(Vector3 worldOffset)
+    public void PositionTooltip(Vector3 worldOffset)
     {
-        return Camera.main.WorldToScreenPoint(transform.position + worldOffset);
+        if (tooltipObject == null) return;
+        tooltipObject.transform.position = transform.position + worldOffset;
     }
 
     void Awake()
     {
         hoverStateUtil = GetComponent<HoverStateUtil>();
         clickStateUtil = GetComponent<ClickStateUtil>();
+
+        // 글로벌 툴팁 참조 (타입별 분기)
+        if (GetComponent<FoodModel>() != null)
+        {
+            tooltipObject = UIManager.Instance.IngredientTooltip;
+        }
+        else if (GetComponent<CookingToolModel>() != null)
+        {
+            tooltipObject = UIManager.Instance.CookingToolTooltip;
+        }
+
+        if (tooltipObject == null)
+        {
+            Debug.LogError($"[TooltipController] {gameObject.name}: Failed to get global tooltip!");
+        }
     }
 
     void Start()
     {
-        if (tooltipPrefab != null && canvas != null)
-        {
-            tooltipObject = Instantiate(tooltipPrefab, canvas.transform);
-            updateTooltipContent?.Invoke();
-            tooltipObject.SetActive(false);
-        }
-        else
-        {
-            Debug.LogWarning($"[TooltipController] {gameObject.name}: tooltipPrefab or canvas is null!");
-        }
+        // 글로벌 툴팁 사용 - Instantiate 불필요
+        // updateTooltipContent는 첫 표시 시 Update()에서 호출됨
     }
 
     void Update()
@@ -72,23 +79,39 @@ public class TooltipController : MonoBehaviour
         {
             if (hoverClock < hoverThreshold && hoverClock + Time.deltaTime >= hoverThreshold)
             {
-                tooltipObject.SetActive(true);
-                updateTooltipContent?.Invoke();
+                // 툴팁 표시 전 소유권 획득
+                if (!tooltipObject.activeSelf || ownsTooltip)
+                {
+                    ownsTooltip = true; // 소유권 획득
+                    tooltipObject.SetActive(true);
+                    updateTooltipContent?.Invoke();
+                }
             }
             hoverClock += Time.deltaTime;
             return;
         }
 
-        // Hide tooltip when not hovering
-        hoverClock = 0;
-        tooltipObject.SetActive(false);
+        // Hide tooltip when not hovering - 소유자만 숨길 수 있음
+        if (ownsTooltip)
+        {
+            hoverClock = 0;
+            ownsTooltip = false; // 소유권 해제
+            tooltipObject.SetActive(false);
+        }
+        else
+        {
+            hoverClock = 0; // 시계만 리셋
+        }
     }
 
     void OnDestroy()
     {
-        if (tooltipObject != null)
+        // 글로벌 툴팁은 파괴하지 않음 (UIManager가 관리)
+        // 소유자만 숨기기
+        if (tooltipObject != null && ownsTooltip)
         {
-            Destroy(tooltipObject);
+            tooltipObject.SetActive(false);
+            ownsTooltip = false;
         }
     }
 }

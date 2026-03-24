@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -147,14 +148,57 @@ public class MenuSelectionUI : MonoBehaviour
 
     public void ConfirmSelection()
     {
-        // 검증 로직 (최소 1개 도시락, 메인 메뉴 필수 등)
-        if (!RecipeDataManager.Instance.HasAnySelection())
+        Debug.Log("[MenuSelectionUI] ConfirmSelection called");
+
+        // Check RecipeDataManager
+        if (RecipeDataManager.Instance == null)
         {
-            Debug.LogWarning("[MenuSelectionUI] No menus selected!");
+            Debug.LogError("[MenuSelectionUI] RecipeDataManager.Instance is null!");
             return;
         }
 
-        // Scene_Mall의 확인 처리는 MallSceneController 등에서 처리하도록 이벤트나 콜백 연동 가능
+        Debug.Log($"[MenuSelectionUI] RecipeDataManager exists, checking selections...");
+
+        // Check for selections
+        bool hasSelection = RecipeDataManager.Instance.HasAnySelection();
+        Debug.Log($"[MenuSelectionUI] HasAnySelection: {hasSelection}");
+
+        if (!hasSelection)
+        {
+            Debug.LogWarning("[MenuSelectionUI] No menus selected!");
+
+            // Log current menu states for debugging
+            for (int i = 0; i < 3; i++)
+            {
+                var menu = RecipeDataManager.Instance.GetMenu(i);
+                if (menu != null)
+                {
+                    Debug.Log($"[MenuSelectionUI] Menu {i}: {menu}");
+                }
+            }
+
+            return;
+        }
+
         Debug.Log("[MenuSelectionUI] Selection confirmed and saved to RecipeDataManager");
+
+        // Check ProgressSystem
+        if (ProgressSystem.instance == null)
+        {
+            Debug.LogError("[MenuSelectionUI] ProgressSystem.instance is null!");
+            return;
+        }
+
+        PhaseType beforePhase = ProgressSystem.instance.phaseData.Phase;
+        Debug.Log($"[MenuSelectionUI] Current Phase: {beforePhase}");
+
+        ProgressSystem.instance.PassPhase();
+
+        PhaseType afterPhase = ProgressSystem.instance.phaseData.Phase;
+        Debug.Log($"[MenuSelectionUI] Phase advanced from {beforePhase} to {afterPhase}");
+
+        // Load Idle scene
+        Debug.Log("[MenuSelectionUI] Loading Idle scene...");
+        SceneManager.LoadScene("Idle");
     }
 }

@@ -26,13 +26,6 @@ public class PhaseButtonHandler : MonoBehaviour
 
         Debug.Log($"[PhaseButtonHandler] Executing action: {action.SelectedAction} for phase {phaseIndex}");
 
-        // 진행 상태 저장
-        if (ProgressSystem.instance != null)
-        {
-            ProgressSystem.instance.flush();
-        }
-        StatsSystem.flush();
-
         // 액션에 따라 분기
         switch (action.SelectedAction)
         {
@@ -47,8 +40,9 @@ public class PhaseButtonHandler : MonoBehaviour
                 if (ProgressSystem.instance != null)
                 {
                     ProgressSystem.instance.PassPhase();
+                    // 저장은 PassDay()에서만 수행
                 }
-                Debug.Log("[PhaseButtonHandler] Rested - stamina restored");
+                Debug.Log("[PhaseButtonHandler] Rested - stamina restored and phase advanced");
                 break;
 
             case ActionType.Shopping:
