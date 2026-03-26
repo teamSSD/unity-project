@@ -61,8 +61,13 @@ public class Farm : MonoBehaviour
             }
             else if (tile.IsEmpty())
             {
-                tile.Plant(cropData);
-                Debug.Log("Crop planted!");
+                CropData randomCrop = CropDataManager.Instance.GetRandomCropByWeight();
+                if (randomCrop != null)
+                {
+                    cropData = randomCrop;
+                    tile.Plant(randomCrop);
+                    Debug.Log($"[Farm] Seed planted! Crop ID: {randomCrop.cropId}");
+                }
             }
             else if (tile.IsHarvestable())
             {

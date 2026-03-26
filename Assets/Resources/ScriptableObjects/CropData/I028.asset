@@ -10,13 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1c1dfe57db414540b66e4db3c1f0e9e, type: 3}
-  m_Name: testCrop
+  m_Name: I028
   m_EditorClassIdentifier: Game.Runtime::CropData
-  cropId: 0
-  growPhaseCount: 2
-  harvestCount: 2
-  seedReturnCount: 3
-  growthSprites:
-  - {fileID: 21300000, guid: 0a6ffb835683c466991174b702e072a2, type: 3}
-  - {fileID: 21300000, guid: 199f8d6e1792b472badf39f5fb340c12, type: 3}
-  - {fileID: 21300000, guid: b36c20e9887eb49caa3bd27faabdd2e8, type: 3}
+  cropId: I028
+  growPhaseCount: 0
+  harvestCount: 0
+  seedReturnCount: 0
+  growthSprites: []
