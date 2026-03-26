@@ -73,9 +73,13 @@ public class Farm : MonoBehaviour
             {
                 if (tile.Harvest(out string id, out int crops, out int seeds))
                 {
-                    Debug.Log("Crop harvested!");
-                    Debug.Log($"Crop harvested! {crops} [{id}] Crop, {seeds} Seeds get");
+                    Debug.Log($"[Farm] Harvested! [{id}] x{crops}, seeds x{seeds}");
+
                     // TODO. Chain Inventory System
+                    if (InventoryManager.Instance != null)
+                    {
+                        InventoryManager.Instance.AddHarvestedCrop(id, crops);
+                    }
                 }
             }
             else
