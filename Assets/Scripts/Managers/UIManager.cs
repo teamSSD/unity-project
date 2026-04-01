@@ -6,63 +6,56 @@ using UnityEngine.UI;
 /// - 씬 전환 시에도 유지되는 글로벌 Canvas 제공
 /// - 모든 UI 요소가 이 Canvas를 사용
 /// - DontDestroyOnLoad로 영구 유지
+/// - Initialize()는 Camera.main 의존 → Cooking 씬 진입 시 lazy init
 /// </summary>
-public class UIManager : MonoBehaviour
+public class UIManager : SingletonMonoBehaviour<UIManager>
 {
-    private static UIManager instance;
-    private static bool initialized = false;
+    private bool isInitialized = false;
 
-    public static UIManager Instance
+    public Canvas GlobalCanvas { get; private set; }
+
+    private GameObject _ingredientTooltip;
+    private GameObject _cookingToolTooltip;
+
+    public GameObject IngredientTooltip
     {
         get
         {
-            if (instance == null)
-            {
-                GameObject go = new GameObject("UIManager");
-                instance = go.AddComponent<UIManager>();
-            }
-
-            // 최초 접근 시 자동 초기화
-            if (!initialized && instance != null)
-            {
-                instance.Initialize();
-                initialized = true;
-            }
-
-            return instance;
+            EnsureInitialized();
+            return _ingredientTooltip;
         }
     }
 
-    public Canvas GlobalCanvas { get; private set; }
-    public GameObject IngredientTooltip { get; private set; }
-    public GameObject CookingToolTooltip { get; private set; }
-
-    void Awake()
+    public GameObject CookingToolTooltip
     {
-        // Singleton 패턴
-        if (instance != null && instance != this)
+        get
         {
-            Destroy(gameObject);
-            return;
+            EnsureInitialized();
+            return _cookingToolTooltip;
         }
+    }
 
-        instance = this;
-        DontDestroyOnLoad(gameObject);
-
-        // Initialize()에서 리소스 로드 수행 (지연 로딩)
+    protected override void OnSingletonAwake()
+    {
         Debug.Log("[UIManager] Awake completed");
     }
 
+    private void EnsureInitialized()
+    {
+        if (!isInitialized)
+            Initialize();
+    }
+
     /// <summary>
-    /// 리소스 로딩 및 초기화 (게임 시작 시 한 번만 호출)
+    /// 리소스 로딩 및 초기화 (Camera.main 필요 → Cooking 씬에서 호출)
     /// </summary>
     public void Initialize()
     {
-        // 글로벌 Canvas 생성
-        CreateGlobalCanvas();
+        if (isInitialized) return;
 
-        // 글로벌 툴팁 생성
+        CreateGlobalCanvas();
         CreateGlobalTooltips();
+        isInitialized = true;
 
         Debug.Log("[UIManager] Initialized with GlobalCanvas and Tooltips");
     }
@@ -95,9 +88,9 @@ public class UIManager : MonoBehaviour
         GameObject ingredientPrefab = Resources.Load<GameObject>("Prefabs/cooking/IngredientDescription");
         if (ingredientPrefab != null)
         {
-            IngredientTooltip = Instantiate(ingredientPrefab, GlobalCanvas.transform);
-            IngredientTooltip.name = "GlobalIngredientTooltip";
-            IngredientTooltip.SetActive(false);
+            _ingredientTooltip = Instantiate(ingredientPrefab, GlobalCanvas.transform);
+            _ingredientTooltip.name = "GlobalIngredientTooltip";
+            _ingredientTooltip.SetActive(false);
             Debug.Log("[UIManager] IngredientTooltip created");
         }
         else
@@ -109,22 +102,14 @@ public class UIManager : MonoBehaviour
         GameObject toolPrefab = Resources.Load<GameObject>("Prefabs/cooking/CookingToolDescription");
         if (toolPrefab != null)
         {
-            CookingToolTooltip = Instantiate(toolPrefab, GlobalCanvas.transform);
-            CookingToolTooltip.name = "GlobalCookingToolTooltip";
-            CookingToolTooltip.SetActive(false);
+            _cookingToolTooltip = Instantiate(toolPrefab, GlobalCanvas.transform);
+            _cookingToolTooltip.name = "GlobalCookingToolTooltip";
+            _cookingToolTooltip.SetActive(false);
             Debug.Log("[UIManager] CookingToolTooltip created");
         }
         else
         {
             Debug.LogError("[UIManager] Failed to load CookingToolDescription prefab");
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (instance == this)
-        {
-            instance = null;
         }
     }
 }

@@ -9,25 +9,8 @@ using UnityEngine;
 /// - DontDestroyOnLoad로 씬 전환 시에도 유지
 /// - Pure Data Manager (UI 없음)
 /// </summary>
-public class RecipeDataManager : MonoBehaviour, SearchRecipeUsecase
+public class RecipeDataManager : SingletonMonoBehaviour<RecipeDataManager>, SearchRecipeUsecase
 {
-    private static RecipeDataManager instance;
-    public static RecipeDataManager Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = FindObjectOfType<RecipeDataManager>();
-                if (instance == null)
-                {
-                    GameObject go = new GameObject("RecipeDataManager");
-                    instance = go.AddComponent<RecipeDataManager>();
-                }
-            }
-            return instance;
-        }
-    }
 
     /// <summary>
     /// 메뉴 선택 데이터 (0=아침, 1=점심, 2=저녁)
@@ -50,18 +33,8 @@ public class RecipeDataManager : MonoBehaviour, SearchRecipeUsecase
         { "M007", "T005" }
     };
 
-    private void Awake()
+    protected override void OnSingletonAwake()
     {
-        // Singleton 패턴
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        instance = this;
-        DontDestroyOnLoad(gameObject);
-
         Debug.Log("[RecipeDataManager] Initialized");
     }
 
@@ -352,13 +325,6 @@ public class RecipeDataManager : MonoBehaviour, SearchRecipeUsecase
         Debug.Log($"[RecipeDataManager] Loaded menu data from progress");
     }
 
-    private void OnDestroy()
-    {
-        if (instance == this)
-        {
-            instance = null;
-        }
-    }
 }
 
 /// <summary>
