@@ -23,9 +23,9 @@ public class SubSceneController : MonoBehaviour
         Debug.Log($"[SubSceneController] Returning to {returnSceneName}");
 
         // 페이즈 진행 (저장은 PassDay()에서만 수행)
-        if (ProgressSystem.instance != null)
+        if (ProgressSystem.Instance != null)
         {
-            ProgressSystem.instance.PassPhase();
+            ProgressSystem.Instance.PassPhase();
             // 저장은 PassDay()에서만 수행
         }
 

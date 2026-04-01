@@ -272,7 +272,7 @@ public class RecipeDataManager : MonoBehaviour, SearchRecipeUsecase
     /// </summary>
     public void flush()
     {
-        if (ProgressSystem.instance?.phaseData == null)
+        if (ProgressSystem.Instance?.phaseData == null)
         {
             Debug.LogWarning("[RecipeDataManager] Cannot flush: ProgressSystem not available");
             return;
@@ -297,7 +297,7 @@ public class RecipeDataManager : MonoBehaviour, SearchRecipeUsecase
             }
         }
 
-        ProgressSystem.instance.phaseData.SelectedMenus = selectedMenuData;
+        ProgressSystem.Instance.phaseData.SelectedMenus = selectedMenuData;
         // 저장은 PassDay()에서만 수행 (여기서는 phaseData에 데이터만 넣음)
 
         Debug.Log($"[RecipeDataManager] Menu data prepared for save: {string.Join(" / ", selectedMenuData)}");
@@ -308,13 +308,13 @@ public class RecipeDataManager : MonoBehaviour, SearchRecipeUsecase
     /// </summary>
     public void LoadMenusFromProgress()
     {
-        if (ProgressSystem.instance?.phaseData?.SelectedMenus == null)
+        if (ProgressSystem.Instance?.phaseData?.SelectedMenus == null)
         {
             Debug.Log("[RecipeDataManager] No saved menu data to load");
             return;
         }
 
-        var savedMenus = ProgressSystem.instance.phaseData.SelectedMenus;
+        var savedMenus = ProgressSystem.Instance.phaseData.SelectedMenus;
 
         for (int i = 0; i < Mathf.Min(savedMenus.Count, menuSelections.Length); i++)
         {

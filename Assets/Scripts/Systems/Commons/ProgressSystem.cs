@@ -1,26 +1,14 @@
 using System.IO;
 using UnityEngine;
 
-public class ProgressSystem : MonoBehaviour
+public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>
 {
-    public static ProgressSystem instance {get; private set;}
     public PhaseData phaseData{get; private set;}
 
     public bool IsLoadable()
     {
         string path = Application.persistentDataPath + "/saves/progress";
         return DataSaveUtil.HasFile<PhaseData>(path);
-    }
-
-    private void Awake()
-    {
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     public void Initialize()

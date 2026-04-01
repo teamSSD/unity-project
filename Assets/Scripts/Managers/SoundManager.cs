@@ -1,26 +1,11 @@
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class SoundManager : MonoBehaviour
+public class SoundManager : SingletonMonoBehaviour<SoundManager>
 {
-    public static SoundManager Instance;
-
     [Header("스피커 설정")]
     public AudioSource bgmSource;
     public AudioSource sfxSource;
-
-    void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
     public void SetBGMVolume(float volume)
     {

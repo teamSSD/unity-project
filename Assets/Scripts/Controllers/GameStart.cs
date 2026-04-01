@@ -14,7 +14,7 @@ public class GameStart : MonoBehaviour
         ManagerBootstrap.EnsureAll();
 
         // Continue 버튼 활성화/비활성화
-        bool hasSaveData = ProgressSystem.instance?.IsLoadable() ?? false;
+        bool hasSaveData = ProgressSystem.Instance?.IsLoadable() ?? false;
 
         if (ContinueButton != null)
         {
@@ -44,7 +44,7 @@ public class GameStart : MonoBehaviour
     {
         // 저장된 데이터 로드
         StatsSystem.Initialize();
-        ProgressSystem.instance.Initialize();
+        ProgressSystem.Instance.Initialize();
         UnlockedFoodManager.Instance?.Initialize();
         InventoryManager.Instance?.Initialize();
         RecipeDataManager.Instance?.Initialize();
@@ -70,10 +70,10 @@ public class GameStart : MonoBehaviour
         StatsSystem.SetStamina(100);     // 100
 
         // ProgressSystem 초기화
-        ProgressSystem.instance.Initialize();
+        ProgressSystem.Instance.Initialize();
 
         // PhaseData.Day를 0으로 설정 (기본값 1 → 0)
-        ProgressSystem.instance.phaseData.Day = 0;
+        ProgressSystem.Instance.phaseData.Day = 0;
 
         // Manager 초기화 (New Game이므로 초기값으로 리셋)
         UnlockedFoodManager.Instance?.Initialize();
@@ -85,7 +85,7 @@ public class GameStart : MonoBehaviour
 
         // ⚠️ 모든 게임 데이터 초기값 저장 (New Game과 PassDay()에서만 저장!)
         StatsSystem.flush();
-        ProgressSystem.instance.flush();
+        ProgressSystem.Instance.flush();
         InventoryManager.Instance?.flush();
         RecipeDataManager.Instance?.flush();
         OrderManager.Instance?.flush();

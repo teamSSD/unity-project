@@ -6,11 +6,8 @@ using UnityEngine;
 /// 레시피 해금 시스템 관리 (Singleton)
 /// IUnlockedFoodProvider 구현 - 해금된 레시피 목록 제공
 /// </summary>
-public class UnlockedFoodManager : MonoBehaviour, IUnlockedFoodProvider
+public class UnlockedFoodManager : SingletonMonoBehaviour<UnlockedFoodManager>, IUnlockedFoodProvider
 {
-    private static UnlockedFoodManager instance;
-    public static UnlockedFoodManager Instance => instance;
-
     /// <summary>
     /// 해금된 레시피 ID 집합 (중복 방지)
     /// </summary>
@@ -21,18 +18,8 @@ public class UnlockedFoodManager : MonoBehaviour, IUnlockedFoodProvider
     /// </summary>
     private List<FoodData> allFoodData;
 
-    private void Awake()
+    protected override void OnSingletonAwake()
     {
-        // Singleton 패턴
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        instance = this;
-        DontDestroyOnLoad(gameObject);
-
         Debug.Log("[UnlockedFoodManager] Awake completed");
     }
 
@@ -58,14 +45,14 @@ public class UnlockedFoodManager : MonoBehaviour, IUnlockedFoodProvider
     /// </summary>
     public void LoadUnlocksFromProgress()
     {
-        if (ProgressSystem.instance?.phaseData == null)
+        if (ProgressSystem.Instance?.phaseData == null)
         {
             Debug.LogWarning("[UnlockedFoodManager] ProgressSystem not ready, using default unlocks");
             UnlockDefaultRecipes();
             return;
         }
 
-        var unlockedList = ProgressSystem.instance.phaseData.UnlockedRecipes;
+        var unlockedList = ProgressSystem.Instance.phaseData.UnlockedRecipes;
         if (unlockedList == null || unlockedList.Count == 0)
         {
             Debug.Log("[UnlockedFoodManager] No unlocked recipes in save data, using defaults");
@@ -155,9 +142,9 @@ public class UnlockedFoodManager : MonoBehaviour, IUnlockedFoodProvider
     /// </summary>
     public void SaveUnlocks()
     {
-        if (ProgressSystem.instance?.phaseData != null)
+        if (ProgressSystem.Instance?.phaseData != null)
         {
-            ProgressSystem.instance.phaseData.UnlockedRecipes = unlockedRecipeIds.ToList();
+            ProgressSystem.Instance.phaseData.UnlockedRecipes = unlockedRecipeIds.ToList();
             // 저장은 PassDay()에서만 수행 (여기서는 phaseData에 데이터만 넣음)
             Debug.Log($"[UnlockedFoodManager] Unlocked recipe data prepared for save: {unlockedRecipeIds.Count} recipes");
         }
@@ -184,11 +171,4 @@ public class UnlockedFoodManager : MonoBehaviour, IUnlockedFoodProvider
         return unlockedRecipeIds.Contains(foodId);
     }
 
-    private void OnDestroy()
-    {
-        if (instance == this)
-        {
-            instance = null;
-        }
-    }
 }

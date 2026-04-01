@@ -2,24 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class InventoryManager : MonoBehaviour, LoadInventoryUsecase
+public class InventoryManager : SingletonMonoBehaviour<InventoryManager>, LoadInventoryUsecase
 {
-    private static InventoryManager instance;
-    public static InventoryManager Instance => instance;
-
     private Dictionary<FoodData, int> inventory = new Dictionary<FoodData, int>();
     private List<FoodData> allFoodData;
 
-    private void Awake()
+    protected override void OnSingletonAwake()
     {
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        instance = this;
-        DontDestroyOnLoad(gameObject);
         Debug.Log("[InventoryManager] Initialized");
     }
 
@@ -140,11 +129,4 @@ public class InventoryManager : MonoBehaviour, LoadInventoryUsecase
             .ToList();
     }
 
-    private void OnDestroy()
-    {
-        if (instance == this)
-        {
-            instance = null;
-        }
-    }
 }

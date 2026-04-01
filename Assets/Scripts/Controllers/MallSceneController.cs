@@ -52,9 +52,9 @@ public class MallSceneController : MonoBehaviour
             bentoSelectionController.Show(() =>
             {
                 // 메뉴 선택 완료 → 페이즈 진행 (Preparation → Morning)
-                if (ProgressSystem.instance != null)
+                if (ProgressSystem.Instance != null)
                 {
-                    ProgressSystem.instance.PassPhase();
+                    ProgressSystem.Instance.PassPhase();
                     // 저장은 PassDay()에서만 수행
                 }
 

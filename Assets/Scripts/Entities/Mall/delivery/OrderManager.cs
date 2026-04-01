@@ -2,12 +2,10 @@
 using System.Linq;
 using UnityEngine;
 
-public class OrderManager : MonoBehaviour,
+public class OrderManager : SingletonMonoBehaviour<OrderManager>,
     IOrderReader,
     IOrderCommand
 {
-    public static OrderManager Instance;
-
     [SerializeField]
     private List<DeliveryOrderData> orders = new();
 
@@ -30,18 +28,6 @@ public class OrderManager : MonoBehaviour,
         public int state;
         public string npcId;
         public int cookedPrice;
-    }
-
-    void Awake()
-    {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     public void Initialize()

@@ -4,11 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class LoadingManager : MonoBehaviour
+public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
 {
-    private static LoadingManager instance;
-    public static LoadingManager Instance => instance;
-
     private Canvas canvas;
     private CanvasGroup canvasGroup;
     private Image progressBarFill;
@@ -18,17 +15,8 @@ public class LoadingManager : MonoBehaviour
 
     private const float FADE_DURATION = 0.3f;
 
-    private void Awake()
+    protected override void OnSingletonAwake()
     {
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        instance = this;
-        DontDestroyOnLoad(gameObject);
-
         BuildLoadingUI();
         canvas.enabled = false;
     }
@@ -172,9 +160,4 @@ public class LoadingManager : MonoBehaviour
         textRect.offsetMax = Vector2.zero;
     }
 
-    private void OnDestroy()
-    {
-        if (instance == this)
-            instance = null;
-    }
 }

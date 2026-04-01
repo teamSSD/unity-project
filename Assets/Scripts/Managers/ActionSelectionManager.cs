@@ -6,30 +6,16 @@ using UnityEngine;
 /// - DontDestroyOnLoad로 씬 전환 시에도 유지
 /// - Pure Data Manager (UI 없음)
 /// </summary>
-public class ActionSelectionManager : MonoBehaviour
+public class ActionSelectionManager : SingletonMonoBehaviour<ActionSelectionManager>
 {
-    private static ActionSelectionManager instance;
-    public static ActionSelectionManager Instance => instance;
-
     /// <summary>
     /// 액션 선택 데이터 (0=아침, 1=점심, 2=저녁)
     /// </summary>
     private ActionSelection[] actionSelections;
 
-    private void Awake()
+    protected override void OnSingletonAwake()
     {
-        // Singleton 패턴
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        instance = this;
-        DontDestroyOnLoad(gameObject);
-
         InitializeActions();
-
         Debug.Log("[ActionSelectionManager] Initialized");
     }
 
@@ -94,13 +80,6 @@ public class ActionSelectionManager : MonoBehaviour
         return false;
     }
 
-    private void OnDestroy()
-    {
-        if (instance == this)
-        {
-            instance = null;
-        }
-    }
 }
 
 /// <summary>

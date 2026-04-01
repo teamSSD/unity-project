@@ -47,7 +47,7 @@ public class PhaseActionSelector : MonoBehaviour
             [ActionType.Work] = () => TransitionScene("Cooking"),
             [ActionType.Rest] = () => {
                 StatsSystem.SetStamina(100);
-                ProgressSystem.instance?.PassPhase();
+                ProgressSystem.Instance?.PassPhase();
                 UpdateUI();
             },
             [ActionType.Shopping] = () => TransitionScene("Scene_Mall")
@@ -78,9 +78,9 @@ public class PhaseActionSelector : MonoBehaviour
 
     private void UpdateUI()
     {
-        if (ProgressSystem.instance != null && ProgressSystem.instance.phaseData != null)
+        if (ProgressSystem.Instance != null && ProgressSystem.Instance.phaseData != null)
         {
-            PhaseType currentPhase = ProgressSystem.instance.phaseData.Phase;
+            PhaseType currentPhase = ProgressSystem.Instance.phaseData.Phase;
 
             if (phaseTypeText != null)
             {
