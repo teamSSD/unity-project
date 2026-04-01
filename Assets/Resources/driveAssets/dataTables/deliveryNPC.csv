@@ -1,4 +1,3 @@
-NpcId,CharacterName,SpritePath,PosX,PosY,DeliveryState
-npc_001,철수,driveAssets/art/character/npc철수,2.5,-2.69,Orderable
-npc_002,영희,driveAssets/art/character/npc영희,-1.0,-2.69,WaitingReceipt
-npc_003,민수,driveAssets/art/character/npc민수,0.0,-2.69,Completed
+NpcId,CharacterName,SpritePath,PosX,PosY,DeliveryState,GroupId
+npc_jar,자르,driveAssets/art/character/char_jar_default,2.0,-2.69,Orderable,power_room_pair
+npc_getoro,게토로,driveAssets/art/character/char_getoro_default,3.5,-2.69,Orderable,power_room_pair

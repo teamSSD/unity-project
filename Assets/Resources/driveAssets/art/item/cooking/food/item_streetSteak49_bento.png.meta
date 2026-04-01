@@ -5,12 +5,6 @@ TextureImporter:
   - first:
       213: -208478731923733960
     second: item_streetSteak49_bento_0
-  - first:
-      213: 7426958205997713119
-    second: item_streetSteak49_bento_1
-  - first:
-      213: 437841112956471122
-    second: item_streetSteak49_bento_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -57,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 250
+  spritePixelsToUnits: 400
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -109,10 +103,10 @@ TextureImporter:
       name: item_streetSteak49_bento_0
       rect:
         serializedVersion: 2
-        x: 510
-        y: 465
-        width: 16
-        height: 14
+        x: 543
+        y: 407
+        width: 343
+        height: 146
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -123,50 +117,6 @@ TextureImporter:
       bones: []
       spriteID: 8324678a2b55b1df0800000000000000
       internalID: -208478731923733960
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: item_streetSteak49_bento_1
-      rect:
-        serializedVersion: 2
-        x: 523
-        y: 374
-        width: 544
-        height: 319
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: fd68a2e732bd11760800000000000000
-      internalID: 7426958205997713119
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: item_streetSteak49_bento_2
-      rect:
-        serializedVersion: 2
-        x: 508
-        y: 429
-        width: 26
-        height: 23
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 25705d52c26831600800000000000000
-      internalID: 437841112956471122
       vertices: []
       indices: 
       edges: []
@@ -186,8 +136,6 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       item_streetSteak49_bento_0: -208478731923733960
-      item_streetSteak49_bento_1: 7426958205997713119
-      item_streetSteak49_bento_2: 437841112956471122
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

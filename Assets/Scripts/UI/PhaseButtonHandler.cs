@@ -2,9 +2,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// 페이즈 버튼 핸들러
-/// ActionSelectionManager에서 선택된 액션을 확인하고 실행
+/// [LEGACY] 페이즈 버튼 핸들러.
+/// PhaseActionSelector와 함께 사용되었으나 IdleViewerUI로 대체됨.
+/// Idle 씬에서만 사용되었으므로 삭제 가능.
 /// </summary>
+[System.Obsolete("IdleViewerUI로 대체됨. 향후 삭제 예정.")]
 public class PhaseButtonHandler : MonoBehaviour
 {
     [SerializeField] private int phaseIndex = 0; // 0=아침, 1=점심, 2=저녁

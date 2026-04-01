@@ -4,18 +4,28 @@ public class DeliveryNpcView : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private string npcId;
+    private string groupId;
+    private string characterName;
 
     public string NpcId => npcId;
+    public string GroupId => groupId;
+    public Sprite Sprite => spriteRenderer?.sprite;
+    public string CharacterName => characterName;
 
-    public void Init(DeliveryNpcCsvData data)
+    public void Init(DeliveryNpcData data, DeliveryNpcState? stateOverride = null)
     {
-        spriteRenderer.sprite =
-            Resources.Load<Sprite>(data.spritePath);
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
+
+        spriteRenderer.sprite = data.sprite;
+        spriteRenderer.sortingOrder = 5;
 
         transform.position = data.position;
-        npcId = data.npcId;
+        npcId = data.id;
+        groupId = data.groupId;
+        characterName = data.characterName;
 
-        ApplyState(data.state);
+        ApplyState(stateOverride ?? data.state);
     }
     private void ApplyState(DeliveryNpcState state)
     {
@@ -33,8 +43,16 @@ public class DeliveryNpcView : MonoBehaviour
         {
             case DeliveryNpcState.Orderable:
                 spriteRenderer.color = Color.white;
-                interactionRoot.SetInteraction(
-                    gameObject.AddComponent<DeliveryNpcOrderInteraction>());
+                if (!string.IsNullOrEmpty(groupId))
+                {
+                    var dialogue = gameObject.AddComponent<DeliveryNpcDialogueInteraction>();
+                    dialogue.Init(groupId);
+                }
+                else
+                {
+                    interactionRoot.SetInteraction(
+                        gameObject.AddComponent<DeliveryNpcOrderInteraction>());
+                }
                 break;
 
             case DeliveryNpcState.WaitingReceipt:

@@ -23,3 +23,15 @@ MonoBehaviour:
   - T001
   - T002
   type: 1
+  toolVariants:
+  - {fileID: 21300000, guid: bdf060a211def4d7c9538d332ee1fe4a, type: 3}
+  - {fileID: 21300000, guid: 5413b5af0a58e4f539fcf15c9c3e4242, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  bentoVariants:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  pieceSprite: {fileID: 0}

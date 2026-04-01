@@ -41,17 +41,19 @@ public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
 
         GameObject go = Instantiate(prefab);
         currentGame = go.GetComponent<MiniGameAbstract>();
-        currentGame.SetIngredients(ingredients);
+        currentGame.SetIngredients(ingredients, toolId);
         currentGame.OnGameFinished += (score) =>
         {
             finalScore = score;
             isFinished = true;
         };
+        ClickStateUtil.globalLocked = true;
         currentGame.StartGame();
         while (!isFinished)
         {
             yield return 0f;
         }
+        ClickStateUtil.globalLocked = false;
         onCompleted?.Invoke(recipeData, finalScore);
     }
 

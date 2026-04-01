@@ -4,6 +4,6 @@ using UnityEngine;
 public interface IOrderCommand
 {
     void GenerateOrder(MenuSchema menu, string questId, string npcId);
-    bool TryMarkCooked(string questId);
+    bool MarkCookedWithPrice(string questId, int price);
     int ConsumeBento(string questId);
 }

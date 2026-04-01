@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GriddleMinigame : MiniGameAbstract
 {
+    [SerializeField] private SpriteStackRenderer stackRenderer;
+
     [Header("Settings")]
     [SerializeField] private int totalArrowCount = 10;
     [SerializeField] private GameObject arrowPrefab;
-    [SerializeField] private Transform arrowSpawnParent; 
-    [SerializeField] private Transform effectParent;     
+    [SerializeField] private Transform arrowSpawnParent;
+    [SerializeField] private Transform effectParent;
     [SerializeField] private float spacing = 150f; // 양수값 권장 (코드 내부에서 계산)
 
     private Queue<Vector2Int> _directionQueue = new Queue<Vector2Int>();
@@ -149,5 +152,16 @@ public class GriddleMinigame : MiniGameAbstract
         // 정수 나눗셈 방지를 위해 float 캐스팅
         float score = (float)_successCount / totalArrowCount;
         return score <= 0 ? 0.01f : score;
+    }
+
+    public override void SetIngredients(List<FoodData> ingredients, string toolId = null)
+    {
+        if (stackRenderer != null && ingredients != null)
+        {
+            var sprites = toolId != null
+                ? ingredients.Select(x => x.GetImageForTool(toolId))
+                : ingredients.Select(x => x.image);
+            stackRenderer.DrawMany(sprites);
+        }
     }
 }

@@ -5,6 +5,24 @@ TextureImporter:
   - first:
       213: -4399018231045230773
     second: item_insulatingMushroom_piece_0
+  - first:
+      213: 6785789567079679220
+    second: item_insulatingMushroom_piece_1
+  - first:
+      213: 953620837460731522
+    second: item_insulatingMushroom_piece_2
+  - first:
+      213: 5672936577790329917
+    second: item_insulatingMushroom_piece_3
+  - first:
+      213: -5737036748241381055
+    second: item_insulatingMushroom_piece_4
+  - first:
+      213: -8823168780497122278
+    second: item_insulatingMushroom_piece_5
+  - first:
+      213: -305658563842514806
+    second: item_insulatingMushroom_piece_6
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -34,7 +52,7 @@ TextureImporter:
   cubemapConvolution: 0
   seamlessCubemap: 0
   textureFormat: 1
-  maxTextureSize: 1024
+  maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
     filterMode: 1
@@ -72,7 +90,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 1024
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -85,7 +103,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: Standalone
-    maxTextureSize: 1024
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -103,8 +121,8 @@ TextureImporter:
       name: item_insulatingMushroom_piece_0
       rect:
         serializedVersion: 2
-        x: 570
-        y: 537
+        x: 484
+        y: 558
         width: 28
         height: 39
       alignment: 0
@@ -117,6 +135,138 @@ TextureImporter:
       bones: []
       spriteID: b4fe412d93c83f2c0800000000000000
       internalID: -4399018231045230773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_insulatingMushroom_piece_1
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 495
+        width: 28
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f4065a98a7fb2e50800000000000000
+      internalID: 6785789567079679220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_insulatingMushroom_piece_2
+      rect:
+        serializedVersion: 2
+        x: 525
+        y: 476
+        width: 28
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 286e1436911fb3d00800000000000000
+      internalID: 953620837460731522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_insulatingMushroom_piece_3
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 435
+        width: 28
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d344380d2c15abe40800000000000000
+      internalID: 5672936577790329917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_insulatingMushroom_piece_4
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 371
+        width: 28
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 149d5bd3973f160b0800000000000000
+      internalID: -5737036748241381055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_insulatingMushroom_piece_5
+      rect:
+        serializedVersion: 2
+        x: 539
+        y: 371
+        width: 28
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1c0725cdbecd8580800000000000000
+      internalID: -8823168780497122278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_insulatingMushroom_piece_6
+      rect:
+        serializedVersion: 2
+        x: 495
+        y: 313
+        width: 28
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a806c97d72512cbf0800000000000000
+      internalID: -305658563842514806
       vertices: []
       indices: 
       edges: []
@@ -136,6 +286,12 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       item_insulatingMushroom_piece_0: -4399018231045230773
+      item_insulatingMushroom_piece_1: 6785789567079679220
+      item_insulatingMushroom_piece_2: 953620837460731522
+      item_insulatingMushroom_piece_3: 5672936577790329917
+      item_insulatingMushroom_piece_4: -5737036748241381055
+      item_insulatingMushroom_piece_5: -8823168780497122278
+      item_insulatingMushroom_piece_6: -305658563842514806
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

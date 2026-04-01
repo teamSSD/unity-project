@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class OrderManager : MonoBehaviour,
@@ -10,6 +11,27 @@ public class OrderManager : MonoBehaviour,
     [SerializeField]
     private List<DeliveryOrderData> orders = new();
 
+    private static string SavePath => Application.persistentDataPath + "/saves/orders";
+
+    [System.Serializable]
+    private class OrderSaveData
+    {
+        public List<OrderEntry> entries = new();
+    }
+
+    [System.Serializable]
+    private class OrderEntry
+    {
+        public string questId;
+        public int orderNumber;
+        public string menuName;
+        public string mainMenuId;
+        public List<string> sideMenuIds = new();
+        public int state;
+        public string npcId;
+        public int cookedPrice;
+    }
+
     void Awake()
     {
         if (Instance != null)
@@ -20,6 +42,59 @@ public class OrderManager : MonoBehaviour,
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+
+    public void Initialize()
+    {
+        var data = DataSaveUtil.LoadData(new OrderSaveData(), SavePath);
+        orders.Clear();
+        foreach (var entry in data.entries)
+        {
+            var sideMenus = entry.sideMenuIds
+                .Where(id => !string.IsNullOrEmpty(id))
+                .Select(id => SearchDataUtil.GetFoodDataById(id))
+                .Where(f => f != null)
+                .ToList();
+
+            orders.Add(new DeliveryOrderData
+            {
+                questId = entry.questId,
+                orderNumber = entry.orderNumber,
+                menuSchema = new MenuSchema(
+                    entry.menuName,
+                    entry.orderNumber,
+                    !string.IsNullOrEmpty(entry.mainMenuId)
+                        ? SearchDataUtil.GetFoodDataById(entry.mainMenuId) : null,
+                    sideMenus
+                ),
+                state = (DeliveryOrderState)entry.state,
+                npcId = entry.npcId,
+                cookedPrice = entry.cookedPrice
+            });
+        }
+
+        Debug.Log($"[OrderManager] Initialized - {orders.Count} orders loaded");
+    }
+
+    public void flush()
+    {
+        var data = new OrderSaveData();
+        foreach (var order in orders)
+        {
+            data.entries.Add(new OrderEntry
+            {
+                questId = order.questId,
+                orderNumber = order.orderNumber,
+                menuName = order.menuSchema?.name ?? "",
+                mainMenuId = order.menuSchema?.mainMenu?.id ?? "",
+                sideMenuIds = order.menuSchema?.sideMenus?
+                    .Select(f => f?.id ?? "").ToList() ?? new List<string>(),
+                state = (int)order.state,
+                npcId = order.npcId,
+                cookedPrice = order.cookedPrice
+            });
+        }
+        DataSaveUtil.SaveData(data, SavePath);
     }
 
     // =====================
@@ -50,44 +125,28 @@ public class OrderManager : MonoBehaviour,
         });
     }
 
-    public bool TryMarkCooked(string questId)
+    public bool MarkCookedWithPrice(string questId, int price)
     {
         var order = GetOrder(questId);
         if (order == null) return false;
         if (order.state != DeliveryOrderState.Ordered) return false;
 
         order.state = DeliveryOrderState.Cooked;
+        order.cookedPrice = price;
+        Debug.Log($"[OrderManager] Marked cooked: {questId}, price={price}원");
         return true;
     }
 
     public int ConsumeBento(string questId)
-    {/*
+    {
         var order = GetOrder(questId);
         if (order == null) return 0;
 
-        MenuSchema menuSchema = order.menuSchema;
-        FoodData mainMenu = menuSchema.mainMenu;
-        List<FoodData> sideMenus = menuSchema.sideMenus;
+        int price = order.cookedPrice;
+        StatsSystem.AddMoney(price);
+        order.state = DeliveryOrderState.Delivered;
 
-        int totalPrice = 0;
-       totalPrice += mainMenu.Price;
-       sideMenus.ForEach(menu => totalPrice += menu.Price);
-
-       int matchCount = 0;
-       if (menuSchema.mainMenu.id == mainMenu.foodData.id) matchCount++;
-       List<string> ids = sideMenus.Select(menu => menu.foodData.id).ToList();
-       menuSchema.sideMenus.ForEach(menu =>
-       {
-           if (ids.Contains(menu.id)) matchCount++;
-       });
-
-       if (matchCount == menuSchema.sideMenus.Count + 1)
-        {
-            StatsSystem.AddMoney(totalPrice);
-            return;
-        }
-        StatsSystem.AddMoney((int) (totalPrice * 0.7f));
-        */
-        return 1000;
+        Debug.Log($"[OrderManager] Delivered: {questId}, reward={price}원");
+        return price;
     }
 }

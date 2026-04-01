@@ -1,19 +1,19 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class DeliveryNpcReceiptInteraction
     : MonoBehaviour, INpcInteraction
 {
     private bool hasReceived = false;
-    private DeliveryNpcContext context;
     private DeliveryNpcView npcView;
+    private GameObject speechBubble;
 
     private void Awake()
     {
-        context = GetComponent<DeliveryNpcContext>();
         npcView = GetComponent<DeliveryNpcView>();
-
     }
+
     public void Interact()
     {
         if (hasReceived) return;
@@ -32,23 +32,33 @@ public class DeliveryNpcReceiptInteraction
             return;
         }
 
-        // 3. 음식 수령 처리
-        OrderManager.Instance.ConsumeBento(myOrder.questId);
-
-        Say("아 잘 먹을게요!");
-
         hasReceived = true;
-        Destroy(gameObject, 0.5f);
+        StartCoroutine(DeliverSequence(myOrder));
+    }
+
+    private IEnumerator DeliverSequence(DeliveryOrderData order)
+    {
+        Say("음식이 왔군요! 확인 중...");
+
+        yield return new WaitForSeconds(2f);
+
+        int reward = OrderManager.Instance.ConsumeBento(order.questId);
+        Say($"감사합니다! ({reward}원)");
+
+        yield return new WaitForSeconds(1.5f);
+
+        Destroy(gameObject);
     }
 
     private void Say(string message)
     {
-        context.speechBubble = Instantiate(context.speechBubblePrefab);
-        context.speechBubbleScript = context.speechBubble.GetComponent<SpeechBubble>();
+        if (speechBubble != null)
+            Destroy(speechBubble);
 
-        context.speechBubbleScript.setContents(message);
-        context.speechBubble.transform.position =
+        var prefab = Resources.Load<GameObject>("Prefabs/cooking/SpeechBubble");
+        speechBubble = Instantiate(prefab);
+        speechBubble.GetComponent<SpeechBubble>().setContents(message);
+        speechBubble.transform.position =
             transform.position + new Vector3(-2.5f, 4f, 0f);
     }
-
 }

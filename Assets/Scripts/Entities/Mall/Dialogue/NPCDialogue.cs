@@ -1,22 +1,24 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class NPCDialogue : MonoBehaviour
 {
-    [Header("UI")]
-    public GameObject interactText;
+    [Header("Dialogue")]
+    [SerializeField] private DialogueSO dialogue;
+
+    [Header("Portrait")]
+    [SerializeField] private Sprite npcPortrait;
+    [SerializeField] private string npcSpeakerName;
 
     private bool isPlayerNear = false;
     private bool isTalking = false;
 
     private DialogueManager dialogueManager;
 
-
     void Start()
     {
         dialogueManager = FindFirstObjectByType<DialogueManager>();
-        interactText.SetActive(false);
     }
 
     void Update()
@@ -26,12 +28,35 @@ public class NPCDialogue : MonoBehaviour
             StartDialogue();
         }
     }
-    
+
     void StartDialogue()
     {
+        if (dialogue == null)
+            return;
+
         isTalking = true;
-        interactText.SetActive(false);
-        dialogueManager.StartDialogue("D001"); //@@ 완전 임시
+        InteractPromptUI.Hide();
+
+        Dictionary<string, Sprite> portraits = null;
+        if (npcPortrait != null && !string.IsNullOrEmpty(npcSpeakerName))
+            portraits = new Dictionary<string, Sprite> { { npcSpeakerName, npcPortrait } };
+
+        dialogueManager.OnDialogueEnded += OnDialogueEnded;
+        dialogueManager.StartDialogue(dialogue, portraits);
+    }
+
+    void OnDialogueEnded(string resultTag)
+    {
+        dialogueManager.OnDialogueEnded -= OnDialogueEnded;
+        StartCoroutine(ResetTalkingNextFrame());
+    }
+
+    IEnumerator ResetTalkingNextFrame()
+    {
+        yield return null;
+        isTalking = false;
+        if (isPlayerNear)
+            InteractPromptUI.Show("*press spacebar to talk*");
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -40,7 +65,7 @@ public class NPCDialogue : MonoBehaviour
         {
             isPlayerNear = true;
             if (!isTalking)
-                interactText.SetActive(true);
+                InteractPromptUI.Show("*press spacebar to talk*");
         }
     }
 
@@ -48,10 +73,11 @@ public class NPCDialogue : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            dialogueManager.EndDialogue(); 
+            if (isTalking)
+                dialogueManager.EndDialogue();
 
             isPlayerNear = false;
-            interactText.SetActive(false);
+            InteractPromptUI.Hide();
             isTalking = false;
         }
     }

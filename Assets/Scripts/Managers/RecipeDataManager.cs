@@ -233,6 +233,16 @@ public class RecipeDataManager : MonoBehaviour, SearchRecipeUsecase
     }
 
     /// <summary>
+    /// minigameId에 대응하는 toolId 반환
+    /// </summary>
+    public string GetToolIdForMinigame(string minigameId)
+    {
+        if (minigameIdToToolId.TryGetValue(minigameId, out string toolId))
+            return toolId;
+        return null;
+    }
+
+    /// <summary>
     /// 모든 레시피 가져오기 (디버깅/UI용)
     /// </summary>
     public List<RecipeData> GetAllRecipes()

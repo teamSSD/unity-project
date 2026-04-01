@@ -101,5 +101,5 @@ public abstract class MiniGameAbstract : MonoBehaviour
     public abstract void OnUpdate();
     public abstract float CalculateScore();
 
-    public virtual void SetIngredients(List<FoodData> ingredients) { }
+    public virtual void SetIngredients(List<FoodData> ingredients, string toolId = null) { }
 }

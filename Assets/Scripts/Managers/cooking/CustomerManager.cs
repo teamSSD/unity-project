@@ -88,7 +88,46 @@ public class CustomerManager : MonoBehaviour
 
     void Start()
     {
+        CreateDeliveryTickets();
         nextSpawnTime = RandomNormal.Get(baseSpawnInterval, spawnIntervalVariance);
+
+        var subScene = FindFirstObjectByType<SubSceneController>();
+        if (subScene != null)
+            OnGameEnd += subScene.ReturnToIdle;
+    }
+
+    private void CreateDeliveryTickets()
+    {
+        if (OrderManager.Instance == null) return;
+
+        foreach (var order in OrderManager.Instance.GetOrders())
+        {
+            if (order.state != DeliveryOrderState.Ordered) continue;
+
+            var ticket = ticketController.CreateTicket(
+                order.menuSchema,
+                onTicketTaken: null,
+                onCustomerExit: null
+            );
+            ticket.IsDelivery = true;
+            ticket.QuestId = order.questId;
+
+            // 배달 표시로 영수증 재설정
+            ticket.GetComponent<Receipt>().Set(order.menuSchema, isDelivery: true);
+
+            // 배달 onTake: 가격 계산 + Cooked 전환
+            var capturedOrder = order;
+            ticket.onTake += (main, sides, pos) =>
+            {
+                int totalPrice = 0;
+                if (sides != null)
+                    foreach (var food in sides)
+                        if (food != null) totalPrice += food.Price;
+
+                OrderManager.Instance.MarkCookedWithPrice(
+                    capturedOrder.questId, totalPrice);
+            };
+        }
     }
 
     void Update()

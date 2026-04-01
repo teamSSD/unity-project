@@ -5,6 +5,11 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
+/// <summary>
+/// [LEGACY] Idle 씬의 페이즈별 Work/Rest/Shopping 액션 선택 UI.
+/// IdleViewerUI로 대체됨. Idle 씬에서만 사용되었으므로 삭제 가능.
+/// </summary>
+[System.Obsolete("IdleViewerUI로 대체됨. 향후 삭제 예정.")]
 public class PhaseActionSelector : MonoBehaviour
 {
     [Header("UI References")]
@@ -26,9 +31,11 @@ public class PhaseActionSelector : MonoBehaviour
     private int currentPhaseIndex = 0;
 
     private Dictionary<ActionType, Action> actionExecutors;
+    private IdleSceneController idleSceneController;
 
     private void Start()
     {
+        idleSceneController = FindObjectOfType<IdleSceneController>();
         InitializeActionExecutors();
         SetupButtons();
         UpdateUI();
@@ -38,14 +45,22 @@ public class PhaseActionSelector : MonoBehaviour
     {
         actionExecutors = new Dictionary<ActionType, Action>
         {
-            [ActionType.Work] = () => SceneManager.LoadScene("Cooking"),
+            [ActionType.Work] = () => TransitionScene("Cooking"),
             [ActionType.Rest] = () => {
                 StatsSystem.SetStamina(100);
                 ProgressSystem.instance?.PassPhase();
                 UpdateUI();
             },
-            [ActionType.Shopping] = () => SceneManager.LoadScene("Scene_Mall")
+            [ActionType.Shopping] = () => TransitionScene("Scene_Mall")
         };
+    }
+
+    private void TransitionScene(string sceneName)
+    {
+        if (idleSceneController != null)
+            idleSceneController.TransitionToScene(sceneName);
+        else
+            SceneManager.LoadScene(sceneName);
     }
 
     private void SetupButtons()

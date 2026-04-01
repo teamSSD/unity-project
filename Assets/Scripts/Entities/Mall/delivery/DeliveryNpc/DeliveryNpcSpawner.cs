@@ -1,11 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 public class DeliveryNpcSpawner : MonoBehaviour
 {
     [SerializeField] private DeliveryNpcView npcPrefab;
-    [SerializeField]private string csvPath = "driveAssets/dataTables/deliveryNPC";
-
 
     private readonly List<GameObject> spawnedNpcs = new();
 
@@ -18,17 +16,15 @@ public class DeliveryNpcSpawner : MonoBehaviour
     {
         Clear();
 
-        List<DeliveryNpcCsvData> npcDatas =
-            DeliveryNpcCsvLoader.Load(csvPath);
+        DeliveryNpcData[] npcDatas =
+            Resources.LoadAll<DeliveryNpcData>("ScriptableObjects/DeliveryNpcData");
 
         foreach (var data in npcDatas)
         {
-            if (data.state == DeliveryNpcState.Completed)// 수령 완료인 npc는 생성안하게 해둠
+            if (data.state == DeliveryNpcState.Completed)
                 continue;
 
-            DeliveryNpcView npc =
-                Instantiate(npcPrefab, transform);
-
+            DeliveryNpcView npc = Instantiate(npcPrefab, transform);
             npc.Init(data);
             spawnedNpcs.Add(npc.gameObject);
         }

@@ -30,15 +30,22 @@ public class MenuSelectionItem : MonoBehaviour
 
     /// <summary>
     /// FoodData SO를 기반으로 음식 이미지와 이름을 설정합니다.
+    /// 레시피가 있으면 도구별 조리 이미지 + 도구 아이콘을 표시합니다.
     /// </summary>
     public void SetData(FoodData foodData)
     {
         CurrentFood = foodData;
         if (foodData == null) return;
 
+        // 레시피 조회 → 도구 정보
+        RecipeData recipe = SearchDataUtil.GetRecipeDataByFoodId(foodData.id);
+        string toolId = null;
+        if (recipe != null)
+            toolId = RecipeDataManager.Instance.GetToolIdForMinigame(recipe.minigameId);
+
         if (foodImage != null)
         {
-            foodImage.sprite = foodData.image;
+            foodImage.sprite = toolId != null ? foodData.GetImageForTool(toolId) : foodData.image;
             foodImage.preserveAspect = true;
             foodImage.gameObject.SetActive(true);
         }
@@ -48,9 +55,22 @@ public class MenuSelectionItem : MonoBehaviour
             nameLabel.text = foodData.ingredientName;
         }
 
-        // 도구 아이콘 초기화 (필요 시 확장)
-        if (toolIcon != null) toolIcon.gameObject.SetActive(false);
-        
+        // 도구 아이콘 설정
+        if (toolIcon != null)
+        {
+            CookingToolData toolData = toolId != null ? SearchDataUtil.GetCookingToolDataById(toolId) : null;
+            if (toolData != null && toolData.defaultImage != null)
+            {
+                toolIcon.sprite = toolData.defaultImage;
+                toolIcon.preserveAspect = true;
+                toolIcon.gameObject.SetActive(true);
+            }
+            else
+            {
+                toolIcon.gameObject.SetActive(false);
+            }
+        }
+
         // 초기 체크박스 상태는 꺼짐
         SetSelection(false);
     }

@@ -20,5 +20,17 @@ MonoBehaviour:
   image: {fileID: 21300000, guid: b6756a62bcc074cf48b655cfb064ff99, type: 3}
   ingredient: {fileID: 11400000, guid: 62c9c111ee9bd4c31b0c53b1e0987277, type: 2}
   availableTools:
-  - T005
+  - T001
   type: 1
+  toolVariants:
+  - {fileID: 21300000, guid: be85ccf7c7314427f85005b0c8a2ebf5, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  bentoVariants:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  pieceSprite: {fileID: 0}

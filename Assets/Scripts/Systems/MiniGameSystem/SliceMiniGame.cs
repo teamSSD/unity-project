@@ -17,7 +17,7 @@ public class SliceMiniGame : MiniGameAbstract
     public int totalSlices = 6;
     public int segmentsPerSlice = 20;
     public float sliceRangeY = 4f;
-    public float sliceAreaWidth = 5f;
+    public float sliceMargin = 0.3f;
     public float tolerance = 0.1f;
     public float hintMoveSpeed = 15f;
 
@@ -28,30 +28,33 @@ public class SliceMiniGame : MiniGameAbstract
     private int _currentSliceIndex = 0;
     private bool _isSlicing = false;
     private bool[] _segmentChecked;
+    private FoodData currentIngredient;
+    private float _cachedSliceAreaWidth;
 
-    // --- 계산 프로퍼티 (에러 해결용) ---
+    // --- 계산 프로퍼티 ---
     private float CenterX => Ingredient.transform.position.x;
     private float StartY => Ingredient.transform.position.y + (sliceRangeY / 2f);
     private float EndY => Ingredient.transform.position.y - (sliceRangeY / 2f);
-    private float ActualWidth => Ingredient.GetComponent<SpriteRenderer>().bounds.size.x;
-    private float LeftEdgeX => CenterX - (sliceAreaWidth / 2f);
-    private float CurrentTargetX 
+    private float LeftEdgeX => CenterX - (_cachedSliceAreaWidth / 2f);
+    private float CurrentTargetX
     {
         get {
             if (totalSlices <= 1) return CenterX;
-            float spacing = sliceAreaWidth / (totalSlices - 1);
-            return LeftEdgeX + (spacing * _currentSliceIndex);
+            float spacing = _cachedSliceAreaWidth / (totalSlices + 1);
+            return LeftEdgeX + (spacing * (_currentSliceIndex + 1));
         }
     }
 
-    public override void SetIngredients(List<FoodData> ingredients)
+    public override void SetIngredients(List<FoodData> ingredients, string toolId = null)
     {
         if (ingredients.Count <= 0) return;
-        
+
+        currentIngredient = ingredients[0];
         _scorer = new SliceScorer(totalSlices, segmentsPerSlice);
         var renderer = Ingredient.GetComponent<SpriteRenderer>();
-        renderer.sprite = ingredients[0].image;
+        renderer.sprite = toolId != null ? ingredients[0].GetImageForTool(toolId) : ingredients[0].image;
         renderer.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
+        _cachedSliceAreaWidth = renderer.bounds.size.x - (sliceMargin * 2f);
         
         visualizer.SetupMask(renderer, maskSprite);
         RefreshState();
@@ -110,8 +113,10 @@ public class SliceMiniGame : MiniGameAbstract
 
     private void SpawnPiece() {
         if (slicePrefab == null) return;
-        var piece = Instantiate(slicePrefab, new Vector3(CurrentTargetX, Ingredient.transform.position.y, -0.2f), Quaternion.identity);
+        var piece = Instantiate(slicePrefab, new Vector3(CurrentTargetX, Ingredient.transform.position.y, -0.2f), Quaternion.identity, transform);
         piece.transform.localScale = Ingredient.transform.localScale;
+        if (currentIngredient?.pieceSprite != null)
+            piece.GetComponent<SpriteRenderer>().sprite = currentIngredient.pieceSprite;
     }
 
     private void RefreshState() => visualizer.UpdateGuide(CurrentTargetX, StartY, EndY);

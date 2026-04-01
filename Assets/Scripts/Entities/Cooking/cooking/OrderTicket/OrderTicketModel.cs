@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(OrderTicketBehavior))]
@@ -14,6 +15,8 @@ public class OrderTicketModel : MonoBehaviour
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
     public bool IsAttached {get; private set;} = false;
+    public bool IsDelivery { get; set; }
+    public string QuestId { get; set; }
     public event Action OnAttached = () => {};
 
     public event Action<FoodSchema, List<FoodSchema>, Vector3> onTake = (_, __, ___) => { };
@@ -40,6 +43,9 @@ public class OrderTicketModel : MonoBehaviour
         BentoModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoModel>();
         if (collision != null)
         {
+            if (IsDelivery && !ValidateExactMatch(collision))
+                return;
+
             bool affected = collision.AddOrderTicket(this);
             if (affected)
             {
@@ -68,6 +74,24 @@ public class OrderTicketModel : MonoBehaviour
     public void DestroyObject()
     {
         Destroy(gameObject);
+    }
+
+    private bool ValidateExactMatch(BentoModel bento)
+    {
+        var foods = bento.getFoodList();
+        if (foods.Count == 0) return false;
+
+        // 메인 확인
+        if (menuSchema.mainMenu == null || foods[0].foodData.id != menuSchema.mainMenu.id)
+            return false;
+
+        // 사이드 확인: 정확히 같은 구성이어야 함
+        var expectedSides = menuSchema.sideMenus
+            .Select(s => s.id).OrderBy(x => x).ToList();
+        var actualSides = foods.Skip(1)
+            .Select(f => f.foodData.id).OrderBy(x => x).ToList();
+
+        return expectedSides.SequenceEqual(actualSides);
     }
 
     private IEnumerator waitAndTake(float time, BentoModel bento) // buy에서 수정

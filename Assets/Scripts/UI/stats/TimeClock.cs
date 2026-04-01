@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class TimeClock : MonoBehaviour
 {
+    private float gameTimeScale = 180f;
+
     private float timer = 0f;
 
     void Update()
@@ -10,10 +12,12 @@ public class TimeClock : MonoBehaviour
 
         timer += Time.deltaTime;
 
-        if (timer >= 1f)
+        float secondsPerGameMinute = 60f / gameTimeScale;
+
+        while (timer >= secondsPerGameMinute)
         {
             StatsSystem.AddTime(0, 1);
-            timer -= 1f;
+            timer -= secondsPerGameMinute;
         }
     }
 }

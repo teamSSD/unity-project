@@ -35,17 +35,11 @@ public class ActionSelectionManager : MonoBehaviour
 
     private void InitializeActions()
     {
-        actionSelections = new ActionSelection[3];
+        actionSelections = new ActionSelection[4];
         actionSelections[0] = new ActionSelection("아침");
         actionSelections[1] = new ActionSelection("점심");
         actionSelections[2] = new ActionSelection("저녁");
-
-        // 테스트용 기본 액션 설정
-        actionSelections[0].SelectedAction = ActionType.Work;
-        actionSelections[1].SelectedAction = ActionType.Rest;
-        actionSelections[2].SelectedAction = ActionType.Shopping;
-
-        Debug.Log("[ActionSelectionManager] Default test actions set: Work, Rest, Shopping");
+        actionSelections[3] = new ActionSelection("밤");
     }
 
     /// <summary>

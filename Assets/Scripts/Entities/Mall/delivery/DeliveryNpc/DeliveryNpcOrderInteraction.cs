@@ -58,7 +58,7 @@ public class DeliveryNpcOrderInteraction
         OrderTicketModel ticketModel = receipt.GetComponent<OrderTicketModel>();
 
         receiptScript.Set(menuSchema);
-        ticketModel.menuSchema = menuSchema;
+        ticketModel.SetMenu(menuSchema);
     }
 
     private void Say(string message)
@@ -73,19 +73,17 @@ public class DeliveryNpcOrderInteraction
 
     private MenuSchema GenerateRandomMenu()
     {
-        TempSearchFoodUsecase tempSearchFoodUsecase = new TempSearchFoodUsecase();
-
         List<MenuSchema> menus = new List<MenuSchema>
         {
             new MenuSchema(
                 "임시정식 A",
                 -1,
-                tempSearchFoodUsecase.Search("I034"),
+                SearchDataUtil.GetFoodDataById("I034"),
                 new List<FoodData>
                 {
-                    tempSearchFoodUsecase.Search("I046"),
-                    tempSearchFoodUsecase.Search("I058"),
-                    tempSearchFoodUsecase.Search("I062")
+                    SearchDataUtil.GetFoodDataById("I046"),
+                    SearchDataUtil.GetFoodDataById("I058"),
+                    SearchDataUtil.GetFoodDataById("I062")
                 }
             ),
         };

@@ -9,8 +9,8 @@ public class Receipt : MonoBehaviour
     private Vector3 std = new Vector3(0, 0, 0);
     private Vector3 off = new Vector3(0, -0.25f, 0);
     
-    public void Set(MenuSchema menuSchema)
-    {   
+    public void Set(MenuSchema menuSchema, bool isDelivery = false)
+    {
         GameObject main = Instantiate(linePrefab, transform);
         main.GetComponent<ReceiptLine>().Set(menuSchema.mainMenu.ingredientName, 1);
         main.transform.localPosition = std;
@@ -22,6 +22,8 @@ public class Receipt : MonoBehaviour
             side.transform.localPosition = std + off * (i+1);
         }
 
-        orderNumber.text = "二쇰Ц踰덊샇 : " + menuSchema.orderNumber;
+        orderNumber.text = isDelivery
+            ? "배달 : " + menuSchema.orderNumber
+            : "주문번호 : " + menuSchema.orderNumber;
     }
 }

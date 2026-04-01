@@ -14,6 +14,9 @@ public class GameStart : MonoBehaviour
         EnsureUnlockedFoodManager();
         EnsureInventoryManager();
         EnsureRecipeDataManager();
+        EnsureOrderManager();
+        EnsureActionSelectionManager();
+        EnsureLoadingManager();
 
         // Continue 버튼 활성화/비활성화
         bool hasSaveData = ProgressSystem.instance?.IsLoadable() ?? false;
@@ -50,6 +53,9 @@ public class GameStart : MonoBehaviour
         UnlockedFoodManager.Instance?.Initialize();
         InventoryManager.Instance?.Initialize();
         RecipeDataManager.Instance?.Initialize();
+        OrderManager.Instance?.Initialize();
+
+        EnsureRecipeBookManager();
 
         // Scene_Mall 씬 로드 (메뉴 선택 → Idle)
         SceneManager.LoadScene("Scene_Mall");
@@ -81,13 +87,20 @@ public class GameStart : MonoBehaviour
         InventoryManager.Instance?.ResetToDefault();
         RecipeDataManager.Instance?.Initialize();
 
+        // 배달 퀘스트 초기화
+        DeliveryNpcDialogueInteraction.ResetAll();
+
         // ⚠️ 모든 게임 데이터 초기값 저장 (New Game과 PassDay()에서만 저장!)
         StatsSystem.flush();
         ProgressSystem.instance.flush();
         InventoryManager.Instance?.flush();
         RecipeDataManager.Instance?.flush();
+        OrderManager.Instance?.flush();
+        DeliveryNpcDialogueInteraction.flush();
 
         Debug.Log("[GameStart] New Game - 초기 데이터 저장 완료");
+
+        EnsureRecipeBookManager();
 
         // Scene_Mall 씬 로드 (메뉴 선택 → Idle)
         SceneManager.LoadScene("Scene_Mall");
@@ -136,6 +149,48 @@ public class GameStart : MonoBehaviour
         else
         {
             Debug.Log("[GameStart] RecipeDataManager already exists");
+        }
+    }
+
+    private void EnsureRecipeBookManager()
+    {
+        if (RecipeBookManager.HasInstance) return;
+        var prefab = Resources.Load<GameObject>("Prefabs/recipebook/legacy/RecipeBook");
+        if (prefab != null)
+        {
+            Instantiate(prefab);
+        }
+    }
+
+    private void EnsureActionSelectionManager()
+    {
+        if (ActionSelectionManager.Instance == null)
+        {
+            GameObject managerObj = new GameObject("ActionSelectionManager");
+            managerObj.AddComponent<ActionSelectionManager>();
+        }
+    }
+
+    private void EnsureLoadingManager()
+    {
+        if (LoadingManager.Instance == null)
+        {
+            GameObject managerObj = new GameObject("LoadingManager");
+            managerObj.AddComponent<LoadingManager>();
+        }
+    }
+
+    private void EnsureOrderManager()
+    {
+        if (OrderManager.Instance == null)
+        {
+            GameObject managerObj = new GameObject("OrderManager");
+            managerObj.AddComponent<OrderManager>();
+            Debug.Log("[GameStart] Created OrderManager");
+        }
+        else
+        {
+            Debug.Log("[GameStart] OrderManager already exists");
         }
     }
 }

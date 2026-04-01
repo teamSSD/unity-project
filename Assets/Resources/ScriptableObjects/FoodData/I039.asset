@@ -20,3 +20,15 @@ MonoBehaviour:
   availableTools:
   - 
   type: 3
+  toolVariants:
+  - {fileID: 21300000, guid: 0daff23dc0cbe40168e0f6ca7707aae3, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  bentoVariants:
+  - {fileID: 21300000, guid: bb947ec53ed3a4e47ab1ae676e1d1755, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  pieceSprite: {fileID: 0}

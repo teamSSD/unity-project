@@ -11,15 +11,13 @@ public enum FoodType
 [CreateAssetMenu(fileName = "NewFoodData", menuName = "Data/Food Data")]
 public class FoodData : ScriptableObject, CsvParsable
 {
-    // Tool ID to tool type mapping
-    private static readonly Dictionary<string, string> toolIdToType = new Dictionary<string, string>
+    // Tool ID → 배열 인덱스 매핑
+    private static readonly string[] toolSuffixes = { "_pan", "_pot", "_bowl", "_cut", "_plate" };
+    private static readonly Dictionary<string, int> toolIdToIndex = new()
     {
-        { "T001", "pan" },
-        { "T002", "pot" },
-        { "T003", "bowl" },
-        { "T004", "cut" },
-        { "T005", "plate" }
+        { "T001", 0 }, { "T002", 1 }, { "T003", 2 }, { "T004", 3 }, { "T005", 4 }
     };
+    private static readonly string[] bentoSuffixes = { "_bento", "_bento_left", "_bento_middle", "_bento_right" };
 
     public string id;
     public string ingredientName;
@@ -28,6 +26,11 @@ public class FoodData : ScriptableObject, CsvParsable
     public IngredientData ingredient;
     public List<string> availableTools = new List<string>();
     public FoodType type;
+
+    [Header("Variant Sprites")]
+    public Sprite[] toolVariants = new Sprite[5];    // [0]pan [1]pot [2]bowl [3]cut [4]plate
+    public Sprite[] bentoVariants = new Sprite[4];   // [0]bento [1]left [2]middle [3]right
+    public Sprite pieceSprite;
 
     public void Init(string[] args)
     {
@@ -43,6 +46,35 @@ public class FoodData : ScriptableObject, CsvParsable
             ingredient = Resources.Load<IngredientData>(ingredientPath);
             availableTools = new List<string>(args[4].Split('/'));
             type = (FoodType)Enum.Parse(typeof(FoodType), args[5].Trim());
+
+            // Variant 스프라이트 로드
+            string baseName = args[3].Trim().Replace("_raw", "");
+
+            // Tool variants
+            if (type == FoodType.INGREDIENT)
+            {
+                foreach (string toolId in availableTools)
+                {
+                    if (toolIdToIndex.TryGetValue(toolId.Trim(), out int idx))
+                        toolVariants[idx] = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + baseName + toolSuffixes[idx]);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 5; i++)
+                    toolVariants[i] = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + baseName + toolSuffixes[i]);
+            }
+
+            // Piece variant (커팅 미니게임용)
+            if (type == FoodType.INGREDIENT && availableTools.Contains("T004"))
+                pieceSprite = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + baseName + "_piece");
+
+            // Bento variants
+            if (type == FoodType.MAIN || type == FoodType.SIDE)
+            {
+                for (int i = 0; i < 4; i++)
+                    bentoVariants[i] = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + baseName + bentoSuffixes[i]);
+            }
         }
         catch (Exception e)
         {
@@ -50,46 +82,17 @@ public class FoodData : ScriptableObject, CsvParsable
         }
     }
 
-    /// <summary>
-    /// Get the bento variant sprite for this food (e.g., item_xxx_raw → item_xxx_bento)
-    /// Falls back to default image if bento variant doesn't exist
-    /// </summary>
-    public Sprite GetBentoImage()
+    public Sprite GetBentoImage(int slotIndex = 0)
     {
-        string baseName = image.name.Replace("_raw", "");
-        string bentoPath = ResourcePaths.Art.FOOD + baseName + "_bento";
-        Sprite bento = Resources.Load<Sprite>(bentoPath);
-        Debug.Log($"[FoodData] GetBentoImage: image.name={image.name}, baseName={baseName}, bentoPath={bentoPath}, found={bento != null}");
-        return bento != null ? bento : image;
+        if (slotIndex < 0 || slotIndex >= bentoVariants.Length)
+            return image;
+        return bentoVariants[slotIndex] != null ? bentoVariants[slotIndex] : image;
     }
 
-    /// <summary>
-    /// Get the appropriate sprite for this ingredient when used with a specific tool
-    /// </summary>
-    /// <param name="toolId">Tool ID like "T001", "T002", etc.</param>
-    /// <returns>Sprite variant for the tool type</returns>
     public Sprite GetImageForTool(string toolId)
     {
-        if (!toolIdToType.TryGetValue(toolId, out string toolType))
-        {
-            Debug.LogError($"[FoodData] Unknown tool ID: {toolId} for ingredient {ingredientName} ({id})");
-            return image; // Fallback to raw if unknown tool
-        }
-
-        // Get base name without _raw suffix
-        string baseName = image.name.Replace("_raw", "");
-        string variantName = $"{baseName}_{toolType}";
-
-        // Load variant image
-        string variantPath = ResourcePaths.Art.FOOD + variantName;
-        Sprite variant = Resources.Load<Sprite>(variantPath);
-
-        if (variant == null)
-        {
-            Debug.LogError($"[FoodData] Missing variant image: {variantPath} for ingredient {ingredientName} ({id})");
-            return image; // Fallback to raw if variant missing
-        }
-
-        return variant;
+        if (!toolIdToIndex.TryGetValue(toolId, out int idx))
+            return image;
+        return toolVariants[idx] != null ? toolVariants[idx] : image;
     }
 }

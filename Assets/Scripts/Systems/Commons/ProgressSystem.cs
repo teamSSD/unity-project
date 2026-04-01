@@ -72,6 +72,8 @@ public class ProgressSystem : MonoBehaviour
     /// - StatsSystem (stamina, day, time, money)
     /// - InventoryManager (inventory)
     /// - RecipeDataManager (menus)
+    /// - DeliveryNpcDialogueInteraction (quest stages)
+    /// - OrderManager (delivery orders)
     /// </summary>
     public void PassDay()
     {
@@ -85,6 +87,8 @@ public class ProgressSystem : MonoBehaviour
         StatsSystem.flush();
         InventoryManager.Instance?.flush();
         RecipeDataManager.Instance?.flush();
+        DeliveryNpcDialogueInteraction.flush();
+        OrderManager.Instance?.flush();
 
         Debug.Log($"[ProgressSystem] PassDay - Day {phaseData.Day} 시작, 모든 데이터 저장 완료");
     }

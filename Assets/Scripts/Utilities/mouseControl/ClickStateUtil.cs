@@ -25,6 +25,8 @@ public class ClickStateUtil : MonoBehaviour
     public Action OnDragEnd;
     public Action OnNone;
 
+    public static bool globalLocked = false;
+
     private Collider2D col2d;
     private Collider2D[] overlapBuf;
 
@@ -46,6 +48,13 @@ public class ClickStateUtil : MonoBehaviour
 
     void Update()
     {
+        if (globalLocked)
+        {
+            if (isDown) { isDown = false; dragging = false; }
+            current = ClickState.None;
+            return;
+        }
+
         var cam = targetCamera != null ? targetCamera : Camera.main;
         if (cam == null) return;
         if (col2d == null) col2d = GetComponent<Collider2D>();

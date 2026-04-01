@@ -13,13 +13,6 @@ public class BentoModel : MonoBehaviour
 
     [Header("Bento Settings")]
     [SerializeField] private int maxFoodSlots = 4;
-    [SerializeField] private List<Vector2> foodPositions = new List<Vector2>()
-    {
-        new Vector2(-0.4f, 0f),   // Main dish position
-        new Vector2(0.6f, 0.4f),  // Side 1
-        new Vector2(0.6f, 0f),    // Side 2
-        new Vector2(0.6f, -0.4f)  // Side 3
-    };
 
     [Header("Audio")]
     [SerializeField] private AudioClip bentoPutSfx;
@@ -48,31 +41,23 @@ public class BentoModel : MonoBehaviour
     }
     public bool AddIngredient(FoodSchema food)
     {
-        if (foodList.Count < maxFoodSlots)
+        if (foodList.Count >= maxFoodSlots) return false;
+
+        if (foodList.Count == 0 && food.foodData.type != FoodType.MAIN)
         {
-            if (foodList.Count == 0 && !(food.foodData.type == FoodType.MAIN))
-            {
-                Debug.Log("해당 음식은 메인 음식이 아닙니다.");
-                return false;
-            }
-            else if (foodList.Count > 0 && food.foodData.type != FoodType.SIDE)
-            {
-                Debug.Log("해당 음식은 사이드 음식이 아닙니다.");
-                return false;
-            }
-
-            // Use position from list if available
-            Vector2 position = foodList.Count < foodPositions.Count
-                ? foodPositions[foodList.Count]
-                : Vector2.zero;
-
-            // MAIN/SIDE dishes use bento variant image
-            Sprite displaySprite = food.foodData.GetBentoImage();
-            BehaviorInstance.AddTexture(displaySprite, position);
-            foodList.Add(food);
-            return true;
+            Debug.Log("해당 음식은 메인 음식이 아닙니다.");
+            return false;
         }
-        return false;
+        else if (foodList.Count > 0 && food.foodData.type != FoodType.SIDE)
+        {
+            Debug.Log("해당 음식은 사이드 음식이 아닙니다.");
+            return false;
+        }
+
+        Sprite displaySprite = food.foodData.GetBentoImage(foodList.Count);
+        BehaviorInstance.AddTexture(displaySprite, Vector2.zero);
+        foodList.Add(food);
+        return true;
     }
 
     public bool AddOrderTicket(OrderTicketModel orderTicket)

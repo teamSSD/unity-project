@@ -18,4 +18,5 @@ public class DeliveryOrderData
     public MenuSchema menuSchema;
     public DeliveryOrderState state;
     public string npcId;
+    public int cookedPrice;
 }

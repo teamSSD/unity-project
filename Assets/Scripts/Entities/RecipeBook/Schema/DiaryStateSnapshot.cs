@@ -15,7 +15,7 @@ public class DiaryStateSnapshot
 
     public DiaryStateSnapshot()
     {
-        CurrentPhase = PhaseType.Preparation;
+        CurrentPhase = PhaseType.Morning;
         ActionStates = new Dictionary<(PhaseType, ActionType), ActionState>();
         BentoSelections = new BentoSelection[3];
 

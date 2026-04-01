@@ -76,6 +76,7 @@ public class UIManager : MonoBehaviour
         GlobalCanvas = canvasObj.AddComponent<Canvas>();
         GlobalCanvas.renderMode = RenderMode.WorldSpace;
         GlobalCanvas.worldCamera = Camera.main;
+        GlobalCanvas.sortingLayerName = "UI";
         GlobalCanvas.sortingOrder = 100; // 항상 최상위
 
         // WorldSpace Canvas Scale

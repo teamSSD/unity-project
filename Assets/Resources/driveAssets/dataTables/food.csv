@@ -5,12 +5,10 @@ I002,밀면,밀빛의 긴 면발. 반투명하게 빛을 반사하며 표면은 
 I003,두부,창백하고 부드러운 사각형 조각. 눌렀을 때 미세한 수분이 배어나오며 가장자리가 살짝 들떠 있다.,item_tofu_raw,T002,INGREDIENT
 I004,마늘,하얗고 단단한 껍질 속에 낱알이 겹겹이 박혀 있다. 으깨면 미세한 증기가 피어오른다.,item_garlic_raw,T001,INGREDIENT
 I005,가지,보랏빛이 짙은 조각. 표면에 염분 결정이 맺혀 있으며 눌렀을 때 단단한 탄성이 있다.,item_eggplant_raw,T003,INGREDIENT
-I006,파프리카,선명한 붉은빛과 노란빛을 띠는 두꺼운 과육. 표면은 매끄럽고 광택이 있으며 단면에서는 달콤하고 싱그러운 향이 퍼져 나온다.,item_paprika_raw,,INGREDIENT
 I007,고추장,깊은 붉은빛의 걸쭉한 장. 표면에 검은 기름막이 얇게 떠 있으며 매운 향과 은근한 단맛이 뒤섞여 있다.,item_gochujang_raw,T003,INGREDIENT
 I008,레몬,밝은 노란색 껍질이 매끈하고 반짝인다. 단면에서는 향기로운 산미가 퍼져 나온다.,item_lemon_raw,T003,INGREDIENT
 I009,인공고기,균일한 적갈색 덩어리. 결이 일정하게 배열되어 있으며 눌렀다 놓으면 천천히 원래 형태로 돌아간다. 열을 가하면 은은한 금속 향과 감칠맛이 올라온다.,item_artificialMeat_raw,T004/T005,INGREDIENT
 I010,루미 계란,은백색 껍질이 희미하게 빛나며 어둠 속에서도 윤광을 발한다. 흔들면 내부에서 은은한 빛이 출렁인다.,item_lumiEgg_raw,T001/T002,INGREDIENT
-I011,홍합,검푸른 조개껍질 속에 촉촉한 주황빛 살이 자리한다. 껍질을 열면 바닷물의 짠 냄새와 함께 은은한 미끈한 감촉이 전해진다.,item_mussel_raw,,INGREDIENT
 I012,절연 버섯,하얀 갓에 회색 줄무늬가 있으며 표면은 전기를 차단하는 듯한 둔탁한 질감.,item_insulatingMushroom_raw,T002/T003/T004,INGREDIENT
 I013,새벽풀,푸른빛과 보랏빛이 섞인 가느다란 잎줄기. 잎끝에는 이슬처럼 보이는 작은 빛 알갱이가 맺혀 있으며 손에 닿으면 잠시 차가운 감각이 남는다.,item_dawnHerb_raw,T002,INGREDIENT
 I014,청유,짙은 청록빛 액체. 빛에 따라 푸른 불빛이 스며 나오며 표면에는 미세한 기포가 일렁인다.,item_azureOil_raw,T001,INGREDIENT
@@ -61,9 +59,9 @@ I059,오믈렛 베이스,,item_omeletteBase_raw,T001,PROCESSING
 I060,옥상 오믈렛,,item_rooftopOmelette_raw,,MAIN
 I061,양념 연어,,item_seasonedSalmon_raw,T001,PROCESSING
 I062,환기구 연어구이,,item_ventGrilledSalmon_raw,,SIDE
-I065,달의 뿌리,은빛 얼룩이 스며든 길고 단단한 뿌리. 빛을 비추면 표면에서 작은 달빛 입자가 천천히 흘러내린다.,item_moonRoot_raw,T005,INGREDIENT
-I066,양파,투명한 막이 겹겹이 쌓인 둥근 구근. 칼끝이 닿으면 매운 향이 즉시 피어올라 눈물이 맺히게 한다.,item_onion_raw,T005,INGREDIENT
+I065,달의 뿌리,은빛 얼룩이 스며든 길고 단단한 뿌리. 빛을 비추면 표면에서 작은 달빛 입자가 천천히 흘러내린다.,item_moonRoot_raw,T001,INGREDIENT
+I066,양파,투명한 막이 겹겹이 쌓인 둥근 구근. 칼끝이 닿으면 매운 향이 즉시 피어올라 눈물이 맺히게 한다.,item_onion_raw,T001,INGREDIENT
 I067,잿빛 간장,탁한 회색빛의 묽은 장액. 표면에 은은한 연기 무늬가 떠돌며 묵직하고 불완전한 감칠맛이 혀끝을 감싼다.,item_ashenSoySauce_raw,T003,INGREDIENT
-I068,신문지,낡은 종이 위 희미해진 글자와 잔흔. 만지면 가루처럼 바스러지며 묘하게 기름 냄새가 남는다.,item_newspaper_raw,T001,INGREDIENT
+I068,신문지,낡은 종이 위 희미해진 글자와 잔흔. 만지면 가루처럼 바스러지며 묘하게 기름 냄새가 남는다.,item_newspaper_raw,T001/T005,INGREDIENT
 I069,물,아무 냄새도 색도 없는 액체. 그러나 빛을 비추면 잔잔한 파문 속에서 단단한 형태가 잠시 드러난다.,item_water_raw,T002,INGREDIENT
 I070,절인 해초,짙은 초록빛 띠가 겹겹이 말려 있고 표면에는 소금 결정이 희미하게 박혀 있다.,item_pickledSeaweed_raw,T002,INGREDIENT

@@ -36,7 +36,10 @@ public class IdleSceneController : MonoBehaviour
         // flush()는 PassPhase() 또는 PassDay()에서만 호출 (씬 전환마다 저장 불필요)
 
         // 씬 로드
-        SceneManager.LoadScene(sceneName);
+        if (LoadingManager.Instance != null)
+            LoadingManager.Instance.LoadScene(sceneName);
+        else
+            SceneManager.LoadScene(sceneName);
     }
 
     private void EnsureUnlockedFoodManager()

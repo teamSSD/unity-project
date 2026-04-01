@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929a58dbdcff141c4a39130b9a1497bb, type: 3}
+  m_Name: OrderEnd
+  m_EditorClassIdentifier: Game.Runtime::DialogueSO
+  entries:
+  - speaker: "\uD50C\uB808\uC774\uC5B4"
+    text: "\uBC30\uB2EC\uC774 \uC544\uB2C8\uB77C\u2026 \uC694\uB9AC\uB97C \uB4E4\uACE0
+      \uC654\uC5B4\uC694."
+    choices: []
+  - speaker: "\uC790\uB974"
+    text: "\uC774\uB984\uBD80\uD130 \uB9D0\uD574\uBD10."
+    choices: []
+  - speaker: "\uD50C\uB808\uC774\uC5B4"
+    text: "\uC804\uB825\uC2E4 \uAF2C\uCE58\uC785\uB2C8\uB2E4."
+    choices: []
+  - speaker: "\uAC8C\uD1A0\uB85C"
+    text: "\uC808\uC5F0 \uBC84\uC12F \uD655\uC778. \uC804\uB958 \uD761\uC218 \uAC00\uB2A5\uC131
+      \uB192\uC74C."
+    choices: []
+  - speaker: "\uC790\uB974"
+    text: "\uB9D0\uBFD0\uC774\uBA74 \uD654\uB0B8\uB2E4."
+    choices: []
+  - speaker: "\uD50C\uB808\uC774\uC5B4"
+    text: "\uC9C1\uC811 \uD655\uC778\uD574\uBCF4\uC8E0."
+    choices: []
+  - speaker: "\uB0B4\uB808\uC774\uC158"
+    text: "(\uC804\uB958\uAC00 \uAF2C\uCE58\uB97C \uC2A4\uCE5C\uB2E4.)"
+    choices: []
+  - speaker: "\uAC8C\uD1A0\uB85C"
+    text: "\uD48D\uBBF8 \uC548\uC815 84%. \uC2DD\uC6A9 \uAC00\uB2A5."
+    choices: []
+  - speaker: "\uC790\uB974"
+    text: "\uC624\u2026 \uC548 \uD0C0\uB124."
+    choices: []
+  - speaker: "\uD50C\uB808\uC774\uC5B4"
+    text: "\uC804\uB958\uB294 \uC5F4\uB85C \uBC14\uB00C\uAC8C \uB9CC\uB4E4\uC5C8\uC5B4\uC694."
+    choices: []
+  - speaker: "\uB0B4\uB808\uC774\uC158"
+    text: "(\uC815\uC804 \uBC1C\uC0DD)"
+    choices: []
+  - speaker: "\uC790\uB974"
+    text: "\uCC28\uB2E8\uAE30 \uB098\uAC14\uB2E4\u2026 \uBD88 \uAEBC\uC84C\uB294\uB370
+      \uB0C4\uC0C8\uB294 \uB0A8\uB124."
+    choices: []
+  - speaker: "\uAC8C\uD1A0\uB85C"
+    text: "\uC5F4 \uC794\uC874 \uD655\uC778. \uB530\uB73B\uD568 \uC9C0\uC18D."
+    choices: []
+  - speaker: "\uD50C\uB808\uC774\uC5B4"
+    text: "\uADF8\uB7EC\uB2C8\uAE4C \uBA39\uC8E0."
+    choices: []
+  - speaker: "\uC790\uB974"
+    text: "\uB9C8\uC9C0\uB9C9 \uAF2C\uCE58 \uD558\uB098 \uB0A8\uC558\uB2E4. \uB204\uAC00
+      \uAC00\uC9C0\uC9C0?"
+    choices:
+    - label: "\uC790\uB974\uAC00 \uBA39\uC5B4\uC694\\n\uAE30\uB2E4\uB9B0 \uAC74 \uB2F9\uC2E0\uC774\uB2C8\uAE4C."
+      responses:
+      - speaker: "\uC790\uB974"
+        text: "\u2026\uBC30\uB2EC\uAFBC\uCE58\uACE4 \uC815 \uB9CE\uB124."
+      resultTag: 
+    - label: "\uC14B\uC774 \uB098\uB204\uC8E0\\n\uC628\uB3C4\uB294 \uB098\uB20C\uC218\uB85D
+        \uC624\uB798 \uAC00\uC694."
+      responses:
+      - speaker: "\uAC8C\uD1A0\uB85C"
+        text: "\uB17C\uB9AC\uC801\uC774\uBA70 \uAC10\uC815\uC801\uC73C\uB85C \uD0C0\uB2F9\uD55C
+          \uC120\uD0DD\uC785\uB2C8\uB2E4."
+      - speaker: "\uC790\uB974"
+        text: "\uADF8 \uB9D0, \uB9C8\uC74C\uC5D0 \uB4E0\uB2E4."
+      resultTag: 
+  - speaker: "\uAC8C\uD1A0\uB85C"
+    text: "\uC804\uB825\uC740 \uB04A\uACA8\uB3C4\u2026"
+    choices: []
+  - speaker: "\uC790\uB974"
+    text: "\uBC30\uB294 \uBD80\uB974\uACE0."
+    choices: []
+  - speaker: "\uD50C\uB808\uC774\uC5B4"
+    text: "\uC628\uB3C4\uB294 \uB0A8\uB124\uC694."
+    choices: []
+  - speaker: "\uAC8C\uD1A0\uB85C"
+    text: "\uD018\uC2A4\uD2B8 \uC644\uB8CC. \uAD00\uACC4 \uC548\uC815\uB3C4 \uC0C1\uC2B9
+      \uD655\uC778."
+    choices: []

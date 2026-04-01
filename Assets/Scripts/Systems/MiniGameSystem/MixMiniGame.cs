@@ -110,11 +110,13 @@ public class MixMiniGame : MiniGameAbstract
         }
     }
 
-    public override void SetIngredients(List<FoodData> ingredients)
+    public override void SetIngredients(List<FoodData> ingredients, string toolId = null)
     {
         if (stackRenderer != null && ingredients != null)
         {
-            var sprites = ingredients.Select(x => x.image); 
+            var sprites = toolId != null
+                ? ingredients.Select(x => x.GetImageForTool(toolId))
+                : ingredients.Select(x => x.image);
             stackRenderer.DrawMany(sprites);
         }
     }

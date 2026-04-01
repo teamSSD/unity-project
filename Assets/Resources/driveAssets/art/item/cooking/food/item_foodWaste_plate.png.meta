@@ -1,0 +1,481 @@
+fileFormatVersion: 2
+guid: 6ff17740817654447ae843f1c133c99a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1346990561711547480
+    second: item_foodWaste_plate_new_0
+  - first:
+      213: 5538239074530571447
+    second: item_foodWaste_plate_new_1
+  - first:
+      213: 6277554283467107879
+    second: item_foodWaste_plate_new_2
+  - first:
+      213: -2602630912252787035
+    second: item_foodWaste_plate_new_3
+  - first:
+      213: 4685685979087360424
+    second: item_foodWaste_plate_new_4
+  - first:
+      213: -387257387965093198
+    second: item_foodWaste_plate_new_5
+  - first:
+      213: -3243087717908053191
+    second: item_foodWaste_plate_new_6
+  - first:
+      213: 2566427580597350475
+    second: item_foodWaste_plate_new_7
+  - first:
+      213: 6459258169417775739
+    second: item_foodWaste_plate_new_8
+  - first:
+      213: -6186159411788363571
+    second: item_foodWaste_plate_new_9
+  - first:
+      213: -8052869887813557942
+    second: item_foodWaste_plate_new_10
+  - first:
+      213: -7916599039330754361
+    second: item_foodWaste_plate_new_11
+  - first:
+      213: -9191211697865512289
+    second: item_foodWaste_plate_new_12
+  - first:
+      213: 1043807887025000731
+    second: item_foodWaste_plate_new_13
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 250
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: item_foodWaste_plate_new_0
+      rect:
+        serializedVersion: 2
+        x: 505
+        y: 489
+        width: 48
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 854ee9a77c871b210800000000000000
+      internalID: 1346990561711547480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_foodWaste_plate_new_1
+      rect:
+        serializedVersion: 2
+        x: 537
+        y: 418
+        width: 564
+        height: 298
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b4359e6817cbdc40800000000000000
+      internalID: 5538239074530571447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_foodWaste_plate_new_2
+      rect:
+        serializedVersion: 2
+        x: 1103
+        y: 484
+        width: 36
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72ee9446c5a5e1750800000000000000
+      internalID: 6277554283467107879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_foodWaste_plate_new_3
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 447
+        width: 61
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a6c8b189f891ebd0800000000000000
+      internalID: -2602630912252787035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_foodWaste_plate_new_4
+      rect:
+        serializedVersion: 2
+        x: 1101
+        y: 463
+        width: 20
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a1d7887296e60140800000000000000
+      internalID: 4685685979087360424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_foodWaste_plate_new_5
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 449
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bae1b9157f20aaf0800000000000000
+      internalID: -387257387965093198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_foodWaste_plate_new_6
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 440
+        width: 21
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93388a637ec3ef2d0800000000000000
+      internalID: -3243087717908053191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_foodWaste_plate_new_7
+      rect:
+        serializedVersion: 2
+        x: 1055
+        y: 444
+        width: 52
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b40354b7948cd9320800000000000000
+      internalID: 2566427580597350475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_foodWaste_plate_new_8
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 429
+        width: 27
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7abfac1515e3a950800000000000000
+      internalID: 6459258169417775739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_foodWaste_plate_new_9
+      rect:
+        serializedVersion: 2
+        x: 624
+        y: 396
+        width: 125
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc84a686ac8562aa0800000000000000
+      internalID: -6186159411788363571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_foodWaste_plate_new_10
+      rect:
+        serializedVersion: 2
+        x: 1032
+        y: 410
+        width: 59
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a41ee62c0857e3090800000000000000
+      internalID: -8052869887813557942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_foodWaste_plate_new_11
+      rect:
+        serializedVersion: 2
+        x: 741
+        y: 411
+        width: 17
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c0ed7f1e17922290800000000000000
+      internalID: -7916599039330754361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_foodWaste_plate_new_12
+      rect:
+        serializedVersion: 2
+        x: 866
+        y: 414
+        width: 17
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9aaf4d68a1427080800000000000000
+      internalID: -9191211697865512289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_foodWaste_plate_new_13
+      rect:
+        serializedVersion: 2
+        x: 1096
+        y: 418
+        width: 22
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1150ef2eb95c7e00800000000000000
+      internalID: 1043807887025000731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      item_foodWaste_plate_new_0: 1346990561711547480
+      item_foodWaste_plate_new_1: 5538239074530571447
+      item_foodWaste_plate_new_10: -8052869887813557942
+      item_foodWaste_plate_new_11: -7916599039330754361
+      item_foodWaste_plate_new_12: -9191211697865512289
+      item_foodWaste_plate_new_13: 1043807887025000731
+      item_foodWaste_plate_new_2: 6277554283467107879
+      item_foodWaste_plate_new_3: -2602630912252787035
+      item_foodWaste_plate_new_4: 4685685979087360424
+      item_foodWaste_plate_new_5: -387257387965093198
+      item_foodWaste_plate_new_6: -3243087717908053191
+      item_foodWaste_plate_new_7: 2566427580597350475
+      item_foodWaste_plate_new_8: 6459258169417775739
+      item_foodWaste_plate_new_9: -6186159411788363571
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
