@@ -20,7 +20,7 @@ public class MallSceneController : MonoBehaviour
         Debug.Log("[MallSceneController] Mall scene started");
 
         // UnlockedFoodManager 초기화 (없으면 생성)
-        EnsureUnlockedFoodManager();
+        ManagerBootstrap.Ensure<UnlockedFoodManager>();
 
         if (bentoSelectionPrefab != null)
         {
@@ -64,16 +64,6 @@ public class MallSceneController : MonoBehaviour
         else
         {
             Debug.LogError("[MallSceneController] BentoSelectionController is null!");
-        }
-    }
-
-    private void EnsureUnlockedFoodManager()
-    {
-        if (UnlockedFoodManager.Instance == null)
-        {
-            GameObject managerObj = new GameObject("UnlockedFoodManager");
-            managerObj.AddComponent<UnlockedFoodManager>();
-            Debug.Log("[MallSceneController] Created UnlockedFoodManager");
         }
     }
 }

@@ -6,10 +6,9 @@ using UnityEngine.SceneManagement;
 using TMPro;
 
 /// <summary>
-/// [LEGACY] Idle 씬의 페이즈별 Work/Rest/Shopping 액션 선택 UI.
-/// IdleViewerUI로 대체됨. Idle 씬에서만 사용되었으므로 삭제 가능.
+/// Idle 씬의 페이즈별 Work/Rest/Shopping 액션 선택 UI.
+/// 씬 전환은 IdleSceneController.TransitionToScene()을 통해 수행.
 /// </summary>
-[System.Obsolete("IdleViewerUI로 대체됨. 향후 삭제 예정.")]
 public class PhaseActionSelector : MonoBehaviour
 {
     [Header("UI References")]

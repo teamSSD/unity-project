@@ -13,7 +13,7 @@ public class IdleSceneController : MonoBehaviour
     private void Start()
     {
         // UnlockedFoodManager 초기화 (없으면 생성)
-        EnsureUnlockedFoodManager();
+        ManagerBootstrap.Ensure<UnlockedFoodManager>();
 
         if (recipeBookManager == null)
         {
@@ -40,15 +40,5 @@ public class IdleSceneController : MonoBehaviour
             LoadingManager.Instance.LoadScene(sceneName);
         else
             SceneManager.LoadScene(sceneName);
-    }
-
-    private void EnsureUnlockedFoodManager()
-    {
-        if (UnlockedFoodManager.Instance == null)
-        {
-            GameObject managerObj = new GameObject("UnlockedFoodManager");
-            managerObj.AddComponent<UnlockedFoodManager>();
-            Debug.Log("[IdleSceneController] Created UnlockedFoodManager");
-        }
     }
 }

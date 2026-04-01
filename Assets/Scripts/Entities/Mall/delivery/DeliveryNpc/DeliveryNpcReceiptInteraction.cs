@@ -56,6 +56,11 @@ public class DeliveryNpcReceiptInteraction
             Destroy(speechBubble);
 
         var prefab = Resources.Load<GameObject>("Prefabs/cooking/SpeechBubble");
+        if (prefab == null)
+        {
+            Debug.LogError("[DeliveryNpcReceiptInteraction] SpeechBubble prefab not found");
+            return;
+        }
         speechBubble = Instantiate(prefab);
         speechBubble.GetComponent<SpeechBubble>().setContents(message);
         speechBubble.transform.position =
