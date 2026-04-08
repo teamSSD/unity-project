@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static ResourcePaths;
 
 public class RecipeBookManager : MonoBehaviour
 {
@@ -79,12 +77,11 @@ public class RecipeBookManager : MonoBehaviour
     [SerializeField] private Transform sideRecipeR;
 
     private Canvas canvas;
-    private GameObject overlay;
+    private MenuCardOverlay cardOverlay;
 
     // 세션 내 상태 기억
     private enum Page { Diary, Main, Side }
     private Page lastPage = Page.Diary;
-    private string lastCardFoodId;
 
     private void Awake()
     {
@@ -113,6 +110,9 @@ public class RecipeBookManager : MonoBehaviour
 
         transform.SetParent(wrapper.transform, false);
         DontDestroyOnLoad(wrapper);
+
+        cardOverlay = gameObject.GetComponent<MenuCardOverlay>();
+        if (cardOverlay == null) cardOverlay = gameObject.AddComponent<MenuCardOverlay>();
 
         isRecipeBookActive = false;
         canvas.enabled = false;
@@ -161,20 +161,16 @@ public class RecipeBookManager : MonoBehaviour
         }
 
         // 마지막에 열려있던 카드 복원
-        if (!string.IsNullOrEmpty(lastCardFoodId))
-            OpenMenuCardL(lastCardFoodId);
+        if (!string.IsNullOrEmpty(cardOverlay.LastCardFoodId))
+            OpenMenuCardL(cardOverlay.LastCardFoodId);
 
         UILockManager.Lock(UILockManager.Owner.RecipeBook);
         isRecipeBookActive = true;
     }
     public void CloseRecipeBook()
     {
-        // 카드가 열려있으면 foodId는 보존하고 오브젝트만 정리
         if (MenuCardController.Instance != null)
-        {
-            MenuCardController.Instance.CloseMenuCard();
-            if (overlay != null) { Destroy(overlay); overlay = null; }
-        }
+            cardOverlay.Close();
 
         canvas.enabled = false;
         isRecipeBookActive = false;
@@ -246,100 +242,16 @@ public class RecipeBookManager : MonoBehaviour
 
     public void OpenMenuCardL(string id)
     {
-        OpenMenuCard(id, cardInstantiateTransform_L);
+        cardOverlay.Open(id, bookRoot.transform, menuCard);
     }
     public void OpenMenuCardR(string id)
     {
-        OpenMenuCard(id, cardInstantiateTransform_R);
+        cardOverlay.Open(id, bookRoot.transform, menuCard);
     }
 
-    public void OpenMenuCard(string id, Transform form)
-    {
-        lastCardFoodId = id;
-
-        if (MenuCardController.Instance != null)
-        {
-            MenuCardController.Instance.ClearMenuCard();
-            MenuCardController.Instance.InitSlot(id);
-            return;
-        }
-
-        // 반투명 오버레이 생성 (레시피북 위에 회색 깔기)
-        overlay = new GameObject("MenuCardOverlay");
-        overlay.transform.SetParent(bookRoot.transform, false);
-        var overlayRect = overlay.AddComponent<RectTransform>();
-        overlayRect.anchorMin = Vector2.zero;
-        overlayRect.anchorMax = Vector2.one;
-        overlayRect.offsetMin = Vector2.zero;
-        overlayRect.offsetMax = Vector2.zero;
-        overlay.AddComponent<Image>().color = new Color(0, 0, 0, 0.5f);
-        var overlayBtn = overlay.AddComponent<Button>();
-        overlayBtn.transition = Selectable.Transition.None;
-        overlayBtn.onClick.AddListener(CloseMenuCard);
-        overlay.transform.SetAsLastSibling();
-
-        // MenuCard를 오버레이 위에 중앙 배치
-        var cardGO = Instantiate(menuCard, overlay.transform);
-        var cardRect = cardGO.GetComponent<RectTransform>();
-        cardRect.anchorMin = new Vector2(0.5f, 0.5f);
-        cardRect.anchorMax = new Vector2(0.5f, 0.5f);
-        cardRect.pivot = new Vector2(0.5f, 0.5f);
-        cardRect.anchoredPosition = Vector2.zero;
-        cardRect.sizeDelta = new Vector2(500, 850);
-
-        cardGO.GetComponent<MenuCardController>().InitSlot(id);
-
-        // X 닫기 버튼 (카드 우상단, overlay 자식으로 absolute 배치)
-        CreateCloseButton(overlay.transform, cardRect);
-    }
-
-    private void CreateCloseButton(Transform parent, RectTransform cardRect)
-    {
-        var btnGO = new GameObject("Button_Close");
-        btnGO.transform.SetParent(parent, false);
-
-        var rect = btnGO.AddComponent<RectTransform>();
-        rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
-        rect.pivot = new Vector2(0.5f, 0.5f);
-        // 카드 우상단 모서리에 배치
-        float cardW = cardRect.sizeDelta.x;
-        float cardH = cardRect.sizeDelta.y;
-        rect.anchoredPosition = new Vector2(cardW / 2 - 15, cardH / 2 - 15);
-        rect.sizeDelta = new Vector2(50, 50);
-
-        var btn = btnGO.AddComponent<Button>();
-        btnGO.AddComponent<Image>().color = new Color(0, 0, 0, 0);
-
-        var textGO = new GameObject("Text");
-        textGO.transform.SetParent(btnGO.transform, false);
-        var textRect = textGO.AddComponent<RectTransform>();
-        textRect.anchorMin = Vector2.zero;
-        textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = textRect.offsetMax = Vector2.zero;
-
-        var tmp = textGO.AddComponent<TextMeshProUGUI>();
-        tmp.font = TMP_Settings.defaultFontAsset;
-        tmp.text = "X";
-        tmp.fontSize = 28;
-        tmp.fontStyle = FontStyles.Bold;
-        tmp.color = new Color(0.2f, 0.2f, 0.2f);
-        tmp.alignment = TextAlignmentOptions.Center;
-
-        btn.onClick.AddListener(CloseMenuCard);
-    }
     public void CloseMenuCard()
     {
-        lastCardFoodId = null;
-
-        if (MenuCardController.Instance != null)
-        {
-            MenuCardController.Instance.CloseMenuCard();
-        }
-        if (overlay != null)
-        {
-            Destroy(overlay);
-            overlay = null;
-        }
+        cardOverlay.Close();
     }
 
     private static readonly string[] DiaryTimeSections = { "Morning", "Lunch", "Evening", "Night" };

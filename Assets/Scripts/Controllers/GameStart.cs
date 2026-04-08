@@ -50,6 +50,7 @@ public class GameStart : MonoBehaviour
         UnlockedFoodManager.Instance?.Initialize();
         InventoryManager.Instance?.Initialize();
         RecipeDataManager.Instance?.Initialize();
+        RecipeLookupService.Instance?.Initialize();
         OrderManager.Instance?.Initialize();
 
         // Phase 2: 저장 데이터 로드
@@ -66,6 +67,7 @@ public class GameStart : MonoBehaviour
         UnlockedFoodManager.Instance?.Initialize();
         InventoryManager.Instance?.Initialize();
         RecipeDataManager.Instance?.Initialize();
+        RecipeLookupService.Instance?.Initialize();
 
         // Phase 2: 새 게임 초기값 설정
         StatsSystem.Instance.SetTime(5, 0);

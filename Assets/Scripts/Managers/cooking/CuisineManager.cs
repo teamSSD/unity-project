@@ -20,8 +20,19 @@ public class CuisineManager : MonoBehaviour
     void Start()
     {
         playMinigameUsecase = gameObject.GetComponent<MiniGameManager>();
-        searchRecipeUsecase = RecipeDataManager.Instance;
+        searchRecipeUsecase = RecipeLookupService.Instance;
         loadInventoryUsecase = InventoryManager.Instance;
+
+        if (loadInventoryUsecase == null)
+        {
+            Debug.LogError("[CuisineManager] InventoryManager.Instance is null! Skipping initialization.");
+            return;
+        }
+
+        if (searchRecipeUsecase == null)
+        {
+            Debug.LogError("[CuisineManager] RecipeLookupService.Instance is null! Some tools might not work.");
+        }
 
         cookingTools.ForEach(tool =>
                 tool.GetComponent<CookingToolModel>()
@@ -31,39 +42,27 @@ public class CuisineManager : MonoBehaviour
         upperShelf = upperShelfGameObject.GetComponent<UpperShelf>();
         lowerShelf = lowerShelfGameObject.GetComponent<LowerShelf>();
 
-        FillRefrigerator(refrigeratorGameObject);
-        FillUpperShelf(upperShelfGameObject);
-        FillLowerShelf(lowerShelfGameObject);
+        FillStorage(refrigerator, IngredientDisplayCategory.Refrigerator, refrigeratorGameObject);
+        FillStorage(upperShelf, IngredientDisplayCategory.UpperShelf, upperShelfGameObject);
+        FillStorage(lowerShelf, IngredientDisplayCategory.LowerShelf, lowerShelfGameObject);
     }
 
-    private void FillRefrigerator(GameObject parent)
+    private void FillStorage(BaseStorage storage, IngredientDisplayCategory category, GameObject parent)
     {
-        loadInventoryUsecase.LoadIngredientsByCategory(IngredientDisplayCategory.Refrigerator).ForEach(data =>
+        foreach (var data in loadInventoryUsecase.LoadIngredientsByCategory(category))
+        {
+            if (storage.IsFull)
             {
-                GameObject ingredientInstance = instantiateFood(parent, data.Item1.ingredientName);
-                FoodModel foodModel = settingFoodModel(ingredientInstance, data.Item1, data.Item2);
-                refrigerator.AddIngredients(foodModel);
-            });
-    }
-
-    public void FillUpperShelf(GameObject parent)
-    {
-        loadInventoryUsecase.LoadIngredientsByCategory(IngredientDisplayCategory.UpperShelf).ForEach(data =>
+                Debug.LogWarning($"[CuisineManager] {category} 보관소 용량 초과 — {data.Item1.ingredientName} 로드 스킵");
+                break;
+            }
+            GameObject ingredientInstance = instantiateFood(parent, data.Item1.ingredientName);
+            FoodModel foodModel = settingFoodModel(ingredientInstance, data.Item1, data.Item2);
+            if (!storage.AddIngredients(foodModel))
             {
-                GameObject ingredientInstance = instantiateFood(parent, data.Item1.ingredientName);
-                FoodModel foodModel = settingFoodModel(ingredientInstance, data.Item1, data.Item2);
-                upperShelf.AddIngredients(foodModel);
-            });
-    }
-
-    public void FillLowerShelf(GameObject parent)
-    {
-        loadInventoryUsecase.LoadIngredientsByCategory(IngredientDisplayCategory.LowerShelf).ForEach(data =>
-            {
-                GameObject ingredientInstance = instantiateFood(parent, data.Item1.ingredientName);
-                FoodModel foodModel = settingFoodModel(ingredientInstance, data.Item1, data.Item2);
-                lowerShelf.AddIngredients(foodModel);
-            });
+                Destroy(ingredientInstance);
+            }
+        }
     }
 
     private GameObject instantiateFood(GameObject parent, string ingredientName)
