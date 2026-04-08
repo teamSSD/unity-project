@@ -164,6 +164,12 @@ public class BentoSelectionController : MonoBehaviour
         InitializeController();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Close();
+    }
+
     public void Close()
     {
         gameObject.SetActive(false);
