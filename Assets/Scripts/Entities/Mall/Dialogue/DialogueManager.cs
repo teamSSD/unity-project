@@ -33,10 +33,20 @@ public class DialogueManager : MonoBehaviour
 
     void Start()
     {
-        var canvas = FindFirstObjectByType<Canvas>();
+        // 자체 Canvas 생성 (DontDestroyOnLoad Canvas 충돌 방지)
+        var canvasObj = new GameObject("DialogueCanvas");
+        canvasObj.transform.SetParent(transform);
+        var canvas = canvasObj.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 50;
+        var scaler = canvasObj.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920, 1080);
+        canvasObj.AddComponent<GraphicRaycaster>();
+
         dialoguePanel = Instantiate(
             Resources.Load<GameObject>("Prefabs/mall/DialoguePanel"),
-            canvas.transform);
+            canvasObj.transform);
 
         nameText = dialoguePanel.transform.Find("nameText").GetComponent<TMP_Text>();
         dialogueText = dialoguePanel.transform.Find("dialogueText").GetComponent<TMP_Text>();
@@ -47,12 +57,25 @@ public class DialogueManager : MonoBehaviour
         portraitContainer = portraitTransform.gameObject;
         npcPortraitImage = portraitTransform.Find("NpcPortrait").GetComponent<Image>();
 
+        // 대화창 클릭으로 넘기기
+        var panelBtn = dialoguePanel.GetComponent<Button>();
+        if (panelBtn == null) panelBtn = dialoguePanel.AddComponent<Button>();
+        panelBtn.transition = Selectable.Transition.None;
+        panelBtn.onClick.AddListener(OnPanelClicked);
+
         dialoguePanel.SetActive(false);
         playerMove = FindFirstObjectByType<PlayerMove>();
     }
 
+    private void OnPanelClicked()
+    {
+        if (!dialoguePanel.activeSelf || waitingForChoice) return;
+        AdvanceDialogue();
+    }
+
     public void StartDialogue(DialogueSO dialogue, Dictionary<string, Sprite> portraits = null)
     {
+        UILockManager.Lock(UILockManager.Owner.Dialogue);
         currentDialogue = dialogue;
         currentIndex = 0;
         lastResultTag = null;
@@ -225,6 +248,7 @@ public class DialogueManager : MonoBehaviour
         branchResponses = null;
         waitingForChoice = false;
 
+        UILockManager.Unlock(UILockManager.Owner.Dialogue);
         OnDialogueEnded?.Invoke(resultTag);
     }
 }

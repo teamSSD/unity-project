@@ -34,7 +34,7 @@ public class PhaseActionSelector : MonoBehaviour
 
     private void Start()
     {
-        idleSceneController = FindObjectOfType<IdleSceneController>();
+        idleSceneController = FindFirstObjectByType<IdleSceneController>();
         InitializeActionExecutors();
         SetupButtons();
         UpdateUI();
@@ -46,7 +46,7 @@ public class PhaseActionSelector : MonoBehaviour
         {
             [ActionType.Work] = () => TransitionScene("Cooking"),
             [ActionType.Rest] = () => {
-                StatsSystem.SetStamina(100);
+                StatsSystem.SetStamina(StatsSystem.GetStamina() + 60);
                 ProgressSystem.Instance?.PassPhase();
                 UpdateUI();
             },

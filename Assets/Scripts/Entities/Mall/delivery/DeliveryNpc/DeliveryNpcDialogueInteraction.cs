@@ -5,9 +5,6 @@ using UnityEngine;
 public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
 {
     private static readonly Dictionary<string, DeliveryQuestStage> questStages = new();
-    private static bool loaded;
-    private static string SavePath => Application.persistentDataPath + "/saves/deliveryQuest";
-
     private static Dictionary<string, MenuSchema> questMenus;
 
     private string groupId;
@@ -15,17 +12,9 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
     private bool isTalking;
     private DialogueManager dialogueManager;
 
-    [System.Serializable]
-    private class SaveData
-    {
-        public List<string> groupIds = new();
-        public List<int> stages = new();
-    }
-
     public void Init(string groupId)
     {
         this.groupId = groupId;
-        if (!loaded) LoadQuestData();
         if (!questStages.ContainsKey(groupId))
             questStages[groupId] = DeliveryQuestStage.Normal;
     }
@@ -37,7 +26,7 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
 
     void Update()
     {
-        if (isPlayerNear && !isTalking && Input.GetKeyDown(KeyCode.Space))
+        if (isPlayerNear && !isTalking && !UILockManager.IsLocked && Input.GetKeyDown(KeyCode.Space))
         {
             StartDialogue();
         }
@@ -83,7 +72,11 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
     {
         dialogueManager.OnDialogueEnded -= OnDialogueEnded;
         AdvanceQuestStage(resultTag);
-        StartCoroutine(ResetTalkingNextFrame());
+
+        if (this != null && gameObject.activeInHierarchy)
+            StartCoroutine(ResetTalkingNextFrame());
+        else
+            isTalking = false;
     }
 
     IEnumerator ResetTalkingNextFrame()
@@ -249,29 +242,34 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
     {
         questStages.Clear();
         questMenus = null;
-        loaded = false;
     }
 
-    // --- 저장/로드 ---
-    public static void flush()
+    // --- 저장/로드 (SaveManager에서 호출) ---
+    public static DeliveryQuestSaveData GetSaveData()
     {
-        var data = new SaveData();
+        var data = new DeliveryQuestSaveData();
         foreach (var kv in questStages)
         {
             data.groupIds.Add(kv.Key);
             data.stages.Add((int)kv.Value);
         }
-        DataSaveUtil.SaveData(data, SavePath);
+        return data;
     }
 
-    static void LoadQuestData()
+    public static void ApplySaveData(DeliveryQuestSaveData data)
     {
-        loaded = true;
-        var data = DataSaveUtil.LoadData(new SaveData(), SavePath);
+        questStages.Clear();
         for (int i = 0; i < data.groupIds.Count; i++)
             questStages[data.groupIds[i]] = (DeliveryQuestStage)data.stages[i];
     }
 
     // INpcInteraction (자동 트리거 비활성 - Space 키 사용)
     public void Interact() { }
+}
+
+[System.Serializable]
+public class DeliveryQuestSaveData
+{
+    public List<string> groupIds = new();
+    public List<int> stages = new();
 }

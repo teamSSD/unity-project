@@ -10,11 +10,13 @@ public class GameStart : MonoBehaviour
     
     void Start()
     {
+        UILockManager.Lock(UILockManager.Owner.GameStart);
+
         // Manager 초기화 (없으면 생성)
         ManagerBootstrap.EnsureAll();
 
         // Continue 버튼 활성화/비활성화
-        bool hasSaveData = ProgressSystem.Instance?.IsLoadable() ?? false;
+        bool hasSaveData = SaveManager.HasSaveData();
 
         if (ContinueButton != null)
         {
@@ -42,7 +44,7 @@ public class GameStart : MonoBehaviour
 
     private void ProcessContinue()
     {
-        // 저장된 데이터 로드
+        // Phase 1: 구조 초기화 (디스크 I/O 없음)
         StatsSystem.Initialize();
         ProgressSystem.Instance.Initialize();
         UnlockedFoodManager.Instance?.Initialize();
@@ -50,50 +52,35 @@ public class GameStart : MonoBehaviour
         RecipeDataManager.Instance?.Initialize();
         OrderManager.Instance?.Initialize();
 
-        // Scene_Mall 씬 로드 (메뉴 선택 → Idle)
+        // Phase 2: 저장 데이터 로드
+        SaveManager.LoadAll();
+
+        UILockManager.Unlock(UILockManager.Owner.GameStart);
         SceneManager.LoadScene("Scene_Mall");
     }
-    /// <summary>
-    /// 새 게임을 시작합니다.
-    ///
-    /// ⚠️ 경고: 게임 시작 시 초기 데이터를 저장합니다!
-    /// 저장은 여기와 PassDay()에서만 수행됩니다!
-    /// </summary>
     private void NewGame()
     {
-        // StatsSystem 초기화
+        // Phase 1: 구조 초기화
         StatsSystem.Initialize();
-
-        // 초기 상태 설정 (D+0, 영업준비 05:00, 돈 3000, 스태미나 100)
-        StatsSystem.SetTime(5, 0);       // 05:00 (영업준비 시작)
-        StatsSystem.SetMoney(3000);      // 3000원
-        StatsSystem.SetStamina(100);     // 100
-
-        // ProgressSystem 초기화
         ProgressSystem.Instance.Initialize();
-
-        // PhaseData.Day를 0으로 설정 (기본값 1 → 0)
-        ProgressSystem.Instance.phaseData.Day = 0;
-
-        // Manager 초기화 (New Game이므로 초기값으로 리셋)
         UnlockedFoodManager.Instance?.Initialize();
-        InventoryManager.Instance?.ResetToDefault();
+        InventoryManager.Instance?.Initialize();
         RecipeDataManager.Instance?.Initialize();
 
-        // 배달 퀘스트 초기화
+        // Phase 2: 새 게임 초기값 설정
+        StatsSystem.SetTime(5, 0);
+        StatsSystem.SetMoney(8000);
+        StatsSystem.SetStamina(100);
+        ProgressSystem.Instance.phaseData.Day = 0;
+        InventoryManager.Instance?.ResetToDefault();
+        UnlockedFoodManager.Instance?.UnlockDefaultRecipes();
         DeliveryNpcDialogueInteraction.ResetAll();
 
-        // ⚠️ 모든 게임 데이터 초기값 저장 (New Game과 PassDay()에서만 저장!)
-        StatsSystem.flush();
-        ProgressSystem.Instance.flush();
-        InventoryManager.Instance?.flush();
-        RecipeDataManager.Instance?.flush();
-        OrderManager.Instance?.flush();
-        DeliveryNpcDialogueInteraction.flush();
+        // Phase 3: 초기 상태 저장
+        SaveManager.SaveAll();
 
-        Debug.Log("[GameStart] New Game - 초기 데이터 저장 완료");
-
-        // Scene_Mall 씬 로드 (메뉴 선택 → Idle)
+        Debug.Log("[GameStart] New Game started");
+        UILockManager.Unlock(UILockManager.Owner.GameStart);
         SceneManager.LoadScene("Scene_Mall");
     }
     private void OpenSetting()

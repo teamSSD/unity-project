@@ -9,7 +9,7 @@ public class DoorInteraction : MonoBehaviour
 
     void Update()
     {
-        if (isPlayerNear && Input.GetKeyDown(KeyCode.Space))
+        if (isPlayerNear && !UILockManager.IsLocked && Input.GetKeyDown(KeyCode.Space))
         {
             GoThroughDoor();
         }

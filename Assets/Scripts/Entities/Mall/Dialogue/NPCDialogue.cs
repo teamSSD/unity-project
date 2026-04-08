@@ -23,7 +23,7 @@ public class NPCDialogue : MonoBehaviour
 
     void Update()
     {
-        if (isPlayerNear && !isTalking && Input.GetKeyDown(KeyCode.Space))
+        if (isPlayerNear && !isTalking && !UILockManager.IsLocked && Input.GetKeyDown(KeyCode.Space))
         {
             StartDialogue();
         }

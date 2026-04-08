@@ -47,13 +47,17 @@ public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
             finalScore = score;
             isFinished = true;
         };
-        ClickStateUtil.globalLocked = true;
+        UILockManager.Lock(UILockManager.Owner.Minigame);
         currentGame.StartGame();
         while (!isFinished)
         {
             yield return 0f;
         }
-        ClickStateUtil.globalLocked = false;
+        while (currentGame != null)
+        {
+            yield return 0f;
+        }
+        UILockManager.Unlock(UILockManager.Owner.Minigame);
         onCompleted?.Invoke(recipeData, finalScore);
     }
 

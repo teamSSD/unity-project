@@ -120,11 +120,11 @@ public class RecipeBookManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab) && !ClickStateUtil.globalLocked)
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             if (isRecipeBookActive)
                 Close();
-            else
+            else if (UILockManager.CanOpen(UILockManager.Owner.RecipeBook))
                 Open();
         }
 
@@ -164,6 +164,7 @@ public class RecipeBookManager : MonoBehaviour
         if (!string.IsNullOrEmpty(lastCardFoodId))
             OpenMenuCardL(lastCardFoodId);
 
+        UILockManager.Lock(UILockManager.Owner.RecipeBook);
         isRecipeBookActive = true;
     }
     public void CloseRecipeBook()
@@ -177,6 +178,7 @@ public class RecipeBookManager : MonoBehaviour
 
         canvas.enabled = false;
         isRecipeBookActive = false;
+        UILockManager.Unlock(UILockManager.Owner.RecipeBook);
     }
     public void OpenDiary()
     {

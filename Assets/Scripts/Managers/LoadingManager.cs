@@ -30,6 +30,7 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
     private IEnumerator LoadSceneCoroutine(string sceneName)
     {
         isLoading = true;
+        UILockManager.Lock(UILockManager.Owner.Loading);
 
         // Fade in
         canvas.enabled = true;
@@ -80,6 +81,7 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
 
         canvas.enabled = false;
         isLoading = false;
+        UILockManager.Unlock(UILockManager.Owner.Loading);
     }
 
     private void BuildLoadingUI()
@@ -149,6 +151,7 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
         var textObj = new GameObject("LoadingText");
         textObj.transform.SetParent(canvasObj.transform, false);
         loadingText = textObj.AddComponent<TextMeshProUGUI>();
+        loadingText.font = TMP_Settings.defaultFontAsset;
         loadingText.text = "Loading...";
         loadingText.fontSize = 28;
         loadingText.alignment = TextAlignmentOptions.Center;

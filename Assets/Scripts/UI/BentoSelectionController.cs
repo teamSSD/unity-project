@@ -155,10 +155,12 @@ public class BentoSelectionController : MonoBehaviour
 
         onConfirmCallback?.Invoke();
         gameObject.SetActive(false);
+        UILockManager.Unlock(UILockManager.Owner.BentoSelection);
     }
 
     public void Show(System.Action onConfirm)
     {
+        UILockManager.Lock(UILockManager.Owner.BentoSelection);
         onConfirmCallback = onConfirm;
         gameObject.SetActive(true);
         InitializeController();
@@ -174,5 +176,6 @@ public class BentoSelectionController : MonoBehaviour
     {
         gameObject.SetActive(false);
         onConfirmCallback = null;
+        UILockManager.Unlock(UILockManager.Owner.BentoSelection);
     }
 }

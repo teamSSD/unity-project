@@ -12,7 +12,7 @@ public class DeliveryNpcInteraction : MonoBehaviour
 
     private void Update()
     {
-        if (isPlayerNear && currentInteraction != null && Input.GetKeyDown(KeyCode.Space))
+        if (isPlayerNear && currentInteraction != null && !UILockManager.IsLocked && Input.GetKeyDown(KeyCode.Space))
         {
             currentInteraction.Interact();
         }
