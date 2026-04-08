@@ -13,7 +13,7 @@ public static class ManagerBootstrap
     public static T Ensure<T>() where T : MonoBehaviour
     {
         // 이미 존재하면 찾아서 반환
-        var existing = Object.FindObjectOfType<T>();
+        var existing = Object.FindFirstObjectByType<T>();
         if (existing != null) return existing;
 
         var go = new GameObject(typeof(T).Name);
@@ -34,6 +34,7 @@ public static class ManagerBootstrap
         Ensure<ActionSelectionManager>();
         Ensure<LoadingManager>();
         Ensure<UIManager>();
+        Ensure<WeatherSystem>();
         EnsureRecipeBookManager();
     }
 

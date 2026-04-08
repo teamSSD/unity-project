@@ -50,8 +50,9 @@ public class DeliveryNpcView : MonoBehaviour
                 }
                 else
                 {
-                    interactionRoot.SetInteraction(
-                        gameObject.AddComponent<DeliveryNpcOrderInteraction>());
+                    var casual = gameObject.AddComponent<CasualNpcInteraction>();
+                    casual.Init(npcId, characterName, spriteRenderer.sprite);
+                    interactionRoot.SetInteraction(casual);
                 }
                 break;
 

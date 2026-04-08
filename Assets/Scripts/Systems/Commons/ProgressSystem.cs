@@ -10,12 +10,14 @@ public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>
         {
             phaseData = new PhaseData();
         }
+        WeatherSystem.Instance?.UpdateWeather(phaseData.Day);
         Debug.Log("[ProgressSystem] Initialized");
     }
 
     public void ApplySaveData(PhaseData data)
     {
         phaseData = data;
+        WeatherSystem.Instance?.UpdateWeather(phaseData.Day);
     }
 
     public event System.Action<PhaseType> OnPhaseChanged;
@@ -52,6 +54,7 @@ public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>
         OnPhaseChanged?.Invoke(phaseData.Phase);
 
         InventoryManager.Instance?.AdvanceDay();
+        WeatherSystem.Instance?.UpdateWeather(phaseData.Day);
         SaveManager.SaveAll();
 
         Debug.Log($"[ProgressSystem] PassDay - Day {phaseData.Day} 시작");
