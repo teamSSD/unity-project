@@ -38,11 +38,11 @@ public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>
     {
         switch (phase)
         {
-            case PhaseType.Preparation: StatsSystem.SetTime(5, 0);  break;
-            case PhaseType.Morning:     StatsSystem.SetTime(7, 0);  break;
-            case PhaseType.Afternoon:   StatsSystem.SetTime(12, 0); break;
-            case PhaseType.Evening:     StatsSystem.SetTime(17, 0); break;
-            case PhaseType.Night:       StatsSystem.SetTime(22, 0); break;
+            case PhaseType.Preparation: StatsSystem.Instance.SetTime(5, 0);  break;
+            case PhaseType.Morning:     StatsSystem.Instance.SetTime(7, 0);  break;
+            case PhaseType.Afternoon:   StatsSystem.Instance.SetTime(12, 0); break;
+            case PhaseType.Evening:     StatsSystem.Instance.SetTime(17, 0); break;
+            case PhaseType.Night:       StatsSystem.Instance.SetTime(22, 0); break;
         }
     }
 
@@ -62,7 +62,7 @@ public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>
 
     public void Die()
     {
-        StatsSystem.SetStamina(0);
+        StatsSystem.Instance.SetStamina(0);
         PassDay();
     }
     

@@ -1,7 +1,5 @@
-using Codice.Client.BaseCommands;
 using System.Collections;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +13,7 @@ public class ItemShopManager : MonoBehaviour
         {
             if (instance == null)
             {
-                instance = FindObjectOfType<ItemShopManager>();
+                instance = FindFirstObjectByType<ItemShopManager>();
                 if (instance == null)
                 {
                     Debug.LogError("ItemShopManager instance not found in scene.");
@@ -107,7 +105,7 @@ public class ItemShopManager : MonoBehaviour
     {
         if (totalPrice <= 0) return;
 
-        StatsSystem.SubMoney(totalPrice);
+        StatsSystem.Instance.SubMoney(totalPrice);
         foreach (var item in purchaseList)
             InventoryManager.Instance?.AddFood(item.Key, item.Value);
 
@@ -131,7 +129,7 @@ public class ItemShopManager : MonoBehaviour
     public void CheckMoneyOver()
     {
         Color c;
-        if (totalPrice > StatsSystem.GetMoney())
+        if (totalPrice > StatsSystem.Instance.GetMoney())
         {
             selectButton.interactable = false;
             selectButton.GetComponentInChildren<TextMeshProUGUI>().color = Color.gray5;

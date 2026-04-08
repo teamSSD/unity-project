@@ -46,7 +46,7 @@ public class PhaseActionSelector : MonoBehaviour
         {
             [ActionType.Work] = () => TransitionScene("Cooking"),
             [ActionType.Rest] = () => {
-                StatsSystem.SetStamina(StatsSystem.GetStamina() + 60);
+                StatsSystem.Instance.SetStamina(StatsSystem.Instance.GetStamina() + 60);
                 ProgressSystem.Instance?.PassPhase();
                 UpdateUI();
             },

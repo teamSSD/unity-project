@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -9,16 +9,14 @@ public class OrderManager : SingletonMonoBehaviour<OrderManager>,
     [SerializeField]
     private List<DeliveryOrderData> orders = new();
 
-    private static string SavePath => Application.persistentDataPath + "/saves/orders";
-
     [System.Serializable]
-    private class OrderSaveData
+    public class OrderSaveData
     {
         public List<OrderEntry> entries = new();
     }
 
     [System.Serializable]
-    private class OrderEntry
+    public class OrderEntry
     {
         public string questId;
         public int orderNumber;
@@ -32,7 +30,33 @@ public class OrderManager : SingletonMonoBehaviour<OrderManager>,
 
     public void Initialize()
     {
-        var data = DataSaveUtil.LoadData(new OrderSaveData(), SavePath);
+        orders.Clear();
+        Debug.Log("[OrderManager] Initialized");
+    }
+
+    public OrderSaveData GetSaveData()
+    {
+        var data = new OrderSaveData();
+        foreach (var order in orders)
+        {
+            data.entries.Add(new OrderEntry
+            {
+                questId = order.questId,
+                orderNumber = order.orderNumber,
+                menuName = order.menuSchema?.name ?? "",
+                mainMenuId = order.menuSchema?.mainMenu?.id ?? "",
+                sideMenuIds = order.menuSchema?.sideMenus?
+                    .Select(f => f?.id ?? "").ToList() ?? new List<string>(),
+                state = (int)order.state,
+                npcId = order.npcId,
+                cookedPrice = order.cookedPrice
+            });
+        }
+        return data;
+    }
+
+    public void ApplySaveData(OrderSaveData data)
+    {
         orders.Clear();
         foreach (var entry in data.entries)
         {
@@ -58,29 +82,7 @@ public class OrderManager : SingletonMonoBehaviour<OrderManager>,
                 cookedPrice = entry.cookedPrice
             });
         }
-
-        Debug.Log($"[OrderManager] Initialized - {orders.Count} orders loaded");
-    }
-
-    public void flush()
-    {
-        var data = new OrderSaveData();
-        foreach (var order in orders)
-        {
-            data.entries.Add(new OrderEntry
-            {
-                questId = order.questId,
-                orderNumber = order.orderNumber,
-                menuName = order.menuSchema?.name ?? "",
-                mainMenuId = order.menuSchema?.mainMenu?.id ?? "",
-                sideMenuIds = order.menuSchema?.sideMenus?
-                    .Select(f => f?.id ?? "").ToList() ?? new List<string>(),
-                state = (int)order.state,
-                npcId = order.npcId,
-                cookedPrice = order.cookedPrice
-            });
-        }
-        DataSaveUtil.SaveData(data, SavePath);
+        Debug.Log($"[OrderManager] Save data applied - {orders.Count} orders");
     }
 
     // =====================
@@ -109,6 +111,26 @@ public class OrderManager : SingletonMonoBehaviour<OrderManager>,
             state = DeliveryOrderState.Ordered,
             npcId = npcId
         });
+
+        // 퀘스트 수주 시 해당 레시피 해금
+        if (UnlockedFoodManager.Instance != null)
+        {
+            if (menu.mainMenu != null)
+            {
+                UnlockedFoodManager.Instance.UnlockRecipe(menu.mainMenu.id);
+            }
+
+            if (menu.sideMenus != null)
+            {
+                foreach (var side in menu.sideMenus)
+                {
+                    if (side != null)
+                        UnlockedFoodManager.Instance.UnlockRecipe(side.id);
+                }
+            }
+
+            UnlockedFoodManager.Instance.PrepareForSave();
+        }
     }
 
     public bool MarkCookedWithPrice(string questId, int price)
@@ -129,7 +151,7 @@ public class OrderManager : SingletonMonoBehaviour<OrderManager>,
         if (order == null) return 0;
 
         int price = order.cookedPrice;
-        StatsSystem.AddMoney(price);
+        StatsSystem.Instance.AddMoney(price);
         order.state = DeliveryOrderState.Delivered;
 
         Debug.Log($"[OrderManager] Delivered: {questId}, reward={price}원");

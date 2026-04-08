@@ -45,7 +45,7 @@ public class GameStart : MonoBehaviour
     private void ProcessContinue()
     {
         // Phase 1: 구조 초기화 (디스크 I/O 없음)
-        StatsSystem.Initialize();
+        StatsSystem.Instance.Initialize();
         ProgressSystem.Instance.Initialize();
         UnlockedFoodManager.Instance?.Initialize();
         InventoryManager.Instance?.Initialize();
@@ -61,16 +61,16 @@ public class GameStart : MonoBehaviour
     private void NewGame()
     {
         // Phase 1: 구조 초기화
-        StatsSystem.Initialize();
+        StatsSystem.Instance.Initialize();
         ProgressSystem.Instance.Initialize();
         UnlockedFoodManager.Instance?.Initialize();
         InventoryManager.Instance?.Initialize();
         RecipeDataManager.Instance?.Initialize();
 
         // Phase 2: 새 게임 초기값 설정
-        StatsSystem.SetTime(5, 0);
-        StatsSystem.SetMoney(8000);
-        StatsSystem.SetStamina(100);
+        StatsSystem.Instance.SetTime(5, 0);
+        StatsSystem.Instance.SetMoney(8000);
+        StatsSystem.Instance.SetStamina(100);
         ProgressSystem.Instance.phaseData.Day = 0;
         InventoryManager.Instance?.ResetToDefault();
         UnlockedFoodManager.Instance?.UnlockDefaultRecipes();

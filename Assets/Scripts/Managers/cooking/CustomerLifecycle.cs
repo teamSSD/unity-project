@@ -68,7 +68,7 @@ public class CustomerLifecycle
         waitingCustomer.onExit += OnCustomerTimeout;
 
         // Setup ticket events
-        orderTicket.OnAttached += () => waitingCustomer.stopTimer = true;
+        orderTicket.OnAttached += () => waitingCustomer.StopTimer();
         orderTicket.onTake += OnOrderDelivered;
     }
 
@@ -97,7 +97,7 @@ public class CustomerLifecycle
 
         // Calculate and award money (using actual food prices)
         int reward = MenuValidator.CalculateReward(menuSchema, mainMenu, sideMenus);
-        StatsSystem.AddMoney(reward);
+        StatsSystem.Instance.AddMoney(reward);
 
         Debug.Log($"[CustomerLifecycle] Reward: {reward}원 (Score: {validation.AccuracyScore:F2})");
 
@@ -129,11 +129,12 @@ public class CustomerLifecycle
             menuSchema,
             mainMenu,
             sideMenus,
-            isExit: false
+            isExit: false,
+            onCompleted: () => {
+                // Notify completion with validation result and reward
+                OnCustomerServed?.Invoke(validation, reward);
+            }
         );
-
-        // Notify completion with validation result and reward
-        OnCustomerServed?.Invoke(validation, reward);
     }
 
     /// <summary>
@@ -151,6 +152,7 @@ public class CustomerLifecycle
         // Cleanup ticket
         if (orderTicket != null)
         {
+            ticketController.RemoveTicket(orderTicket);
             orderTicket.DestroyObject();
             orderTicket = null;
         }
@@ -169,11 +171,12 @@ public class CustomerLifecycle
             menuSchema,
             null,
             null,
-            isExit: true
+            isExit: true,
+            onCompleted: () => {
+                // Notify completion
+                OnCustomerLeft?.Invoke();
+            }
         );
-
-        // Notify completion
-        OnCustomerLeft?.Invoke();
     }
 
     /// <summary>

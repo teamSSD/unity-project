@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 /*
@@ -52,11 +51,6 @@ public abstract class MiniGameAbstract : MonoBehaviour
         elapsedTime += Time.deltaTime;
 
         OnUpdate();
-
-        if (elapsedTime >= duration)
-        {
-            EndGame();
-        }
     }
 
     public void EndGame()
@@ -64,7 +58,7 @@ public abstract class MiniGameAbstract : MonoBehaviour
         if (!isPlaying) return;
         isPlaying = false;
 
-        StatsSystem.SubStamina(1);
+        StatsSystem.Instance.SubStamina(5);
 
         float score = CalculateScore();
 
