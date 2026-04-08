@@ -42,12 +42,16 @@ public class BentoCategoryUI : MonoBehaviour
 
     public void Clear()
     {
-        if (container == null) return;
-        foreach (Transform child in container)
+        foreach (var item in items)
         {
-            Destroy(child.gameObject);
+            if (item != null)
+                item.OnClicked = null;
         }
         items.Clear();
+
+        if (container == null) return;
+        foreach (Transform child in container)
+            Destroy(child.gameObject);
     }
 
     public void AddItem(GameObject itemPrefab, FoodData data, System.Action<MenuSelectionItem> onClicked)
