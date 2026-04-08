@@ -1,14 +1,26 @@
 using System.Collections.Generic;
 
 [System.Serializable]
+public class InventoryBatchEntry
+{
+    public int quantity;
+    public int daysRemaining;
+}
+
+[System.Serializable]
+public class InventoryItemEntry
+{
+    public string foodId;
+    public List<InventoryBatchEntry> batches = new List<InventoryBatchEntry>();
+}
+
+[System.Serializable]
 public class InventorySaveData
 {
-    public List<string> foodIds;
-    public List<int> amounts;
+    // 레거시 (하위호환)
+    public List<string> foodIds = new List<string>();
+    public List<int> amounts = new List<int>();
 
-    public InventorySaveData()
-    {
-        foodIds = new List<string>();
-        amounts = new List<int>();
-    }
+    // 신규 배치 데이터
+    public List<InventoryItemEntry> items = new List<InventoryItemEntry>();
 }
