@@ -5,17 +5,17 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class Farm : MonoBehaviour
 {
-    [Header("¼³Á¤")]
+    [Header("ï¿½ï¿½ï¿½ï¿½")]
     public CropData cropData;
     public TextMeshProUGUI actionPrompt;
 
-    [Header("½Ã°¢Àû ¿ä¼Ò")]
-    [Tooltip("ÀÛ¹° ÀÌ¹ÌÁö¸¦ ¶ç¿öÁÙ SpriteRenderer¸¦ ¿¬°á")]
+    [Header("ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½")]
+    [Tooltip("ï¿½Û¹ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ SpriteRendererï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public SpriteRenderer cropSpriteRenderer;
 
     public float uiOffsetY = 0.5f;
 
-    [Header("¼ºÀå °ÔÀÌÁö UI")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ UI")]
     public GaugeUI growthGauge;
     public GameObject gaugeCanvas;
 
@@ -28,28 +28,26 @@ public class Farm : MonoBehaviour
 
     private void Start()
     {
-        phaseProvider = TempTimePhaseProvider.Instance;
+        phaseProvider = ProgressSystem.Instance;
         if (phaseProvider == null)
         {
-            Debug.LogError("No TempTimePhaseProvider in this Scene");
-        }
-        else
-        {
-            tile = new FarmTile(phaseProvider);
-
-            TempTimePhaseProvider.Instance.OnPhaseChanged += OnTimePassed;
+            Debug.LogError("[Farm] ProgressSystem not found");
+            return;
         }
 
+        tile = new FarmTile(phaseProvider);
+
+        ProgressSystem.Instance.OnPhaseChanged += OnPhaseChangedHandler;
         OnTimePassed();
     }
 
     private void OnDestroy()
     {
-        if (TempTimePhaseProvider.Instance != null)
-        {
-            TempTimePhaseProvider.Instance.OnPhaseChanged -= OnTimePassed;
-        }
+        if (ProgressSystem.Instance != null)
+            ProgressSystem.Instance.OnPhaseChanged -= OnPhaseChangedHandler;
     }
+
+    private void OnPhaseChangedHandler(PhaseType _) => OnTimePassed();
 
     void Update()
     {

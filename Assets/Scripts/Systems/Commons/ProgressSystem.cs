@@ -1,8 +1,13 @@
 using UnityEngine;
 
-public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>
+public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>, TimePhaseProvider
 {
     public PhaseData phaseData{get; private set;}
+
+    // TimePhaseProvider 구현
+    private int cumulativePhaseIndex;
+    public int CurrentPhaseIndex => cumulativePhaseIndex;
+    public int TotalPhaseCount => 5; // Preparation ~ Night
 
     public void Initialize()
     {
@@ -22,6 +27,9 @@ public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>
 
     public event System.Action<PhaseType> OnPhaseChanged;
 
+    // TimePhaseProvider.NextPhase — PassPhase 위임
+    void TimePhaseProvider.NextPhase() => PassPhase();
+
     public void PassPhase()
     {
         if (phaseData.Phase == PhaseType.Night)
@@ -30,6 +38,7 @@ public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>
             return;
         }
         phaseData.Phase++;
+        cumulativePhaseIndex++;
         SetPhaseTime(phaseData.Phase);
         OnPhaseChanged?.Invoke(phaseData.Phase);
     }
@@ -50,6 +59,7 @@ public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>
     {
         phaseData.Day++;
         phaseData.Phase = PhaseType.Preparation;
+        cumulativePhaseIndex++;
         SetPhaseTime(phaseData.Phase);
         OnPhaseChanged?.Invoke(phaseData.Phase);
 

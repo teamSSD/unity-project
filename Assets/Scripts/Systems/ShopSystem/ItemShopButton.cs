@@ -6,11 +6,11 @@ public class ItemShopButton : MonoBehaviour
 {
     private SearchProductUsecase searchProductUsecase;
 
-    [Header("»óÁ¡ ¸ñ·Ï")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½")]
     [SerializeField] public List<ItemShopSlotInfo> sellItemList;
     private void Awake()
     {
-        searchProductUsecase = new TempSearchProductUsecase();
+        searchProductUsecase = ProductLookupService.Instance;
     }
     public void OpenShop()
     {

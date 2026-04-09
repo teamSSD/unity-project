@@ -37,6 +37,7 @@ public static class ManagerBootstrap
         Ensure<LoadingManager>();
         Ensure<UIManager>();
         Ensure<WeatherSystem>();
+        Ensure<ProductLookupService>();
         EnsureRecipeBookManager();
     }
 

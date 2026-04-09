@@ -1,8 +1,4 @@
-using Codice.Client.BaseCommands;
-using System.Collections;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -102,8 +98,7 @@ public class GardenShopManager : MonoBehaviour
 
     public void BuyUpgrade(FarmUpgradeType type)
     {
-        // int currentGold = InventoryManager.Instance.GetGold();
-        int currentGold = 50000; // 임시 골드
+        int currentGold = StatsSystem.Instance != null ? StatsSystem.Instance.GetMoney() : 0;
         bool isSuccess = false;
 
         switch (type)
