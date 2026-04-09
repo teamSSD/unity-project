@@ -40,6 +40,7 @@ public class HorizontalCameraMove : MonoBehaviour
 
     bool IsActive()
     {
+        if (ClickStateUtil.globalLocked) return false;
         return holdKey == KeyCode.None || Input.GetKey(holdKey);
     }
 

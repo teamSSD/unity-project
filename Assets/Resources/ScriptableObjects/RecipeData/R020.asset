@@ -17,6 +17,6 @@ MonoBehaviour:
   minigameId: M002
   inputs:
   - food: {fileID: 11400000, guid: bb194e0b89d8e4f08a78e2ab29717905, type: 2}
-    foodWeight: 1.2
+    foodWeight: 1.5
   - food: {fileID: 11400000, guid: a61cf1568f3da44e194546bec4f8de3a, type: 2}
-    foodWeight: 1.2
+    foodWeight: 1

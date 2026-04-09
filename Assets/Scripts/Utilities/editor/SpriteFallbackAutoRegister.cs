@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.IO;
 using System.Linq;
 using TMPro;
@@ -13,7 +14,7 @@ public class SpriteFallbackAutoRegister
         var main = Selection.activeObject as TMP_SpriteAsset;
         if (main == null)
         {
-            Debug.LogError("´ëÇ¥ TMP Sprite AssetÀ» ¼±ÅÃÇÏ¼¼¿ä.");
+            Debug.LogError("ï¿½ï¿½Ç¥ TMP Sprite Assetï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½.");
             return;
         }
 
@@ -31,7 +32,7 @@ public class SpriteFallbackAutoRegister
 
         if (allSpriteAssets.Count == 0)
         {
-            Debug.LogWarning("µî·ÏÇÒ TMP Sprite AssetÀÌ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ï¿½ï¿½ï¿½ï¿½ï¿½ TMP Sprite Assetï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             return;
         }
 
@@ -48,6 +49,7 @@ public class SpriteFallbackAutoRegister
         EditorUtility.SetDirty(main);
         AssetDatabase.SaveAssets();
 
-        Debug.Log($"µî·Ï ¿Ï·á: {allSpriteAssets.Count}°³ Sprite Asset");
+        Debug.Log($"ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½: {allSpriteAssets.Count}ï¿½ï¿½ Sprite Asset");
     }
 }
+#endif

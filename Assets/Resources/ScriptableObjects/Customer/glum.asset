@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: glum
   m_EditorClassIdentifier: 
   type: glum
-  characterImage: {fileID: -5860149634122512169, guid: 4ddc6500813324939aa898dc9edaea40, type: 3}
+  characterImage: {fileID: -49323233470411945, guid: e8d6905f1eb424a0ebeb978f28add38b, type: 3}
   orderingMessage: "{0} \uD558\uB098\uC694"
   satisfiedMessage: "\uADF8\uB798. \uC774 \uC815\uB3C4\uBA74 \uB410\uC5B4."
   unsatisfiedMessage: "\uC74C\u2026 \uADF8\uB0E5 \uADF8\uB798."

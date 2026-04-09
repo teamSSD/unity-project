@@ -109,6 +109,19 @@ public class OrderTicketController : MonoBehaviour
         return activeTickets.Count > 0;
     }
 
+    /// <summary>
+    /// Check if there are any active non-delivery tickets (배달 티켓 제외)
+    /// </summary>
+    public bool HasActiveCustomerTickets()
+    {
+        foreach (var ticket in activeTickets)
+        {
+            if (ticket != null && !ticket.IsDelivery)
+                return true;
+        }
+        return false;
+    }
+
     private void OnDestroy()
     {
         ClearAllTickets();

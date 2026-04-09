@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: impatient
   m_EditorClassIdentifier: 
   type: impatient
-  characterImage: {fileID: -49323233470411945, guid: e8d6905f1eb424a0ebeb978f28add38b, type: 3}
+  characterImage: {fileID: -5860149634122512169, guid: 4ddc6500813324939aa898dc9edaea40, type: 3}
   orderingMessage: "{0} \uD558\uB098\uC694"
   satisfiedMessage: "\uC624\uCF00\uC774! \uBC14\uB85C \uAC04\uB2E4!"
   unsatisfiedMessage: "\uBA39\uAE34 \uD588\uC5B4. \uB2E4\uC74C\uC740 \uBAB0\uB77C."

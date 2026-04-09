@@ -1,7 +1,10 @@
 fileFormatVersion: 2
-guid: 32646331deeed43c28256943c0f90728
+guid: 6c57db27de326442db20f24e45cd9483
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: 845663756648927516
+    second: item_grilledSteelRoot_raw_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -95,7 +98,29 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: item_grilledSteelRoot_raw_0
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 87
+        width: 439
+        height: 824
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c115b76c4b66cbb00800000000000000
+      internalID: 845663756648927516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -109,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      item_grilledSteelRoot_raw_0: 845663756648927516
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public static class InteractPromptUI
 {
@@ -28,6 +29,10 @@ public static class InteractPromptUI
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = 10;
 
+        var scaler = canvasObj.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920, 1080);
+
         promptObj = new GameObject("InteractPrompt", typeof(RectTransform));
         promptObj.transform.SetParent(canvas.transform, false);
 
@@ -36,6 +41,7 @@ public static class InteractPromptUI
         rect.sizeDelta = new Vector2(800f, 60f);
 
         tmpText = promptObj.AddComponent<TextMeshProUGUI>();
+        tmpText.font = TMP_Settings.defaultFontAsset;
         tmpText.fontSize = 52;
         tmpText.alignment = TextAlignmentOptions.Center;
         tmpText.color = Color.white;

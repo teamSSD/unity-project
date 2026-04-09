@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -65,7 +65,6 @@ public class SliceMiniGame : MiniGameAbstract
     {
         UpdateKnifeTransform();
         if (!isPlaying) return;
-        elapsedTime = 0;
         
         HandleInput();
         visualizer.ManageHint(mouseHintPrefab, CurrentTargetX, StartY, _isSlicing, EndY, hintMoveSpeed);

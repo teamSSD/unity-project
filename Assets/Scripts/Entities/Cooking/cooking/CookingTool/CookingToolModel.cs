@@ -1,4 +1,3 @@
-using UnityEditor.Animations;
 using UnityEngine;
 using System.Linq;
 
@@ -193,7 +192,6 @@ public class CookingToolModel : MonoBehaviour
 
     private void PlayMinigame()
     {
-        BehaviorInstance.locked = true;
         if (!injected)
         {
             Debug.LogWarning("Interface didn't injected.");
@@ -201,6 +199,7 @@ public class CookingToolModel : MonoBehaviour
         }
         if (SchemaInstance.IsCookable())
         {
+            BehaviorInstance.locked = true;
             SchemaInstance.MinigameStart();
 
             RecipeData response = searchRecipeUsecase.Search(

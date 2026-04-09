@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,6 +50,7 @@ public class OrderTicketModel : MonoBehaviour
             if (affected)
             {
                 IsAttached = true;
+                collision.BehaviorInstance.locked = true; // 완성된 도시락은 이동 불가
                 StartCoroutine(waitAndTake(RandomGeneral.getRandomNormal(0.5f, 1.5f), collision));
 
                 GetComponent<SpriteRenderer>().enabled = false;
@@ -100,7 +101,8 @@ public class OrderTicketModel : MonoBehaviour
 
         FoodSchema main = bento.getFoodList()[0];
         List<FoodSchema> sides = bento.getFoodList();
+        Vector3 spawnPosition = bento.GetBentoPosition();
         Destroy(bento.gameObject);
-        onTake.Invoke(main, sides, bento.transform.position);
+        onTake.Invoke(main, sides, spawnPosition);
     }
 }

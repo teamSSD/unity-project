@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -57,7 +57,7 @@ public class DeliveryNpcOrderInteraction
         Receipt receiptScript = receipt.GetComponent<Receipt>();
         OrderTicketModel ticketModel = receipt.GetComponent<OrderTicketModel>();
 
-        receiptScript.Set(menuSchema);
+        receiptScript.Set(menuSchema, true);
         ticketModel.SetMenu(menuSchema);
     }
 

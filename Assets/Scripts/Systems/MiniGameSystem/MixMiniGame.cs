@@ -56,7 +56,7 @@ public class MixMiniGame : MiniGameAbstract
 
     private void checkEnd()
     {
-        if (pressCount >= pressRequiringCount)
+        if (pressCount >= pressRequiringCount || timer >= duration)
         {
             EndGame();
         }

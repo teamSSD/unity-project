@@ -24,8 +24,12 @@ public class BentoBehavior : MonoBehaviour
         ClickState clickState = clickStateUtil.getState();
         ProcessMovement(clickState);
     }
+    public bool locked = false;
+
     private void ProcessMovement(ClickState clickState)
     {
+        if (locked) return;
+
         if (clickState == ClickState.Dragging)
         {
             Vector3 target = mainCamera.ScreenToWorldPoint(Input.mousePosition);

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using System.IO;
 using System.Linq;
@@ -124,3 +125,4 @@ public class BuildSettingsHelper
         }
     }
 }
+#endif

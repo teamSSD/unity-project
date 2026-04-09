@@ -82,11 +82,45 @@ public class FoodData : ScriptableObject, CsvParsable
         }
     }
 
-    public Sprite GetBentoImage(int slotIndex = 0)
+    public Sprite GetRepresentativeBentoImage()
     {
-        if (slotIndex < 0 || slotIndex >= bentoVariants.Length)
+        if (type == FoodType.MAIN)
+        {
+            return bentoVariants[0] != null ? bentoVariants[0] : image;
+        }
+        else if (type == FoodType.SIDE)
+        {
+            for (int i = 1; i < bentoVariants.Length; i++)
+            {
+                if (bentoVariants[i] != null) return bentoVariants[i];
+            }
             return image;
-        return bentoVariants[slotIndex] != null ? bentoVariants[slotIndex] : image;
+        }
+        return image;
+    }
+
+    public Sprite GetMainBentoImage()
+    {
+        if (type != FoodType.MAIN)
+        {
+            Debug.LogWarning($"[FoodData] {ingredientName}(은)는 MAIN 타입이 아님에도 메인 전용 이미지를 요청받았습니다!");
+            return image;
+        }
+        return bentoVariants[0] != null ? bentoVariants[0] : image;
+    }
+
+    public Sprite GetSideBentoImage(int sideOrder)
+    {
+        if (type != FoodType.SIDE)
+        {
+            Debug.LogWarning($"[FoodData] {ingredientName}(은)는 SIDE 타입이 아님에도 사이드 전용 이미지를 요청받았습니다!");
+            return image;
+        }
+
+        int targetIndex = 1 + sideOrder;
+        if (targetIndex >= bentoVariants.Length) targetIndex = bentoVariants.Length - 1; // 최대치는 마지막 인덱스
+        
+        return bentoVariants[targetIndex] != null ? bentoVariants[targetIndex] : image;
     }
 
     public Sprite GetImageForTool(string toolId)

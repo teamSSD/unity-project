@@ -21,7 +21,6 @@ public class GriddleMinigame : MiniGameAbstract
     private int _processedCount = 0;
     private int _successCount = 0;
     private const int MaxVisibleCount = 3;
-    private bool _isProcessing = false; // 애니메이션 도중 중복 처리 방지용 (선택 사항)
 
     private readonly List<Vector2Int> _directionPool = new List<Vector2Int> {
         Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
@@ -81,7 +80,6 @@ public class GriddleMinigame : MiniGameAbstract
     public override void OnUpdate()
     {
         if (_processedCount >= totalArrowCount) return;
-        elapsedTime = 0;
 
         Vector2Int inputDir = GetInput();
         if (inputDir != Vector2Int.zero && _activeArrows.Count > 0)

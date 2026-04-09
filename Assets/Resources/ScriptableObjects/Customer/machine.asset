@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: machine
   m_EditorClassIdentifier: 
   type: machine
-  characterImage: {fileID: -4683906691180376045, guid: 01901e073c90545a0a2aab11cfed341f, type: 3}
+  characterImage: {fileID: 21300000, guid: ee025155f3b484cffa40ad9169c4d79e, type: 3}
   orderingMessage: "{0} \uD558\uB098\uC694"
   satisfiedMessage: "\uC0C1\uD0DC \uC591\uD638. \uC7AC\uC8FC\uBB38 \uAC00\uB2A5."
   unsatisfiedMessage: "\uD3B8\uCC28 \uC788\uC74C. \uAC1C\uC120 \uD544\uC694."

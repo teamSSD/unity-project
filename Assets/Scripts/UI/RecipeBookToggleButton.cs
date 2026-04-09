@@ -23,7 +23,7 @@ public class RecipeBookToggleButton : MonoBehaviour
 
         if (recipeBookManager == null)
         {
-            recipeBookManager = FindObjectOfType<RecipeBookManager>();
+            recipeBookManager = FindFirstObjectByType<RecipeBookManager>();
         }
 
         if (toggleButton != null)

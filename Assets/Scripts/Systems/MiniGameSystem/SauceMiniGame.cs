@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System.Linq;
 
 /*
 SauceMiniGame.cs
@@ -19,6 +21,7 @@ public class SauceMiniGame : MiniGameAbstract
 {
     [Header("UI 오브젝트")]
     public Image gaugeBar;               // UI Image (Fill 방식)
+    [SerializeField] private SpriteStackRenderer stackRenderer;
 
     [Header("게임 설정")]
     public float decreasePerPress = 2.5f;  // 스페이스바 당 게이지 증가량
@@ -49,7 +52,6 @@ public class SauceMiniGame : MiniGameAbstract
     public override void OnUpdate()
     {
         if (!isPlaying) return;
-         elapsedTime = 0;
 
         if (currentGauge <= 0)
         {
@@ -91,5 +93,16 @@ public class SauceMiniGame : MiniGameAbstract
         float penaltyDiff = Mathf.Max(0, diff - tolerance);
         float score = 1.0f - (penaltyDiff / (maxPossibleDiff - tolerance));
         return Mathf.Clamp01(score);
+    }
+
+    public override void SetIngredients(List<FoodData> ingredients, string toolId = null)
+    {
+        if (stackRenderer != null && ingredients != null)
+        {
+            var sprites = toolId != null
+                ? ingredients.Select(x => x.GetImageForTool(toolId))
+                : ingredients.Select(x => x.image);
+            stackRenderer.DrawMany(sprites);
+        }
     }
 }

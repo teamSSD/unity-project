@@ -6,9 +6,7 @@ public class WaitingCustomer : MonoBehaviour
 {
     [SerializeField] private GameObject gaugePrefab;
     public event Action onExit = () => {};
-    public bool stopTimer = false;
-    private float timer = 0;
-    private float timeLimit = 180; // 180
+    private int managerTimerId = -1;
     private GameObject gaugeUI;
     private GaugeUI guageScript;
     private bool injected = false;
@@ -19,8 +17,31 @@ public class WaitingCustomer : MonoBehaviour
 
         gaugeUI.transform.SetParent(worldCanvas.transform);
         gaugeUI.transform.position = this.gameObject.transform.position + offset;
+
+        var sr = GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            sr.sprite = customerData.characterImage;
+            sr.sortingLayerName = "Customer";
+            sr.sortingOrder = 0;
+        }
+
+        var pc = GetComponent<PolygonCollider2D>();
+        if (pc != null && sr.sprite != null)
+        {
+            // 새로운 스프라이트 외곽선에 맞게 콜라이더 재생성
+            int pathCount = sr.sprite.GetPhysicsShapeCount();
+            pc.pathCount = pathCount;
+            List<Vector2> pathPoints = new List<Vector2>();
+            for (int i = 0; i < pathCount; i++)
+            {
+                pathPoints.Clear();
+                sr.sprite.GetPhysicsShape(i, pathPoints);
+                pc.SetPath(i, pathPoints);
+            }
+        }
+        
         injected = true;
-        gameObject.GetComponent<SpriteRenderer>().sprite = customerData.characterImage;
     }
 
     void Awake()
@@ -29,19 +50,28 @@ public class WaitingCustomer : MonoBehaviour
         guageScript = gaugeUI.GetComponent<GaugeUI>();
     }
 
-    void Update()
+    void Start()
     {
-        if (!injected)
+        if (TimeManager.Instance != null)
         {
-            Debug.Log("WaitingCustomer didn't injected.");
+            managerTimerId = TimeManager.Instance.StartCustomerTimer(
+                onTick: (elapsed, duration) => {
+                    if (guageScript != null)
+                        guageScript.SetProgress(elapsed, duration);
+                },
+                onComplete: () => {
+                    OnExit();
+                }
+            );
         }
-        guageScript.SetProgress(timer, timeLimit);
-        if (!stopTimer) timer += Time.deltaTime;
-        if (timer > timeLimit)
+    }
+
+    public void StopTimer()
+    {
+        if (managerTimerId != -1 && TimeManager.Instance != null)
         {
-            OnExit();
-            stopTimer = true;
-            timeLimit = timer + 1;
+            TimeManager.Instance.CancelTimer(managerTimerId);
+            managerTimerId = -1;
         }
     }
 
@@ -57,6 +87,12 @@ public class WaitingCustomer : MonoBehaviour
 
     private void OnDestroy()
     {
-        Destroy(gaugeUI);
+        if (managerTimerId != -1 && TimeManager.Instance != null)
+        {
+            TimeManager.Instance.CancelTimer(managerTimerId);
+        }
+
+        if (gaugeUI != null)
+            Destroy(gaugeUI);
     }
 }

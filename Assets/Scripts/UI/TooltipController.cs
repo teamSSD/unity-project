@@ -48,6 +48,12 @@ public class TooltipController : MonoBehaviour
         clickStateUtil = GetComponent<ClickStateUtil>();
 
         // 글로벌 툴팁 참조 (타입별 분기)
+        if (UIManager.Instance == null)
+        {
+            Debug.LogWarning($"[TooltipController] {gameObject.name}: UIManager.Instance is null! Cannot get global tooltip.");
+            return;
+        }
+
         if (GetComponent<FoodModel>() != null)
         {
             tooltipObject = UIManager.Instance.IngredientTooltip;

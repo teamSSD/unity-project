@@ -301,6 +301,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoringPrefab: {fileID: 0}
   gaugeBar: {fileID: 6270032678367151959}
+  stackRenderer: {fileID: 944562236939760790}
   decreasePerPress: 2
   targetGauge: 65
   upperArrow: {fileID: 6132707111305442208}

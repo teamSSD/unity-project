@@ -9,26 +9,23 @@ public class RecipeBookMenuProvider : ISelectMenu
 {
     public List<MenuSchema> GetTodaysMenu()
     {
-        // RecipeDataManager 접근
-        if (RecipeDataManager.Instance == null)
+        if (RecipeDataManager.Instance == null || RecipeDataManager.Instance.GetAllMenusAsSchema().Count == 0)
         {
-            Debug.LogError("[RecipeBookMenuProvider] RecipeDataManager not found! Returning empty menu.");
+            Debug.LogWarning("[RecipeBookMenuProvider] RecipeDataManager not found or empty! Using fallback: loading first FoodData from Resources.");
+            var allFood = Resources.LoadAll<FoodData>("ScriptableObjects/FoodData");
+            if (allFood != null && allFood.Length > 0)
+            {
+                var fallbackMenu = new MenuSchema("디버그 메뉴", 1, allFood[0], new List<FoodData>());
+                return new List<MenuSchema> { fallbackMenu };
+            }
             return new List<MenuSchema>();
         }
 
         var menuList = RecipeDataManager.Instance.GetAllMenusAsSchema();
-
-        if (menuList.Count == 0)
+        Debug.Log($"[RecipeBookMenuProvider] GetTodaysMenu() returned {menuList.Count} menus");
+        foreach (var menu in menuList)
         {
-            Debug.LogError("[RecipeBookMenuProvider] No menus selected! Please select menus before entering Cooking scene.");
-        }
-        else
-        {
-            Debug.Log($"[RecipeBookMenuProvider] GetTodaysMenu() returned {menuList.Count} menus");
-            foreach (var menu in menuList)
-            {
-                Debug.Log($"  - {menu}");
-            }
+            Debug.Log($"  - {menu}");
         }
 
         return menuList;

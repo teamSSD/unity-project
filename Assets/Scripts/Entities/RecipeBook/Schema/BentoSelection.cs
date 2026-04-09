@@ -70,7 +70,7 @@ public class BentoSelection
     /// </summary>
     public bool HasSelection()
     {
-        return MainMenu != null;
+        return MainMenu != null || SideMenus.Count > 0;
     }
 
     /// <summary>
@@ -78,7 +78,7 @@ public class BentoSelection
     /// </summary>
     public bool IsComplete()
     {
-        return MainMenu != null;
+        return MainMenu != null || SideMenus.Count > 0;
     }
 
     public override string ToString()

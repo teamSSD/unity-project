@@ -12,7 +12,7 @@ public class ScanColliderUtil : MonoBehaviour
 
     private void Awake()
     {
-        _overlapFilter = new ContactFilter2D().NoFilter();
+        _overlapFilter = ContactFilter2D.noFilter;
         _overlapFilter.useTriggers = true;
     }
 
