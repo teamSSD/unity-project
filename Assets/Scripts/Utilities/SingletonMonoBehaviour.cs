@@ -1,7 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// DontDestroyOnLoad 싱글톤 베이스 클래스.
+/// 싱글톤 베이스 클래스.
+/// Managers 씬에 배치되어 영구 존재 (DontDestroyOnLoad 불필요).
 /// 상속 후 OnSingletonAwake()에서 초기화 로직을 구현하세요.
 /// </summary>
 public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : SingletonMonoBehaviour<T>
@@ -17,7 +18,6 @@ public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : Single
             return;
         }
         _instance = (T)this;
-        DontDestroyOnLoad(gameObject);
         OnSingletonAwake();
     }
 

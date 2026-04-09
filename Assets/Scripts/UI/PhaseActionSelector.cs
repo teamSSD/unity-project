@@ -59,7 +59,7 @@ public class PhaseActionSelector : MonoBehaviour
         if (idleSceneController != null)
             idleSceneController.TransitionToScene(sceneName);
         else
-            SceneManager.LoadScene(sceneName);
+            SceneLoader.LoadScene(sceneName);
     }
 
     private void SetupButtons()

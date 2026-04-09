@@ -12,12 +12,9 @@ public class IdleSceneController : MonoBehaviour
 
     private void Start()
     {
-        // UnlockedFoodManager 초기화 (없으면 생성)
-        ManagerBootstrap.Ensure<UnlockedFoodManager>();
-
         if (recipeBookManager == null)
         {
-            recipeBookManager = FindObjectOfType<RecipeBookManager>();
+            recipeBookManager = FindFirstObjectByType<RecipeBookManager>();
         }
 
         Debug.Log("[IdleSceneController] Idle scene started");
@@ -35,10 +32,6 @@ public class IdleSceneController : MonoBehaviour
         // RecipeBook은 항상 View Mode이므로 리셋 불필요
         // flush()는 PassPhase() 또는 PassDay()에서만 호출 (씬 전환마다 저장 불필요)
 
-        // 씬 로드
-        if (LoadingManager.Instance != null)
-            LoadingManager.Instance.LoadScene(sceneName);
-        else
-            SceneManager.LoadScene(sceneName);
+        SceneLoader.LoadScene(sceneName);
     }
 }

@@ -27,6 +27,82 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
         StartCoroutine(LoadSceneCoroutine(sceneName));
     }
 
+    /// <summary>
+    /// Additive 씬 전환: 이전 씬 unload + 새 씬 additive load + SetActiveScene
+    /// </summary>
+    public void LoadSceneAdditive(string sceneName, string previousScene)
+    {
+        if (isLoading) return;
+        StartCoroutine(LoadSceneAdditiveCoroutine(sceneName, previousScene));
+    }
+
+    private IEnumerator LoadSceneAdditiveCoroutine(string sceneName, string previousScene)
+    {
+        isLoading = true;
+        UILockManager.Lock(UILockManager.Owner.Loading);
+
+        // Fade in
+        canvas.enabled = true;
+        canvasGroup.alpha = 0f;
+        progressBarFill.fillAmount = 0f;
+        loadingText.text = "Loading...";
+
+        float t = 0f;
+        while (t < FADE_DURATION)
+        {
+            t += Time.unscaledDeltaTime;
+            canvasGroup.alpha = Mathf.Clamp01(t / FADE_DURATION);
+            yield return null;
+        }
+        canvasGroup.alpha = 1f;
+
+        // Unload previous
+        if (!string.IsNullOrEmpty(previousScene))
+        {
+            var scene = SceneManager.GetSceneByName(previousScene);
+            if (scene.isLoaded)
+            {
+                var unload = SceneManager.UnloadSceneAsync(scene);
+                if (unload != null)
+                    while (!unload.isDone) yield return null;
+            }
+        }
+
+        // Additive load
+        var op = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+        op.allowSceneActivation = false;
+
+        while (op.progress < 0.9f)
+        {
+            float progress = Mathf.Clamp01(op.progress / 0.9f);
+            progressBarFill.fillAmount = progress;
+            loadingText.text = $"Loading... {Mathf.RoundToInt(progress * 100)}%";
+            yield return null;
+        }
+
+        progressBarFill.fillAmount = 1f;
+        loadingText.text = "Loading... 100%";
+        yield return new WaitForSecondsRealtime(0.15f);
+
+        op.allowSceneActivation = true;
+        while (!op.isDone) yield return null;
+
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
+
+        // Fade out
+        t = 0f;
+        while (t < FADE_DURATION)
+        {
+            t += Time.unscaledDeltaTime;
+            canvasGroup.alpha = 1f - Mathf.Clamp01(t / FADE_DURATION);
+            yield return null;
+        }
+
+        canvas.enabled = false;
+        isLoading = false;
+        UILockManager.Unlock(UILockManager.Owner.Loading);
+    }
+
     private IEnumerator LoadSceneCoroutine(string sceneName)
     {
         isLoading = true;

@@ -58,7 +58,7 @@ public class MallSceneController : MonoBehaviour
                     // 저장은 PassDay()에서만 수행
                 }
 
-                SceneManager.LoadScene("Idle");
+                SceneLoader.LoadScene("Idle");
             });
         }
         else

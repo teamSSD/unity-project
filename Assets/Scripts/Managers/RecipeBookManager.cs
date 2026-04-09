@@ -2,46 +2,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RecipeBookManager : MonoBehaviour
+public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
 {
-    private static RecipeBookManager instance;
-
-    /// <summary>
-    /// RecipeBookManager 인스턴스가 존재하는지 확인 (에러 로그 없음)
-    /// </summary>
-    public static bool HasInstance
-    {
-        get
-        {
-            if (instance != null) return true;
-            instance = FindFirstObjectByType<RecipeBookManager>();
-            return instance != null;
-        }
-    }
-
-    public static RecipeBookManager Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = FindFirstObjectByType<RecipeBookManager>();
-                if (instance == null)
-                {
-                    Debug.LogError("RecipeBookManager instance not found in scene.");
-                }
-            }
-            return instance;
-        }
-    }
+    public static bool HasInstance => Instance != null;
 
     private static bool isRecipeBookActive = false;
-    public static bool IsRecipeBookActive
-    {
-        get { return isRecipeBookActive; }
-    }
-
-    // RecipeBook은 이제 항상 읽기 전용 (View Mode만 지원)
+    public static bool IsRecipeBookActive => isRecipeBookActive;
     public static bool IsReadOnly => true;
 
     [Header("Recipe Book Root")]
@@ -83,16 +49,8 @@ public class RecipeBookManager : MonoBehaviour
     private enum Page { Diary, Main, Side }
     private Page lastPage = Page.Diary;
 
-    private void Awake()
+    protected override void OnSingletonAwake()
     {
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        instance = this;
-
         if (transform.parent != null)
             transform.SetParent(null);
 
@@ -109,7 +67,6 @@ public class RecipeBookManager : MonoBehaviour
         wrapper.AddComponent<UnityEngine.UI.GraphicRaycaster>();
 
         transform.SetParent(wrapper.transform, false);
-        DontDestroyOnLoad(wrapper);
 
         cardOverlay = gameObject.GetComponent<MenuCardOverlay>();
         if (cardOverlay == null) cardOverlay = gameObject.AddComponent<MenuCardOverlay>();

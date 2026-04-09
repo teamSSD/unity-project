@@ -12,9 +12,6 @@ public class GameStart : MonoBehaviour
     {
         UILockManager.Lock(UILockManager.Owner.GameStart);
 
-        // Manager 초기화 (없으면 생성)
-        ManagerBootstrap.EnsureAll();
-
         // Continue 버튼 활성화/비활성화
         bool hasSaveData = SaveManager.HasSaveData();
 
@@ -57,7 +54,7 @@ public class GameStart : MonoBehaviour
         SaveManager.LoadAll();
 
         UILockManager.Unlock(UILockManager.Owner.GameStart);
-        SceneManager.LoadScene("Scene_Mall");
+        SceneLoader.LoadScene("Scene_Mall");
     }
     private void NewGame()
     {
@@ -83,7 +80,7 @@ public class GameStart : MonoBehaviour
 
         Debug.Log("[GameStart] New Game started");
         UILockManager.Unlock(UILockManager.Owner.GameStart);
-        SceneManager.LoadScene("Scene_Mall");
+        SceneLoader.LoadScene("Scene_Mall");
     }
     private void OpenSetting()
     {

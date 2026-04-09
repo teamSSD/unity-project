@@ -17,7 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ForReal/Cooking.unity
     guid: 63a09571c702d4fa9a5328f37aa382c2
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ForReal/Scene_Delivery.unity
     guid: 00ae8324b032f4df2adf265d7198d515
   - enabled: 1

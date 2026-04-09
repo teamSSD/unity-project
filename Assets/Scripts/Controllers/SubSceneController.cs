@@ -29,6 +29,6 @@ public class SubSceneController : MonoBehaviour
             // 저장은 PassDay()에서만 수행
         }
 
-        SceneManager.LoadScene(returnSceneName);
+        SceneLoader.LoadScene(returnSceneName);
     }
 }
