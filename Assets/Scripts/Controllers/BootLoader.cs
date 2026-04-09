@@ -14,7 +14,8 @@ public class BootLoader : MonoBehaviour
         while (!managersOp.isDone)
             yield return null;
 
-        // 2. ManagerBootstrap 실행
+        // 2. Managers 씬을 active로 설정 후 매니저 생성 (Boot이 아닌 Managers에 배치)
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("Managers"));
         ManagerBootstrap.EnsureAll();
 
         // 3. GameStart 씬 additive 로드 (완료 대기)
