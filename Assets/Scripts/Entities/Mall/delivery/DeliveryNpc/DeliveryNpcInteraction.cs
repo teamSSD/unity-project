@@ -4,6 +4,7 @@ public class DeliveryNpcInteraction : MonoBehaviour
 {
     private INpcInteraction currentInteraction;
     private bool isPlayerNear;
+    private bool interactCooldown;
 
     public void SetInteraction(INpcInteraction interaction)
     {
@@ -12,9 +13,12 @@ public class DeliveryNpcInteraction : MonoBehaviour
 
     private void Update()
     {
+        if (interactCooldown) { interactCooldown = false; return; }
+
         if (isPlayerNear && currentInteraction != null && !UILockManager.IsLocked && Input.GetKeyDown(KeyCode.Space))
         {
             currentInteraction.Interact();
+            interactCooldown = true;
         }
     }
 

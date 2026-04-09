@@ -22,6 +22,7 @@ public class DialogueManager : MonoBehaviour
     private int currentIndex;
     private string lastResultTag;
     private bool waitingForChoice;
+    private bool justStarted;
 
     // 분기 응답 재생 상태
     private List<DialogueLine> branchResponses;
@@ -76,6 +77,7 @@ public class DialogueManager : MonoBehaviour
     public void StartDialogue(DialogueSO dialogue, Dictionary<string, Sprite> portraits = null)
     {
         UILockManager.Lock(UILockManager.Owner.Dialogue);
+        justStarted = true;
         currentDialogue = dialogue;
         currentIndex = 0;
         lastResultTag = null;
@@ -92,6 +94,8 @@ public class DialogueManager : MonoBehaviour
 
     void Update()
     {
+        if (justStarted) { justStarted = false; return; }
+
         if (!dialoguePanel.activeSelf || waitingForChoice)
             return;
 
