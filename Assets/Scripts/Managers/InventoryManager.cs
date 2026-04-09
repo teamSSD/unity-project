@@ -123,6 +123,23 @@ public class InventoryManager : SingletonMonoBehaviour<InventoryManager>, LoadIn
             .ToList();
     }
 
+    /// <summary>
+    /// 텃밭 수확물을 인벤토리에 추가 (cropId → FoodData 검색 후 AddFood)
+    /// </summary>
+    public void AddHarvestedCrop(string cropId, int amount)
+    {
+        FoodData food = allFoodData?.Find(f => f.id == cropId);
+        if (food != null)
+        {
+            AddFood(food, amount);
+            Debug.Log($"[InventoryManager] Harvested {cropId} x{amount}");
+        }
+        else
+        {
+            Debug.LogWarning($"[InventoryManager] Cannot find FoodData for cropId: {cropId}");
+        }
+    }
+
     // ========== 유통기한 ==========
 
     /// <summary>
