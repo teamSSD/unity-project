@@ -10,55 +10,61 @@ public static class SceneLoader
 {
     private static string currentGameplayScene;
 
+    public static string CurrentScene => currentGameplayScene;
+
+    /// <summary>
+    /// BootLoader에서 초기 씬 이름 설정용 (로드 완료 후 호출)
+    /// </summary>
+    public static void SetCurrentScene(string sceneName)
+    {
+        currentGameplayScene = sceneName;
+    }
+
     /// <summary>
     /// 게임플레이 씬 전환. 현재 씬을 unload하고 새 씬을 additive로 로드.
-    /// LoadingManager가 있으면 페이드 효과 사용.
+    /// currentGameplayScene은 비동기 완료 후에만 갱신.
     /// </summary>
     public static void LoadScene(string sceneName)
     {
         if (LoadingManager.Instance != null)
         {
-            LoadingManager.Instance.LoadSceneAdditive(sceneName, currentGameplayScene);
+            LoadingManager.Instance.LoadSceneAdditive(sceneName, currentGameplayScene, () =>
+            {
+                currentGameplayScene = sceneName;
+            });
         }
         else
         {
-            // LoadingManager 없을 때 (Boot 초기 단계)
             var runner = GetCoroutineRunner();
-            runner.StartCoroutine(LoadSceneDirectCoroutine(sceneName));
+            if (runner != null)
+                runner.StartCoroutine(LoadSceneDirectCoroutine(sceneName));
         }
-
-        currentGameplayScene = sceneName;
     }
-
-    /// <summary>
-    /// Boot에서 초기 씬 로드 (unload 대상 없음)
-    /// </summary>
-    public static void LoadInitialScene(string sceneName)
-    {
-        currentGameplayScene = sceneName;
-        SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-    }
-
-    public static string CurrentScene => currentGameplayScene;
 
     private static IEnumerator LoadSceneDirectCoroutine(string sceneName)
     {
-        if (!string.IsNullOrEmpty(currentGameplayScene) && currentGameplayScene != sceneName)
+        string previousScene = currentGameplayScene;
+
+        if (!string.IsNullOrEmpty(previousScene) && previousScene != sceneName)
         {
-            var unload = SceneManager.UnloadSceneAsync(currentGameplayScene);
-            if (unload != null)
-                while (!unload.isDone) yield return null;
+            var scene = SceneManager.GetSceneByName(previousScene);
+            if (scene.isLoaded)
+            {
+                var unload = SceneManager.UnloadSceneAsync(scene);
+                if (unload != null)
+                    while (!unload.isDone) yield return null;
+            }
         }
 
         var load = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
         while (!load.isDone) yield return null;
 
+        currentGameplayScene = sceneName;
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
     }
 
     private static MonoBehaviour GetCoroutineRunner()
     {
-        // Managers 씬에 있는 아무 MonoBehaviour 사용
         if (LoadingManager.Instance != null) return LoadingManager.Instance;
         if (ProgressSystem.Instance != null) return ProgressSystem.Instance;
         return Object.FindFirstObjectByType<MonoBehaviour>();

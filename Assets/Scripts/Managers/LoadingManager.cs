@@ -30,13 +30,13 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
     /// <summary>
     /// Additive 씬 전환: 이전 씬 unload + 새 씬 additive load + SetActiveScene
     /// </summary>
-    public void LoadSceneAdditive(string sceneName, string previousScene)
+    public void LoadSceneAdditive(string sceneName, string previousScene, System.Action onComplete = null)
     {
         if (isLoading) return;
-        StartCoroutine(LoadSceneAdditiveCoroutine(sceneName, previousScene));
+        StartCoroutine(LoadSceneAdditiveCoroutine(sceneName, previousScene, onComplete));
     }
 
-    private IEnumerator LoadSceneAdditiveCoroutine(string sceneName, string previousScene)
+    private IEnumerator LoadSceneAdditiveCoroutine(string sceneName, string previousScene, System.Action onComplete = null)
     {
         isLoading = true;
         UILockManager.Lock(UILockManager.Owner.Loading);
@@ -101,6 +101,7 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
         canvas.enabled = false;
         isLoading = false;
         UILockManager.Unlock(UILockManager.Owner.Loading);
+        onComplete?.Invoke();
     }
 
     private IEnumerator LoadSceneCoroutine(string sceneName)

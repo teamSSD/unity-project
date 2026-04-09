@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// Boot 씬 진입점. Managers 씬을 additive 로드 후 GameStart 씬으로 전환.
+/// Boot 씬 진입점. Managers 씬 → GameStart 씬 순차 로드 후 자기 자신(Boot) unload.
 /// </summary>
 public class BootLoader : MonoBehaviour
 {
@@ -14,10 +14,18 @@ public class BootLoader : MonoBehaviour
         while (!managersOp.isDone)
             yield return null;
 
-        // 2. ManagerBootstrap 실행 (Managers 씬에 배치된 컴포넌트 or 코드 호출)
+        // 2. ManagerBootstrap 실행
         ManagerBootstrap.EnsureAll();
 
-        // 3. GameStart 씬을 additive 로드
-        SceneLoader.LoadInitialScene("GameStart");
+        // 3. GameStart 씬 additive 로드 (완료 대기)
+        var gameStartOp = SceneManager.LoadSceneAsync("GameStart", LoadSceneMode.Additive);
+        while (!gameStartOp.isDone)
+            yield return null;
+
+        SceneLoader.SetCurrentScene("GameStart");
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("GameStart"));
+
+        // 4. Boot 씬 자체 unload
+        SceneManager.UnloadSceneAsync("Boot");
     }
 }
