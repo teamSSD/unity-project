@@ -21,6 +21,11 @@ public static class CsvModelConverter
         List<T> result = new List<T>();
 
         TextAsset csvFile = Resources.Load<TextAsset>(resourcePath);
+        if (csvFile == null)
+        {
+            Debug.LogError($"[CsvModelConverter] CSV file not found: {resourcePath}");
+            return result;
+        }
         string[] lines = csvFile.text.Split(new[] { "\r\n", "\r", "\n" }, System.StringSplitOptions.None);
 
         foreach (string line in lines.Skip(1))

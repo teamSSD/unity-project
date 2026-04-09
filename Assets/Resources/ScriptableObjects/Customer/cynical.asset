@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7c213fca0a714e4499ef3ffa048d9e2, type: 3}
+  m_Name: cynical
+  m_EditorClassIdentifier: 
+  type: cynical
+  characterImage: {fileID: 21300000, guid: 9e25fb68e8de2479496dda36f4744015, type: 3}
+  orderingMessage: "{0} \uD558\uB098\uC694"
+  satisfiedMessage: "\uD6C4\u2026 \uC624\uB298\uC740 \uB2F9\uCCA8\uC774\uB124."
+  unsatisfiedMessage: "\uAE30\uB300\uB294 \uC548 \uD588\uB294\uB370, \uC5ED\uC2DC\uB124."
+  escapeMessage: "\uC904 \uC124 \uAC00\uCE58\uAE4C\uC9C4 \uC544\uB2C8\uC57C."

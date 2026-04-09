@@ -1,23 +1,15 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class DoorInteraction : MonoBehaviour
 {
     public GameObject player;
     public Vector2 destination;
-    public GameObject interactText;
 
     private bool isPlayerNear = false;
 
-    void Start()
-    {
-        interactText.SetActive(false);
-    }
-
     void Update()
     {
-        if (isPlayerNear && Input.GetKeyDown(KeyCode.Space))
+        if (isPlayerNear && !UILockManager.IsLocked && Input.GetKeyDown(KeyCode.Space))
         {
             GoThroughDoor();
         }
@@ -27,8 +19,8 @@ public class DoorInteraction : MonoBehaviour
     {
         player.transform.position = new Vector3(destination.x, player.transform.position.y, 0f);
         Camera.main.transform.position = new Vector3(destination.x, Camera.main.transform.position.y, Camera.main.transform.position.z);
-        isPlayerNear = false;//@@
-        interactText.SetActive(false);//@@
+        isPlayerNear = false;
+        InteractPromptUI.Hide();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -36,7 +28,7 @@ public class DoorInteraction : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             isPlayerNear = true;
-            interactText.SetActive(true);
+            InteractPromptUI.Show("(press spacebar to go in)");
         }
     }
 
@@ -45,7 +37,7 @@ public class DoorInteraction : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             isPlayerNear = false;
-            interactText.SetActive(false);
+            InteractPromptUI.Hide();
         }
     }
 }

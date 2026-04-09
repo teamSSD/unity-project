@@ -1,52 +1,73 @@
-using UnityEngine;
-using System.Linq;
 using System.Collections.Generic;
+using UnityEngine;
 
-[RequireComponent(typeof(Collider2D))]
-[DisallowMultipleComponent]
+/// <summary>
+/// 물리 콜라이더를 스캔하여 지정된 컴포넌트나 태그를 가진 객체를 탐색합니다.
+/// </summary>
 public class ScanColliderUtil : MonoBehaviour
 {
-    [Header("Scan Settings")]
-    [SerializeField] private ContactFilter2D overlapFilter;
-
-    private Collider2D selfCollider;
-    private List<Collider2D> bufferList = new List<Collider2D>(16);
+    private readonly List<Collider2D> _overlapBuffer = new List<Collider2D>(16);
+    private Collider2D _selfCollider;
+    private ContactFilter2D _overlapFilter;
 
     private void Awake()
     {
-        selfCollider = GetComponent<Collider2D>();
+        _overlapFilter = ContactFilter2D.noFilter;
+        _overlapFilter.useTriggers = true;
     }
 
-    /* null이 반환될 수 있음 */
+    /// <summary>
+    /// 지정된 컴포넌트 <typeparamref name="T"/>를 가진 가장 가까운 객체를 반환합니다.
+    /// </summary>
     public T GetOverlappingWithComponent<T>() where T : Component
     {
-        if (selfCollider == null) selfCollider = GetComponent<Collider2D>();
-        bufferList.Clear();
-        selfCollider.GetContacts(overlapFilter, bufferList);
-        for (int i = 0; i < bufferList.Count; i++)
-            {
-                Collider2D otherCollider = bufferList[i];
-                if (otherCollider == null || otherCollider == selfCollider) continue;
-                T component = otherCollider.GetComponentInParent<T>();
-                if (component != null) return component;
-            }
-            return default;
+        var candidates = GetValidOverlappingColliders();
+        T nearest = default;
+        float minDistance = float.MaxValue;
+
+        foreach (var other in candidates)
+        {
+            if (other.TryGetComponent(out T component))
+                UpdateNearest(component, other, ref nearest, ref minDistance);
+        }
+        return nearest;
     }
 
-    /* null이 반환될 수 있음 */
+    /// <summary>
+    /// 지정된 태그를 가진 가장 가까운 GameObject를 반환합니다.
+    /// </summary>
     public GameObject GetOverlappingWithTag(string tag)
     {
-        if (selfCollider == null) selfCollider = GetComponent<Collider2D>();
-        bufferList.Clear();
-        selfCollider.GetContacts(overlapFilter, bufferList);
-        for (int i = 0; i < bufferList.Count; i++)
+        var candidates = GetValidOverlappingColliders();
+        GameObject nearest = null;
+        float minDistance = float.MaxValue;
+
+        foreach (var other in candidates)
         {
-            Collider2D otherCollider = bufferList[i];
-            if (otherCollider != null && otherCollider.gameObject != null)
-            {
-                if (otherCollider.CompareTag(tag)) return otherCollider.gameObject;
-            }
+            if (other.CompareTag(tag))
+                UpdateNearest(other.gameObject, other, ref nearest, ref minDistance);
         }
-        return null;
+        return nearest;
+    }
+
+    private List<Collider2D> GetValidOverlappingColliders()
+    {
+        _selfCollider ??= GetComponent<Collider2D>();
+        _overlapBuffer.Clear();
+        
+        _selfCollider.Overlap(_overlapFilter, _overlapBuffer);
+        _overlapBuffer.RemoveAll(c => c == null || c == _selfCollider);
+
+        return _overlapBuffer;
+    }
+
+    private void UpdateNearest<TResult>(TResult current, Collider2D other, ref TResult nearest, ref float minDist)
+    {
+        float dist = Vector2.Distance(transform.position, other.transform.position);
+        if (dist < minDist)
+        {
+            minDist = dist;
+            nearest = current;
+        }
     }
 }

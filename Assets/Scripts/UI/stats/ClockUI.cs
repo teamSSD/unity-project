@@ -15,12 +15,13 @@ public class ClockUI : MonoBehaviour
 
     void OnEnable()
     {
-        StatsSystem.OnTimeChanged += SetTargetTime;
+        StatsSystem.Instance.OnTimeChanged += SetTargetTime;
+        SetTargetTime(StatsSystem.Instance.GetHour(), StatsSystem.Instance.GetMinute());
     }
 
     void OnDisable()
     {
-        StatsSystem.OnTimeChanged -= SetTargetTime;
+        StatsSystem.Instance.OnTimeChanged -= SetTargetTime;
     }
 
     private void SetTargetTime(int hour, int minute)

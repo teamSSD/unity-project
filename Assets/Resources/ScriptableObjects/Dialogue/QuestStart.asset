@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929a58dbdcff141c4a39130b9a1497bb, type: 3}
+  m_Name: QuestStart
+  m_EditorClassIdentifier: Game.Runtime::DialogueSO
+  entries:
+  - speaker: "\uC790\uB974"
+    text: "\uC654\uAD70. \uB0C4\uC0C8\uB9CC\uC73C\uB85C\uB3C4 \uBC30\uB2EC\uAFBC\uC778
+      \uC904 \uC54C\uC558\uB2E4."
+    choices: []
+  - speaker: "\uD50C\uB808\uC774\uC5B4"
+    text: "\uD569\uC131 \uB2ED \uB3C4\uC2DC\uB77D \uBC30\uB2EC \uC654\uC2B5\uB2C8\uB2E4.
+      \uB530\uB048\uD558\uAC8C"
+    choices: []
+  - speaker: "\uAC8C\uD1A0\uB85C"
+    text: "\uACBD\uACE0. \uC8FC\uBCC0 \uC804\uB958 \uACFC\uB2E4 \uAC10\uC9C0."
+    choices: []
+  - speaker: "\uC790\uB974"
+    text: "\uC5EC\uAE30\uC120 \uC74C\uC2DD\uB3C4 \uC2DC\uD5D8\uC744 \uD1B5\uACFC\uD574\uC57C
+      \uBA39\uC744 \uC218 \uC788\uC5B4."
+    choices:
+    - label: "\uADF8\uB0E5 \uC5F4\uC5B4\uBCFC\uAC8C\uC694\\n\uAD1C\uCC2E\uC744 \uAC70\uC608\uC694."
+      responses:
+      - speaker: "\uB0B4\uB808\uC774\uC158"
+        text: "(\uB3C4\uC2DC\uB77D\uC774 \uC2A4\uD30C\uD06C\uC5D0 \uD0C0\uBC84\uB9B0\uB2E4.)"
+      - speaker: "\uAC8C\uD1A0\uB85C"
+        text: "\uB3C4\uC2DC\uB77D \uC628\uB3C4 \uAE09\uC0C1\uC2B9. \uD0C4\uD654 \uC9C4\uD589."
+      - speaker: "\uC790\uB974"
+        text: "\uC74C\uC2DD\uC774 \uC544\uB2C8\uB77C \uC0AC\uACE0 \uD604\uC7A5\uC778\uB370?"
+      - speaker: "\uD50C\uB808\uC774\uC5B4"
+        text: "\u2026\uC774 \uD658\uACBD\uC5D0\uC120 \uC77C\uBC18 \uB3C4\uC2DC\uB77D\uC740
+          \uBABB \uBC84\uD2F0\uB124\uC694."
+      - speaker: "\uAC8C\uD1A0\uB85C"
+        text: "\uC808\uC5F0 \uC7AC\uB8CC \uD544\uC694\uC131 \uD655\uC778."
+      - speaker: "\uD50C\uB808\uC774\uC5B4"
+        text: "\uD3D0\uC218\uC870 \uADFC\uCC98 \uC808\uC5F0 \uBC84\uC12F\uC774\uB77C\uBA74
+          \uAC00\uB2A5\uD560\uC9C0\uB3C4."
+      - speaker: "\uC790\uB974"
+        text: "\uADF8\uAC70\uBA74 \uAE30\uB2E4\uB9B4 \uAC00\uCE58 \uC788\uC9C0."
+      - speaker: "\uD50C\uB808\uC774\uC5B4"
+        text: "\uAD6C\uD574\uC624\uACA0\uC2B5\uB2C8\uB2E4."
+      resultTag: accept
+    - label: "\uC7A0\uAE50 \uC8FC\uBCC0\uBD80\uD130 \uBCFC\uAC8C\uC694\\n\uC804\uAE30\uAC00
+        \uB108\uBB34 \uAC15\uD574\uC694."
+      responses:
+      - speaker: "\uAC8C\uD1A0\uB85C"
+        text: "\uD604\uBA85\uD55C \uD310\uB2E8."
+      - speaker: "\uC790\uB974"
+        text: "\uB208\uCE58\uB294 \uC788\uAD70. \uC900\uBE44\uB418\uBA74 \uB2E4\uC2DC
+          \uB9D0\uD574\uB77C."
+      resultTag: defer

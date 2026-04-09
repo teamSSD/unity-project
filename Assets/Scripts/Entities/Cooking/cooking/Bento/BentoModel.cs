@@ -10,12 +10,17 @@ using UnityEngine;
 public class BentoModel : MonoBehaviour
 {
     public BentoBehavior BehaviorInstance { get; private set; }
+
+    [Header("Bento Settings")]
+    [SerializeField] private int maxFoodSlots = 4;
+
+    [Header("Audio")]
+    [SerializeField] private AudioClip bentoPutSfx;
+
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
-
-    private List<Vector2> locateList = new List<Vector2>() { new Vector2(-0.4f, 0f), new Vector2(0.6f, 0.4f) , new Vector2(0.6f, 0f) , new Vector2(0.6f, -0.4f) };
     private List<FoodSchema> foodList = new List<FoodSchema>();
-    BentoPositionModel bentoPositionModel;
+    private BentoPositionModel bentoPositionModel;
 
     void Awake()
     {
@@ -36,23 +41,33 @@ public class BentoModel : MonoBehaviour
     }
     public bool AddIngredient(FoodSchema food)
     {
-        if (foodList.Count < 4)
+        if (foodList.Count >= maxFoodSlots) return false;
+
+        if (food.foodData.type != FoodType.MAIN && food.foodData.type != FoodType.SIDE)
         {
-            if (foodList.Count == 0 && !(food.foodData.type == FoodType.MAIN))
-            {
-                Debug.Log("해당 음식은 메인 음식이 아닙니다.");
-                return false;
-            }
-            else if (foodList.Count > 0 && food.foodData.type != FoodType.SIDE)
-            {
-                Debug.Log("해당 음식은 사이드 음식이 아닙니다.");
-                return false;
-            }
-            BehaviorInstance.AddTexture(Resources.Load<Sprite>(ResourcePaths.Art.FOOD + food.foodData.imageName), locateList[foodList.Count]);
-            foodList.Add(food);
-            return true;
+            Debug.Log("해당 음식은 도시락에 담을 수 없는 타입입니다 (메인/사이드 요리만 가능).");
+            return false;
         }
-        return false;
+
+        Sprite displaySprite = null;
+
+        if (food.foodData.type == FoodType.MAIN)
+        {
+            displaySprite = food.foodData.GetMainBentoImage();
+        }
+        else if (food.foodData.type == FoodType.SIDE)
+        {
+            // 등록된 요리 중 SIDE의 개수를 셉니다 (가장 먼저 들어오면 0)
+            int sideCount = 0;
+            foreach (var f in foodList)
+            {
+                if (f.foodData.type == FoodType.SIDE) sideCount++;
+            }
+            displaySprite = food.foodData.GetSideBentoImage(sideCount);
+        }
+        BehaviorInstance.AddTexture(displaySprite, Vector2.zero);
+        foodList.Add(food);
+        return true;
     }
 
     public bool AddOrderTicket(OrderTicketModel orderTicket)
@@ -76,6 +91,7 @@ public class BentoModel : MonoBehaviour
             {
                 BehaviorInstance.defaultPosition = bentoPositionModel.transform.position;
                 bentoPositionModel.isSet = true;
+                SoundManager.Instance.Play2DSFX(bentoPutSfx, 0.4f);
             }
             else
             {
@@ -95,5 +111,14 @@ public class BentoModel : MonoBehaviour
     public List<FoodSchema> getFoodList()
     {
         return foodList;
+    }
+
+    public Vector3 GetBentoPosition()
+    {
+        if (bentoPositionModel != null)
+        {
+            return bentoPositionModel.transform.position;
+        }
+        return transform.position;
     }
 }

@@ -2,34 +2,24 @@ using UnityEngine;
 
 [RequireComponent(typeof(ClickStateUtil))]
 [RequireComponent(typeof(SpriteRenderer))]
-[RequireComponent(typeof(Animator))]
 [DisallowMultipleComponent]
 public class FoodBehavior : MonoBehaviour
 {
     public float speed = 10f;
     public Vector3 defaultPosition = new Vector3(0, 0, 0);
     private ClickStateUtil clickStateUtil;
-    private Animator animator;
     private Camera mainCamera;
 
     void Awake()
     {
         clickStateUtil = GetComponent<ClickStateUtil>();
-        animator = GetComponent<Animator>();
         mainCamera = Camera.main;
     }
 
     void Update()
     {
         ClickState clickState = clickStateUtil.getState();
-        ProcessAnimation(clickState);
         ProcessMovement(clickState);
-    }
-
-    private void ProcessAnimation(ClickState clickState)
-    {
-        if (clickState == ClickState.DragStart) animator.SetBool("Clicking", true);
-        if (clickState == ClickState.DragEnd) animator.SetBool("Clicking", false);
     }
     
     private void ProcessMovement(ClickState clickState)

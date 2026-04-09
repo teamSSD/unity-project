@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7c213fca0a714e4499ef3ffa048d9e2, type: 3}
+  m_Name: impatient
+  m_EditorClassIdentifier: 
+  type: impatient
+  characterImage: {fileID: -5860149634122512169, guid: 4ddc6500813324939aa898dc9edaea40, type: 3}
+  orderingMessage: "{0} \uD558\uB098\uC694"
+  satisfiedMessage: "\uC624\uCF00\uC774! \uBC14\uB85C \uAC04\uB2E4!"
+  unsatisfiedMessage: "\uBA39\uAE34 \uD588\uC5B4. \uB2E4\uC74C\uC740 \uBAB0\uB77C."
+  escapeMessage: "\uB2A6\uC5C8\uC5B4! \uCF5C \uB5B4\uB2E4!"

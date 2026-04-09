@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(OrderTicketBehavior))]
@@ -8,16 +9,17 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class OrderTicketModel : MonoBehaviour
 {
-    public OrderTicketBehavior BehaviorInstance { get; private set; }
-    public GameObject TakingCustomerPrefab;
-    public GameObject waitingCustomer;
-    public MenuSchema menuSchema;
-    private static System.Random rand = new System.Random();
+    private OrderTicketBehavior BehaviorInstance;
+    private MenuSchema menuSchema;
+    [SerializeField] private AudioClip attachSfx;
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
     public bool IsAttached {get; private set;} = false;
+    public bool IsDelivery { get; set; }
+    public string QuestId { get; set; }
+    public event Action OnAttached = () => {};
 
-    public event Action onTake = () => { };
+    public event Action<FoodSchema, List<FoodSchema>, Vector3> onTake = (_, __, ___) => { };
     void Awake()
     {
         BehaviorInstance = GetComponent<OrderTicketBehavior>();
@@ -25,6 +27,11 @@ public class OrderTicketModel : MonoBehaviour
         clickStateUtil = GetComponent<ClickStateUtil>();
 
         clickStateUtil.OnDragEnd += AddToBento;
+    }
+
+    void Start()
+    {
+        SoundManager.Instance.Play2DSFX(attachSfx, 0.4f);
     }
 
     void OnDestroy()
@@ -36,49 +43,66 @@ public class OrderTicketModel : MonoBehaviour
         BentoModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoModel>();
         if (collision != null)
         {
+            if (IsDelivery && !ValidateExactMatch(collision))
+                return;
+
             bool affected = collision.AddOrderTicket(this);
             if (affected)
             {
                 IsAttached = true;
-                onTake.Invoke();
-                waitingCustomer.GetComponent<WaitingCustomer>().stopTimer = true;
-                FoodSchema main = collision.getFoodList()[0];
-                List<FoodSchema> sides = collision.getFoodList();
-                sides.RemoveAt(0);
-                StartCoroutine(buy(menuSchema, main, sides, getRandomNormal(0.5f, 1.5f), collision));
+                collision.BehaviorInstance.locked = true; // 완성된 도시락은 이동 불가
+                StartCoroutine(waitAndTake(RandomGeneral.getRandomNormal(0.5f, 1.5f), collision));
+
                 GetComponent<SpriteRenderer>().enabled = false;
                 foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = false;
+
+                OnAttached.Invoke();
+                SoundManager.Instance.Play2DSFX(attachSfx, 0.4f);
             }
         }
     }
 
-    private IEnumerator buy(MenuSchema menuSchema, FoodSchema mainMenu, List<FoodSchema> sideMenus, float time, BentoModel collision)
+    public void SetMenu(MenuSchema menuSchema)
     {
-        Vector3 offset = new Vector3(0.27f, 0, 0);
+        this.menuSchema = menuSchema;
+    }
+
+    public void SetDefaultPosition(Vector3 position)
+    {
+        BehaviorInstance.defaultPosition = position;
+    }
+
+    public void DestroyObject()
+    {
+        Destroy(gameObject);
+    }
+
+    private bool ValidateExactMatch(BentoModel bento)
+    {
+        var foods = bento.getFoodList();
+        if (foods.Count == 0) return false;
+
+        // 메인 확인
+        if (menuSchema.mainMenu == null || foods[0].foodData.id != menuSchema.mainMenu.id)
+            return false;
+
+        // 사이드 확인: 정확히 같은 구성이어야 함
+        var expectedSides = menuSchema.sideMenus
+            .Select(s => s.id).OrderBy(x => x).ToList();
+        var actualSides = foods.Skip(1)
+            .Select(f => f.foodData.id).OrderBy(x => x).ToList();
+
+        return expectedSides.SequenceEqual(actualSides);
+    }
+
+    private IEnumerator waitAndTake(float time, BentoModel bento) // buy에서 수정
+    {
         yield return new WaitForSeconds(time);
 
-        GameObject generated = Instantiate(TakingCustomerPrefab);
-        generated.transform.position = collision.transform.position + offset;
-        waitingCustomer.GetComponent<WaitingCustomer>().OnExit();
-        Destroy(collision.gameObject);
-        generated.GetComponent<TakingCustomer>().take(menuSchema, mainMenu, sideMenus);
-    }
-
-    private float getRandomNormal(float minVal, float maxVal)
-    {
-        double mean = (minVal + maxVal) / 2.0;
-        double stdDev = (maxVal - minVal) / 6.0;
-
-        while (true) {
-            double u1 = 1.0 - rand.NextDouble(); 
-            double u2 = 1.0 - rand.NextDouble();
-            double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
-            
-            double val = mean + stdDev * randStdNormal;
-
-            if (val >= minVal && val <= maxVal) {
-                return (float) val;
-            }
-        }
+        FoodSchema main = bento.getFoodList()[0];
+        List<FoodSchema> sides = bento.getFoodList();
+        Vector3 spawnPosition = bento.GetBentoPosition();
+        Destroy(bento.gameObject);
+        onTake.Invoke(main, sides, spawnPosition);
     }
 }

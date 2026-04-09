@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 /*
 MiniGameManager.cs
 ==================
@@ -12,25 +14,68 @@ MiniGameManager.cs
 사용법:
 - MiniGameAbstract를 상속한 미니게임을 생성 후 StartMiniGame() 호출
 */
-public class MiniGameManager : MonoBehaviour
+public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
 {
     private MiniGameAbstract currentGame;
-    public GameObject MiniGamePrefab;
 
-    private void Start() //***테스트용 임시코드 - 이후 Start()함수 삭제할 것***
+    [SerializeField] private GameObject BakeMinigamePrefab;
+    [SerializeField] private GameObject BoilMinigamePrefab;
+    [SerializeField] private GameObject MixMinigamePrefab;
+    [SerializeField] private GameObject SauseMinigamePrefab;
+    [SerializeField] private GameObject CutMinigamePrefab;
+    [SerializeField] private GameObject GrillMinigamePrefab;
+    [SerializeField] private GameObject MinigameResultPrefab;
+
+    private static Vector2 offset = new Vector2(-0.8f, 3);
+
+    public IEnumerator<float> PlayCoroutine(string toolId, RecipeData recipeData, Vector2 position, List<FoodData> ingredients, Action<RecipeData, float> onCompleted)
     {
-        //클릭미니게임 실행코드
-        //GameObject miniGameObject = new GameObject("ClickMiniGame");
-        //currentGame = miniGameObject.AddComponent<ClickMiniGame>();
+        GameObject prefab = GetPrefab(toolId, recipeData);
+        prefab.GetComponent<MiniGameAbstract>().scoringPrefab = MinigameResultPrefab;
 
-        //미니게임 실행코드
-        GameObject go = Instantiate(MiniGamePrefab);
+        if (prefab == null) yield break;
+        prefab.transform.position = position + offset;
+
+        bool isFinished = false;
+        float finalScore = 0f;
+
+        GameObject go = Instantiate(prefab);
         currentGame = go.GetComponent<MiniGameAbstract>();
+        currentGame.SetIngredients(ingredients, toolId);
+        currentGame.OnGameFinished += (score) =>
+        {
+            finalScore = score;
+            isFinished = true;
+        };
+        UILockManager.Lock(UILockManager.Owner.Minigame);
         currentGame.StartGame();
+        while (!isFinished)
+        {
+            yield return 0f;
+        }
+        while (currentGame != null)
+        {
+            yield return 0f;
+        }
+        UILockManager.Unlock(UILockManager.Owner.Minigame);
+        onCompleted?.Invoke(recipeData, finalScore);
     }
-    public void StartMiniGame(MiniGameAbstract game)
+
+    private GameObject GetPrefab(string toolId, RecipeData recipeData)
     {
-        currentGame = game;
-        currentGame.StartGame();
+        if (recipeData.minigameId == "M001") return BakeMinigamePrefab;
+        if (recipeData.minigameId == "M002") return BoilMinigamePrefab;
+        if (recipeData.minigameId == "M004") return MixMinigamePrefab;
+        if (recipeData.minigameId == "M005") return SauseMinigamePrefab;
+        if (recipeData.minigameId == "M006") return CutMinigamePrefab;
+        if (recipeData.minigameId == "M007") return GrillMinigamePrefab;
+
+        if (toolId == "T001") return BakeMinigamePrefab;
+        if (toolId == "T002") return BoilMinigamePrefab;
+        if (toolId == "T003") return SauseMinigamePrefab;
+        if (toolId == "T004") return CutMinigamePrefab;
+        if (toolId == "T005") return GrillMinigamePrefab;
+
+        return null;
     }
 }

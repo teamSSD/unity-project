@@ -40,11 +40,19 @@ public class HorizontalCameraMove : MonoBehaviour
 
     bool IsActive()
     {
+        if (ClickStateUtil.globalLocked) return false;
         return holdKey == KeyCode.None || Input.GetKey(holdKey);
     }
 
     float GetRawInput()
     {
+        // 키보드 입력
+        float kb = 0f;
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))  kb = -1f;
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) kb =  1f;
+        if (kb != 0f) return kb;
+
+        // 마우스 엣지 입력 (키보드 미사용 시 폴백)
         float mx = Input.mousePosition.x / Mathf.Max(1f, (float)Screen.width);
         float leftEnd = edgeZone;
         float rightBeg = 1f - edgeZone;

@@ -12,7 +12,6 @@ public class CuisineManager : MonoBehaviour
     [SerializeField] private Canvas canvas;
     private PlayMinigameUsecase playMinigameUsecase;
     private SearchRecipeUsecase searchRecipeUsecase;
-    private SearchFoodUsecase searchFoodUsecase;
     private LoadInventoryUsecase loadInventoryUsecase;
     private Refrigerator refrigerator;
     private UpperShelf upperShelf;
@@ -20,60 +19,64 @@ public class CuisineManager : MonoBehaviour
 
     void Start()
     {
-        playMinigameUsecase = new TempPlayMinigameUsecase();
-        searchRecipeUsecase = new TempSearchRecipeUsecase();
-        searchFoodUsecase = new TempSearchFoodUsecase();
-        loadInventoryUsecase = new TempLoadInventoryUsecase(searchFoodUsecase);
+        playMinigameUsecase = gameObject.GetComponent<MiniGameManager>();
+        searchRecipeUsecase = RecipeLookupService.Instance;
+        loadInventoryUsecase = InventoryManager.Instance;
+
+        if (loadInventoryUsecase == null)
+        {
+            Debug.LogError("[CuisineManager] InventoryManager.Instance is null! Skipping initialization.");
+            return;
+        }
+
+        if (searchRecipeUsecase == null)
+        {
+            Debug.LogError("[CuisineManager] RecipeLookupService.Instance is null! Some tools might not work.");
+        }
 
         cookingTools.ForEach(tool =>
                 tool.GetComponent<CookingToolModel>()
-                        .Inject(playMinigameUsecase, searchRecipeUsecase, searchFoodUsecase));
+                        .Inject(playMinigameUsecase, searchRecipeUsecase));
 
         refrigerator = refrigeratorGameObject.GetComponent<Refrigerator>();
         upperShelf = upperShelfGameObject.GetComponent<UpperShelf>();
         lowerShelf = lowerShelfGameObject.GetComponent<LowerShelf>();
 
-        FillRefrigerator(refrigeratorGameObject);
-        FillUpperShelf(upperShelfGameObject);
-        FillLowerShelf(lowerShelfGameObject);
+        FillStorage(refrigerator, IngredientDisplayCategory.Refrigerator, refrigeratorGameObject);
+        FillStorage(upperShelf, IngredientDisplayCategory.UpperShelf, upperShelfGameObject);
+        FillStorage(lowerShelf, IngredientDisplayCategory.LowerShelf, lowerShelfGameObject);
     }
 
-    private void FillRefrigerator(GameObject parent)
+    private void FillStorage(BaseStorage storage, IngredientDisplayCategory category, GameObject parent)
     {
-        loadInventoryUsecase.LoadIngredientByCategory(IngredientDisplayCategory.Refrigerator).ForEach(data =>
+        foreach (var data in loadInventoryUsecase.LoadIngredientsByCategory(category))
+        {
+            if (storage.IsFull)
             {
-                GameObject ingredientInstance = Instantiate(foodPrefab, parent.transform);
-                ingredientInstance.name = data.Item1.ingredientName;
-                FoodModel foodModel = ingredientInstance.GetComponent<FoodModel>();
-                foodModel.Inject(canvas, loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
-                refrigerator.AddIngredients(foodModel);
-                ingredientInstance.transform.position = foodModel.BehaviorInstance.defaultPosition;
-            });
+                Debug.LogWarning($"[CuisineManager] {category} 보관소 용량 초과 — {data.Item1.ingredientName} 로드 스킵");
+                break;
+            }
+            GameObject ingredientInstance = instantiateFood(parent, data.Item1.ingredientName);
+            FoodModel foodModel = settingFoodModel(ingredientInstance, data.Item1, data.Item2);
+            if (!storage.AddIngredients(foodModel))
+            {
+                Destroy(ingredientInstance);
+            }
+        }
     }
 
-    public void FillUpperShelf(GameObject parent)
+    private GameObject instantiateFood(GameObject parent, string ingredientName)
     {
-        loadInventoryUsecase.LoadIngredientByCategory(IngredientDisplayCategory.UpperShelf).ForEach(data =>
-            {
-                GameObject ingredientInstance = Instantiate(foodPrefab, parent.transform);
-                ingredientInstance.name = data.Item1.ingredientName;
-                FoodModel foodModel = ingredientInstance.GetComponent<FoodModel>();
-                foodModel.Inject(canvas, loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
-                upperShelf.AddIngredients(foodModel);
-                ingredientInstance.transform.position = foodModel.BehaviorInstance.defaultPosition;
-            });
+        GameObject ingredientInstance = Instantiate(foodPrefab, parent.transform);
+        ingredientInstance.name = ingredientName;
+        return ingredientInstance;
     }
 
-    public void FillLowerShelf(GameObject parent)
+    private FoodModel settingFoodModel(GameObject instance, FoodData food, IngredientData data)
     {
-        loadInventoryUsecase.LoadIngredientByCategory(IngredientDisplayCategory.LowerShelf).ForEach(data =>
-            {
-                GameObject ingredientInstance = Instantiate(foodPrefab, parent.transform);
-                ingredientInstance.name = data.Item1.ingredientName;
-                FoodModel foodModel = ingredientInstance.GetComponent<FoodModel>();
-                foodModel.Inject(canvas, loadInventoryUsecase, data.Item1, data.Item2.defaultPrice);
-                lowerShelf.AddIngredients(foodModel);
-                ingredientInstance.transform.position = foodModel.BehaviorInstance.defaultPosition;
-            });
+        FoodModel foodModel = instance.GetComponent<FoodModel>();
+        foodModel.Inject(canvas, loadInventoryUsecase, food, data.defaultPrice);
+        instance.transform.position = foodModel.GetDefaultPosition();
+        return foodModel;
     }
 }

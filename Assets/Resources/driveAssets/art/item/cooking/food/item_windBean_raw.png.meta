@@ -1,7 +1,19 @@
 fileFormatVersion: 2
 guid: 91bf69d172f4241ba9af1480ed591269
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: 7181515721405393151
+    second: item_windBean_raw_0
+  - first:
+      213: 9216955269129985683
+    second: item_windBean_raw_1
+  - first:
+      213: -6665866297192130112
+    second: item_windBean_raw_2
+  - first:
+      213: 7149705886789815766
+    second: item_windBean_raw_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -31,7 +43,7 @@ TextureImporter:
   cubemapConvolution: 0
   seamlessCubemap: 0
   textureFormat: 1
-  maxTextureSize: 2048
+  maxTextureSize: 1024
   textureSettings:
     serializedVersion: 2
     filterMode: 1
@@ -67,9 +79,9 @@ TextureImporter:
   swizzle: 50462976
   cookieLightType: 0
   platformSettings:
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -80,9 +92,9 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: Standalone
-    maxTextureSize: 2048
+    maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -95,8 +107,97 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: item_windBean_raw_0
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 351
+        width: 88
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff86043df7ed9a360800000000000000
+      internalID: 7181515721405393151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_windBean_raw_1
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 345
+        width: 706
+        height: 356
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39e5827dbf339ef70800000000000000
+      internalID: 9216955269129985683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_windBean_raw_2
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 291
+        width: 89
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c95d938be51e73a0800000000000000
+      internalID: -6665866297192130112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_windBean_raw_3
+      rect:
+        serializedVersion: 2
+        x: 524
+        y: 262
+        width: 86
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dd40ae8f9bd83360800000000000000
+      internalID: 7149705886789815766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
+    customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
@@ -106,7 +207,13 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      item_windBean_raw_0: 7181515721405393151
+      item_windBean_raw_1: 9216955269129985683
+      item_windBean_raw_2: -6665866297192130112
+      item_windBean_raw_3: 7149705886789815766
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

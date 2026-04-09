@@ -1,53 +1,44 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Cooking 씬의 통계 및 결과(종료) 이벤트 관리.
+/// 시간 진행은 이제 TimeManager가 주도합니다.
+/// </summary>
 [RequireComponent(typeof(CustomerManager))]
+[RequireComponent(typeof(TimeManager))]
 public class StatManager : MonoBehaviour
 {
     public event Action onTimeEnd = () => {};
-    private CustomerManager customerManager;
-    private float time = 0;
-    private float threshold = 1.5f;
+
     void OnEnable()
     {
-        StatsSystem.Initialize();
+        StatsSystem.Instance.Initialize();
 
-        customerManager = this.GetComponent<CustomerManager>();
-
-        StatsSystem.OnStaminaExhausted += OnStaminaExhausted;
-
-        StatsSystem.SetTime(11, 00);
-        StatsSystem.RegisterBreakPoint(15, 00, OnTimeEnd);
-
-        customerManager.isOpen = true;
+        StatsSystem.Instance.OnStaminaExhausted += OnStaminaExhausted;
+        
+        // TimeManager의 마감 이벤트 구독
+        if (TimeManager.Instance != null)
+            TimeManager.Instance.OnTimeEnd += OnTimeEnd;
     }
 
     void OnDisable()
     {
-        StatsSystem.OnStaminaExhausted -= OnStaminaExhausted;
+        StatsSystem.Instance.OnStaminaExhausted -= OnStaminaExhausted;
+        if (TimeManager.Instance != null)
+            TimeManager.Instance.OnTimeEnd -= OnTimeEnd;
     }
 
-    void Update()
-    {
-        time += Time.deltaTime;
-        while (time >= threshold)
-        {
-            time -= threshold;
-            StatsSystem.AddTime(0, 1);
-        }
-    }
+
 
     private void OnStaminaExhausted()
     {
-        Debug.Log("쥬금");
+        Debug.Log("[StatManager] Stamina exhausted");
     }
 
     private void OnTimeEnd()
     {
-        customerManager.isOpen = false;
-        Debug.Log("시간 다됨");
+        Debug.Log("[StatManager] Time ended");
         onTimeEnd.Invoke();
     }
 }

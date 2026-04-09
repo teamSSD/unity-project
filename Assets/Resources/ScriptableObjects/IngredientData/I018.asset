@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1d49fb768c0943beb67eff314b604fa, type: 3}
+  m_Name: I018
+  m_EditorClassIdentifier: Game.Runtime::IngredientData
+  id: I018
+  description: "\uAE38\uACE0 \uC18D\uC774 \uBE48 \uC904\uAE30. \uAC89\uC740 \uC9D9\uC740
+    \uB179\uC0C9 \uC18D\uC740 \uC605\uC740 \uD770\uBE5B\uC744 \uB764\uB2E4."
+  display: 1
+  defaultPrice: 1500
+  tag: 1
+  expirationDay: 10

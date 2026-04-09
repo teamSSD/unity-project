@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7c213fca0a714e4499ef3ffa048d9e2, type: 3}
+  m_Name: grumbling
+  m_EditorClassIdentifier: 
+  type: grumbling
+  characterImage: {fileID: -4683906691180376045, guid: 01901e073c90545a0a2aab11cfed341f, type: 3}
+  orderingMessage: "{0} \uD558\uB098\uC694"
+  satisfiedMessage: "\uC5D0\uC774, \uBB50\u2026 \uC0DD\uAC01\uBCF4\uB2E4 \uB0AB\uB124."
+  unsatisfiedMessage: "\uC774 \uAC00\uACA9\uC774\uBA74 \uC880 \uC544\uC27D\uC9C0."
+  escapeMessage: "\uC544, \uC548 \uAE30\uB2E4\uB824. \uB098\uAC00!"

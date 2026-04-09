@@ -25,6 +25,12 @@ public class ClickStateUtil : MonoBehaviour
     public Action OnDragEnd;
     public Action OnNone;
 
+    public static bool globalLocked
+    {
+        get => UILockManager.IsLocked;
+        set { } // 하위 호환 — 실제 제어는 UILockManager에서
+    }
+
     private Collider2D col2d;
     private Collider2D[] overlapBuf;
 
@@ -46,6 +52,13 @@ public class ClickStateUtil : MonoBehaviour
 
     void Update()
     {
+        if (globalLocked)
+        {
+            if (isDown) { isDown = false; dragging = false; }
+            current = ClickState.None;
+            return;
+        }
+
         var cam = targetCamera != null ? targetCamera : Camera.main;
         if (cam == null) return;
         if (col2d == null) col2d = GetComponent<Collider2D>();
@@ -133,7 +146,11 @@ public class ClickStateUtil : MonoBehaviour
 
     private bool IsTopMostAt(Vector2 worldPoint)
     {
-        int count = Physics2D.OverlapCircleNonAlloc(worldPoint, 0.0005f, overlapBuf, pickMask);
+        var filter = new ContactFilter2D();
+        filter.SetLayerMask(pickMask);
+        filter.useLayerMask = true;
+        filter.useTriggers = true;
+        int count = Physics2D.OverlapCircle(worldPoint, 0.0005f, filter, overlapBuf);
         if (count <= 0) return false;
 
         Collider2D best = null;

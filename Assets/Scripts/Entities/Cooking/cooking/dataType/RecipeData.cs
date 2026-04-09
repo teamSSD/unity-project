@@ -1,26 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
+[Serializable]
 public class RecipeIngredient
 {
-    public string foodId;
+    public FoodData food;
     public float foodWeight;
 
-    public RecipeIngredient(string foodId, float foodWeight)
+    public RecipeIngredient(FoodData food, float foodWeight)
     {
-        this.foodId = foodId;
+        this.food = food;
         this.foodWeight = foodWeight;
     }
 }
 
-public class RecipeData : CsvParsable
+[CreateAssetMenu(fileName = "NewRecipe", menuName = "Data/Recipe")]
+public class RecipeData : ScriptableObject, CsvParsable
 {
+    [Header("Recipe Identity")]
     public string id;
-    public string outputId;
+    [Header("Output")]
+    public FoodData outputFood;
+    [Header("Settings")]
     public string minigameId;
-    public ISet<RecipeIngredient> inputInfoSet;
-
+    [Header("Ingredients")]
+    public List<RecipeIngredient> inputs = new List<RecipeIngredient>();
+    public HashSet<RecipeIngredient> GetInputInfoSet() => new HashSet<RecipeIngredient>(inputs);
     public override bool Equals(object obj)
     {
         if (obj is RecipeData other)
@@ -39,27 +46,31 @@ public class RecipeData : CsvParsable
 
         try
         {
-            this.id = args[0].Trim();
-            this.outputId = args[1].Trim();
-            this.minigameId = args[2].Trim();
-            this.inputInfoSet = args[3].Split('/').Select(item =>
-                    {
-                        string[] parts = item.Split('-');
-                        return new RecipeIngredient(parts[0].Trim(), float.Parse(parts[1]));
-                    }).ToHashSet();
+            id = args[0].Trim();
+            string outputId = args[1].Trim();
+            outputFood = Resources.Load<FoodData>("ScriptableObjects/FoodData/" + outputId);
+            minigameId = args[2].Trim();
+            inputs = args[3].Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Select(item =>
+            {
+                string[] parts = item.Split('-');
+                string ingredientId = parts[0].Trim();
+                float weight = float.Parse(parts[1]);
+                FoodData ingredientSO = Resources.Load<FoodData>("ScriptableObjects/FoodData/" + ingredientId);
+                return new RecipeIngredient(ingredientSO, weight);
+            }).ToList();
         }
         catch (Exception e)
         {
-            throw new CsvParsingException($"Exception occured during parsing csv\nmessage : {e.Message}");
+            throw new CsvParsingException($"Exception occured during parsing\nmessage : {e.Message}");
         }
     }
 
     public RecipeData() {}
 
-    public RecipeData(string id, string outputId, string minigameId, ISet<RecipeIngredient> inputInfoSet) {
+    public RecipeData(string id, FoodData outputFood, string minigameId, List<RecipeIngredient> inputs) {
         this.id = id;
-        this.outputId = outputId;
+        this.outputFood = outputFood;
         this.minigameId = minigameId;
-        this.inputInfoSet = inputInfoSet;
+        this.inputs = inputs;
     }
 }

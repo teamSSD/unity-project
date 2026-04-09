@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 3019181474673414119}
   - component: {fileID: 1241388302637625775}
   - component: {fileID: 2070515606449926398}
-  - component: {fileID: 1999603750625581274}
   - component: {fileID: 5835594176602967571}
   - component: {fileID: 935772268552198346}
   - component: {fileID: 6968429833796327789}
@@ -58,6 +57,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -101,6 +103,7 @@ PolygonCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3721458004035474150}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -124,7 +127,8 @@ PolygonCollider2D:
     m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -160,7 +164,7 @@ PolygonCollider2D:
   m_UseDelaunayMesh: 0
 --- !u!50 &7459708382901624544
 Rigidbody2D:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -171,8 +175,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -233,31 +237,10 @@ MonoBehaviour:
   rootGO: {fileID: 0}
   start: {x: 0, y: 0}
   step: {x: 0, y: 0}
-  iconScale: 0.3
+  iconScale: 1
   baseSortingOrder: 1
   inheritSortingFromThis: 1
   sortingReference: {fileID: 0}
---- !u!95 &1999603750625581274
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3721458004035474150}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &5835594176602967571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,3 +297,5 @@ MonoBehaviour:
   cookingToolData: {fileID: 0}
   canvas: {fileID: 0}
   descriptionPrefab: {fileID: 8741771434616529297, guid: 1b3fec945fb144ca7adb2756960dd742, type: 3}
+  toolId: 
+  trashcanSfx: {fileID: 8300000, guid: 438d05766992e47919ed02c9792e9353, type: 3}

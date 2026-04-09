@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 /*
 MiniGameAbstract.cs
@@ -23,59 +21,79 @@ MiniGameAbstract.cs
 */
 public abstract class MiniGameAbstract : MonoBehaviour
 {
+    public event Action<float> OnGameFinished;
     protected bool isPlaying;
     protected float duration = 5f;  // 게임 진행 시간 (초)
     protected float elapsedTime = 0f;
+    public string minigameId { get; protected set; }
 
+    public GameObject scoringPrefab;
     protected GameObject miniGameBgPrefab;
+
     public void StartGame()
     {
         isPlaying = true;
         elapsedTime = 0f;
-        Debug.Log($"{GetType().Name} 시작!");
         ShowBG();
-        this.transform.position = miniGameBgPrefab.transform.position;
     }
 
     protected virtual void Update()
     {
-        if (!isPlaying) return;
+        if (!isPlaying)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Destroy(gameObject);
+            }
+            return;
+        }
 
         elapsedTime += Time.deltaTime;
 
         OnUpdate();
-
-        if (elapsedTime >= duration)
-        {
-            EndGame();
-        }
     }
 
     public void EndGame()
     {
         if (!isPlaying) return;
-
         isPlaying = false;
 
-        RemoveBG();
+        StatsSystem.Instance.SubStamina(5);
 
         float score = CalculateScore();
-        Debug.Log($"{GetType().Name} 종료! 점수: {score:F2}");
-        Destroy(this.gameObject);
+
+        // 스코어링 생성
+        getScoringInstance(score);
+
+        OnGameFinished?.Invoke(score);
+        Destroy(gameObject, 1f);
+        RemoveBG(1f);
+    }
+
+    public void getScoringInstance(float score)
+    {
+        if (scoringPrefab == null) return;
+        
+        GameObject prefab = Instantiate(scoringPrefab);
+        prefab.transform.parent = gameObject.transform;
+        prefab.transform.localPosition = new Vector3(0.5f, 0.3f);
+        prefab.GetComponent<MinigameResult>()?.SetScore(score);
     }
 
     private void ShowBG()
     {
         miniGameBgPrefab = Resources.Load<GameObject>("Prefabs/minigame/miniGameBG");
 
-        Vector3 pos = GetBGPosition();
-        miniGameBgPrefab = Instantiate(miniGameBgPrefab, pos, Quaternion.identity);
+        miniGameBgPrefab = Instantiate(miniGameBgPrefab);
+        miniGameBgPrefab.transform.parent = this.gameObject.transform;
+        miniGameBgPrefab.transform.localPosition = Vector3.zero;
     }
-    private void RemoveBG()
+    private void RemoveBG(float time)
     {
-        if (miniGameBgPrefab != null) Destroy(miniGameBgPrefab);
+        if (miniGameBgPrefab != null) Destroy(miniGameBgPrefab, time);
     }
-    public abstract Vector3 GetBGPosition();
     public abstract void OnUpdate();
     public abstract float CalculateScore();
+
+    public virtual void SetIngredients(List<FoodData> ingredients, string toolId = null) { }
 }

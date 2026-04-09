@@ -36,4 +36,11 @@ public class PlayerMove : MonoBehaviour
         // 물리 이동 (프레임별로 부드럽게)
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
     }
+
+    void OnDisable()
+    {
+        moveInput = 0;
+        if (rb != null)
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+    }
 }

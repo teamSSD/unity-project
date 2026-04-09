@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: T003
   cookerName: "\uBCF4\uC6B8"
-  defaultImage: {fileID: 0}
+  defaultImage: {fileID: 21300000, guid: c83e64c48f34847eb8ee786d8133ace0, type: 3}

@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e6faed1582df4141a504255d9b78dfe, type: 3}
+  m_Name: I024
+  m_EditorClassIdentifier: Game.Runtime::FoodData
+  id: I024
+  ingredientName: "\uAC80\uC740\uAE68"
+  description: "\uC791\uC740 \uD751\uC0C9 \uC528\uC557. \uB9E4\uB048\uD558\uACE0
+    \uB2E8\uB2E8\uD558\uBA70 \uC190\uAC00\uB77D \uC0AC\uC774\uC5D0\uC11C \uBC88\uCA4D
+    \uBE5B\uB09C\uB2E4."
+  image: {fileID: 21300000, guid: ce8b82f90afa544969fa3d0368226110, type: 3}
+  ingredient: {fileID: 11400000, guid: 79a78d28e5876407385a962b3242a0cb, type: 2}
+  availableTools:
+  - T001
+  - T003
+  type: 1
+  toolVariants:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 21300000, guid: 4f90fa5e8beb4424785b1b377e67a147, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  bentoVariants:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  pieceSprite: {fileID: 0}
