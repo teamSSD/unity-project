@@ -10,6 +10,10 @@ public class GameStart : MonoBehaviour
     
     void Start()
     {
+        // Boot 씬을 거치지 않고 직접 Play한 경우 매니저 보장
+        if (StatsSystem.Instance == null)
+            ManagerBootstrap.EnsureAll();
+
         UILockManager.Lock(UILockManager.Owner.GameStart);
 
         // Continue 버튼 활성화/비활성화
