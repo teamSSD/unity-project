@@ -252,6 +252,13 @@ public class DialogueManager : MonoBehaviour
         branchResponses = null;
         waitingForChoice = false;
 
+        // 1프레임 지연 Unlock — 같은 프레임에서 Space가 재진입하는 것을 방지
+        StartCoroutine(DelayedUnlock(resultTag));
+    }
+
+    private System.Collections.IEnumerator DelayedUnlock(string resultTag)
+    {
+        yield return null;
         UILockManager.Unlock(UILockManager.Owner.Dialogue);
         OnDialogueEnded?.Invoke(resultTag);
     }
