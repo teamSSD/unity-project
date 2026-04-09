@@ -34,7 +34,10 @@ public class CustomerSpawner : MonoBehaviour
     private Vector3 exitPosition = new Vector3(-11.63f, -0.85f, 0);
 
     public int AvailableWaitingSlots => availableWaitingPositions.Count;
-    public int MaxWaitingCustomers => 5;
+    public int MaxWaitingCustomers => 3;
+
+    // Position Settings
+    private Vector3 orderingPosition = new Vector3(3.02f, 0.21f, 0f); 
 
     /// <summary>
     /// Spawn an ordering customer (at counter)
@@ -42,8 +45,9 @@ public class CustomerSpawner : MonoBehaviour
     public GameObject SpawnOrderingCustomer(MenuSchema menuSchema, CustomerData customerData, Action onOrderPlaced)
     {
         GameObject customer = Instantiate(orderingCustomerPrefab);
-        OrderingCustomer script = customer.GetComponent<OrderingCustomer>();
+        customer.transform.position = orderingPosition; // 위치 명시적 설정
 
+        OrderingCustomer script = customer.GetComponent<OrderingCustomer>();
         script.Inject(menuSchema, customerData);
         script.onExit += () =>
         {
@@ -84,7 +88,7 @@ public class CustomerSpawner : MonoBehaviour
     /// Spawn a taking customer (receiving order)
     /// </summary>
     public GameObject SpawnTakingCustomer(CustomerData customerData, Vector3 position,
-        MenuSchema menuSchema, FoodSchema mainMenu, List<FoodSchema> sideMenus, bool isExit)
+        MenuSchema menuSchema, FoodSchema mainMenu, List<FoodSchema> sideMenus, bool isExit, Action onCompleted = null)
     {
         GameObject customer = Instantiate(takingCustomerPrefab);
         TakingCustomer script = customer.GetComponent<TakingCustomer>();
@@ -102,7 +106,19 @@ public class CustomerSpawner : MonoBehaviour
         }
 
         Destroy(customer, 3f); // Auto-destroy after animation
+
+        if (onCompleted != null)
+        {
+            StartCoroutine(InvokeAfterDelay(3f, onCompleted));
+        }
+
         return customer;
+    }
+
+    private System.Collections.IEnumerator InvokeAfterDelay(float delay, Action action)
+    {
+        yield return new WaitForSeconds(delay);
+        action?.Invoke();
     }
 
     /// <summary>

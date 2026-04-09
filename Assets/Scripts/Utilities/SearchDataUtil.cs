@@ -80,6 +80,37 @@ public class SearchDataUtil
         return result;
     }
 
+    private static readonly System.Collections.Generic.Dictionary<string, int> _chainDepthCache = new();
+
+    /// <summary>
+    /// 레시피 체인 깊이를 계산합니다. (예: 원재료=0, 1단계 조리=1, 2단계=2, ...)
+    /// MAIN/SIDE 완성 보너스 배율 산출에 사용됩니다.
+    /// </summary>
+    public static int GetChainDepth(string foodId)
+    {
+        if (_chainDepthCache.TryGetValue(foodId, out int cached))
+            return cached;
+
+        var recipe = recipeList.FirstOrDefault(r => r.outputFood != null && r.outputFood.id == foodId);
+        if (recipe == null || recipe.inputs == null || recipe.inputs.Count == 0)
+        {
+            _chainDepthCache[foodId] = 0;
+            return 0;
+        }
+
+        int maxInputDepth = 0;
+        foreach (var input in recipe.inputs)
+        {
+            if (input.food == null) continue;
+            int d = GetChainDepth(input.food.id);
+            if (d > maxInputDepth) maxInputDepth = d;
+        }
+
+        int depth = maxInputDepth + 1;
+        _chainDepthCache[foodId] = depth;
+        return depth;
+    }
+
     /// <summary>
     /// 캐시된 데이터를 무효화합니다.
     /// ScriptableObject가 런타임에 변경되었을 때 호출하세요.
@@ -90,6 +121,7 @@ public class SearchDataUtil
         _ingredientList = null;
         _recipeList = null;
         _cookingToolList = null;
+        _chainDepthCache.Clear();
         Debug.Log("[SearchDataUtil] Cache invalidated");
     }
 }

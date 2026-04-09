@@ -24,9 +24,9 @@ public class CustomerManager : MonoBehaviour
     [SerializeField] private GameObject receiptPrefab;
     [SerializeField] private Canvas worldCanvas;
 
-    [Header("Spawn Settings")]
-    [SerializeField] private float baseSpawnInterval = 5f;
-    [SerializeField] private float spawnIntervalVariance = 3f;
+    [Header("Spawn Settings (페이즈별 자동 설정)")]
+    private float baseSpawnInterval = 30f;
+    private float spawnIntervalVariance = 8f;
 
     // Components
     private CustomerSpawner spawner;
@@ -88,12 +88,38 @@ public class CustomerManager : MonoBehaviour
 
     void Start()
     {
+        ApplyPhaseSettings();
         CreateDeliveryTickets();
         nextSpawnTime = RandomNormal.Get(baseSpawnInterval, spawnIntervalVariance);
 
         var subScene = FindFirstObjectByType<SubSceneController>();
         if (subScene != null)
             OnGameEnd += subScene.ReturnToIdle;
+    }
+
+    private void ApplyPhaseSettings()
+    {
+        var phase = ProgressSystem.Instance?.phaseData?.Phase ?? PhaseType.Morning;
+        switch (phase)
+        {
+            case PhaseType.Morning:
+                baseSpawnInterval = 45f;
+                spawnIntervalVariance = 10f;
+                break;
+            case PhaseType.Afternoon:
+                baseSpawnInterval = 30f;
+                spawnIntervalVariance = 8f;
+                break;
+            case PhaseType.Evening:
+                baseSpawnInterval = 22f;
+                spawnIntervalVariance = 5f;
+                break;
+            case PhaseType.Night:
+                baseSpawnInterval = 15f;
+                spawnIntervalVariance = 4f;
+                break;
+        }
+        Debug.Log($"[CustomerManager] Phase={phase}, SpawnInterval={baseSpawnInterval}±{spawnIntervalVariance}");
     }
 
     private void CreateDeliveryTickets()
@@ -302,7 +328,7 @@ public class CustomerManager : MonoBehaviour
     /// </summary>
     private void CheckGameEnd()
     {
-        if (!isOpen && !ticketController.HasActiveTickets())
+        if (!isOpen && !ticketController.HasActiveCustomerTickets())
         {
             Debug.Log("[CustomerManager] Game End");
             LogSessionSummary();

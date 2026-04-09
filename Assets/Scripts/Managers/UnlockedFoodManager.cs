@@ -29,7 +29,6 @@ public class UnlockedFoodManager : SingletonMonoBehaviour<UnlockedFoodManager>, 
     public void Initialize()
     {
         LoadAllFoodData();
-        LoadUnlocksFromProgress();
         Debug.Log("[UnlockedFoodManager] Initialized");
     }
 
@@ -70,20 +69,15 @@ public class UnlockedFoodManager : SingletonMonoBehaviour<UnlockedFoodManager>, 
     /// </summary>
     public void UnlockDefaultRecipes()
     {
-        // 기본 메인 메뉴 (6개 전체)
+        // 시작 해금 메뉴 (2 MAIN + 2 SIDE)
+        // 나머지는 배달 퀘스트로 순차 해금
         string[] defaultMains = {
-            "I034", // 새벽국
-            "I039", // 구룡면
             "I044", // 기계장 고기정식
-            "I049", // 스트리트 스테이크 49
-            "I053", // 폐건물 삼각밥
             "I060"  // 옥상 오믈렛
         };
 
-        // 기본 사이드 메뉴 (3개, I058 전력실 꼬치 제외)
         string[] defaultSides = {
             "I046", // 루미 젤리
-            "I056", // 네온 샐러드
             "I062"  // 환기구 연어구이
         };
 
@@ -97,7 +91,7 @@ public class UnlockedFoodManager : SingletonMonoBehaviour<UnlockedFoodManager>, 
             UnlockRecipe(id);
         }
 
-        SaveUnlocks();
+        PrepareForSave();
         Debug.Log($"[UnlockedFoodManager] Default recipes unlocked: {defaultMains.Length} mains + {defaultSides.Length} sides");
     }
 
@@ -133,20 +127,18 @@ public class UnlockedFoodManager : SingletonMonoBehaviour<UnlockedFoodManager>, 
         {
             unlockedRecipeIds.Add(food.id);
         }
-        SaveUnlocks();
+        PrepareForSave();
         Debug.Log($"[UnlockedFoodManager] All {unlockedRecipeIds.Count} recipes unlocked");
     }
 
     /// <summary>
-    /// 해금 데이터를 ProgressSystem에 저장
+    /// 해금 데이터를 PhaseData에 준비 (SaveManager에서 호출)
     /// </summary>
-    public void SaveUnlocks()
+    public void PrepareForSave()
     {
         if (ProgressSystem.Instance?.phaseData != null)
         {
             ProgressSystem.Instance.phaseData.UnlockedRecipes = unlockedRecipeIds.ToList();
-            // 저장은 PassDay()에서만 수행 (여기서는 phaseData에 데이터만 넣음)
-            Debug.Log($"[UnlockedFoodManager] Unlocked recipe data prepared for save: {unlockedRecipeIds.Count} recipes");
         }
     }
 

@@ -8,18 +8,26 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public abstract class BaseStorage : MonoBehaviour
 {
+    [Header("Capacity")]
+    [SerializeField] protected int capacity = 99;
+
     protected List<FoodModel> foodModels = new List<FoodModel>();
 
+    public int Capacity => capacity;
+    public bool IsFull => foodModels.Count >= capacity;
+
     /// <summary>
-    /// Add a single ingredient to storage
+    /// Add a single ingredient to storage. Returns false if full.
     /// </summary>
-    public virtual void AddIngredients(FoodModel ingredient)
+    public virtual bool AddIngredients(FoodModel ingredient)
     {
-        if (ingredient == null || foodModels.Contains(ingredient)) return;
+        if (ingredient == null || foodModels.Contains(ingredient)) return false;
+        if (IsFull) return false;
 
         ingredient.SetDefaultPosition(transform.position + CalculatePositionForIndex(foodModels.Count));
         foodModels.Add(ingredient);
         ingredient.onDestroy += HandleFoodDestroyed;
+        return true;
     }
 
     /// <summary>

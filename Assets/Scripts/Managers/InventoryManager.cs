@@ -34,6 +34,24 @@ public class InventoryManager : SingletonMonoBehaviour<InventoryManager>, LoadIn
         Debug.Log($"[InventoryManager] Loaded {allFoodData.Count} food data assets");
     }
 
+    // 시작 메뉴(옥상오믈렛, 기계장, 루미젤리, 환기구연어) 원재료
+    private static readonly Dictionary<string, int> startingIngredients = new()
+    {
+        { "I007", 3 }, // 고추장
+        { "I008", 3 }, // 레몬
+        { "I009", 3 }, // 인공고기
+        { "I010", 3 }, // 루미계란
+        { "I017", 3 }, // 스틸루트
+        { "I019", 3 }, // 검은된장
+        { "I020", 3 }, // 조명시럽
+        { "I022", 3 }, // 연기잎버터
+        { "I025", 3 }, // 청양잎
+        { "I026", 3 }, // 루미잎
+        { "I027", 3 }, // 빛토마토
+        { "I031", 3 }, // 인공연어
+        { "I068", 3 }, // 신문지
+    };
+
     private void InitializeDefaultInventory()
     {
         foreach (FoodData food in allFoodData)
@@ -41,11 +59,18 @@ public class InventoryManager : SingletonMonoBehaviour<InventoryManager>, LoadIn
             if (food.type == FoodType.INGREDIENT)
             {
                 int expDays = GetExpirationDays(food);
-                var batch = new InventoryBatch { quantity = 99, daysRemaining = expDays };
-                inventory[food] = new List<InventoryBatch> { batch };
+                if (startingIngredients.TryGetValue(food.id, out int qty))
+                {
+                    var batch = new InventoryBatch { quantity = qty, daysRemaining = expDays };
+                    inventory[food] = new List<InventoryBatch> { batch };
+                }
+                else
+                {
+                    inventory[food] = new List<InventoryBatch>();
+                }
             }
         }
-        Debug.Log($"[InventoryManager] Initialized default inventory with {inventory.Count} ingredients (all x99)");
+        Debug.Log($"[InventoryManager] Initialized inventory: {startingIngredients.Count} ingredients with starting stock");
     }
 
     // ========== 공개 API (시그니처 유지) ==========

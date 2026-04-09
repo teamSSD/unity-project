@@ -6,6 +6,8 @@ using UnityEngine;
 /// </summary>
 public class UpperShelf : BaseStorage
 {
+    private void Awake() => capacity = 3;
+
     [SerializeField] private float xOffset = 0f;
     [SerializeField] private float yPosition = 0f;
     [SerializeField] private float xInterval = 1f;

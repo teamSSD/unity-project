@@ -6,6 +6,8 @@ using UnityEngine;
 /// </summary>
 public class Refrigerator : BaseStorage
 {
+    private void Awake() => capacity = 7;
+
     [SerializeField] private float xOffset = 0f;
     [SerializeField] private float yOffset = 0f;
     [SerializeField] private float xInterval = 1f;

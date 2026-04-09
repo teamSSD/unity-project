@@ -104,6 +104,9 @@ Icon?
 obj/
 Temp/
 
+# 빌드 출력 디렉토리
+SSD_*/
+
 # 로그 & 리포트
 *.log
 *.stacktrace

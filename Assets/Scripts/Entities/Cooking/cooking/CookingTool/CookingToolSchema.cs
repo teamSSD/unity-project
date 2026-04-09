@@ -82,8 +82,16 @@ public class CookingToolSchema
             recipeData.inputs,
             ingredient => ingredient.foodData,
             inputInfo => inputInfo.food,
-            (ingredient, inputInfo) => ingredient.Price * (1 + inputInfo.foodWeight * score)
+            (ingredient, inputInfo) => ingredient.Price * (0.85f + inputInfo.foodWeight * score)
         ).Sum();
+
+        // 체인 완성 보너스: MAIN/SIDE 완성 시 체인 깊이에 비례한 보너스
+        if (foodData.type == FoodType.MAIN || foodData.type == FoodType.SIDE)
+        {
+            int chainDepth = SearchDataUtil.GetChainDepth(foodData.id);
+            float chainBonus = 1f + 0.15f * (chainDepth - 1);
+            newPrice = (int)(newPrice * chainBonus);
+        }
 
         result = new FoodSchema(foodData, newPrice);
         Ingredients.Clear();
