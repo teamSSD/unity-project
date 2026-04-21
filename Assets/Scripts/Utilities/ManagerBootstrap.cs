@@ -28,16 +28,24 @@ public static class ManagerBootstrap
     public static void EnsureAll()
     {
         Ensure<StatsSystem>();
+        Ensure<ProgressSystem>();
         Ensure<UnlockedFoodManager>();
         Ensure<InventoryManager>();
         Ensure<RecipeDataManager>();
         Ensure<RecipeLookupService>();
         Ensure<OrderManager>();
         Ensure<ActionSelectionManager>();
+        Ensure<ToolUpgradeManager>();
+        Ensure<StorageUpgradeManager>();
+        Ensure<FarmUpgradeManager>();
+        Ensure<CropDataManager>();
         Ensure<LoadingManager>();
+        Ensure<HUDManager>();
         Ensure<UIManager>();
         Ensure<WeatherSystem>();
-        Ensure<ProductLookupService>();
+        Ensure<SettlementManager>();
+        Ensure<UnifiedShopManager>();
+        Ensure<SettingsUIManager>();
         EnsureRecipeBookManager();
     }
 
@@ -47,7 +55,7 @@ public static class ManagerBootstrap
     private static void EnsureRecipeBookManager()
     {
         if (RecipeBookManager.HasInstance) return;
-        var prefab = Resources.Load<GameObject>("Prefabs/recipebook/legacy/RecipeBook");
+        var prefab = Resources.Load<GameObject>(ResourcePaths.Prefab.RecipeBook);
         if (prefab != null)
         {
             Object.Instantiate(prefab);

@@ -57,8 +57,14 @@ public class GameStart : MonoBehaviour
         // Phase 2: 저장 데이터 로드
         SaveManager.LoadAll();
 
+        // Phase 3: 시드 초기화 (세이브에서 복원 후)
+        var stats = StatsSystem.Instance.GetSaveData();
+        GameRandom.InitSession(stats.immutableSeed, (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+        GameRandom.InitDay(StatsSystem.Instance.GetDay());
+
+        HUDManager.Instance?.Initialize();
         UILockManager.Unlock(UILockManager.Owner.GameStart);
-        SceneLoader.LoadScene("Scene_Mall");
+        SceneLoader.LoadScene(SceneNames.Mall);
     }
     private void NewGame()
     {
@@ -78,16 +84,24 @@ public class GameStart : MonoBehaviour
         InventoryManager.Instance?.ResetToDefault();
         UnlockedFoodManager.Instance?.UnlockDefaultRecipes();
         DeliveryNpcDialogueInteraction.ResetAll();
+        FarmTileStorage.Clear();
 
-        // Phase 3: 초기 상태 저장
+        // Phase 3: 시드 초기화
+        int now = (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        StatsSystem.Instance.GetSaveData().immutableSeed = now;
+        GameRandom.InitSession(now, now + 1);
+        GameRandom.InitDay(0);
+
+        // Phase 4: 초기 상태 저장
         SaveManager.SaveAll();
 
+        HUDManager.Instance?.Initialize();
         Debug.Log("[GameStart] New Game started");
         UILockManager.Unlock(UILockManager.Owner.GameStart);
-        SceneLoader.LoadScene("Scene_Mall");
+        SceneLoader.LoadScene(SceneNames.Mall);
     }
     private void OpenSetting()
     {
-        // 세팅창 열기~
+        SettingsUIManager.Instance?.Open();
     }
 }

@@ -14,7 +14,9 @@ public static class UILockManager
         RecipeBook,
         BentoSelection,
         GameStart,
-        Loading
+        Loading,
+        Shop,
+        Settings
     }
 
     private static readonly HashSet<Owner> activeLocks = new();
