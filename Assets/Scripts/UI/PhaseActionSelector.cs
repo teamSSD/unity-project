@@ -50,7 +50,7 @@ public class PhaseActionSelector : MonoBehaviour
                 ProgressSystem.Instance?.PassPhase();
                 UpdateUI();
             },
-            [ActionType.Shopping] = () => TransitionScene("Scene_Mall")
+            [ActionType.Shopping] = () => TransitionScene(SceneNames.Mall)
         };
     }
 

@@ -17,7 +17,7 @@ public class BuildSettingsHelper
         // Step 1: Fix .meta files
         string[] scenesToFix = {
             "Assets/Scenes/ForReal/Scene_Delivery.unity",
-            "Assets/Scenes/ForReal/Scene_Shop.unity"
+            "Assets/Scenes/ForReal/Shop.unity"
         };
 
         foreach (var scenePath in scenesToFix)
@@ -107,7 +107,7 @@ public class BuildSettingsHelper
             "Assets/Scenes/ForReal/Idle.unity",
             "Assets/Scenes/ForReal/Cooking.unity",
             "Assets/Scenes/ForReal/Scene_Delivery.unity",
-            "Assets/Scenes/ForReal/Scene_Shop.unity"
+            "Assets/Scenes/ForReal/Shop.unity"
         };
 
         foreach (var requiredScene in requiredScenes)
