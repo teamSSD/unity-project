@@ -1,0 +1,123 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 348c7a64b8ed14a94bf6cb446471a918, type: 3}
+  m_Name: FoodShopConfig
+  m_EditorClassIdentifier: Game.Runtime::FoodShopConfigSO
+  shopName: Food Store
+  generalItems:
+  - item: {fileID: 11400000, guid: bb194e0b89d8e4f08a78e2ab29717905, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: c8251ec2f51a14eaf9e8b914b219fa2e, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: 1e87ab85da8ac4b87bf6fd330a6632f2, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: 56e22e07005a640729c07a67ac96e393, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: 168d6ed10191548c4b7e9ab85a31bed5, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: 55a71b22c47794259989718794b981c9, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: 492c15154600b4cc18446e68176dcd93, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: 862af52bd816e44d69dfc77fd032a327, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: b36ec19e840974730a43830495b3cd38, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: 97bc054130f89408eb258365bb8abdf3, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: 84438a13931974327b7fa0e9c425d63c, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: 51757ae4db92e4a16851469d23ec63bd, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: 6f94c99bb03d2419eaba64f0f437ef2a, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: 3cb92120c12cb48ae875fa86c1fda3db, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: 40d49729ec114427cb717290c2f261d9, type: 2}
+    stock: 999
+    type: 0
+  - item: {fileID: 11400000, guid: a61cf1568f3da44e194546bec4f8de3a, type: 2}
+    stock: 999
+    type: 0
+  specialPool:
+  - item: {fileID: 11400000, guid: 4a35296857138455f9bd284d9b3aa2c3, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: 13f0ac699ac1a4ac6ac0bd9232add271, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: d79d50cf2da0643468c6a9ecc52d1867, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: e7c3bcf308f1e4f1aae07a2d7245fdae, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: 859a6d11da3034ef5bfc03827415febe, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: a77a76fa89078450c9b871ff71f299e0, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: 36edcd6b161a94a23ac5687959c72af3, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: a89d70355a98e4f209c68f26f834434c, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: 454f34b1733784b159168eb4b22e707c, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: 9273d8081e7644d3390d45d73a2e4d23, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: d025f92d06a7a4520958db73d97ecb9a, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: 6e865bb4924c44f87832087c2a43e91b, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: 301cab2408341454eb99735208110b86, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: 25fefbdb3dc6042a9b3ab66ab5d513f8, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: 46bd2ebc161184901a99732389c7d594, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: eb47f21c2ee8e47f2b3496fd5241a1c8, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: bec80aa479dd343f89a4711788ee509f, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: 75e17fd1d683d468db7e0ad3c7720406, type: 2}
+    stock: 10
+    type: 1
+  - item: {fileID: 11400000, guid: 3e7b47af83c2140cebcfc30da9b102c5, type: 2}
+    stock: 10
+    type: 1
+  specialPickCount: 4

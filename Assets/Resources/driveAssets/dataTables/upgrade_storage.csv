@@ -1,0 +1,5 @@
+level,cost,refrigeratorCapacity,upperShelfCapacity,lowerShelfCapacity
+0,0,7,3,4
+1,10000,10,5,6
+2,25000,13,6,8
+3,60000,15,8,8
