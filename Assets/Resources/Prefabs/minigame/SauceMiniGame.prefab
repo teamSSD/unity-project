@@ -244,7 +244,7 @@ Transform:
   m_GameObject: {fileID: 2877695898132456518}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.23000002, z: 0}
+  m_LocalPosition: {x: 0, y: -0.59, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -278,7 +278,7 @@ Transform:
   m_GameObject: {fileID: 2899877712096204643}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.2, y: -1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -300,6 +300,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoringPrefab: {fileID: 0}
+  miniGameBgSource: {fileID: 4917050209121447711, guid: 021eb9aa84fdafa4f88bf57435a6cc97, type: 3}
   gaugeBar: {fileID: 6270032678367151959}
   stackRenderer: {fileID: 944562236939760790}
   decreasePerPress: 2
@@ -498,7 +499,7 @@ Transform:
   m_GameObject: {fileID: 5074471795802524348}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.44291997, y: 1.5174699, z: 0}
+  m_LocalPosition: {x: 0.44291997, y: 0.6974699, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -764,7 +765,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: -0.54}
+  m_AnchoredPosition: {x: 0, y: -1.36}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &8064644071158885048
