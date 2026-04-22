@@ -153,7 +153,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::DeliveryNpcView
   spriteRenderer: {fileID: 0}
-  npcId: 
+  npcId:
+  dialogueConfig: {fileID: 11400000, guid: b48d62202543b4cc88eadbdbf63ffff9, type: 2}
+  speechBubblePrefab: {fileID: 430330622492403479, guid: 7a9a481941c9347d2b25e6ed5038bf0e, type: 3}
 --- !u!114 &3362052833411811683
 MonoBehaviour:
   m_ObjectHideFlags: 0

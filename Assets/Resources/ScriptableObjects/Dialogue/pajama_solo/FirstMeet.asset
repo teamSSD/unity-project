@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929a58dbdcff141c4a39130b9a1497bb, type: 3}
+  m_Name: FirstMeet
+  m_EditorClassIdentifier: Game.Runtime::DialogueSO
+  entries:
+  - speaker: "\uD30C\uC790\uB9C8"
+    text: "\uC73C\uC74C\u2026 \uB204\uAD6C\uC57C\u2026 \uC878\uB9B0\uB370\u2026"
+    choices: []
+  - speaker: "\uD50C\uB808\uC774\uC5B4"
+    text: "\uBC30\uB2EC\uC778\uB370\uC694. \uAE68\uC6CC\uC11C \uC8C4\uC1A1\uD569\uB2C8\uB2E4."
+    choices: []
+  - speaker: "\uD30C\uC790\uB9C8"
+    text: "\uBC30\uB2EC\u2026? \uC544, \uC74C\uC2DD? \uADF8\uB7FC \uAD1C\uCC2E\uC544."
+    choices: []

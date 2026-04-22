@@ -45,7 +45,7 @@ public class IngredientImageConsistencyChecker : EditorWindow
                 }
 
                 string variantName = $"{baseName}_{toolType}";
-                string variantPath = ResourcePaths.Art.FOOD + variantName;
+                string variantPath = ResourcePaths.Art.Food + variantName;
                 Sprite variant = Resources.Load<Sprite>(variantPath);
 
                 if (variant == null)

@@ -5,6 +5,8 @@ using UnityEngine;
 public class DeliveryNpcReceiptInteraction
     : MonoBehaviour, INpcInteraction
 {
+    private GameObject speechBubblePrefab;
+
     private bool hasReceived = false;
     private DeliveryNpcView npcView;
     private GameObject speechBubble;
@@ -12,6 +14,11 @@ public class DeliveryNpcReceiptInteraction
     private void Awake()
     {
         npcView = GetComponent<DeliveryNpcView>();
+    }
+
+    public void Init(GameObject speechBubble)
+    {
+        speechBubblePrefab = speechBubble;
     }
 
     public void Interact()
@@ -55,13 +62,7 @@ public class DeliveryNpcReceiptInteraction
         if (speechBubble != null)
             Destroy(speechBubble);
 
-        var prefab = Resources.Load<GameObject>("Prefabs/cooking/SpeechBubble");
-        if (prefab == null)
-        {
-            Debug.LogError("[DeliveryNpcReceiptInteraction] SpeechBubble prefab not found");
-            return;
-        }
-        speechBubble = Instantiate(prefab);
+        speechBubble = Instantiate(speechBubblePrefab);
         speechBubble.GetComponent<SpeechBubble>().setContents(message);
         speechBubble.transform.position =
             transform.position + new Vector3(-2.5f, 4f, 0f);

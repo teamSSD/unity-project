@@ -15,6 +15,6 @@ MonoBehaviour:
   id: npc_lede
   characterName: "\uB808\uB370"
   sprite: {fileID: 21300000, guid: a7b136570851841bcaebfa5f1f822852, type: 3}
-  position: {x: 13, y: -2.69}
+  position: {x: 27, y: -5.9}
   state: 0
-  groupId: 
+  groupId: lede_solo

@@ -17,7 +17,7 @@ public class DeliveryNpcSpawner : MonoBehaviour
         Clear();
 
         DeliveryNpcData[] npcDatas =
-            Resources.LoadAll<DeliveryNpcData>("ScriptableObjects/DeliveryNpcData");
+            Resources.LoadAll<DeliveryNpcData>(ResourcePaths.SO.DeliveryNpcData);
 
         foreach (var data in npcDatas)
         {

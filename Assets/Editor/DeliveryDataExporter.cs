@@ -64,7 +64,7 @@ public class DeliveryDataExporter : Editor
         AssetDatabase.Refresh();
     }
 
-    // ── Dialogue 변환 ────────────────────────────────────
+    // ── Dialogue 변환 (groupId 지원) ─────────────────────
 
     static void ExportDialogue()
     {
@@ -72,22 +72,49 @@ public class DeliveryDataExporter : Editor
         var branchGroups = ParseBranchCSV();
         if (dialogRows == null || branchGroups == null) return;
 
-        string savePath = $"{BaseSOPath}/Dialogue";
-        ClearFolder(savePath);
+        string dialogueRoot = $"{BaseSOPath}/Dialogue";
+        ClearFolder(dialogueRoot);
 
+        // groupId별로 stage 시작점 그룹핑
         var stageStarts = dialogRows.Values
             .Where(r => r.condition != "Serial")
             .ToList();
 
-        int created = 0;
-        foreach (var start in stageStarts)
-        {
-            var so = BuildDialogueSO(start, dialogRows, branchGroups);
-            if (so == null) continue;
+        var groupedStarts = stageStarts
+            .GroupBy(r => r.groupId)
+            .Where(g => !string.IsNullOrEmpty(g.Key));
 
-            so.name = start.condition;
-            AssetDatabase.CreateAsset(so, $"{savePath}/{start.condition}.asset");
-            created++;
+        foreach (var group in groupedStarts)
+        {
+            string groupId = group.Key;
+            string groupPath = $"{dialogueRoot}/{groupId}";
+            Directory.CreateDirectory(groupPath);
+
+            var config = ScriptableObject.CreateInstance<DeliveryDialogueConfig>();
+            int created = 0;
+
+            foreach (var start in group)
+            {
+                var so = BuildDialogueSO(start, dialogRows, branchGroups);
+                if (so == null) continue;
+
+                so.name = start.condition;
+                AssetDatabase.CreateAsset(so, $"{groupPath}/{start.condition}.asset");
+                created++;
+
+                // Config에 바인딩
+                switch (start.condition)
+                {
+                    case "FirstMeet":  config.firstMeet  = so; break;
+                    case "Normal":     config.normal     = so; break;
+                    case "QuestStart": config.questStart = so; break;
+                    case "Ordering":   config.ordering   = so; break;
+                    case "OrderEnd":   config.orderEnd   = so; break;
+                }
+            }
+
+            AssetDatabase.CreateAsset(config, $"{groupPath}/Config.asset");
+            Debug.Log($"[DeliveryDataExporter] {groupId}: {created} DialogueSO + Config 생성");
         }
 
         AssetDatabase.SaveAssets();
@@ -196,11 +223,11 @@ public class DeliveryDataExporter : Editor
         return null;
     }
 
-    // ── CSV 파싱 ─────────────────────────────────────────
+    // ── CSV 파싱 (groupId 컬럼 지원) ─────────────────────
 
     class DialogRow
     {
-        public string id, npc, contents, condition, next, branchId;
+        public string groupId, id, npc, contents, condition, next, branchId;
     }
 
     class BranchRow
@@ -222,16 +249,17 @@ public class DeliveryDataExporter : Editor
         for (int i = 1; i < lines.Length; i++)
         {
             var t = ParseCsvLine(lines[i]);
-            if (t.Count < 6) continue;
+            if (t.Count < 7) continue;
 
             var row = new DialogRow
             {
-                id = t[0].Trim(),
-                npc = t[1].Trim(),
-                contents = t[2].Trim(),
-                condition = t[3].Trim(),
-                next = t[4].Trim(),
-                branchId = t[5].Trim()
+                groupId   = t[0].Trim(),
+                id        = t[1].Trim(),
+                npc       = t[2].Trim(),
+                contents  = t[3].Trim(),
+                condition = t[4].Trim(),
+                next      = t[5].Trim(),
+                branchId  = t[6].Trim()
             };
             rows[row.id] = row;
         }
@@ -255,10 +283,10 @@ public class DeliveryDataExporter : Editor
 
             var row = new BranchRow
             {
-                id = t[0].Trim(),
-                order = int.Parse(t[1].Trim()),
-                contents = t[2].Trim(),
-                next = t[3].Trim(),
+                id        = t[0].Trim(),
+                order     = int.Parse(t[1].Trim()),
+                contents  = t[2].Trim(),
+                next      = t[3].Trim(),
                 resultTag = t[4].Trim()
             };
 

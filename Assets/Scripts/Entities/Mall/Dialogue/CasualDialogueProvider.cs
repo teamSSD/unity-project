@@ -21,7 +21,7 @@ public static class CasualDialogueProvider
     {
         npcLines = new Dictionary<string, List<Line>>();
 
-        var csv = Resources.Load<TextAsset>("driveAssets/dataTables/npcCasualDialogue");
+        var csv = Resources.Load<TextAsset>(ResourcePaths.Data.NpcCasualDialogue);
         if (csv == null) { Debug.LogError("[CasualDialogue] CSV not found"); return; }
 
         var lines = csv.text.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);
@@ -66,7 +66,7 @@ public static class CasualDialogueProvider
 
         if (candidates.Count == 0) return null;
 
-        var picked = candidates[Random.Range(0, candidates.Count)];
+        var picked = candidates[GameRandom.Range(GameRandom.Variable, 0, candidates.Count)];
 
         var so = ScriptableObject.CreateInstance<DialogueSO>();
         so.entries = new List<DialogueEntry>

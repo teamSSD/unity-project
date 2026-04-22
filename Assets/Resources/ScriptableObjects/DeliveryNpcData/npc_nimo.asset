@@ -15,6 +15,6 @@ MonoBehaviour:
   id: npc_nimo
   characterName: "\uB2C8\uBAA8"
   sprite: {fileID: 21300000, guid: 1071998672bf4469180c2c4e23a8cd90, type: 3}
-  position: {x: 11, y: -2.69}
+  position: {x: -21.2, y: 5.4}
   state: 0
-  groupId: 
+  groupId: nimo_solo

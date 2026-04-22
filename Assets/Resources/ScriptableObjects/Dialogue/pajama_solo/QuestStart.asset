@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929a58dbdcff141c4a39130b9a1497bb, type: 3}
+  m_Name: QuestStart
+  m_EditorClassIdentifier: Game.Runtime::DialogueSO
+  entries:
+  - speaker: "\uD30C\uC790\uB9C8"
+    text: "\uC788\uC796\uC544\u2026 \uAD6C\uB8E1\uBA74 \uBA39\uACE0 \uC2F6\uC740\uB370\u2026
+      \uB9CC\uB4E4\uC5B4\uC904 \uC218 \uC788\uC5B4?"
+    choices: []
+  - speaker: "\uD50C\uB808\uC774\uC5B4"
+    text: "\uAD6C\uB8E1\uBA74? \uBA74 \uC694\uB9AC\uB124\uC694."
+    choices:
+    - label: "\uB9CC\uB4E4\uC5B4\uBCFC\uAC8C\uC694.\\n\uBA74 \uC694\uB9AC \uC88B\uC544\uD574\uC694."
+      responses:
+      - speaker: "\uD50C\uB808\uC774\uC5B4"
+        text: "\uC54C\uACA0\uC5B4\uC694. \uB9CC\uB4E4\uC5B4\uC62C\uAC8C\uC694."
+      - speaker: "\uD30C\uC790\uB9C8"
+        text: "\uACE0\uB9C8\uC6CC\u2026 \uAE30\uB2E4\uB9AC\uBA74\uC11C \uC798\uAC8C\u2026"
+      resultTag: accept
+    - label: "\uC9C0\uAE08\uC740 \uC880\u2026\\n\uB2E4\uC74C\uC5D0 \uD560\uAC8C\uC694."
+      responses:
+      - speaker: "\uD30C\uC790\uB9C8"
+        text: "\uC544\uC9C1\uC740 \uAD1C\uCC2E\uC544\u2026 \uB2E4\uC74C\uC5D0 \uD574\uC918."
+      resultTag: defer

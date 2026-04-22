@@ -7,6 +7,7 @@ public class DialogueManager : MonoBehaviour
 {
     [Header("Choices")]
     public Button choiceButtonPrefab;
+    [SerializeField] private GameObject dialoguePanelPrefab;
 
     private GameObject dialoguePanel;
     private TMP_Text nameText;
@@ -45,9 +46,7 @@ public class DialogueManager : MonoBehaviour
         scaler.referenceResolution = new Vector2(1920, 1080);
         canvasObj.AddComponent<GraphicRaycaster>();
 
-        dialoguePanel = Instantiate(
-            Resources.Load<GameObject>("Prefabs/mall/DialoguePanel"),
-            canvasObj.transform);
+        dialoguePanel = Instantiate(dialoguePanelPrefab, canvasObj.transform);
 
         nameText = dialoguePanel.transform.Find("nameText").GetComponent<TMP_Text>();
         dialogueText = dialoguePanel.transform.Find("dialogueText").GetComponent<TMP_Text>();

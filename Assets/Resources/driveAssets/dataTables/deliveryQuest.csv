@@ -1,2 +1,7 @@
 GroupId,MenuName,MainMenuId,SideMenu1Id,SideMenu2Id,SideMenu3Id
 power_room_pair,전력실 도시락,I060,I046,I058,
+sranya_solo,새벽국 도시락,I034,I056,,
+pajama_solo,구룡면 도시락,I039,,,
+moai_solo,스테이크 도시락,I049,,,
+nimo_solo,삼각밥 도시락,I053,,,
+lede_solo,고기정식 도시락,I044,I046,,

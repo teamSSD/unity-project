@@ -61,7 +61,7 @@ public class NPCDialogue : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag(Tags.Player))
         {
             isPlayerNear = true;
             if (!isTalking)
@@ -71,7 +71,7 @@ public class NPCDialogue : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag(Tags.Player))
         {
             if (isTalking)
                 dialogueManager.EndDialogue();

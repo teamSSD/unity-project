@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929a58dbdcff141c4a39130b9a1497bb, type: 3}
+  m_Name: OrderEnd
+  m_EditorClassIdentifier: Game.Runtime::DialogueSO
+  entries:
+  - speaker: "\uD50C\uB808\uC774\uC5B4"
+    text: "\uAD6C\uB8E1\uBA74 \uAC00\uC838\uC654\uC5B4\uC694. \uC77C\uC5B4\uB098\uC138\uC694."
+    choices: []
+  - speaker: "\uD30C\uC790\uB9C8"
+    text: "(\uBC8C\uB5A1) \uBA74\uC774\uB2E4! \uAD6D\uBB3C \uB0C4\uC0C8\u2026!"
+    choices: []
+  - speaker: "\uD30C\uC790\uB9C8"
+    text: "\uC774\uAC78\uB85C \uD55C \uC0BC \uC2DC\uAC04\uC740 \uBC84\uD2F8 \uC218
+      \uC788\uACA0\uB2E4."
+    choices:
+    - label: "\uB9DB\uC788\uAC8C \uB4DC\uC138\uC694.\\n\uC7A0\uAE6C \uBCF4\uB78C\uC774
+        \uC788\uB124\uC694."
+      responses:
+      - speaker: "\uD30C\uC790\uB9C8"
+        text: "\uBC30\uB2EC\uAFBC \uCD5C\uACE0\u2026 \uB2E4\uC74C\uC5D0\uB3C4 \uBD80\uD0C1\uD574\u2026"
+      resultTag: 
+    - label: "\uD479 \uC8FC\uBB34\uC138\uC694.\\n\uB2E4\uC74C\uC5D0 \uB610 \uC62C\uAC8C\uC694."
+      responses:
+      - speaker: "\uD30C\uC790\uB9C8"
+        text: "\uC774\uC81C \uC9C4\uC9DC \uC798 \uC218 \uC788\uC5B4\u2026 \uACE0\uB9C8\uC6CC."
+      resultTag: 

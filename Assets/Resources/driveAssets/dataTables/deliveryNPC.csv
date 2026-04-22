@@ -1,9 +1,9 @@
 NpcId,CharacterName,SpritePath,PosX,PosY,DeliveryState,GroupId
-npc_jar,자르,driveAssets/art/character/char_jar_default,2.0,-2.69,Orderable,power_room_pair
-npc_getoro,게토로,driveAssets/art/character/char_getoro_default,3.5,-2.69,Orderable,power_room_pair
-npc_sranya,스라냐,driveAssets/art/character/char_sranya_default,5.0,-2.69,Orderable,
-npc_pajama,파자마,driveAssets/art/character/char_pajama_default,7.0,-2.69,Orderable,
-npc_moai,모아이,driveAssets/art/character/char_moai_default,9.0,-2.69,Orderable,
-npc_nimo,니모,driveAssets/art/character/char_nimo_default,11.0,-2.69,Orderable,
-npc_lede,레데,driveAssets/art/character/char_lede_default,13.0,-2.69,Orderable,
-npc_gabriel,가브리엘,driveAssets/art/character/char_gabriel_default,1.0,-2.69,Orderable,
+npc_jar,자르,driveAssets/art/character/char_jar_default,18.77,0.34,Orderable,power_room_pair
+npc_getoro,게토로,driveAssets/art/character/char_getoro_default,13.53,0.3,Orderable,power_room_pair
+npc_sranya,스라냐,driveAssets/art/character/char_sranya_default,-22.6,-7.2,Orderable,sranya_solo
+npc_pajama,파자마,driveAssets/art/character/char_pajama_default,-16.9,-7.2,Orderable,pajama_solo
+npc_moai,모아이,driveAssets/art/character/char_moai_default,-13.0,-5.9,Orderable,moai_solo
+npc_nimo,니모,driveAssets/art/character/char_nimo_default,-21.2,5.4,Orderable,nimo_solo
+npc_lede,레데,driveAssets/art/character/char_lede_default,27.0,-5.9,Orderable,lede_solo
+npc_gabriel,가브리엘,driveAssets/art/character/char_gabriel_default,-30.1,9.1,Orderable,

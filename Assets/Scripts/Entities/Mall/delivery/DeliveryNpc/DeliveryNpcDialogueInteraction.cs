@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
 {
+    private DeliveryDialogueConfig dialogueConfig;
+
     private static readonly Dictionary<string, DeliveryQuestStage> questStages = new();
     private static Dictionary<string, MenuSchema> questMenus;
 
@@ -15,6 +17,8 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
     public void Init(string groupId)
     {
         this.groupId = groupId;
+        dialogueConfig = Resources.Load<DeliveryDialogueConfig>(
+            $"ScriptableObjects/Dialogue/{groupId}/Config");
         if (!questStages.ContainsKey(groupId))
             questStages[groupId] = DeliveryQuestStage.Normal;
     }
@@ -89,14 +93,15 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
 
     DialogueSO GetDialogueForStage(DeliveryQuestStage stage)
     {
+        if (dialogueConfig == null) return null;
         return stage switch
         {
-            DeliveryQuestStage.FirstMeet => Resources.Load<DialogueSO>("ScriptableObjects/Dialogue/FirstMeet"),
-            DeliveryQuestStage.Normal => Resources.Load<DialogueSO>("ScriptableObjects/Dialogue/Normal"),
-            DeliveryQuestStage.QuestStart => Resources.Load<DialogueSO>("ScriptableObjects/Dialogue/QuestStart"),
-            DeliveryQuestStage.Ordering => Resources.Load<DialogueSO>("ScriptableObjects/Dialogue/Ordering"),
-            DeliveryQuestStage.OrderEnd => Resources.Load<DialogueSO>("ScriptableObjects/Dialogue/OrderEnd"),
-            DeliveryQuestStage.Completed => Resources.Load<DialogueSO>("ScriptableObjects/Dialogue/Normal"),
+            DeliveryQuestStage.FirstMeet  => dialogueConfig.firstMeet,
+            DeliveryQuestStage.Normal     => dialogueConfig.normal,
+            DeliveryQuestStage.QuestStart => dialogueConfig.questStart,
+            DeliveryQuestStage.Ordering   => dialogueConfig.ordering,
+            DeliveryQuestStage.OrderEnd   => dialogueConfig.orderEnd,
+            DeliveryQuestStage.Completed  => dialogueConfig.normal,
             _ => null
         };
     }
@@ -157,7 +162,7 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
     // --- 플레이어 근접 감지 ---
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag(Tags.Player))
         {
             isPlayerNear = true;
             if (!isTalking)
@@ -167,7 +172,7 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
 
     void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag(Tags.Player))
         {
             if (isTalking)
                 dialogueManager.EndDialogue();
@@ -211,7 +216,7 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         if (questMenus != null) return;
         questMenus = new Dictionary<string, MenuSchema>();
 
-        var csv = Resources.Load<TextAsset>("driveAssets/dataTables/deliveryQuest");
+        var csv = Resources.Load<TextAsset>(ResourcePaths.Data.DeliveryQuest);
         if (csv == null) return;
 
         var lines = csv.text.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);

@@ -4,6 +4,7 @@ public class DeliveryNpcView : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private string npcId;
+    [SerializeField] private GameObject speechBubblePrefab;
     private string groupId;
     private string characterName;
 
@@ -58,8 +59,9 @@ public class DeliveryNpcView : MonoBehaviour
 
             case DeliveryNpcState.WaitingReceipt:
                 spriteRenderer.color = Color.yellow;
-                interactionRoot.SetInteraction(
-                    gameObject.AddComponent<DeliveryNpcReceiptInteraction>());
+                var receipt = gameObject.AddComponent<DeliveryNpcReceiptInteraction>();
+                receipt.Init(speechBubblePrefab);
+                interactionRoot.SetInteraction(receipt);
                 break;
 
             case DeliveryNpcState.Completed:

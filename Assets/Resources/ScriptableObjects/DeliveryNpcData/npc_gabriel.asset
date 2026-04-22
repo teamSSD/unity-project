@@ -15,6 +15,6 @@ MonoBehaviour:
   id: npc_gabriel
   characterName: "\uAC00\uBE0C\uB9AC\uC5D8"
   sprite: {fileID: 21300000, guid: afc797b192b0c48879e1fa904d328878, type: 3}
-  position: {x: 1, y: -2.69}
+  position: {x: -30.1, y: 9.1}
   state: 0
   groupId: 
