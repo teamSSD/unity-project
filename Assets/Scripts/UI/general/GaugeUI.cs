@@ -7,6 +7,7 @@ public class GaugeUI : MonoBehaviour
 {
     [SerializeField] private Image fillImage;
     [SerializeField] private float animationSpeed = 5f;
+    [SerializeField] private bool reverse;
     private float targetFillAmount = 1f;
 
     void Update()
@@ -20,20 +21,15 @@ public class GaugeUI : MonoBehaviour
     public void SetProgress(float current, float max)
     {
         if (max == 0) return;
-        float progress = current / max;
-        if (progress < 0) progress = 0;
-        if (progress > 1) progress = 1;
-        targetFillAmount = Mathf.Clamp01(progress);
+        float progress = Mathf.Clamp01(current / max);
+        targetFillAmount = reverse ? 1f - progress : progress;
     }
 
     public void SnapTo(float current, float max)
     {
         if (max == 0) return;
-        float progress = current / max;
-        if (progress < 0) progress = 0;
-        if (progress > 1) progress = 1;
-
-        targetFillAmount = Mathf.Clamp01(progress);
+        float progress = Mathf.Clamp01(current / max);
+        targetFillAmount = reverse ? 1f - progress : progress;
 
         if (fillImage != null)
         {
