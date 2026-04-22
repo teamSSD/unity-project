@@ -10,72 +10,38 @@ public class GardenShopSlot : MonoBehaviour
     public TextMeshProUGUI loreText;
     public TextMeshProUGUI costText;
 
-    private FarmUpgradeType myUpgradeType;
-
     private void Awake()
     {
         if (buyButton != null)
-        {
             buyButton.onClick.AddListener(OnBuyButtonClicked);
-        }
-    }
-
-    public void SetupSlot(FarmUpgradeType type)
-    {
-        myUpgradeType = type;
-        RefreshSlot();
     }
 
     private void OnBuyButtonClicked()
     {
-        GardenShopManager.Instance.BuyUpgrade(myUpgradeType);
+        UnifiedShopManager.Instance.BuyFarmUpgrade();
     }
 
     public void RefreshSlot()
     {
-        int currentLevel = FarmUpgradeManager.Instance.GetCurrentLevel(myUpgradeType);
-        string nextValue = FarmUpgradeManager.Instance.GetNextUpgradeValueText(myUpgradeType);
-        int nextCost = FarmUpgradeManager.Instance.GetNextUpgradeCost(currentLevel);
+        bool isMax = FarmUpgradeManager.Instance.IsMax();
+        var cur  = FarmUpgradeManager.Instance.GetCurrentData();
+        var next = FarmUpgradeManager.Instance.GetNextData();
 
-        if (nextCost == -1)
+        if (isMax)
         {
-            switch (myUpgradeType)
-            {
-                case FarmUpgradeType.TileCount:
-                    titleText.text = $"ÅÔ¹ç Å©±â ¾÷±×·¹ÀÌµå <size=70%>(LV.MAX)</size>";
-                    loreText.text = $"¹çÀÇ Å©±â¸¦ {nextValue}¸¸Å­ È®Àå";
-                    break;
-                case FarmUpgradeType.TimeReduction:
-                    titleText.text = $"Àç¹è ½Ã°£ ¾÷±×·¹ÀÌµå <size=70%>(LV.MAX)</size>";
-                    loreText.text = $"ÀÛ¹°ÀÇ ¼öÈ® ½Ã°£ {nextValue}% °¨¼Ò";
-                    break;
-                case FarmUpgradeType.HarvestCount:
-                    titleText.text = $"¼öÈ® È¿À² ¾÷±×·¹ÀÌµå <size=70%>(LV.MAX)</size>";
-                    loreText.text = $"¼öÈ®½Ã ¾ò´Â ÀÛ¹°ÀÌ {nextValue}°³·Î Áõ°¡";
-                    break;
-            }
-            costText.text = "ÃÖ´ë ·¹º§";
+            titleText.text = "ë†ì¥ ì—…ê·¸ë ˆì´ë“œ <size=70%>(MAX)</size>";
+            loreText.text  = "ëª¨ë“  í•­ëª© ìµœëŒ€ ë ˆë²¨";
+            costText.text  = "ìµœëŒ€ ë ˆë²¨";
             buyButton.interactable = false;
         }
         else
         {
-            switch (myUpgradeType)
-            {
-                case FarmUpgradeType.TileCount:
-                    titleText.text = $"ÅÔ¹ç Å©±â ¾÷±×·¹ÀÌµå <size=70%>(LV.{currentLevel})</size>";
-                    loreText.text = $"¹çÀÇ Å©±â¸¦ {nextValue}¸¸Å­ È®Àå";
-                    break;
-                case FarmUpgradeType.TimeReduction:
-                    titleText.text = $"Àç¹è ½Ã°£ ¾÷±×·¹ÀÌµå <size=70%>(LV.{currentLevel})</size>";
-                    loreText.text = $"ÀÛ¹°ÀÇ ¼öÈ® ½Ã°£ {nextValue}% °¨¼Ò";
-                    break;
-                case FarmUpgradeType.HarvestCount:
-                    titleText.text = $"¼öÈ® È¿À² ¾÷±×·¹ÀÌµå <size=70%>(LV.{currentLevel})</size>";
-                    loreText.text = $"¼öÈ®½Ã ¾ò´Â ÀÛ¹°ÀÌ {nextValue}°³·Î Áõ°¡";
-                    break;
-            }
-            costText.text = $"{nextCost:N0} G";
-            buyButton.interactable = true;
+            titleText.text = $"ë†ì¥ ì—…ê·¸ë ˆì´ë“œ <size=70%>(Lv.{cur.level} â†’ Lv.{next.level})</size>";
+            loreText.text  = $"íƒ€ì¼ {cur.tileCount}â†’{next.tileCount}  /  "
+                           + $"ìˆ˜í™• ì‹œê°„ -{next.timeReduction * 100:0}%  /  "
+                           + $"ìˆ˜í™•ëŸ‰ {cur.harvestCount}â†’{next.harvestCount}";
+            costText.text  = $"{next.cost:N0} G";
+            buyButton.interactable = StatsSystem.Instance.GetMoney() >= next.cost;
         }
     }
 }

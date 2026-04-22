@@ -1,21 +1,17 @@
 using TMPro;
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteStackRenderer))]
 [RequireComponent(typeof(Collider2D))]
 public class Farm : MonoBehaviour
 {
-    [Header("����")]
-    public CropData cropData;
+    [System.NonSerialized] public CropData cropData;
     public TextMeshProUGUI actionPrompt;
 
-    [Header("�ð��� ���")]
-    [Tooltip("�۹� �̹����� ����� SpriteRenderer�� ����")]
+    [Header("작물 표시")]
     public SpriteRenderer cropSpriteRenderer;
-
     public float uiOffsetY = 0.5f;
 
-    [Header("���� ������ UI")]
+    [Header("성장 게이지 UI")]
     public GaugeUI growthGauge;
     public GameObject gaugeCanvas;
 
@@ -24,10 +20,13 @@ public class Farm : MonoBehaviour
     private TimePhaseProvider phaseProvider;
 
     private bool playerIn = false;
-    public bool IsLocked => farmIndex >= FarmUpgradeManager.Instance.GetCurrentTileCount();
+    public bool IsLocked => farmIndex >= (FarmUpgradeManager.Instance?.GetCurrentData()?.tileCount ?? 3);
 
     private void Start()
     {
+        if (ProgressSystem.Instance == null)
+            ManagerBootstrap.EnsureAll();
+
         phaseProvider = ProgressSystem.Instance;
         if (phaseProvider == null)
         {
@@ -37,12 +36,30 @@ public class Farm : MonoBehaviour
 
         tile = new FarmTile(phaseProvider);
 
+        // 저장된 타일 상태 복원
+        var saved = FarmTileStorage.GetTileData(farmIndex);
+        if (saved != null) tile.ApplySaveData(saved);
+
+        // 빈 타일이면 자동 심기
+        if (!IsLocked && tile.IsEmpty())
+        {
+            CropData randomCrop = CropDataManager.Instance.GetRandomCropByWeight();
+            if (randomCrop != null)
+            {
+                cropData = randomCrop;
+                tile.Plant(randomCrop);
+            }
+        }
+
         ProgressSystem.Instance.OnPhaseChanged += OnPhaseChangedHandler;
         OnTimePassed();
     }
 
     private void OnDestroy()
     {
+        // 씬 나가기 전에 타일 상태 저장
+        if (tile != null) FarmTileStorage.SetTileData(farmIndex, tile.GetSaveData());
+
         if (ProgressSystem.Instance != null)
             ProgressSystem.Instance.OnPhaseChanged -= OnPhaseChangedHandler;
     }
@@ -51,32 +68,27 @@ public class Farm : MonoBehaviour
 
     void Update()
     {
+        if (tile == null) return;
         if (playerIn && Input.GetKeyDown(KeyCode.Space))
         {
             if (IsLocked)
             {
-                Debug.Log("This Fram is locked!");
-            }
-            else if (tile.IsEmpty())
-            {
-                CropData randomCrop = CropDataManager.Instance.GetRandomCropByWeight();
-                if (randomCrop != null)
-                {
-                    cropData = randomCrop;
-                    tile.Plant(randomCrop);
-                    Debug.Log($"[Farm] Seed planted! Crop ID: {randomCrop.cropId}");
-                }
+                Debug.Log("This farm is locked!");
             }
             else if (tile.IsHarvestable())
             {
-                if (tile.Harvest(out string id, out int crops, out int seeds))
+                int harvestCount = FarmUpgradeManager.Instance?.GetCurrentData()?.harvestCount ?? 5;
+                if (tile.Harvest(out string id, out int crops, harvestCount))
                 {
-                    Debug.Log($"[Farm] Harvested! [{id}] x{crops}, seeds x{seeds}");
+                    Debug.Log($"[Farm] Harvested! [{id}] x{crops}");
+                    InventoryManager.Instance?.AddHarvestedCrop(id, crops);
 
-                    // TODO. Chain Inventory System
-                    if (InventoryManager.Instance != null)
+                    // 수확 후 자동 심기
+                    CropData nextCrop = CropDataManager.Instance.GetRandomCropByWeight();
+                    if (nextCrop != null)
                     {
-                        InventoryManager.Instance.AddHarvestedCrop(id, crops);
+                        cropData = nextCrop;
+                        tile.Plant(nextCrop);
                     }
                 }
             }
@@ -91,7 +103,7 @@ public class Farm : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag(Tags.Player))
         {
             playerIn = true;
             UpdatePrompt();
@@ -100,7 +112,7 @@ public class Farm : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag(Tags.Player))
         {
             playerIn = false;
             actionPrompt.text = "";
@@ -109,28 +121,23 @@ public class Farm : MonoBehaviour
 
     public void UpdateVisuals()
     {
-        if (cropSpriteRenderer == null) return;
+        if (cropSpriteRenderer == null || tile == null) return;
 
         CropData currentCrop = tile.GetCurrentCrop();
 
-        if (currentCrop == null || currentCrop.growthSprites == null || currentCrop.growthSprites.Length == 0)
+        if (currentCrop == null)
         {
             cropSpriteRenderer.sprite = null;
             if (gaugeCanvas != null) gaugeCanvas.SetActive(false);
-
             return;
         }
 
         if (gaugeCanvas != null) gaugeCanvas.SetActive(true);
-
-        int passed = tile.GetPassedPhases();
-        int maxSpriteIndex = currentCrop.growthSprites.Length - 1;
-        int spriteIndex = Mathf.Clamp(passed, 0, maxSpriteIndex);
-
-        if (cropSpriteRenderer != null) cropSpriteRenderer.sprite = currentCrop.growthSprites[spriteIndex];
+        cropSpriteRenderer.sprite = currentCrop.sprite;
 
         if (growthGauge != null)
         {
+            int passed = tile.GetPassedPhases();
             if (passed == 0)
                 growthGauge.SnapTo(0, currentCrop.growPhaseCount);
             else
@@ -142,17 +149,16 @@ public class Farm : MonoBehaviour
 
     private void UpdatePrompt()
     {
-        if (!playerIn || actionPrompt == null) return;
-
+        if (!playerIn || actionPrompt == null || tile == null) return;
 
         if (IsLocked)
-            actionPrompt.text = "This Fram is locked";
-        if (tile.IsHarvestable())
-            actionPrompt.text = "Press [Space] to Harvest";
+            actionPrompt.text = "잠겨 있음";
+        else if (tile.IsHarvestable())
+            actionPrompt.text = "(스페이스바로 수확)";
         else if (tile.IsEmpty())
-            actionPrompt.text = "Press [Space] to Plant";
+            actionPrompt.text = "(스페이스바로 심기)";
         else
-            actionPrompt.text = "Growing...";
+            actionPrompt.text = "성장 중...";
     }
 
     private void AdjustUIPosition()
@@ -160,18 +166,10 @@ public class Farm : MonoBehaviour
         if (cropSpriteRenderer.sprite == null || gaugeCanvas == null) return;
 
         Bounds bounds = cropSpriteRenderer.bounds;
-
         float topY = bounds.max.y;
-
         Vector3 newPos = gaugeCanvas.transform.position;
         newPos.y = topY + uiOffsetY;
         gaugeCanvas.transform.position = newPos;
-    }
-
-    public void NextPhase()
-    {
-        phaseProvider.NextPhase();
-        Debug.Log("Next Phase");
     }
 
     private void OnTimePassed()

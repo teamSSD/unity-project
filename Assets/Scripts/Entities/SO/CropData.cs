@@ -1,14 +1,18 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CropData", menuName = "Scriptable Objects/CropData")]
-public class CropData : ScriptableObject
+public class CropData : CsvParsable
 {
     public string cropId;
-    public int growPhaseCount;
-    public int harvestCount;
-    public int seedReturnCount;
+    public int    growPhaseCount;
+    public float  spawnWeight;
+    public string imagePath;
+    public Sprite sprite; // CropDataManager.LoadData()ì—ì„œ Resources.Load
 
-    [Header("½Ã°¢Àû ¿ä¼Ò")]
-    [Tooltip("¼ºÀå ´Ü°èº° ÀÌ¹ÌÁö (0: ¾¾¾Ñ, ¸¶Áö¸·: ¼öÈ® °¡´É)")]
-    public Sprite[] growthSprites;
+    public void Init(string[] f)
+    {
+        cropId         = f[0].Trim();
+        growPhaseCount = int.Parse(f[1].Trim());
+        spawnWeight    = float.Parse(f[2].Trim());
+        imagePath      = f[3].Trim();
+    }
 }

@@ -172,7 +172,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &375782431385777479
 CanvasRenderer:
@@ -202,7 +202,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1bcb1cafb722840e1b6e18b4600c229a, type: 3}
+  m_Sprite: {fileID: -7055294593051057967, guid: adefaa13d3c5e42d499d4366cbe2a178, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -261,7 +261,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5598b76415f21b4438ac28867b2caeb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::Farm
-  cropData: {fileID: 0}
   actionPrompt: {fileID: 6727544678558968937}
   cropSpriteRenderer: {fileID: 8902883799851120429}
   uiOffsetY: 0.5
@@ -663,7 +662,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3568301081927957665
 CanvasRenderer:
@@ -693,7 +692,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 07a6d8d8dc7fd46d0951d5f6f6ba0fe5, type: 3}
+  m_Sprite: {fileID: -7147482773396978899, guid: adefaa13d3c5e42d499d4366cbe2a178, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1

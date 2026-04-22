@@ -1,0 +1,14 @@
+cropId,growPhaseCount,spawnWeight,imagePath
+I004,7,0.04,driveAssets/art/item/cooking/food/item_garlic_raw
+I005,7,0.04,driveAssets/art/item/cooking/food/item_eggplant_raw
+I012,3,0.20,driveAssets/art/item/cooking/food/item_insulatingMushroom_raw
+I013,7,0.04,driveAssets/art/item/cooking/food/item_dawnHerb_raw
+I017,7,0.04,driveAssets/art/item/cooking/food/item_steelRoot_raw
+I018,7,0.04,driveAssets/art/item/cooking/food/item_greenOnion_raw
+I025,3,0.20,driveAssets/art/item/cooking/food/item_cheongyangLeaf_raw
+I026,5,0.12,driveAssets/art/item/cooking/food/item_lumiLeaf_raw
+I027,5,0.12,driveAssets/art/item/cooking/food/item_lightTomato_raw
+I028,7,0.04,driveAssets/art/item/cooking/food/item_windBean_raw
+I029,7,0.04,driveAssets/art/item/cooking/food/item_electricFlower_raw
+I065,7,0.04,driveAssets/art/item/cooking/food/item_moonRoot_raw
+I066,7,0.04,driveAssets/art/item/cooking/food/item_onion_raw

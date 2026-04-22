@@ -1,80 +1,41 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-
-[System.Serializable]
-public class CropWeightData
-{
-    public CropData crop;
-    public float weight;
-}
 
 public class CropDataManager : MonoBehaviour
 {
     public static CropDataManager Instance { get; private set; }
 
-    [Header("Data Connection")]
-    public string csvResourcePath = "garden_weight";
+    private List<CropData> crops = new();
+    private float totalWeight;
 
-    public string cropSoFolderPath = "ScriptableObjects/CropData";
-
-    [Header("Weight Data List")]
-    public List<CropWeightData> cropDropTable = new List<CropWeightData>();
-
-    private void Awake()
+    void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-
-        LoadCSVAndSetWeights();
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        LoadData();
     }
 
-    private void LoadCSVAndSetWeights()
+    void LoadData()
     {
-        cropDropTable.Clear();
-
-        CropData[] allCropSOs = Resources.LoadAll<CropData>(cropSoFolderPath);
-        Debug.Log($"[CropDataManager] Loaded {allCropSOs.Length} Crop SOs from Resources/{cropSoFolderPath}");
-
-        List<GardenWeightData> rawDataList = CsvModelConverter.Parse<GardenWeightData>(csvResourcePath);
-
-        foreach (var data in rawDataList)
+        var rows = CsvModelConverter.Parse<CropData>(ResourcePaths.DataTable.CropData);
+        foreach (var row in rows)
         {
-            if (data.Weight > 0f)
-            {
-                CropData matchingCrop = Array.Find(allCropSOs, c => c.cropId == data.Id);
+            row.sprite = Resources.Load<Sprite>(row.imagePath);
+            if (row.sprite == null)
+                Debug.LogWarning($"[CropDataManager] 스프라이트 없음: {row.imagePath}");
 
-                if (matchingCrop != null)
-                {
-                    cropDropTable.Add(new CropWeightData { crop = matchingCrop, weight = data.Weight });
-                }
-                else
-                {
-                    Debug.LogWarning($"[CropDataManager] Missing SO for ID: '{data.Id}'");
-                }
-            }
+            crops.Add(row);
+            totalWeight += row.spawnWeight;
         }
-
-        Debug.Log($"[CropDataManager] Successfully loaded {cropDropTable.Count} crop weights.");
+        Debug.Log($"[CropDataManager] {crops.Count}개 작물 로드 완료");
     }
+
+    public CropData GetCropById(string cropId) => crops.Find(c => c.cropId == cropId);
 
     public CropData GetRandomCropByWeight()
     {
-        if (cropDropTable.Count == 0) return null;
-
-        float randomValue = UnityEngine.Random.Range(0f, 1f);
-        float cumulativeWeight = 0f;
-
-        foreach (CropWeightData data in cropDropTable)
-        {
-            cumulativeWeight += data.weight;
-
-            if (randomValue <= cumulativeWeight)
-            {
-                return data.crop;
-            }
-        }
-
-        return cropDropTable[cropDropTable.Count - 1].crop;
+        if (crops.Count == 0) return null;
+        return GameRandom.WeightedPick(GameRandom.Immutable, crops, c => c.spawnWeight);
     }
 }

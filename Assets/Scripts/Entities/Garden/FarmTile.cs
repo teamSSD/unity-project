@@ -19,43 +19,64 @@ public class FarmTile
 
     public bool IsHarvestable()
     {
-        if(crop == null) return false;
+        if (crop == null) return false;
 
         int passed = phaseProvider.CurrentPhaseIndex - plantedPhase;
-        return passed >= crop.growPhaseCount;
+        float timeReduction = FarmUpgradeManager.Instance?.GetCurrentData()?.timeReduction ?? 0f;
+        int requiredPhases = Mathf.CeilToInt(crop.growPhaseCount * (1f - timeReduction));
+        return passed >= requiredPhases;
     }
 
-    public bool Harvest(out string harvestedCropId, out int harvestedCrops, out int returnedSeeds)
+    public bool Harvest(out string harvestedCropId, out int harvestedCrops, int harvestCount)
     {
         harvestedCropId = "";
-        harvestedCrops = 0;
-        returnedSeeds = 0;
+        harvestedCrops  = 0;
 
         if (!IsHarvestable()) return false;
 
         harvestedCropId = crop.cropId;
-
-        harvestedCrops = FarmUpgradeManager.Instance.GetCurrentHarvestCount();
-
-        returnedSeeds = crop.seedReturnCount;
+        harvestedCrops  = harvestCount;
 
         crop = null;
         return true;
     }
 
-    public bool IsEmpty()
-    {
-        return crop == null;
-    }
+    public bool IsEmpty() => crop == null;
 
-    public CropData GetCurrentCrop()
-    {
-        return crop;
-    }
+    public CropData GetCurrentCrop() => crop;
 
     public int GetPassedPhases()
     {
         if (crop == null) return 0;
         return phaseProvider.CurrentPhaseIndex - plantedPhase;
     }
+
+    // ── 저장/로드 ──
+
+    public FarmTileSaveData GetSaveData()
+    {
+        return new FarmTileSaveData
+        {
+            cropId = crop?.cropId ?? "",
+            plantedPhase = plantedPhase
+        };
+    }
+
+    public void ApplySaveData(FarmTileSaveData data)
+    {
+        if (string.IsNullOrEmpty(data.cropId))
+        {
+            crop = null;
+            return;
+        }
+        crop = CropDataManager.Instance?.GetCropById(data.cropId);
+        plantedPhase = data.plantedPhase;
+    }
+}
+
+[System.Serializable]
+public class FarmTileSaveData
+{
+    public string cropId = "";
+    public int plantedPhase;
 }
