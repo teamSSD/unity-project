@@ -31,7 +31,7 @@ public class RecipeLookupService : SingletonMonoBehaviour<RecipeLookupService>, 
 
     private void LoadAllRecipes()
     {
-        RecipeData[] recipes = Resources.LoadAll<RecipeData>("ScriptableObjects/RecipeData");
+        RecipeData[] recipes = Resources.LoadAll<RecipeData>(ResourcePaths.Data.RecipeData);
         allRecipes = new List<RecipeData>(recipes);
         Debug.Log($"[RecipeLookupService] Loaded {allRecipes.Count} recipes");
     }

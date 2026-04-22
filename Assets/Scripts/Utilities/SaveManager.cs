@@ -9,6 +9,10 @@ public class GameSaveData
     public InventorySaveData inventory = new();
     public OrderManager.OrderSaveData orders = new();
     public DeliveryQuestSaveData deliveryQuest = new();
+    public ToolUpgradeSaveData toolUpgrades = new();
+    public StorageUpgradeSaveData storageUpgrades = new();
+    public FarmUpgradeSaveData farmUpgrades = new();
+    public FarmTilesSaveData farmTiles = new();
 }
 
 /// <summary>
@@ -56,6 +60,15 @@ public static class SaveManager
 
         save.deliveryQuest = DeliveryNpcDialogueInteraction.GetSaveData();
 
+        if (ToolUpgradeManager.Instance != null)
+            save.toolUpgrades = ToolUpgradeManager.Instance.GetSaveData();
+        if (StorageUpgradeManager.Instance != null)
+            save.storageUpgrades = StorageUpgradeManager.Instance.GetSaveData();
+        if (FarmUpgradeManager.Instance != null)
+            save.farmUpgrades = FarmUpgradeManager.Instance.GetSaveData();
+
+        save.farmTiles = FarmTileStorage.GetSaveData();
+
         // Phase 3: 단일 파일로 저장
         DataSaveUtil.SaveData(save, SavePath);
 
@@ -85,6 +98,11 @@ public static class SaveManager
             OrderManager.Instance.ApplySaveData(save.orders);
 
         DeliveryNpcDialogueInteraction.ApplySaveData(save.deliveryQuest);
+
+        ToolUpgradeManager.Instance?.ApplySaveData(save.toolUpgrades);
+        StorageUpgradeManager.Instance?.ApplySaveData(save.storageUpgrades);
+        FarmUpgradeManager.Instance?.ApplySaveData(save.farmUpgrades);
+        FarmTileStorage.ApplySaveData(save.farmTiles);
 
         // Phase 2: PhaseData에서 piggyback 데이터 로드
         UnlockedFoodManager.Instance?.LoadUnlocksFromProgress();

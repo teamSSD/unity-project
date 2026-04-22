@@ -26,6 +26,9 @@ public class TimeManager : MonoBehaviour
 
     public bool IsPaused { get; private set; } = false;
 
+    public int StartTimeMinutes => startHour * 60 + startMinute;
+    public int EndTimeMinutes => endHour * 60 + endMinute;
+
     private float gameTimer = 0f;
     private int breakTargetTime = -1;
     private Action breakAction;

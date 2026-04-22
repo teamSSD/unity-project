@@ -17,6 +17,6 @@ MonoBehaviour:
     \uBC18\uC9DD\uC778\uB2E4. \uB2E8\uBA74\uC5D0\uC11C\uB294 \uD5A5\uAE30\uB85C\uC6B4
     \uC0B0\uBBF8\uAC00 \uD37C\uC838 \uB098\uC628\uB2E4."
   display: 1
-  defaultPrice: 1500
+  defaultPrice: 600
   tag: 2
-  expirationDay: 10
+  expirationDay: 5

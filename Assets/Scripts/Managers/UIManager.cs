@@ -85,13 +85,12 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
     private void CreateGlobalTooltips()
     {
         // Ingredient 툴팁 (재료/음식용) - 1개만
-        GameObject ingredientPrefab = Resources.Load<GameObject>("Prefabs/cooking/IngredientDescription");
+        GameObject ingredientPrefab = Resources.Load<GameObject>(ResourcePaths.Prefab.IngredientDescription);
         if (ingredientPrefab != null)
         {
             _ingredientTooltip = Instantiate(ingredientPrefab, GlobalCanvas.transform);
             _ingredientTooltip.name = "GlobalIngredientTooltip";
             _ingredientTooltip.SetActive(false);
-            Debug.Log("[UIManager] IngredientTooltip created");
         }
         else
         {
@@ -99,13 +98,12 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
         }
 
         // CookingTool 툴팁 (조리 도구용) - 1개만
-        GameObject toolPrefab = Resources.Load<GameObject>("Prefabs/cooking/CookingToolDescription");
+        GameObject toolPrefab = Resources.Load<GameObject>(ResourcePaths.Prefab.CookingToolDescription);
         if (toolPrefab != null)
         {
             _cookingToolTooltip = Instantiate(toolPrefab, GlobalCanvas.transform);
             _cookingToolTooltip.name = "GlobalCookingToolTooltip";
             _cookingToolTooltip.SetActive(false);
-            Debug.Log("[UIManager] CookingToolTooltip created");
         }
         else
         {

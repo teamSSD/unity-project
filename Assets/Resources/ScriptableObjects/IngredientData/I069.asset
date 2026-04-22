@@ -19,4 +19,4 @@ MonoBehaviour:
   display: 1
   defaultPrice: 600
   tag: 4
-  expirationDay: 10
+  expirationDay: 5

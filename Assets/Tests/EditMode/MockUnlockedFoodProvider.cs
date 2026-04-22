@@ -9,38 +9,36 @@ using UnityEngine;
 public class MockUnlockedFoodProvider : IUnlockedFoodProvider
 {
     private readonly HashSet<string> unlockedFoodIds;
+    private readonly FoodData[] catalog;
 
+    // 기본 ID 세트로 Resources에서 로드
     public MockUnlockedFoodProvider()
-    {
-        unlockedFoodIds = new HashSet<string>
-        {
-            // 메인 메뉴 (5개)
-            "I034", "I039", "I044", "I049", "I053",
-            // 사이드 메뉴 (4개)
-            "I046", "I056", "I058", "I062"
-        };
-    }
+        : this(Resources.LoadAll<FoodData>(ResourcePaths.Data.FoodData)) { }
 
+    // 특정 ID 목록 + Resources에서 로드
     public MockUnlockedFoodProvider(params string[] foodIds)
+        : this(Resources.LoadAll<FoodData>(ResourcePaths.Data.FoodData), foodIds) { }
+
+    // 카탈로그 주입 (Resources 불필요 — 순수 단위 테스트용)
+    public MockUnlockedFoodProvider(FoodData[] catalog, params string[] foodIds)
     {
-        unlockedFoodIds = new HashSet<string>(foodIds);
+        this.catalog = catalog;
+        unlockedFoodIds = foodIds.Length > 0
+            ? new HashSet<string>(foodIds)
+            : new HashSet<string>
+            {
+                // 메인 메뉴 (5개)
+                "I034", "I039", "I044", "I049", "I053",
+                // 사이드 메뉴 (4개)
+                "I046", "I056", "I058", "I062"
+            };
     }
 
-    public List<FoodData> GetUnlockedMainFoods()
-    {
-        var allFoods = Resources.LoadAll<FoodData>("ScriptableObjects/FoodData");
-        return allFoods
-            .Where(f => f.type == FoodType.MAIN && unlockedFoodIds.Contains(f.id))
-            .ToList();
-    }
+    public List<FoodData> GetUnlockedMainFoods() =>
+        catalog.Where(f => f.type == FoodType.MAIN && unlockedFoodIds.Contains(f.id)).ToList();
 
-    public List<FoodData> GetUnlockedSideFoods()
-    {
-        var allFoods = Resources.LoadAll<FoodData>("ScriptableObjects/FoodData");
-        return allFoods
-            .Where(f => f.type == FoodType.SIDE && unlockedFoodIds.Contains(f.id))
-            .ToList();
-    }
+    public List<FoodData> GetUnlockedSideFoods() =>
+        catalog.Where(f => f.type == FoodType.SIDE && unlockedFoodIds.Contains(f.id)).ToList();
 
     public bool IsUnlocked(string foodId)
     {
@@ -59,11 +57,7 @@ public class MockUnlockedFoodProvider : IUnlockedFoodProvider
 
     public void UnlockAll()
     {
-        var allFoods = Resources.LoadAll<FoodData>("ScriptableObjects/FoodData");
-        foreach (var food in allFoods)
-        {
-            unlockedFoodIds.Add(food.id);
-        }
+        foreach (var food in catalog) unlockedFoodIds.Add(food.id);
     }
 
     public void LockAll()

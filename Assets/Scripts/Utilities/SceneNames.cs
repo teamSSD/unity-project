@@ -7,5 +7,6 @@ public static class SceneNames
     public const string Idle      = "Idle";
     public const string Cooking   = "Cooking";
     public const string Garden    = "Garden";
-    public const string Shop      = "Shop";
+    public const string Shop       = "Shop";
+    public const string Settlement = "Settlement";
 }

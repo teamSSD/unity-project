@@ -13,7 +13,7 @@ public class SearchDataUtil
         get
         {
             if (_foodList == null)
-                _foodList = Resources.LoadAll<FoodData>("ScriptableObjects/FoodData");
+                _foodList = Resources.LoadAll<FoodData>(ResourcePaths.Data.FoodData);
             return _foodList;
         }
     }
@@ -23,7 +23,7 @@ public class SearchDataUtil
         get
         {
             if (_ingredientList == null)
-                _ingredientList = Resources.LoadAll<IngredientData>("ScriptableObjects/IngredientData");
+                _ingredientList = Resources.LoadAll<IngredientData>(ResourcePaths.Data.IngredientData);
             return _ingredientList;
         }
     }
@@ -33,7 +33,7 @@ public class SearchDataUtil
         get
         {
             if (_recipeList == null)
-                _recipeList = Resources.LoadAll<RecipeData>("ScriptableObjects/RecipeData");
+                _recipeList = Resources.LoadAll<RecipeData>(ResourcePaths.Data.RecipeData);
             return _recipeList;
         }
     }
@@ -43,7 +43,7 @@ public class SearchDataUtil
         get
         {
             if (_cookingToolList == null)
-                _cookingToolList = Resources.LoadAll<CookingToolData>("ScriptableObjects/CookingTools");
+                _cookingToolList = Resources.LoadAll<CookingToolData>(ResourcePaths.Data.CookingTools);
             return _cookingToolList;
         }
     }

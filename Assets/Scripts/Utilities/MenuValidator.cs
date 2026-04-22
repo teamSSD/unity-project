@@ -256,31 +256,12 @@ public static class MenuValidator
             }
         }
 
-        // 2. 기본 배율 적용 (100% + 일치 사이드 개수 × 10%)
-        float baseMultiplier = 1.0f + (matchingSidesCount * 0.1f);
+        // 2. 사이드 일치 보너스 (일치 사이드당 +5%)
+        float baseMultiplier = 1.0f + (matchingSidesCount * 0.05f);
         totalPrice *= baseMultiplier;
 
-        // 3. 추가 배율 적용
-        int expectedSideCount = order.sideMenus?.Count ?? 0;
-        int providedSideCount = providedSides?.Count ?? 0;
-        bool allMatch = mainMatches &&
-                        matchingSidesCount == expectedSideCount &&
-                        providedSideCount == expectedSideCount;
-
-        float finalMultiplier;
-        if (allMatch)
-        {
-            finalMultiplier = 1.3f; // 모두 일치: 30% 증가
-        }
-        else if (mainMatches)
-        {
-            finalMultiplier = 1.0f; // 메인만 일치: 그대로
-        }
-        else
-        {
-            finalMultiplier = 0.7f; // 메인 불일치: 30% 감소
-        }
-
+        // 3. 메인 일치 여부 배율 (메인 불일치 시 ×0.7, 일치 시 그대로)
+        float finalMultiplier = mainMatches ? 1.0f : 0.7f;
         totalPrice *= finalMultiplier;
 
         return Mathf.RoundToInt(totalPrice);

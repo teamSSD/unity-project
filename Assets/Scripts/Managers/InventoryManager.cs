@@ -29,7 +29,7 @@ public class InventoryManager : SingletonMonoBehaviour<InventoryManager>, LoadIn
 
     private void LoadAllFoodData()
     {
-        FoodData[] foods = Resources.LoadAll<FoodData>("ScriptableObjects/FoodData");
+        FoodData[] foods = Resources.LoadAll<FoodData>(ResourcePaths.Data.FoodData);
         allFoodData = new List<FoodData>(foods);
         Debug.Log($"[InventoryManager] Loaded {allFoodData.Count} food data assets");
     }

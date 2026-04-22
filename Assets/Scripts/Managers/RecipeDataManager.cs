@@ -167,7 +167,7 @@ public class RecipeDataManager : SingletonMonoBehaviour<RecipeDataManager>
             // 메인 메뉴 설정
             if (!string.IsNullOrEmpty(mainId))
             {
-                FoodData mainFood = Resources.Load<FoodData>($"ScriptableObjects/FoodData/{mainId}");
+                FoodData mainFood = Resources.Load<FoodData>(ResourcePaths.SO.FoodDataById + mainId);
                 if (mainFood != null)
                 {
                     menuSelections[i].SetMain(mainFood);
@@ -177,7 +177,7 @@ public class RecipeDataManager : SingletonMonoBehaviour<RecipeDataManager>
             // 사이드 메뉴 설정
             foreach (string sideId in sideIds)
             {
-                FoodData sideFood = Resources.Load<FoodData>($"ScriptableObjects/FoodData/{sideId}");
+                FoodData sideFood = Resources.Load<FoodData>(ResourcePaths.SO.FoodDataById + sideId);
                 if (sideFood != null)
                 {
                     menuSelections[i].AddSide(sideFood);

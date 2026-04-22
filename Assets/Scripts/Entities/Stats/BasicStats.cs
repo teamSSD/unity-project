@@ -5,6 +5,8 @@ public class BasicStats
     public int day;
     public int time;
     public int money;
+    public int immutableSeed;
+    public int sessionSeed;
 
     public BasicStats()
     {

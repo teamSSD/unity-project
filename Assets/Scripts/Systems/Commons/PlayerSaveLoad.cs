@@ -8,7 +8,7 @@ public class PlayerData
     public int score;
 }
 
-public class playerSaveLoad : MonoBehaviour
+public class PlayerSaveLoad : MonoBehaviour
 {
     public GameObject GameManager; // Inspector에서 연결
     string path;

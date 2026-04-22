@@ -44,6 +44,9 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
 
     private Canvas canvas;
     private MenuCardOverlay cardOverlay;
+    private Button closeButton;
+    private DiaryMenuDisplay diaryMenuDisplay;
+    private Transform diaryPageL;
 
     // 세션 내 상태 기억
     private enum Page { Diary, Main, Side }
@@ -71,6 +74,10 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         cardOverlay = gameObject.GetComponent<MenuCardOverlay>();
         if (cardOverlay == null) cardOverlay = gameObject.AddComponent<MenuCardOverlay>();
 
+        closeButton = bookRoot.transform.Find("Button_Close")?.GetComponentInChildren<Button>();
+        diaryMenuDisplay = diary.GetComponentInChildren<DiaryMenuDisplay>(true);
+        diaryPageL = diary.transform.Find("Page_L");
+
         isRecipeBookActive = false;
         canvas.enabled = false;
     }
@@ -96,7 +103,7 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
 
     public void OpenRecipeBook(bool active)
     {
-        bookRoot.transform.Find("Button_Close").GetComponentInChildren<Button>().gameObject.SetActive(active);
+        if (closeButton != null) closeButton.gameObject.SetActive(active);
 
         if (isRecipeBookActive)
         {
@@ -133,19 +140,32 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         isRecipeBookActive = false;
         UILockManager.Unlock(UILockManager.Owner.RecipeBook);
     }
+    private void ShowOnlyPage(GameObject page)
+    {
+        SetPageContent(diary, page == diary);
+        SetPageContent(mainMenu, page == mainMenu);
+        SetPageContent(sideMenu, page == sideMenu);
+    }
+
+    // Child 0 is the bookmark tab button — always stays visible
+    private void SetPageContent(GameObject panel, bool active)
+    {
+        for (int i = 1; i < panel.transform.childCount; i++)
+            panel.transform.GetChild(i).gameObject.SetActive(active);
+    }
+
     public void OpenDiary()
     {
         lastPage = Page.Diary;
-        diary.transform.SetAsLastSibling();
+        ShowOnlyPage(diary);
         CloseMenuCard();
 
-        var display = diary.GetComponentInChildren<DiaryMenuDisplay>(true);
-        if (display != null) display.Refresh();
+        if (diaryMenuDisplay != null) diaryMenuDisplay.Refresh();
     }
     public void OpenMainMenu()
     {
         lastPage = Page.Main;
-        mainMenu.transform.SetAsLastSibling();
+        ShowOnlyPage(mainMenu);
         CloseMenuCard();
         if (UnlockedFoodManager.Instance != null)
             PopulateRecipePage(mainRecipeL, mainRecipeR,
@@ -154,7 +174,7 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     public void OpenSideMenu()
     {
         lastPage = Page.Side;
-        sideMenu.transform.SetAsLastSibling();
+        ShowOnlyPage(sideMenu);
         CloseMenuCard();
         if (UnlockedFoodManager.Instance != null)
             PopulateRecipePage(sideRecipeL, sideRecipeR,
@@ -217,12 +237,11 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     {
         if (ActionSelectionManager.Instance == null || diary == null) return;
 
-        Transform pageL = diary.transform.Find("Page_L");
-        if (pageL == null) return;
+        if (diaryPageL == null) return;
 
         for (int i = 0; i < DiaryTimeSections.Length; i++)
         {
-            Transform section = pageL.Find(DiaryTimeSections[i]);
+            Transform section = diaryPageL.Find(DiaryTimeSections[i]);
             if (section == null) continue;
 
             var actionToggles = section.GetComponentsInChildren<ActionToggle>(true);
