@@ -12,7 +12,7 @@ public class RecipeBookMenuProvider : ISelectMenu
         if (RecipeDataManager.Instance == null || RecipeDataManager.Instance.GetAllMenusAsSchema().Count == 0)
         {
             Debug.LogWarning("[RecipeBookMenuProvider] RecipeDataManager not found or empty! Using fallback: loading first FoodData from Resources.");
-            var allFood = Resources.LoadAll<FoodData>("ScriptableObjects/FoodData");
+            var allFood = Resources.LoadAll<FoodData>(ResourcePaths.Data.FoodData);
             if (allFood != null && allFood.Length > 0)
             {
                 var fallbackMenu = new MenuSchema("디버그 메뉴", 1, allFood[0], new List<FoodData>());

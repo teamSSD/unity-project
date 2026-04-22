@@ -19,7 +19,7 @@ public class OrderTicketController : MonoBehaviour
     }
 
     private List<OrderTicketModel> activeTickets = new List<OrderTicketModel>();
-    private Vector3 basePosition = new Vector3(7.65f, 0.94f, 0);
+    private Vector3 basePosition = new Vector3(5.65f, 0.94f, 0);
     private Vector3 verticalOffset = new Vector3(0, -2.38f, 0);
 
     public int ActiveTicketCount => activeTickets.Count;

@@ -13,6 +13,8 @@ public class GuidedButtonAnimator : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
+    private bool triggerSet = false;
+
     public void Update()
     {
         if (!guided)
@@ -20,16 +22,29 @@ public class GuidedButtonAnimator : MonoBehaviour
             animator.SetBool(isPressedHash, false);
             return;
         }
-        if (guided && Input.GetKeyDown(keyCode))
+        if (Input.GetKeyDown(keyCode))
         {
             animator.SetBool(isPressedHash, true);
             return;
         }
-        animator.SetTrigger(requirePressedHash);
+        animator.SetBool(isPressedHash, false);
+        if (!triggerSet)
+        {
+            animator.SetTrigger(requirePressedHash);
+            triggerSet = true;
+        }
     }
 
     public void Guide()
     {
         guided = true;
+        triggerSet = false;
+    }
+
+    public void Unguide()
+    {
+        guided = false;
+        triggerSet = false;
+        animator.SetBool(isPressedHash, false);
     }
 }

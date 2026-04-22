@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MinigameResult : MonoBehaviour
 {
+    private static readonly int AppearHash = Animator.StringToHash("Appear");
+
     public List<MinigameResultEntity> minigameResults;
     SpriteRenderer spriteRenderer;
     Animator animator;
@@ -26,7 +28,7 @@ public class MinigameResult : MonoBehaviour
                 break;
             }
         }
-        animator.SetTrigger("Appear");
+        animator.SetTrigger(AppearHash);
     }
 
     //0 fail, 0 - 50 poor, 50-70 ok, 

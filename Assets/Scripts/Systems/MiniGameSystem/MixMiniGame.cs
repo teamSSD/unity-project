@@ -110,6 +110,8 @@ public class MixMiniGame : MiniGameAbstract
         }
     }
 
+    public override void ApplyUpgrade(float m, int s) { base.ApplyUpgrade(m, s); pressRequiringCount = (int)(pressRequiringCount * m); }
+
     public override void SetIngredients(List<FoodData> ingredients, string toolId = null)
     {
         if (stackRenderer != null && ingredients != null)

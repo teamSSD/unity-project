@@ -63,6 +63,7 @@ public class SauceMiniGame : MiniGameAbstract
 
         if (isUpperTurn && Input.GetKeyDown(KeyCode.UpArrow))
         {
+            upperArrowAnim.Unguide();
             lowerArrowAnim.Guide();
             waitingTime = 0;
             currentGauge -= decreasePerPress;
@@ -71,6 +72,7 @@ public class SauceMiniGame : MiniGameAbstract
         }
         if (!isUpperTurn && Input.GetKeyDown(KeyCode.DownArrow))
         {
+            lowerArrowAnim.Unguide();
             upperArrowAnim.Guide();
             waitingTime = 0;
             currentGauge -= decreasePerPress;
@@ -94,6 +96,8 @@ public class SauceMiniGame : MiniGameAbstract
         float score = 1.0f - (penaltyDiff / (maxPossibleDiff - tolerance));
         return Mathf.Clamp01(score);
     }
+
+    public override void ApplyUpgrade(float m, int s) { base.ApplyUpgrade(m, s); tolerance = (int)Mathf.Ceil(tolerance / m); }
 
     public override void SetIngredients(List<FoodData> ingredients, string toolId = null)
     {

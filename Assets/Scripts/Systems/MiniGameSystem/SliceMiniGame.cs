@@ -20,6 +20,11 @@ public class SliceMiniGame : MiniGameAbstract
     public float sliceMargin = 0.3f;
     public float tolerance = 0.1f;
     public float hintMoveSpeed = 15f;
+    public float sliceYOffset = 0f;
+    public float pieceXOffset = 0f;
+    [Tooltip("슬라이스 선 중심 Y (월드). 0이면 Ingredient 기준 사용")]
+    public float sliceCenterY = 0f;
+    public bool useFixedSliceCenter = false;
 
     [Header("Visuals")]
     public Sprite maskSprite;
@@ -33,8 +38,9 @@ public class SliceMiniGame : MiniGameAbstract
 
     // --- 계산 프로퍼티 ---
     private float CenterX => Ingredient.transform.position.x;
-    private float StartY => Ingredient.transform.position.y + (sliceRangeY / 2f);
-    private float EndY => Ingredient.transform.position.y - (sliceRangeY / 2f);
+    private float SliceBaseY => useFixedSliceCenter ? sliceCenterY : Ingredient.transform.position.y + sliceYOffset;
+    private float StartY => SliceBaseY + (sliceRangeY / 2f);
+    private float EndY => SliceBaseY - (sliceRangeY / 2f);
     private float LeftEdgeX => CenterX - (_cachedSliceAreaWidth / 2f);
     private float CurrentTargetX
     {
@@ -44,6 +50,8 @@ public class SliceMiniGame : MiniGameAbstract
             return LeftEdgeX + (spacing * (_currentSliceIndex + 1));
         }
     }
+
+    public override void ApplyUpgrade(float m, int s) { base.ApplyUpgrade(m, s); tolerance /= m; }
 
     public override void SetIngredients(List<FoodData> ingredients, string toolId = null)
     {
@@ -112,7 +120,7 @@ public class SliceMiniGame : MiniGameAbstract
 
     private void SpawnPiece() {
         if (slicePrefab == null) return;
-        var piece = Instantiate(slicePrefab, new Vector3(CurrentTargetX, Ingredient.transform.position.y, -0.2f), Quaternion.identity, transform);
+        var piece = Instantiate(slicePrefab, new Vector3(CurrentTargetX + pieceXOffset, SliceBaseY, -0.2f), Quaternion.identity, transform);
         piece.transform.localScale = Ingredient.transform.localScale;
         if (currentIngredient?.pieceSprite != null)
             piece.GetComponent<SpriteRenderer>().sprite = currentIngredient.pieceSprite;

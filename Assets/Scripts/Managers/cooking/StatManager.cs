@@ -13,8 +13,6 @@ public class StatManager : MonoBehaviour
 
     void OnEnable()
     {
-        StatsSystem.Instance.Initialize();
-
         StatsSystem.Instance.OnStaminaExhausted += OnStaminaExhausted;
         
         // TimeManager의 마감 이벤트 구독
@@ -33,7 +31,8 @@ public class StatManager : MonoBehaviour
 
     private void OnStaminaExhausted()
     {
-        Debug.Log("[StatManager] Stamina exhausted");
+        Debug.Log("[StatManager] Stamina exhausted → ending day");
+        ProgressSystem.Instance?.Die();
     }
 
     private void OnTimeEnd()

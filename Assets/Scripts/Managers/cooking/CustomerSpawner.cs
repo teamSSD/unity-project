@@ -128,7 +128,7 @@ public class CustomerSpawner : MonoBehaviour
     {
         if (availableWaitingPositions.Count == 0) return -1;
 
-        int randomIndex = RandomGeneral.Pick(availableWaitingPositions);
+        int randomIndex = GameRandom.Pick(GameRandom.Variable, availableWaitingPositions);
         availableWaitingPositions.Remove(randomIndex);
         return randomIndex;
     }
@@ -150,8 +150,8 @@ public class CustomerSpawner : MonoBehaviour
     private Vector3 CalculateWaitingPosition(int index)
     {
         Vector3 randomVariance = new Vector3(
-            waitingPositionVariance.x * RandomNormal.Range(-1, 1),
-            waitingPositionVariance.y * RandomNormal.Range(-1, 1),
+            waitingPositionVariance.x * GameRandom.NormalRange(GameRandom.Variable, -1, 1),
+            waitingPositionVariance.y * GameRandom.NormalRange(GameRandom.Variable, -1, 1),
             0
         );
 

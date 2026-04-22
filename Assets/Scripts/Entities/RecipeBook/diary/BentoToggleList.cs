@@ -136,7 +136,7 @@ public class BentoToggleList : MonoBehaviour, IBentoValidator, IBentoToggle
 
         List<GameObject> menus = toggleRoot
             .GetComponentsInChildren<Transform>(true)
-            .Where(t => t.CompareTag("DiaryMenu"))
+            .Where(t => t.CompareTag(Tags.DiaryMenu))
             .Select(t => t.gameObject)
             .ToList();
 
@@ -179,7 +179,7 @@ public class BentoToggleList : MonoBehaviour, IBentoValidator, IBentoToggle
 
         List<GameObject> menus = toggleRoot
             .GetComponentsInChildren<Transform>(true)
-            .Where(t => t.CompareTag("DiaryMenu"))
+            .Where(t => t.CompareTag(Tags.DiaryMenu))
             .Select(t => t.gameObject)
             .ToList();
 
@@ -264,7 +264,7 @@ public class BentoToggleList : MonoBehaviour, IBentoValidator, IBentoToggle
 
         List<GameObject> menus = toggleRoot
             .GetComponentsInChildren<Transform>(true)
-            .Where(t => t.CompareTag("DiaryMenu"))
+            .Where(t => t.CompareTag(Tags.DiaryMenu))
             .Select(t => t.gameObject)
             .ToList();
 

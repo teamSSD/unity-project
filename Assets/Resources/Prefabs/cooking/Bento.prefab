@@ -183,6 +183,7 @@ MonoBehaviour:
   - {x: 0.6, y: 0}
   - {x: 0.6, y: -0.4}
   bentoPutSfx: {fileID: 8300000, guid: def805ce710264dee846c23c428b1f9a, type: 3}
+  receiptSprite: {fileID: 21300000, guid: e6f13a492c56440d89b8835010afbb69, type: 3}
 --- !u!60 &1358770288440104008
 PolygonCollider2D:
   m_ObjectHideFlags: 0

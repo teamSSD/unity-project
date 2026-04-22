@@ -51,7 +51,7 @@ public class OrderTicketModel : MonoBehaviour
             {
                 IsAttached = true;
                 collision.BehaviorInstance.locked = true; // 완성된 도시락은 이동 불가
-                StartCoroutine(waitAndTake(RandomGeneral.getRandomNormal(0.5f, 1.5f), collision));
+                StartCoroutine(waitAndTake(GameRandom.NormalRange(GameRandom.Variable, 0.5f, 1.5f), collision));
 
                 GetComponent<SpriteRenderer>().enabled = false;
                 foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = false;

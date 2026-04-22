@@ -40,9 +40,9 @@ public class FoodData : ScriptableObject, CsvParsable
             id = args[0].Trim();
             ingredientName = args[1].Trim();
             description = args[2].Trim();
-            string spritePath = ResourcePaths.Art.FOOD + args[3].Trim();
+            string spritePath = ResourcePaths.Art.Food + args[3].Trim();
             image = Resources.Load<Sprite>(spritePath);
-            string ingredientPath = "ScriptableObjects/IngredientData/" + id;
+            string ingredientPath = ResourcePaths.SO.IngredientDataById + id;
             ingredient = Resources.Load<IngredientData>(ingredientPath);
             availableTools = new List<string>(args[4].Split('/'));
             type = (FoodType)Enum.Parse(typeof(FoodType), args[5].Trim());
@@ -56,24 +56,24 @@ public class FoodData : ScriptableObject, CsvParsable
                 foreach (string toolId in availableTools)
                 {
                     if (toolIdToIndex.TryGetValue(toolId.Trim(), out int idx))
-                        toolVariants[idx] = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + baseName + toolSuffixes[idx]);
+                        toolVariants[idx] = Resources.Load<Sprite>(ResourcePaths.Art.Food + baseName + toolSuffixes[idx]);
                 }
             }
             else
             {
                 for (int i = 0; i < 5; i++)
-                    toolVariants[i] = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + baseName + toolSuffixes[i]);
+                    toolVariants[i] = Resources.Load<Sprite>(ResourcePaths.Art.Food + baseName + toolSuffixes[i]);
             }
 
             // Piece variant (커팅 미니게임용)
             if (type == FoodType.INGREDIENT && availableTools.Contains("T004"))
-                pieceSprite = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + baseName + "_piece");
+                pieceSprite = Resources.Load<Sprite>(ResourcePaths.Art.Food + baseName + "_piece");
 
             // Bento variants
             if (type == FoodType.MAIN || type == FoodType.SIDE)
             {
                 for (int i = 0; i < 4; i++)
-                    bentoVariants[i] = Resources.Load<Sprite>(ResourcePaths.Art.FOOD + baseName + bentoSuffixes[i]);
+                    bentoVariants[i] = Resources.Load<Sprite>(ResourcePaths.Art.Food + baseName + bentoSuffixes[i]);
             }
         }
         catch (Exception e)

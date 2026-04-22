@@ -26,8 +26,10 @@ public abstract class MiniGameAbstract : MonoBehaviour
     protected float duration = 5f;  // 게임 진행 시간 (초)
     protected float elapsedTime = 0f;
     public string minigameId { get; protected set; }
+    protected int upgradedStaminaCost = 5;
 
     public GameObject scoringPrefab;
+    [SerializeField] private GameObject miniGameBgSource;
     protected GameObject miniGameBgPrefab;
 
     public void StartGame()
@@ -58,7 +60,7 @@ public abstract class MiniGameAbstract : MonoBehaviour
         if (!isPlaying) return;
         isPlaying = false;
 
-        StatsSystem.Instance.SubStamina(5);
+        StatsSystem.Instance.SubStamina(upgradedStaminaCost);
 
         float score = CalculateScore();
 
@@ -82,9 +84,7 @@ public abstract class MiniGameAbstract : MonoBehaviour
 
     private void ShowBG()
     {
-        miniGameBgPrefab = Resources.Load<GameObject>("Prefabs/minigame/miniGameBG");
-
-        miniGameBgPrefab = Instantiate(miniGameBgPrefab);
+        miniGameBgPrefab = Instantiate(miniGameBgSource);
         miniGameBgPrefab.transform.parent = this.gameObject.transform;
         miniGameBgPrefab.transform.localPosition = Vector3.zero;
     }
@@ -94,6 +94,11 @@ public abstract class MiniGameAbstract : MonoBehaviour
     }
     public abstract void OnUpdate();
     public abstract float CalculateScore();
+
+    public virtual void ApplyUpgrade(float multiplier, int staminaCost)
+    {
+        upgradedStaminaCost = staminaCost;
+    }
 
     public virtual void SetIngredients(List<FoodData> ingredients, string toolId = null) { }
 }

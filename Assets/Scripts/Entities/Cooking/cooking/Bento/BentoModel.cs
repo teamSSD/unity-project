@@ -16,6 +16,7 @@ public class BentoModel : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioClip bentoPutSfx;
+    [SerializeField] private Sprite receiptSprite;
 
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
@@ -74,7 +75,7 @@ public class BentoModel : MonoBehaviour
     {
         if (foodList.Count >= 1)
         {
-            BehaviorInstance.AddTexture(Resources.Load<Sprite>("driveAssets/art/item/cooking/cookingTool/item_reciept_default"));
+            BehaviorInstance.AddTexture(receiptSprite);
             Debug.Log($"도시락 포장이 완료되었습니다.");
             return true;
         }

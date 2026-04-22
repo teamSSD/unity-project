@@ -26,7 +26,7 @@ public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
     [SerializeField] private GameObject GrillMinigamePrefab;
     [SerializeField] private GameObject MinigameResultPrefab;
 
-    private static Vector2 offset = new Vector2(-0.8f, 3);
+    private static Vector2 offset = new Vector2(0f, 4.5f);
 
     public IEnumerator<float> PlayCoroutine(string toolId, RecipeData recipeData, Vector2 position, List<FoodData> ingredients, Action<RecipeData, float> onCompleted)
     {
@@ -42,6 +42,11 @@ public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
         GameObject go = Instantiate(prefab);
         currentGame = go.GetComponent<MiniGameAbstract>();
         currentGame.SetIngredients(ingredients, toolId);
+
+        var upgradeData = ToolUpgradeManager.Instance?.GetCurrentData(toolId);
+        float multiplier = upgradeData?.durationMultiplier ?? 1f;
+        int staminaCost = upgradeData?.staminaCost ?? 5;
+        currentGame.ApplyUpgrade(multiplier, staminaCost);
         currentGame.OnGameFinished += (score) =>
         {
             finalScore = score;

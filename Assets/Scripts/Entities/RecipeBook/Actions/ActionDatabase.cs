@@ -38,7 +38,7 @@ public static class ActionDatabase
                 displayName: "상가 이동",
                 description: "상가로 이동합니다",
                 initialState: ActionState.Available,
-                targetSceneName: "Scene_Shop",
+                targetSceneName: SceneNames.Shop,
                 commandId: ""
             )
         }

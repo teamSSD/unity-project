@@ -38,7 +38,7 @@ public class GriddleMinigame : MiniGameAbstract
     private void InitializeQueue()
     {
         for (int i = 0; i < totalArrowCount; i++)
-            _directionQueue.Enqueue(RandomGeneral.Pick(_directionPool));
+            _directionQueue.Enqueue(GameRandom.Pick(GameRandom.Variable, _directionPool));
     }
 
     private void SpawnNextArrow()
@@ -151,6 +151,8 @@ public class GriddleMinigame : MiniGameAbstract
         float score = (float)_successCount / totalArrowCount;
         return score <= 0 ? 0.01f : score;
     }
+
+    public override void ApplyUpgrade(float m, int s) { base.ApplyUpgrade(m, s); totalArrowCount = Mathf.Max(3, (int)(totalArrowCount * m)); }
 
     public override void SetIngredients(List<FoodData> ingredients, string toolId = null)
     {

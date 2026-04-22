@@ -10,7 +10,7 @@ using TMPro;
 [RequireComponent(typeof(Button))]
 public class PhaseCheckToggle : MonoBehaviour
 {
-    private GameObject checkmark;
+    [SerializeField] private GameObject checkmark;
     private bool isChecked;
     private Button button;
 
@@ -27,35 +27,8 @@ public class PhaseCheckToggle : MonoBehaviour
         if (img != null)
             img.color = new Color(0, 0, 0, 0);
 
-        // Label/Checkmark 자동 탐색
-        var label = transform.Find("Label");
-        if (label != null)
-        {
-            var cm = label.Find("Checkmark");
-            if (cm != null)
-            {
-                checkmark = cm.gameObject;
-
-                // TMP 텍스트 설정
-                var tmp = checkmark.GetComponent<TextMeshProUGUI>();
-                if (tmp != null)
-                {
-                    tmp.text = "\u2713";
-                    tmp.fontSize = 24;
-                    tmp.color = Color.black;
-                    tmp.alignment = TextAlignmentOptions.Center;
-                }
-
-                // RectTransform 크기 설정
-                var rt = checkmark.GetComponent<RectTransform>();
-                if (rt != null)
-                {
-                    rt.sizeDelta = new Vector2(30, 20);
-                }
-
-                checkmark.SetActive(false);
-            }
-        }
+        if (checkmark != null)
+            checkmark.SetActive(false);
     }
 
     public void Toggle()

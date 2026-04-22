@@ -90,7 +90,7 @@ public class CustomerManager : MonoBehaviour
     {
         ApplyPhaseSettings();
         CreateDeliveryTickets();
-        nextSpawnTime = RandomNormal.Get(baseSpawnInterval, spawnIntervalVariance);
+        nextSpawnTime = GameRandom.Normal(GameRandom.Variable, 5f, 3f); // 첫 손님은 빠르게
 
         var subScene = FindFirstObjectByType<SubSceneController>();
         if (subScene != null)
@@ -173,7 +173,7 @@ public class CustomerManager : MonoBehaviour
         if (timer < nextSpawnTime) return;
 
         timer -= nextSpawnTime;
-        nextSpawnTime = RandomNormal.Get(baseSpawnInterval, spawnIntervalVariance);
+        nextSpawnTime = GameRandom.Normal(GameRandom.Variable, baseSpawnInterval, spawnIntervalVariance);
 
         // Don't spawn if there's already an ordering customer or waiting queue is full
         if (currentOrderingCustomer != null || spawner.IsWaitingQueueFull())
@@ -283,7 +283,7 @@ public class CustomerManager : MonoBehaviour
             return null;
         }
 
-        MenuSchema menu = salesMenus[Random.Range(0, salesMenus.Count)];
+        MenuSchema menu = salesMenus[GameRandom.Range(GameRandom.Variable, 0, salesMenus.Count)];
         menu.orderNumber = nextOrderNumber;
         nextOrderNumber++;
 
@@ -301,7 +301,7 @@ public class CustomerManager : MonoBehaviour
             return null;
         }
 
-        return customerDataList[Random.Range(0, customerDataList.Count)];
+        return customerDataList[GameRandom.Range(GameRandom.Variable, 0, customerDataList.Count)];
     }
 
     /// <summary>
@@ -406,5 +406,17 @@ public class CustomerManager : MonoBehaviour
         Debug.Log($"Average Score: {avgScore:F2} ({MenuValidator.GetGrade(avgScore)})");
         Debug.Log($"Total Earnings: {totalEarnings}원");
         Debug.Log("=====================================");
+
+        if (totalEarnings > 0 && SettlementManager.Instance != null && ProgressSystem.Instance != null)
+            SettlementManager.Instance.AddIncome(PhaseToLabel(ProgressSystem.Instance.phaseData.Phase), totalEarnings);
     }
+
+    private static string PhaseToLabel(PhaseType p) => p switch
+    {
+        PhaseType.Morning   => "아침 영업",
+        PhaseType.Afternoon => "점심 영업",
+        PhaseType.Evening   => "저녁 영업",
+        PhaseType.Night     => "야간 영업",
+        _                   => "영업"
+    };
 }

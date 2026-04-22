@@ -12,7 +12,7 @@ public class FireMiniGame : MiniGameAbstract
     [Header("게이지 설정")]
     [SerializeField] private Vector3 gaugePosition = new Vector3(-2f, 0.33f, 0);
     [SerializeField] private float safeZoneRatio = 0.25f;
-    [SerializeField] private float xOffset = 0.5f;
+    [SerializeField] private float xOffset = 0.3f;
 
     [Header("게임 설정")]
     public float gameDuration = 3.0f; 
@@ -119,6 +119,8 @@ public class FireMiniGame : MiniGameAbstract
     {
         return Mathf.Clamp01(accScore);
     }
+
+    public override void ApplyUpgrade(float m, int s) { base.ApplyUpgrade(m, s); gameDuration *= m; }
 
     public override void SetIngredients(List<FoodData> ingredients, string toolId = null)
     {

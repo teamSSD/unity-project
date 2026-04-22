@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class CuisineManager : MonoBehaviour
+public class CookingSceneManager : MonoBehaviour
 {
     [SerializeField] private List<GameObject> cookingTools;
     [SerializeField] private GameObject refrigeratorGameObject;
@@ -25,13 +25,13 @@ public class CuisineManager : MonoBehaviour
 
         if (loadInventoryUsecase == null)
         {
-            Debug.LogError("[CuisineManager] InventoryManager.Instance is null! Skipping initialization.");
+            Debug.LogError("[CookingSceneManager] InventoryManager.Instance is null! Skipping initialization.");
             return;
         }
 
         if (searchRecipeUsecase == null)
         {
-            Debug.LogError("[CuisineManager] RecipeLookupService.Instance is null! Some tools might not work.");
+            Debug.LogError("[CookingSceneManager] RecipeLookupService.Instance is null! Some tools might not work.");
         }
 
         cookingTools.ForEach(tool =>
@@ -53,7 +53,7 @@ public class CuisineManager : MonoBehaviour
         {
             if (storage.IsFull)
             {
-                Debug.LogWarning($"[CuisineManager] {category} 보관소 용량 초과 — {data.Item1.ingredientName} 로드 스킵");
+                Debug.LogWarning($"[CookingSceneManager] {category} 보관소 용량 초과 — {data.Item1.ingredientName} 로드 스킵");
                 break;
             }
             GameObject ingredientInstance = instantiateFood(parent, data.Item1.ingredientName);

@@ -48,14 +48,14 @@ public class RecipeData : ScriptableObject, CsvParsable
         {
             id = args[0].Trim();
             string outputId = args[1].Trim();
-            outputFood = Resources.Load<FoodData>("ScriptableObjects/FoodData/" + outputId);
+            outputFood = Resources.Load<FoodData>(ResourcePaths.SO.FoodDataById + outputId);
             minigameId = args[2].Trim();
             inputs = args[3].Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Select(item =>
             {
                 string[] parts = item.Split('-');
                 string ingredientId = parts[0].Trim();
                 float weight = float.Parse(parts[1]);
-                FoodData ingredientSO = Resources.Load<FoodData>("ScriptableObjects/FoodData/" + ingredientId);
+                FoodData ingredientSO = Resources.Load<FoodData>(ResourcePaths.SO.FoodDataById + ingredientId);
                 return new RecipeIngredient(ingredientSO, weight);
             }).ToList();
         }
