@@ -5,9 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/Scene_Minigame_Test.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/ForReal/Boot.unity
+    guid: 86d5a6ca807ac4e29854714c8de48add
+  - enabled: 1
+    path: Assets/Scenes/ForReal/Managers.unity
+    guid: 54133444fb61340819694ebe65539e6f
   - enabled: 1
     path: Assets/Scenes/ForReal/GameStart.unity
     guid: a60a342c0be1b43e889355f3a58d4b77
@@ -17,14 +20,17 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ForReal/Cooking.unity
     guid: 63a09571c702d4fa9a5328f37aa382c2
-  - enabled: 0
-    path: Assets/Scenes/ForReal/Scene_Delivery.unity
-    guid: 00ae8324b032f4df2adf265d7198d515
   - enabled: 1
-    path: Assets/Scenes/ForReal/Scene_Shop.unity
+    path: Assets/Scenes/ForReal/Shop.unity
     guid: 2ecd0ff332aad4508b37e6af66fdfa1a
   - enabled: 1
-    path: Assets/Scenes/ForReal/Scene_Mall.unity
+    path: Assets/Scenes/ForReal/Mall.unity
     guid: 96e1cfed9afc79f4c93bb52d5433a94a
+  - enabled: 1
+    path: Assets/Scenes/ForReal/Garden.unity
+    guid: 05f6eeffbde49ee42b67a146472eb5d2
+  - enabled: 1
+    path: Assets/Scenes/ForReal/Settlement.unity
+    guid: 00000000000000000000000000000000
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

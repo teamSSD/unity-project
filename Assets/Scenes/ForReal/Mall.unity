@@ -2869,7 +2869,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e46dcf8df7e74900855ad0081abf83c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::SceneTransitionInteraction
-  targetScene: Scene_Shop
+  targetScene: Shop
   promptMessage: (press spacebar to enter shop)
 --- !u!1 &1826322012
 GameObject:

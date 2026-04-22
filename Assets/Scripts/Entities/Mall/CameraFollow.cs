@@ -1,21 +1,50 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    public Transform player; // 따라갈 캐릭터
-    public Vector3 offset;   // 카메라와 플레이어 사이 거리
-    public float smoothSpeed = 0.125f; // 카메라 이동 부드럽게
+    public Transform player;
+    public Vector3 offset;
+    public float smoothTime = 0.15f;
+    public float maxSpeed = 12f;
+
+    [Header("카메라 경계 (boundsSource 할당 시 자동 계산, 없으면 수동값 사용)")]
+    public SpriteRenderer boundsSource;
+    public Vector2 xBoundsManual = new Vector2(-33f, 33f);
+    public Vector2 yBoundsManual = new Vector2(-10f, 8f);
+
+    private Camera cam;
+    private Vector3 velocity = Vector3.zero;
+
+    void Awake()
+    {
+        cam = GetComponent<Camera>();
+    }
 
     void LateUpdate()
     {
         if (player == null) return;
 
-        // 목표 위치 = 플레이어 위치 + 오프셋
-        Vector3 targetPos = new Vector3(player.position.x + offset.x, transform.position.y, transform.position.z);
+        Vector3 targetPos = new Vector3(
+            player.position.x + offset.x,
+            player.position.y + offset.y,
+            transform.position.z);
 
-        // 부드럽게 이동
-        Vector3 smoothedPos = Vector3.Lerp(transform.position, targetPos, smoothSpeed);
+        Vector2 xB = xBoundsManual;
+        Vector2 yB = yBoundsManual;
 
-        transform.position = smoothedPos;
+        if (boundsSource != null && cam != null)
+        {
+            float halfH = cam.orthographicSize;
+            float halfW = halfH * cam.aspect;
+            var b = boundsSource.bounds;
+            xB = new Vector2(b.min.x + halfW, b.max.x - halfW);
+            yB = new Vector2(b.min.y + halfH, b.max.y - halfH);
+        }
+
+        targetPos.x = Mathf.Clamp(targetPos.x, xB.x, xB.y);
+        targetPos.y = Mathf.Clamp(targetPos.y, yB.x, yB.y);
+
+        transform.position = Vector3.SmoothDamp(
+            transform.position, targetPos, ref velocity, smoothTime, maxSpeed);
     }
 }

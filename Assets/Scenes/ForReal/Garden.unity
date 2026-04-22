@@ -996,7 +996,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0941b1f770ef544c6985dd9f949f25b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::SubSceneController
-  returnSceneName: Scene_Mall
+  returnSceneName: Mall
 --- !u!4 &1081592763
 Transform:
   m_ObjectHideFlags: 0
@@ -1043,7 +1043,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e46dcf8df7e74900855ad0081abf83c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::SceneTransitionInteraction
-  targetScene: Scene_Mall
+  targetScene: Mall
   promptMessage: "(\uC2A4\uD398\uC774\uC2A4\uBC14\uB85C \uC0C1\uAC00 \uBCF5\uADC0)"
 --- !u!212 &1507138904
 SpriteRenderer:

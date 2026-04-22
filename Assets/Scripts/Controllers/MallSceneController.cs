@@ -51,14 +51,10 @@ public class MallSceneController : MonoBehaviour
         {
             bentoSelectionController.Show(() =>
             {
-                // 메뉴 선택 완료 → 페이즈 진행 (Preparation → Morning)
-                if (ProgressSystem.Instance != null)
-                {
-                    ProgressSystem.Instance.PassPhase();
-                    // 저장은 PassDay()에서만 수행
-                }
-
-                SceneLoader.LoadScene("Idle");
+                // 메뉴 선택 완료 → 페이즈 진행
+                var ps = ProgressSystem.Instance;
+                if (ps == null || !ps.PassPhase())
+                    SceneLoader.LoadScene(SceneNames.Idle);
             });
         }
         else

@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class SubSceneController : MonoBehaviour
 {
     [Header("Return Scene")]
-    [SerializeField] private string returnSceneName = "Idle";
+    [SerializeField] private string returnSceneName = SceneNames.Idle;
 
     private void Start()
     {
@@ -22,13 +22,8 @@ public class SubSceneController : MonoBehaviour
     {
         Debug.Log($"[SubSceneController] Returning to {returnSceneName}");
 
-        // 페이즈 진행 (저장은 PassDay()에서만 수행)
-        if (ProgressSystem.Instance != null)
-        {
-            ProgressSystem.Instance.PassPhase();
-            // 저장은 PassDay()에서만 수행
-        }
-
-        SceneLoader.LoadScene(returnSceneName);
+        var ps = ProgressSystem.Instance;
+        if (ps == null || !ps.PassPhase())
+            SceneLoader.LoadScene(returnSceneName);
     }
 }
