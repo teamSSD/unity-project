@@ -12,7 +12,9 @@ public class MenuSelectionItem : MonoBehaviour
     [Header("UI Components")]
     [SerializeField] private Image foodImage;
     [SerializeField] private Image toolIcon;
-    [SerializeField] private GameObject checkbox;
+    [SerializeField] private Image cellImage;
+    [SerializeField] private Sprite cellNormal;
+    [SerializeField] private Sprite cellSelected;
     [SerializeField] private TextMeshProUGUI nameLabel;
     [SerializeField] private Button clickButton;
 
@@ -80,10 +82,8 @@ public class MenuSelectionItem : MonoBehaviour
     /// </summary>
     public void SetSelection(bool isSelected)
     {
-        if (checkbox != null)
-        {
-            checkbox.SetActive(isSelected);
-        }
+        if (cellImage != null)
+            cellImage.sprite = isSelected ? cellSelected : cellNormal;
     }
 
     /// <summary>

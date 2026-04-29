@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
 {
     private GameObject settingsPanel;
+    private GameObject backdrop;
 
     protected override void OnSingletonAwake()
     {
@@ -20,6 +21,18 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
         scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
         scaler.matchWidthOrHeight = 0f;
         canvasGO.AddComponent<GraphicRaycaster>();
+
+        backdrop = new GameObject("BlackBackdrop", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        backdrop.layer = LayerMask.NameToLayer("UI");
+        backdrop.transform.SetParent(canvasGO.transform, false);
+        var rt = (RectTransform)backdrop.transform;
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.sizeDelta = Vector2.zero;
+        rt.anchoredPosition = Vector2.zero;
+        backdrop.GetComponent<Image>().color = Color.black;
+        backdrop.GetComponent<Image>().raycastTarget = true;
+        backdrop.SetActive(false);
 
         var prefab = Resources.Load<GameObject>(ResourcePaths.Prefab.Settings);
         settingsPanel = Instantiate(prefab, canvasGO.transform);
@@ -42,6 +55,7 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
 
     public void Open()
     {
+        backdrop.SetActive(true);
         settingsPanel.SetActive(true);
         Canvas.ForceUpdateCanvases();
         LayoutRebuilder.ForceRebuildLayoutImmediate(settingsPanel.GetComponent<RectTransform>());
@@ -51,6 +65,7 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
 
     public void Close()
     {
+        backdrop.SetActive(false);
         settingsPanel.SetActive(false);
         UILockManager.Unlock(UILockManager.Owner.Settings);
         TimeManager.Instance?.ResumeTime();
