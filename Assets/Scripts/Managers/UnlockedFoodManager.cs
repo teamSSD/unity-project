@@ -144,6 +144,22 @@ public class UnlockedFoodManager : SingletonMonoBehaviour<UnlockedFoodManager>, 
 
     // IUnlockedFoodProvider 구현
 
+    public List<FoodData> GetAllMainFoods()
+    {
+        return allFoodData
+            .Where(f => f.type == FoodType.MAIN)
+            .OrderBy(f => f.id)
+            .ToList();
+    }
+
+    public List<FoodData> GetAllSideFoods()
+    {
+        return allFoodData
+            .Where(f => f.type == FoodType.SIDE)
+            .OrderBy(f => f.id)
+            .ToList();
+    }
+
     public List<FoodData> GetUnlockedMainFoods()
     {
         return allFoodData

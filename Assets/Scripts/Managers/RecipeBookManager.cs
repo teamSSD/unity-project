@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,11 +20,8 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     [Header("Diary Menu Slot")]
     [SerializeField] public GameObject menuSlot;
 
-    [Header("Main Menu Page")]
+    [Header("Menu Page (Main L / Side R)")]
     [SerializeField] public GameObject mainMenu;
-
-    [Header("Side Menu Page")]
-    [SerializeField] public GameObject sideMenu;
 
     [Header("Menu Card")]
     [SerializeField] public GameObject menuCard;
@@ -34,13 +32,9 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     [Header("Card Instantiate Transform (R)")]
     [SerializeField] public Transform cardInstantiateTransform_R;
 
-    [Header("Main Recipe Containers")]
+    [Header("Recipe Containers (L=Main, R=Side)")]
     [SerializeField] private Transform mainRecipeL;
     [SerializeField] private Transform mainRecipeR;
-
-    [Header("Side Recipe Containers")]
-    [SerializeField] private Transform sideRecipeL;
-    [SerializeField] private Transform sideRecipeR;
 
     private Canvas canvas;
     private MenuCardOverlay cardOverlay;
@@ -49,7 +43,7 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     private Transform diaryPageL;
 
     // 세션 내 상태 기억
-    private enum Page { Diary, Main, Side }
+    private enum Page { Diary, Menu }
     private Page lastPage = Page.Diary;
 
     protected override void OnSingletonAwake()
@@ -119,8 +113,7 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         // 마지막 페이지 복원
         switch (lastPage)
         {
-            case Page.Main: OpenMainMenu(); break;
-            case Page.Side: OpenSideMenu(); break;
+            case Page.Menu: OpenMenu(); break;
             default: OpenDiary(); break;
         }
 
@@ -144,7 +137,6 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     {
         SetPageContent(diary, page == diary);
         SetPageContent(mainMenu, page == mainMenu);
-        SetPageContent(sideMenu, page == sideMenu);
     }
 
     // Child 0 is the bookmark tab button — always stays visible
@@ -162,23 +154,16 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
 
         if (diaryMenuDisplay != null) diaryMenuDisplay.Refresh();
     }
-    public void OpenMainMenu()
+    public void OpenMenu()
     {
-        lastPage = Page.Main;
+        lastPage = Page.Menu;
         ShowOnlyPage(mainMenu);
         CloseMenuCard();
         if (UnlockedFoodManager.Instance != null)
-            PopulateRecipePage(mainRecipeL, mainRecipeR,
-                UnlockedFoodManager.Instance.GetUnlockedMainFoods());
-    }
-    public void OpenSideMenu()
-    {
-        lastPage = Page.Side;
-        ShowOnlyPage(sideMenu);
-        CloseMenuCard();
-        if (UnlockedFoodManager.Instance != null)
-            PopulateRecipePage(sideRecipeL, sideRecipeR,
-                UnlockedFoodManager.Instance.GetUnlockedSideFoods());
+        {
+            PopulateContainer(mainRecipeL, UnlockedFoodManager.Instance.GetAllMainFoods());
+            PopulateContainer(mainRecipeR, UnlockedFoodManager.Instance.GetAllSideFoods());
+        }
     }
 
     private GameObject menuSlotTemplate;
@@ -199,21 +184,24 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
             Destroy(parent.GetChild(i).gameObject);
     }
 
-    private void PopulateRecipePage(Transform containerL, Transform containerR, List<FoodData> foods)
+    private void PopulateContainer(Transform container, List<FoodData> foods)
     {
-        EnsureMenuSlotTemplate(containerL);
-
-        ClearChildren(containerL);
-        ClearChildren(containerR);
-
-        for (int i = 0; i < foods.Count; i++)
+        EnsureMenuSlotTemplate(container);
+        ClearChildren(container);
+        var unlockedMgr = UnlockedFoodManager.Instance;
+        var sorted = unlockedMgr != null
+            ? foods.OrderByDescending(f => unlockedMgr.IsUnlocked(f.id))
+            : (IEnumerable<FoodData>)foods;
+        foreach (var food in sorted)
         {
-            var parent = (i < 6) ? containerL : containerR;
-            var go = Instantiate(menuSlotTemplate, parent);
+            var go = Instantiate(menuSlotTemplate, container);
             go.SetActive(true);
             var slot = go.GetComponent<MenuSlot>();
-            slot.Id = foods[i].id;
-            slot.InitSlot();
+            slot.Id = food.id;
+            if (unlockedMgr != null && unlockedMgr.IsUnlocked(food.id))
+                slot.InitSlot();
+            else
+                slot.InitEmpty();
         }
     }
 

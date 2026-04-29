@@ -12,8 +12,17 @@ public class MenuSlot : MonoBehaviour
     private FoodData foodData;
     private Image toolImage;
 
+    public void InitEmpty()
+    {
+        if (MenuImage != null) MenuImage.transform.parent.gameObject.SetActive(false);
+        if (NameLabel != null) NameLabel.transform.parent.gameObject.SetActive(false);
+    }
+
     public void InitSlot()
     {
+        if (MenuImage != null) MenuImage.transform.parent.gameObject.SetActive(true);
+        if (NameLabel != null) NameLabel.transform.parent.gameObject.SetActive(true);
+
         foodData = SearchDataUtil.GetFoodDataById(Id);
         if (foodData == null) return;
 
