@@ -9,8 +9,12 @@ using UnityEngine.SceneManagement;
 public static class SceneLoader
 {
     private static string currentGameplayScene;
+    private static Vector3? _mallReturnPosition;
 
     public static string CurrentScene => currentGameplayScene;
+    public static Vector3? MallReturnPosition => _mallReturnPosition;
+    public static void SetMallReturnPosition(Vector3 pos) => _mallReturnPosition = pos;
+    public static void ClearMallReturnPosition() => _mallReturnPosition = null;
 
     /// <summary>
     /// BootLoader에서 초기 씬 이름 설정용 (로드 완료 후 호출)

@@ -14,6 +14,8 @@ public class SceneTransitionInteraction : MonoBehaviour
         {
             isPlayerNear = false;
             InteractPromptUI.Hide();
+            if (SceneLoader.CurrentScene == SceneNames.Mall)
+                SceneLoader.SetMallReturnPosition(transform.position);
             SceneLoader.LoadScene(targetScene);
         }
     }

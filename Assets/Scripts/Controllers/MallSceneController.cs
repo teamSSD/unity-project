@@ -19,6 +19,25 @@ public class MallSceneController : MonoBehaviour
     {
         Debug.Log("[MallSceneController] Mall scene started");
 
+        if (SceneLoader.MallReturnPosition.HasValue)
+        {
+            var player = GameObject.FindGameObjectWithTag(Tags.Player);
+            if (player != null)
+            {
+                player.transform.position = SceneLoader.MallReturnPosition.Value;
+
+                var cam = Object.FindFirstObjectByType<CameraFollow>();
+                if (cam != null)
+                {
+                    cam.transform.position = new Vector3(
+                        player.transform.position.x + cam.offset.x,
+                        player.transform.position.y + cam.offset.y,
+                        cam.transform.position.z);
+                }
+            }
+            SceneLoader.ClearMallReturnPosition();
+        }
+
         // UnlockedFoodManager 초기화 (없으면 생성)
         ManagerBootstrap.Ensure<UnlockedFoodManager>();
 

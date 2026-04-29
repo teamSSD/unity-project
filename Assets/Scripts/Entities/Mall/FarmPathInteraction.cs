@@ -10,6 +10,7 @@ public class FarmPathInteraction : MonoBehaviour
         {
             isPlayerNear = false;
             InteractPromptUI.Hide();
+            SceneLoader.SetMallReturnPosition(transform.position);
             SceneLoader.LoadScene(SceneNames.Garden);
         }
     }
