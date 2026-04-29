@@ -32,7 +32,7 @@ public class MenuSlot : MonoBehaviour
                 rt.offsetMin = Vector2.zero;
                 rt.offsetMax = Vector2.zero;
             }
-            MenuImage.preserveAspect = false;
+            MenuImage.preserveAspect = true;
         }
 
         NameLabel.text = foodData.ingredientName;
