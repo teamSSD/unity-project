@@ -17,23 +17,8 @@ public class MenuSlot : MonoBehaviour
         foodData = SearchDataUtil.GetFoodDataById(Id);
         if (foodData == null) return;
 
-        // IMAGE_Menu = 도구 배경, IMAGE_Menu/image = 음식 오버레이
         if (toolImage == null && MenuImage != null)
-        {
-            toolImage = MenuImage.transform.parent?.GetComponent<Image>();
-
-            // 음식 이미지를 도구 이미지에 정확히 겹치게
-            var rt = MenuImage.GetComponent<RectTransform>();
-            if (rt != null)
-            {
-                rt.localScale = Vector3.one;
-                rt.anchorMin = Vector2.zero;
-                rt.anchorMax = Vector2.one;
-                rt.offsetMin = Vector2.zero;
-                rt.offsetMax = Vector2.zero;
-            }
-            MenuImage.preserveAspect = true;
-        }
+            toolImage = MenuImage.transform.parent?.Find("Tool")?.GetComponent<Image>();
 
         NameLabel.text = foodData.ingredientName;
 
