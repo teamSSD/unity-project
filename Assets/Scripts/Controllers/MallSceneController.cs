@@ -1,16 +1,18 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
 /// Scene_Mall 씬 컨트롤러.
-/// 상가에서 메뉴 선택 후 집으로 돌아가기를 제어합니다.
+/// - Preparation 페이즈: 메뉴 선택 UI 열기 (매일 초기화)
+/// - 그 외 페이즈: "{페이즈}를 끝내시겠습니까?" 확인 다이얼로그 후 PassPhase
 /// </summary>
 public class MallSceneController : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private Button goHomeButton;
     [SerializeField] private GameObject bentoSelectionPrefab;
+    [SerializeField] private DialogueManager dialogueManager;
 
     private GameObject bentoSelectionInstance;
     private BentoSelectionController bentoSelectionController;
@@ -38,47 +40,107 @@ public class MallSceneController : MonoBehaviour
             SceneLoader.ClearMallReturnPosition();
         }
 
-        // UnlockedFoodManager 초기화 (없으면 생성)
         ManagerBootstrap.Ensure<UnlockedFoodManager>();
+
+        // Preparation 페이즈 진입 시 메뉴 초기화
+        if (ProgressSystem.Instance?.phaseData.Phase == PhaseType.Preparation)
+            RecipeDataManager.Instance?.ClearAllMenus();
 
         if (bentoSelectionPrefab != null)
         {
             bentoSelectionInstance = Instantiate(bentoSelectionPrefab);
             bentoSelectionController = bentoSelectionInstance.GetComponent<BentoSelectionController>();
-
             if (bentoSelectionController != null)
-            {
                 bentoSelectionController.Close();
-            }
         }
         else
         {
             Debug.LogError("[MallSceneController] BentoSelection prefab is not assigned in the inspector!");
         }
 
+        if (dialogueManager == null)
+            dialogueManager = Object.FindFirstObjectByType<DialogueManager>();
+
         if (goHomeButton != null)
-        {
             goHomeButton.onClick.AddListener(OnGoHome);
-        }
     }
 
     private void OnGoHome()
     {
-        Debug.Log("[MallSceneController] Opening BentoSelection...");
+        var phase = ProgressSystem.Instance?.phaseData.Phase ?? PhaseType.Preparation;
 
-        if (bentoSelectionController != null)
+        if (phase == PhaseType.Preparation)
         {
-            bentoSelectionController.Show(() =>
-            {
-                // 메뉴 선택 완료 → 페이즈 진행
-                var ps = ProgressSystem.Instance;
-                if (ps == null || !ps.PassPhase())
-                    SceneLoader.LoadScene(SceneNames.Idle);
-            });
+            OpenMenuSelection();
         }
         else
         {
-            Debug.LogError("[MallSceneController] BentoSelectionController is null!");
+            ShowPhaseEndConfirm(phase);
         }
     }
+
+    private void OpenMenuSelection()
+    {
+        if (bentoSelectionController == null)
+        {
+            Debug.LogError("[MallSceneController] BentoSelectionController is null!");
+            return;
+        }
+
+        bentoSelectionController.Show(() =>
+        {
+            var ps = ProgressSystem.Instance;
+            if (ps == null || !ps.PassPhase())
+                SceneLoader.LoadScene(SceneNames.Idle);
+        });
+    }
+
+    private void ShowPhaseEndConfirm(PhaseType phase)
+    {
+        if (dialogueManager == null)
+        {
+            Debug.LogError("[MallSceneController] DialogueManager not found!");
+            return;
+        }
+
+        var so = ScriptableObject.CreateInstance<DialogueSO>();
+        so.entries = new List<DialogueEntry>
+        {
+            new DialogueEntry
+            {
+                speaker = "",
+                text = $"{PhaseToString(phase)}를 끝내시겠습니까?",
+                choices = new List<DialogueChoice>
+                {
+                    new DialogueChoice { label = "예",   resultTag = "confirm" },
+                    new DialogueChoice { label = "아니요", resultTag = "cancel"  }
+                }
+            }
+        };
+
+        dialogueManager.OnDialogueEnded += OnPhaseEndResult;
+        dialogueManager.StartDialogue(so);
+    }
+
+    private void OnPhaseEndResult(string tag)
+    {
+        dialogueManager.OnDialogueEnded -= OnPhaseEndResult;
+
+        if (tag == "confirm")
+        {
+            var ps = ProgressSystem.Instance;
+            if (ps == null || !ps.PassPhase())
+                SceneLoader.LoadScene(SceneNames.Idle);
+        }
+    }
+
+    private static string PhaseToString(PhaseType phase) => phase switch
+    {
+        PhaseType.Preparation => "영업 준비",
+        PhaseType.Morning     => "아침",
+        PhaseType.Afternoon   => "점심",
+        PhaseType.Evening     => "저녁",
+        PhaseType.Night       => "밤",
+        _                     => phase.ToString()
+    };
 }

@@ -38,7 +38,7 @@ public class SettlementController : MonoBehaviour
         if (waitingForInput && Input.anyKeyDown)
         {
             waitingForInput = false;
-            SceneLoader.LoadScene(SceneNames.Idle);
+            SceneLoader.LoadScene(SceneNames.Mall);
         }
     }
 
