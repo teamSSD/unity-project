@@ -77,13 +77,10 @@ public class MenuSelectionItem : MonoBehaviour
         SetSelection(false);
     }
 
-    /// <summary>
-    /// 체크박스 활성화 여부를 결정합니다.
-    /// </summary>
     public void SetSelection(bool isSelected)
     {
         if (cellImage != null)
-            cellImage.sprite = isSelected ? cellSelected : cellNormal;
+            cellImage.enabled = isSelected;
     }
 
     /// <summary>

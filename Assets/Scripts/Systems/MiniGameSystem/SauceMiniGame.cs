@@ -28,14 +28,12 @@ public class SauceMiniGame : MiniGameAbstract
     public float targetGauge = 63;        // 목표 게이지
     public GameObject upperArrow;
     public GameObject lowerArrow;
-    public float coldStart = 1.5f;
-    
     private GuidedButtonAnimator upperArrowAnim;
     private GuidedButtonAnimator lowerArrowAnim;
     private bool isUpperTurn = true;
     private float currentGauge = 100;
+    private bool waitingForFirstInput = true;
 
-    //타이머로 시간 재고 꺼버리면 끝
     private float waitingTime = 0f;
     private float waitingThreshold = 0.7f;
     private int tolerance = 2;
@@ -58,11 +56,11 @@ public class SauceMiniGame : MiniGameAbstract
             EndGame();
         }
 
-        coldStart -= Time.deltaTime;
         gaugeBar.fillAmount = currentGauge / 100;
 
         if (isUpperTurn && Input.GetKeyDown(KeyCode.UpArrow))
         {
+            waitingForFirstInput = false;
             upperArrowAnim.Unguide();
             lowerArrowAnim.Guide();
             waitingTime = 0;
@@ -72,6 +70,7 @@ public class SauceMiniGame : MiniGameAbstract
         }
         if (!isUpperTurn && Input.GetKeyDown(KeyCode.DownArrow))
         {
+            waitingForFirstInput = false;
             lowerArrowAnim.Unguide();
             upperArrowAnim.Guide();
             waitingTime = 0;
@@ -79,9 +78,11 @@ public class SauceMiniGame : MiniGameAbstract
             isUpperTurn = true;
             return;
         }
-        
+
+        if (waitingForFirstInput) return;
+
         waitingTime += Time.deltaTime;
-        if (coldStart < 0 && waitingTime >= waitingThreshold)
+        if (waitingTime >= waitingThreshold)
         {
             EndGame();
         }
