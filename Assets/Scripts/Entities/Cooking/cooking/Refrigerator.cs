@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class Refrigerator : BaseStorage
 {
-    private void Awake() => capacity = StorageUpgradeManager.Instance?.GetCurrentData()?.refrigeratorCapacity ?? 7;
+    private void Awake() => capacity = StorageUpgradeManager.Instance?.GetCurrentData("refrigerator")?.value ?? 7;
 
     [SerializeField] private float xOffset = 0f;
     [SerializeField] private float yOffset = 0f;

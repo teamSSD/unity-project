@@ -42,9 +42,6 @@ public class UnifiedShopManager : MonoBehaviour
     // 업그레이드 슬롯
     private readonly List<UpgradeShopSlot> upgradeSlots = new();
 
-    // 농장 슬롯
-    private GardenShopSlot farmSlot;
-
     private void Awake()
     {
         if (instance != null && instance != this) { Destroy(gameObject); return; }
@@ -162,18 +159,25 @@ public class UnifiedShopManager : MonoBehaviour
     private void LoadStorageTab()
     {
         var prefab = Resources.Load<GameObject>(UpgradeSlotPrefabPath);
-        var slot = Instantiate(prefab, slotContent).GetComponent<UpgradeShopSlot>();
-        slot.InitStorage();
-        upgradeSlots.Add(slot);
+        foreach (var type in StorageUpgradeManager.Instance.GetAllTypes())
+        {
+            var slot = Instantiate(prefab, slotContent).GetComponent<UpgradeShopSlot>();
+            slot.InitStorage(type);
+            upgradeSlots.Add(slot);
+        }
     }
 
     // ── 농장 탭 ──────────────────────────────────────────────────────
 
     private void LoadFarmTab()
     {
-        var prefab = Resources.Load<GameObject>(FarmSlotPrefabPath);
-        farmSlot = Instantiate(prefab, slotContent).GetComponent<GardenShopSlot>();
-        farmSlot.RefreshSlot();
+        var prefab = Resources.Load<GameObject>(UpgradeSlotPrefabPath);
+        foreach (var type in FarmUpgradeManager.Instance.GetAllTypes())
+        {
+            var slot = Instantiate(prefab, slotContent).GetComponent<UpgradeShopSlot>();
+            slot.InitFarm(type);
+            upgradeSlots.Add(slot);
+        }
     }
 
     // ── 슬롯 정리 ───────────────────────────────────────────────────
@@ -187,8 +191,6 @@ public class UnifiedShopManager : MonoBehaviour
         foreach (var slot in upgradeSlots)
             if (slot != null) Destroy(slot.gameObject);
         upgradeSlots.Clear();
-
-        if (farmSlot != null) { Destroy(farmSlot.gameObject); farmSlot = null; }
     }
 
     // ── ItemShopSlot 콜백 ────────────────────────────────────────────
@@ -253,11 +255,5 @@ public class UnifiedShopManager : MonoBehaviour
         foreach (var slot in upgradeSlots) slot.Refresh();
     }
 
-    // ── GardenShopSlot 콜백 ──────────────────────────────────────────
 
-    public void BuyFarmUpgrade()
-    {
-        if (FarmUpgradeManager.Instance.TryUpgrade())
-            farmSlot?.RefreshSlot();
-    }
 }

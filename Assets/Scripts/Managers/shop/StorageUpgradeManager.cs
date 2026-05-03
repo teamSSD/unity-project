@@ -5,8 +5,8 @@ public class StorageUpgradeManager : MonoBehaviour
 {
     public static StorageUpgradeManager Instance { get; private set; }
 
-    private List<StorageUpgradeData> upgradeTable;
-    private int storageLevel = 0;
+    private Dictionary<string, List<StorageUpgradeData>> upgradeTable;
+    private Dictionary<string, int> levels = new();
 
     private void Awake()
     {
@@ -18,24 +18,38 @@ public class StorageUpgradeManager : MonoBehaviour
 
     void LoadTable()
     {
-        upgradeTable = CsvModelConverter.Parse<StorageUpgradeData>(ResourcePaths.DataTable.StorageUpgrade);
+        upgradeTable = new Dictionary<string, List<StorageUpgradeData>>();
+        var rows = CsvModelConverter.Parse<StorageUpgradeData>(ResourcePaths.DataTable.StorageUpgrade);
+        foreach (var row in rows)
+        {
+            if (!upgradeTable.ContainsKey(row.type))
+            {
+                upgradeTable[row.type] = new List<StorageUpgradeData>();
+                levels[row.type] = 0;
+            }
+            upgradeTable[row.type].Add(row);
+        }
     }
 
-    public StorageUpgradeData GetCurrentData()
+    public StorageUpgradeData GetCurrentData(string type)
     {
-        return upgradeTable?.Find(d => d.level == storageLevel);
+        if (!upgradeTable.TryGetValue(type, out var list)) return null;
+        int lv = levels.TryGetValue(type, out var l) ? l : 0;
+        return list.Find(d => d.level == lv);
     }
 
-    public StorageUpgradeData GetNextData()
+    public StorageUpgradeData GetNextData(string type)
     {
-        return upgradeTable?.Find(d => d.level == storageLevel + 1);
+        if (!upgradeTable.TryGetValue(type, out var list)) return null;
+        int lv = levels.TryGetValue(type, out var l) ? l : 0;
+        return list.Find(d => d.level == lv + 1);
     }
 
-    public bool IsMax() => GetNextData() == null;
+    public bool IsMax(string type) => GetNextData(type) == null;
 
-    public bool TryUpgrade()
+    public bool TryUpgrade(string type)
     {
-        var next = GetNextData();
+        var next = GetNextData(type);
         if (next == null) return false;
 
         if (StatsSystem.Instance.GetMoney() < next.cost)
@@ -46,19 +60,35 @@ public class StorageUpgradeManager : MonoBehaviour
 
         StatsSystem.Instance.SubMoney(next.cost);
         SettlementManager.Instance?.AddExpense("업그레이드", next.cost);
-        storageLevel = next.level;
-        Debug.Log($"[StorageUpgrade] 창고 → Lv.{storageLevel} 업그레이드 완료");
+        levels[type] = next.level;
+        Debug.Log($"[StorageUpgrade] {type} → Lv.{next.level} 업그레이드 완료");
         return true;
     }
 
-    // --- 저장/로드 ---
-    public StorageUpgradeSaveData GetSaveData() => new StorageUpgradeSaveData { level = storageLevel };
+    public IEnumerable<string> GetAllTypes() => upgradeTable.Keys;
 
-    public void ApplySaveData(StorageUpgradeSaveData data) => storageLevel = data.level;
+    public StorageUpgradeSaveData GetSaveData()
+    {
+        var data = new StorageUpgradeSaveData();
+        foreach (var kv in levels)
+        {
+            data.types.Add(kv.Key);
+            data.levels.Add(kv.Value);
+        }
+        return data;
+    }
+
+    public void ApplySaveData(StorageUpgradeSaveData data)
+    {
+        for (int i = 0; i < data.types.Count; i++)
+            if (levels.ContainsKey(data.types[i]))
+                levels[data.types[i]] = data.levels[i];
+    }
 }
 
 [System.Serializable]
 public class StorageUpgradeSaveData
 {
-    public int level = 0;
+    public List<string> types  = new();
+    public List<int>    levels = new();
 }

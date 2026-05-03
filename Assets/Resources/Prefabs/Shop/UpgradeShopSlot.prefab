@@ -1112,8 +1112,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::UpgradeShopSlot
   icon: {fileID: 0}
   nameLabel: {fileID: 2818759673208584278}
-  levelLabel: {fileID: 186314923289687556}
+  levelLabel: {fileID: 3309443682104885629}
   costLabel: {fileID: 2996186696781339887}
+  descriptionLabel: {fileID: 186314923289687556}
   upgradeButton: {fileID: 4960026115600320225}
 --- !u!1 &6938950947396659067
 GameObject:
