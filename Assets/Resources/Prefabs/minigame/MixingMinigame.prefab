@@ -55,6 +55,7 @@ MonoBehaviour:
   height: 0.5
   pressRequiringCount: 20
   idleClearTime: 2.7
+  interactionSfx: {fileID: 8300000, guid: 43b1bf5e91cf643b2a88f59761eb852c, type: 3}
 --- !u!1 &1269079005886294225
 GameObject:
   m_ObjectHideFlags: 0

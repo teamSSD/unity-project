@@ -439,6 +439,7 @@ MonoBehaviour:
   sliceCenterY: 1.06
   useFixedSliceCenter: 1
   maskSprite: {fileID: 21300000, guid: fab2c4d676c234e95beea12992219a6d, type: 3}
+  interactionSfx: {fileID: 8300000, guid: 36d8d94c1731649d687d8e6abcc54fb9, type: 3}
 --- !u!1 &6840812378509623670
 GameObject:
   m_ObjectHideFlags: 0
