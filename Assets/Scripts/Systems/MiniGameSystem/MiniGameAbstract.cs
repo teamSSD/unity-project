@@ -37,6 +37,7 @@ public abstract class MiniGameAbstract : MonoBehaviour
         isPlaying = true;
         elapsedTime = 0f;
         ShowBG();
+        OnGameStarted();
     }
 
     protected virtual void Update()
@@ -59,6 +60,7 @@ public abstract class MiniGameAbstract : MonoBehaviour
     {
         if (!isPlaying) return;
         isPlaying = false;
+        OnGameEnded();
 
         StatsSystem.Instance.SubStamina(upgradedStaminaCost);
 
@@ -92,6 +94,9 @@ public abstract class MiniGameAbstract : MonoBehaviour
     {
         if (miniGameBgPrefab != null) Destroy(miniGameBgPrefab, time);
     }
+    protected virtual void OnGameStarted() { }
+    protected virtual void OnGameEnded()   { }
+
     public abstract void OnUpdate();
     public abstract float CalculateScore();
 
