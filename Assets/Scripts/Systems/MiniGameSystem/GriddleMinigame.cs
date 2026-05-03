@@ -7,6 +7,10 @@ public class GriddleMinigame : MiniGameAbstract
 {
     [SerializeField] private SpriteStackRenderer stackRenderer;
 
+    [Header("SFX")]
+    [SerializeField] private AudioClip loopSfx;
+    [SerializeField] private float baseLoopVolume = 0.6f;
+
     [Header("Settings")]
     [SerializeField] private int totalArrowCount = 10;
     [SerializeField] private GameObject arrowPrefab;
@@ -85,6 +89,7 @@ public class GriddleMinigame : MiniGameAbstract
         if (inputDir != Vector2Int.zero && _activeArrows.Count > 0)
         {
             CheckAnswer(inputDir);
+            StartCoroutine(VolumeSpike());
         }
     }
 
@@ -142,6 +147,16 @@ public class GriddleMinigame : MiniGameAbstract
         // 4. 이펙트가 끝난 시점에 다음 화살표를 채우고 위치를 내림
         SpawnNextArrow();
         UpdateVisualPositions();
+    }
+
+    protected override void OnGameStarted() => SoundManager.Instance?.PlayLoopSFX(loopSfx, 0.2f);
+    protected override void OnGameEnded()   => SoundManager.Instance?.StopLoopSFX(0.2f);
+
+    private IEnumerator VolumeSpike()
+    {
+        SoundManager.Instance?.SetLoopSFXVolume(1f);
+        yield return new WaitForSeconds(0.15f);
+        SoundManager.Instance?.SetLoopSFXVolume(baseLoopVolume);
     }
 
     public override float CalculateScore()

@@ -8,6 +8,11 @@ public class FireMiniGame : MiniGameAbstract
     [SerializeField] private RectTransform gaugeBar;
     [SerializeField] private Transform arrowTransform;
     [SerializeField] private SpriteStackRenderer stackRenderer;
+
+    [Header("SFX")]
+    [SerializeField] private AudioClip loopSfx;
+    [SerializeField] private bool volumeTracksArrow;
+    [SerializeField] private float baseLoopVolume = 0.6f;
     
     [Header("게이지 설정")]
     [SerializeField] private Vector3 gaugePosition = new Vector3(-2f, 0.33f, 0);
@@ -90,6 +95,13 @@ public class FireMiniGame : MiniGameAbstract
 
         float currentFrameScore = CalculateFrameScore();
         accScore += currentFrameScore * (Time.deltaTime / gameDuration);
+
+        if (loopSfx != null)
+        {
+            float v = volumeTracksArrow ? arrowValue
+                                        : (Input.GetKey(KeyCode.Space) ? 1f : baseLoopVolume);
+            SoundManager.Instance?.SetLoopSFXVolume(v);
+        }
     }
 
     private void UpdateArrowPosition()
@@ -114,6 +126,9 @@ public class FireMiniGame : MiniGameAbstract
         float penalty = Mathf.Pow(diff, 2) / normalizationDivisor;
         return Mathf.Max(0, 1.0f - penalty);
     }
+
+    protected override void OnGameStarted() => SoundManager.Instance?.PlayLoopSFX(loopSfx, 0.2f);
+    protected override void OnGameEnded()   => SoundManager.Instance?.StopLoopSFX(0.2f);
 
     public override float CalculateScore()
     {

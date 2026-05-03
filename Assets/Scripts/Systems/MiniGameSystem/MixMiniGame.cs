@@ -5,6 +5,8 @@ using UnityEngine;
 public class MixMiniGame : MiniGameAbstract
 {
     [SerializeField] private SpriteStackRenderer stackRenderer;
+    [Header("SFX")]
+    [SerializeField] private AudioClip interactionSfx;
     [Header("게임 설정")]
     public GameObject mixingRod;
     public float width = 1f;
@@ -44,6 +46,7 @@ public class MixMiniGame : MiniGameAbstract
             pressCount++;
             RodMovement.sweep(timer - beforeTime);
             beforeTime = timer;
+            SoundManager.Instance?.Play2DSFX(interactionSfx);
         }
 
         checkEnd();

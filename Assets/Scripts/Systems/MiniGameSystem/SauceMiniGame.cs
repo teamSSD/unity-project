@@ -22,6 +22,8 @@ public class SauceMiniGame : MiniGameAbstract
     [Header("UI 오브젝트")]
     public Image gaugeBar;               // UI Image (Fill 방식)
     [SerializeField] private SpriteStackRenderer stackRenderer;
+    [Header("SFX")]
+    [SerializeField] private AudioClip interactionSfx;
 
     [Header("게임 설정")]
     public float decreasePerPress = 2.5f;  // 스페이스바 당 게이지 증가량
@@ -66,6 +68,7 @@ public class SauceMiniGame : MiniGameAbstract
             waitingTime = 0;
             currentGauge -= decreasePerPress;
             isUpperTurn = false;
+            SoundManager.Instance?.Play2DSFX(interactionSfx);
             return;
         }
         if (!isUpperTurn && Input.GetKeyDown(KeyCode.DownArrow))
@@ -76,6 +79,7 @@ public class SauceMiniGame : MiniGameAbstract
             waitingTime = 0;
             currentGauge -= decreasePerPress;
             isUpperTurn = true;
+            SoundManager.Instance?.Play2DSFX(interactionSfx);
             return;
         }
 
