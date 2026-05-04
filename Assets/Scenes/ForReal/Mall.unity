@@ -1494,6 +1494,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::DialogueManager
   choiceButtonPrefab: {fileID: 3786900930374099017, guid: 64cfcccdbf696ed4184415c78302b4b3, type: 3}
   dialoguePanelPrefab: {fileID: 3696376485703433615, guid: 1f21844aaee0d49faa3960c1eb598f37, type: 3}
+  npcBlipSfx: {fileID: 8300000, guid: 31d1f57fdea9543c3936e613ecc34c47, type: 3}
 --- !u!4 &714383671
 Transform:
   m_ObjectHideFlags: 0
@@ -1816,6 +1817,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 6
+  walkSfx: {fileID: 8300000, guid: 53de61b27d72c4864bab03061ea3cb1d, type: 3}
+  stepInterval: 0.35
 --- !u!70 &964561693
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -3196,6 +3199,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::MallSceneController
   goHomeButton: {fileID: 1260570318}
   bentoSelectionPrefab: {fileID: 2982246101368685665, guid: 25a35e68b56754ec8a459e64f2775f1f, type: 3}
+  dialogueManager: {fileID: 0}
 --- !u!4 &1887685399
 Transform:
   m_ObjectHideFlags: 0

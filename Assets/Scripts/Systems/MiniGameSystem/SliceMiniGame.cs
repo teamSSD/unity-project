@@ -87,12 +87,12 @@ public class SliceMiniGame : MiniGameAbstract
         if (Input.GetMouseButtonDown(0) && IsAtStart(pos)) {
             _isSlicing = true;
             _segmentChecked = new bool[segmentsPerSlice];
-            SoundManager.Instance?.Play2DSFX(interactionSfx);
         }
         else if (_isSlicing && Input.GetMouseButton(0)) {
             ProceedSlice(pos);
         }
         else if (_isSlicing && Input.GetMouseButtonUp(0)) {
+            SoundManager.Instance?.Play2DSFX(interactionSfx);
             FinishSlice();
         }
     }

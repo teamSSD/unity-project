@@ -25,6 +25,7 @@ public class GriddleMinigame : MiniGameAbstract
     private int _processedCount = 0;
     private int _successCount = 0;
     private const int MaxVisibleCount = 3;
+    private Coroutine _volumeSpikeCoroutine;
 
     private readonly List<Vector2Int> _directionPool = new List<Vector2Int> {
         Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
@@ -89,7 +90,8 @@ public class GriddleMinigame : MiniGameAbstract
         if (inputDir != Vector2Int.zero && _activeArrows.Count > 0)
         {
             CheckAnswer(inputDir);
-            StartCoroutine(VolumeSpike());
+            if (_volumeSpikeCoroutine != null) StopCoroutine(_volumeSpikeCoroutine);
+            _volumeSpikeCoroutine = StartCoroutine(VolumeSpike());
         }
     }
 

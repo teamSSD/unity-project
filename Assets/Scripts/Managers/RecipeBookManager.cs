@@ -105,6 +105,9 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
             return;
         }
 
+        UISoundManager.Instance?.PlayUIBook();
+        GlobalButtonSfxManager.Instance?.RegisterButtons(transform);
+
         canvas.enabled = true;
         foreach (MenuSlot slot in GetComponentsInChildren<MenuSlot>())
             slot.InitSlot();

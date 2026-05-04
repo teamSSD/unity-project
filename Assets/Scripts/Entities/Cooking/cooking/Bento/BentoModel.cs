@@ -16,6 +16,7 @@ public class BentoModel : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioClip bentoPutSfx;
+    [SerializeField] private AudioClip trashcanSfx;
     [SerializeField] private Sprite receiptSprite;
 
     private ScanColliderUtil scanColliderUtil;
@@ -104,6 +105,7 @@ public class BentoModel : MonoBehaviour
             GameObject gameObject = scanColliderUtil.GetOverlappingWithTag(Tags.Trashcan.ToString());
             if (gameObject != null)
             {
+                SoundManager.Instance?.Play2DSFX(trashcanSfx);
                 Destroy(this.gameObject);
             }
         }

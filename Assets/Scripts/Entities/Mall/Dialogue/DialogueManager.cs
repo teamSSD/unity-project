@@ -25,6 +25,13 @@ public class DialogueManager : MonoBehaviour
     private bool waitingForChoice;
     private bool justStarted;
 
+    [Header("SFX")]
+    [SerializeField] private AudioClip npcBlipSfx;
+
+    private bool _isTyping;
+    private Coroutine _typingCoroutine;
+    private string _currentLineText;
+
     // 분기 응답 재생 상태
     private List<DialogueLine> branchResponses;
     private int branchIndex;
@@ -70,6 +77,7 @@ public class DialogueManager : MonoBehaviour
     private void OnPanelClicked()
     {
         if (!dialoguePanel.activeSelf || waitingForChoice) return;
+        if (_isTyping) { SkipTyping(); return; }
         AdvanceDialogue();
     }
 
@@ -87,6 +95,8 @@ public class DialogueManager : MonoBehaviour
         portraitContainer.SetActive(portraits != null && portraits.Count > 0);
 
         dialoguePanel.SetActive(true);
+        UISoundManager.Instance?.PlayUIBook();
+        GlobalButtonSfxManager.Instance?.RegisterButtons(dialoguePanel.transform);
         if (playerMove != null) playerMove.enabled = false;
         ShowCurrentEntry();
     }
@@ -100,7 +110,8 @@ public class DialogueManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            AdvanceDialogue();
+            if (_isTyping) SkipTyping();
+            else AdvanceDialogue();
         }
     }
 
@@ -138,26 +149,58 @@ public class DialogueManager : MonoBehaviour
 
     void ShowLine(DialogueLine line)
     {
-        dialogueText.text = line.text;
+        ApplyPortrait(line);
 
+        if (_typingCoroutine != null) StopCoroutine(_typingCoroutine);
+        _typingCoroutine = StartCoroutine(TypeText(line.text));
+    }
+
+    void ApplyPortrait(DialogueLine line)
+    {
         if (speakerPortraits != null && speakerPortraits.TryGetValue(line.speaker, out var sprite))
         {
-            // NPC가 말할 때: 이름 표시, 해당 NPC 초상화 활성화
             nameText.text = line.speaker;
             npcPortraitImage.sprite = sprite;
             npcPortraitImage.color = Color.white;
         }
         else if (speakerPortraits != null && speakerPortraits.Count > 0)
         {
-            // 플레이어가 말할 때: 초상화 어둡게
             nameText.text = line.speaker;
             npcPortraitImage.color = new Color(0.5f, 0.5f, 0.5f, 1f);
         }
         else
         {
-            // 초상화 없는 대화
             nameText.text = line.speaker;
         }
+    }
+
+    private System.Collections.IEnumerator TypeText(string text)
+    {
+        _currentLineText = text;
+        _isTyping = true;
+        dialogueText.text = "";
+        int charIndex = 0;
+        foreach (char c in text)
+        {
+            dialogueText.text += c;
+            if (!char.IsWhiteSpace(c))
+            {
+                charIndex++;
+                if (charIndex % 3 == 0)
+                    SoundManager.Instance?.Play2DSFX(npcBlipSfx, 0.7f);
+            }
+            yield return new WaitForSeconds(0.04f);
+        }
+        _isTyping = false;
+        _typingCoroutine = null;
+    }
+
+    private void SkipTyping()
+    {
+        if (_typingCoroutine != null) StopCoroutine(_typingCoroutine);
+        _typingCoroutine = null;
+        dialogueText.text = _currentLineText ?? "";
+        _isTyping = false;
     }
 
     void ShowEntry(DialogueEntry entry)

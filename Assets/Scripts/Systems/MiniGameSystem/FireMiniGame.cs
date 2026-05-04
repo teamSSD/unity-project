@@ -98,8 +98,16 @@ public class FireMiniGame : MiniGameAbstract
 
         if (loopSfx != null)
         {
-            float v = volumeTracksArrow ? arrowValue
-                                        : (Input.GetKey(KeyCode.Space) ? 1f : baseLoopVolume);
+            float v;
+            if (volumeTracksArrow)
+            {
+                float multiplier = arrowValue <= 0.5f ? arrowValue * 2f : 1f + (arrowValue - 0.5f);
+                v = multiplier * baseLoopVolume;
+            }
+            else
+            {
+                v = Input.GetKey(KeyCode.Space) ? 1f : baseLoopVolume;
+            }
             SoundManager.Instance?.SetLoopSFXVolume(v);
         }
     }

@@ -23,16 +23,7 @@ public class CookingSceneManager : MonoBehaviour
         searchRecipeUsecase = RecipeLookupService.Instance;
         loadInventoryUsecase = InventoryManager.Instance;
 
-        if (loadInventoryUsecase == null)
-        {
-            Debug.LogError("[CookingSceneManager] InventoryManager.Instance is null! Skipping initialization.");
-            return;
-        }
-
-        if (searchRecipeUsecase == null)
-        {
-            Debug.LogError("[CookingSceneManager] RecipeLookupService.Instance is null! Some tools might not work.");
-        }
+        if (loadInventoryUsecase == null) return;
 
         cookingTools.ForEach(tool =>
                 tool.GetComponent<CookingToolModel>()
@@ -49,19 +40,14 @@ public class CookingSceneManager : MonoBehaviour
 
     private void FillStorage(BaseStorage storage, IngredientDisplayCategory category, GameObject parent)
     {
-        foreach (var data in loadInventoryUsecase.LoadIngredientsByCategory(category))
+        var items = loadInventoryUsecase.LoadIngredientsByCategory(category);
+        foreach (var data in items)
         {
-            if (storage.IsFull)
-            {
-                Debug.LogWarning($"[CookingSceneManager] {category} 보관소 용량 초과 — {data.Item1.ingredientName} 로드 스킵");
-                break;
-            }
+            if (storage.IsFull) break;
             GameObject ingredientInstance = instantiateFood(parent, data.Item1.ingredientName);
             FoodModel foodModel = settingFoodModel(ingredientInstance, data.Item1, data.Item2);
             if (!storage.AddIngredients(foodModel))
-            {
                 Destroy(ingredientInstance);
-            }
         }
     }
 

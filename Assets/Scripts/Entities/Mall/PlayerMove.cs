@@ -2,13 +2,16 @@
 
 public class PlayerMove : MonoBehaviour
 {
-    public float moveSpeed = 5f; // 이동 속도
-    //public float minX = 3f;     // 맵 왼쪽 경계
-    //public float maxX = 12f;      // 맵 오른쪽 경계
+    public float moveSpeed = 5f;
+
+    [Header("SFX")]
+    [SerializeField] private AudioClip walkSfx;
+    [SerializeField] private float stepInterval = 0.22f;
 
     Rigidbody2D rb;
     SpriteRenderer sr;
     float moveInput;
+    private float _stepTimer;
 
     void Start()
     {
@@ -19,12 +22,26 @@ public class PlayerMove : MonoBehaviour
     void Update()
     {
         // A,D 또는 ←,→ 키 입력(-1(왼쪽), 0, 1(오른쪽))
-        moveInput = Input.GetAxisRaw("Horizontal"); 
+        moveInput = Input.GetAxisRaw("Horizontal");
 
-        if (moveInput < 0) //왼쪽 이동이면 스프라이트 뒤집기
+        if (moveInput < 0)
             sr.flipX = true;
         else if (moveInput > 0)
             sr.flipX = false;
+
+        if (moveInput != 0)
+        {
+            _stepTimer += Time.deltaTime;
+            if (_stepTimer >= stepInterval)
+            {
+                _stepTimer = 0f;
+                SoundManager.Instance?.Play2DSFX(walkSfx);
+            }
+        }
+        else
+        {
+            _stepTimer = stepInterval;
+        }
 
         // X축 Clamp
         //float clampedX = Mathf.Clamp(transform.position.x, minX, maxX);

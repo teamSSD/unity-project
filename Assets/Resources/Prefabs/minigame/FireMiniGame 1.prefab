@@ -52,6 +52,9 @@ MonoBehaviour:
   gaugeBar: {fileID: 5706802652186505064}
   arrowTransform: {fileID: 7603734157991998617}
   stackRenderer: {fileID: 7612486307956065961}
+  loopSfx: {fileID: 8300000, guid: 311ab480ff29c46b58ebb6dfc5ef3d79, type: 3}
+  volumeTracksArrow: 1
+  baseLoopVolume: 0.6
   gaugePosition: {x: -2, y: 0.33, z: 0}
   safeZoneRatio: 0.25
   xOffset: 0.3
@@ -59,9 +62,6 @@ MonoBehaviour:
   coldStartTime: 0.5
   acceleration: 2
   maxVelocity: 1
-  loopSfx: {fileID: 8300000, guid: 311ab480ff29c46b58ebb6dfc5ef3d79, type: 3}
-  volumeTracksArrow: 0
-  baseLoopVolume: 0.6
 --- !u!1 &4158257247090499813
 GameObject:
   m_ObjectHideFlags: 0

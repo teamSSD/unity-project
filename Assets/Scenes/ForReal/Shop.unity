@@ -152,6 +152,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::PlayerMove
   moveSpeed: 6
+  walkSfx: {fileID: 8300000, guid: 53de61b27d72c4864bab03061ea3cb1d, type: 3}
+  stepInterval: 0.35
 --- !u!70 &79143381
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

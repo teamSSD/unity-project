@@ -9,6 +9,9 @@ public class StatsSystem : SingletonMonoBehaviour<StatsSystem>
     public event Action<int> OnMoneyChanged;
     public event Action OnStaminaExhausted;
 
+    [Header("SFX")]
+    [SerializeField] private AudioClip cashDrawerSfx;
+
     private BasicStats basicStats = new BasicStats();
 
     public void Initialize()
@@ -84,6 +87,15 @@ public class StatsSystem : SingletonMonoBehaviour<StatsSystem>
         OnMoneyChanged?.Invoke(basicStats.money);
     }
 
-    public void AddMoney(int value) => SetMoney(basicStats.money + value);
-    public void SubMoney(int value) => SetMoney(basicStats.money - value);
+    public void AddMoney(int value)
+    {
+        SetMoney(basicStats.money + value);
+        SoundManager.Instance?.Play2DSFX(cashDrawerSfx);
+    }
+
+    public void SubMoney(int value)
+    {
+        SetMoney(basicStats.money - value);
+        SoundManager.Instance?.Play2DSFX(cashDrawerSfx);
+    }
 }
