@@ -14,11 +14,8 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     [Header("Recipe Book Root")]
     [SerializeField] public GameObject bookRoot;
 
-    [Header("Diary Page")]
-    [SerializeField] public GameObject diary;
-
-    [Header("Diary Menu Slot")]
-    [SerializeField] public GameObject menuSlot;
+    [Header("Inventory Page")]
+    [SerializeField] public GameObject inventory;
 
     [Header("Menu Page (Main L / Side R)")]
     [SerializeField] public GameObject mainMenu;
@@ -39,19 +36,16 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     private Canvas canvas;
     private MenuCardOverlay cardOverlay;
     private Button closeButton;
-    private DiaryMenuDisplay diaryMenuDisplay;
-    private Transform diaryPageL;
+    private InventoryPageController inventoryPageController;
 
-    // 세션 내 상태 기억
-    private enum Page { Diary, Menu }
-    private Page lastPage = Page.Diary;
+    private enum Page { Inventory, Menu }
+    private Page lastPage = Page.Menu;
 
     protected override void OnSingletonAwake()
     {
         if (transform.parent != null)
             transform.SetParent(null);
 
-        // 래퍼 Canvas 생성 (RecipeBook은 자식으로 원래 크기 1320x870 유지)
         var wrapper = new GameObject("RecipeBookCanvas");
         canvas = wrapper.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -69,8 +63,7 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         if (cardOverlay == null) cardOverlay = gameObject.AddComponent<MenuCardOverlay>();
 
         closeButton = bookRoot.transform.Find("Button_Close")?.GetComponentInChildren<Button>();
-        diaryMenuDisplay = diary.GetComponentInChildren<DiaryMenuDisplay>(true);
-        diaryPageL = diary.transform.Find("Page_L");
+        inventoryPageController = inventory.GetComponentInChildren<InventoryPageController>(true);
 
         isRecipeBookActive = false;
         canvas.enabled = false;
@@ -108,25 +101,22 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         UISoundManager.Instance?.PlayUIBook();
         GlobalButtonSfxManager.Instance?.RegisterButtons(transform);
 
-        canvas.enabled = true;
-        foreach (MenuSlot slot in GetComponentsInChildren<MenuSlot>())
-            slot.InitSlot();
-        UpdateDiaryCheckmarks();
-
-        // 마지막 페이지 복원
         switch (lastPage)
         {
-            case Page.Menu: OpenMenu(); break;
-            default: OpenDiary(); break;
+            case Page.Inventory: OpenInventory(); break;
+            default: OpenMenu(); break;
         }
 
-        // 마지막에 열려있던 카드 복원
+        canvas.enabled = true;
+        Canvas.ForceUpdateCanvases();
+
         if (!string.IsNullOrEmpty(cardOverlay.LastCardFoodId))
             OpenMenuCardL(cardOverlay.LastCardFoodId);
 
         UILockManager.Lock(UILockManager.Owner.RecipeBook);
         isRecipeBookActive = true;
     }
+
     public void CloseRecipeBook()
     {
         if (MenuCardController.Instance != null)
@@ -136,27 +126,27 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         isRecipeBookActive = false;
         UILockManager.Unlock(UILockManager.Owner.RecipeBook);
     }
+
     private void ShowOnlyPage(GameObject page)
     {
-        SetPageContent(diary, page == diary);
+        SetPageContent(inventory, page == inventory);
         SetPageContent(mainMenu, page == mainMenu);
     }
 
-    // Child 0 is the bookmark tab button — always stays visible
     private void SetPageContent(GameObject panel, bool active)
     {
         for (int i = 1; i < panel.transform.childCount; i++)
             panel.transform.GetChild(i).gameObject.SetActive(active);
     }
 
-    public void OpenDiary()
+    public void OpenInventory()
     {
-        lastPage = Page.Diary;
-        ShowOnlyPage(diary);
+        lastPage = Page.Inventory;
+        ShowOnlyPage(inventory);
         CloseMenuCard();
-
-        if (diaryMenuDisplay != null) diaryMenuDisplay.Refresh();
+        inventoryPageController?.Refresh();
     }
+
     public void OpenMenu()
     {
         lastPage = Page.Menu;
@@ -212,6 +202,7 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     {
         cardOverlay.Open(id, bookRoot.transform, menuCard);
     }
+
     public void OpenMenuCardR(string id)
     {
         cardOverlay.Open(id, bookRoot.transform, menuCard);
@@ -222,45 +213,11 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         cardOverlay.Close();
     }
 
-    private static readonly string[] DiaryTimeSections = { "Morning", "Lunch", "Evening", "Night" };
-
-    private void UpdateDiaryCheckmarks()
-    {
-        if (ActionSelectionManager.Instance == null || diary == null) return;
-
-        if (diaryPageL == null) return;
-
-        for (int i = 0; i < DiaryTimeSections.Length; i++)
-        {
-            Transform section = diaryPageL.Find(DiaryTimeSections[i]);
-            if (section == null) continue;
-
-            var actionToggles = section.GetComponentsInChildren<ActionToggle>(true);
-            var saved = ActionSelectionManager.Instance.GetAction(i);
-            int savedType = saved != null && saved.HasSelection() ? (int)saved.SelectedAction : 0;
-
-            foreach (var at in actionToggles)
-            {
-                bool isSelected = savedType != 0 && at.actionType == savedType;
-                if (at.checkmark != null)
-                    at.checkmark.SetActive(isSelected);
-                if (at.toggle != null)
-                    at.toggle.SetIsOnWithoutNotify(isSelected);
-            }
-        }
-    }
-
-    /// <summary>
-    /// 레시피북 열기 (읽기 전용)
-    /// </summary>
     public void Open()
     {
         OpenRecipeBook(true);
     }
 
-    /// <summary>
-    /// 레시피북 닫기
-    /// </summary>
     public void Close()
     {
         CloseRecipeBook();

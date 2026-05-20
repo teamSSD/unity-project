@@ -45,60 +45,65 @@ public class GameStart : MonoBehaviour
 
     private void ProcessContinue()
     {
-        // Phase 1: 구조 초기화 (디스크 I/O 없음)
-        StatsSystem.Instance.Initialize();
-        ProgressSystem.Instance.Initialize();
-        UnlockedFoodManager.Instance?.Initialize();
-        InventoryManager.Instance?.Initialize();
-        RecipeDataManager.Instance?.Initialize();
-        RecipeLookupService.Instance?.Initialize();
-        OrderManager.Instance?.Initialize();
-
-        // Phase 2: 저장 데이터 로드
-        SaveManager.LoadAll();
-
-        // Phase 3: 시드 초기화 (세이브에서 복원 후)
-        var stats = StatsSystem.Instance.GetSaveData();
-        GameRandom.InitSession(stats.immutableSeed, (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-        GameRandom.InitDay(StatsSystem.Instance.GetDay());
-
-        HUDManager.Instance?.Initialize();
         UILockManager.Unlock(UILockManager.Owner.GameStart);
-        SceneLoader.LoadScene(SceneNames.Mall);
+        // 무거운 초기화는 로딩 화면이 가린 상태에서 실행되도록 람다로 전달
+        SceneLoader.LoadSceneWithInit(SceneNames.Mall, () =>
+        {
+            // Phase 1: 구조 초기화 (디스크 I/O 없음)
+            StatsSystem.Instance.Initialize();
+            ProgressSystem.Instance.Initialize();
+            UnlockedFoodManager.Instance?.Initialize();
+            InventoryManager.Instance?.Initialize();
+            RecipeDataManager.Instance?.Initialize();
+            RecipeLookupService.Instance?.Initialize();
+            OrderManager.Instance?.Initialize();
+
+            // Phase 2: 저장 데이터 로드
+            SaveManager.LoadAll();
+
+            // Phase 3: 시드 초기화 (세이브에서 복원 후)
+            var stats = StatsSystem.Instance.GetSaveData();
+            GameRandom.InitSession(stats.immutableSeed, (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            GameRandom.InitDay(StatsSystem.Instance.GetDay());
+
+            HUDManager.Instance?.Initialize();
+        });
     }
     private void NewGame()
     {
-        // Phase 1: 구조 초기화
-        StatsSystem.Instance.Initialize();
-        ProgressSystem.Instance.Initialize();
-        UnlockedFoodManager.Instance?.Initialize();
-        InventoryManager.Instance?.Initialize();
-        RecipeDataManager.Instance?.Initialize();
-        RecipeLookupService.Instance?.Initialize();
-
-        // Phase 2: 새 게임 초기값 설정
-        StatsSystem.Instance.SetTime(5, 0);
-        StatsSystem.Instance.SetMoney(8000);
-        StatsSystem.Instance.SetStamina(100);
-        ProgressSystem.Instance.phaseData.Day = 0;
-        InventoryManager.Instance?.ResetToDefault();
-        UnlockedFoodManager.Instance?.UnlockDefaultRecipes();
-        DeliveryNpcDialogueInteraction.ResetAll();
-        FarmTileStorage.Clear();
-
-        // Phase 3: 시드 초기화
-        int now = (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        StatsSystem.Instance.GetSaveData().immutableSeed = now;
-        GameRandom.InitSession(now, now + 1);
-        GameRandom.InitDay(0);
-
-        // Phase 4: 초기 상태 저장
-        SaveManager.SaveAll();
-
-        HUDManager.Instance?.Initialize();
-        Debug.Log("[GameStart] New Game started");
         UILockManager.Unlock(UILockManager.Owner.GameStart);
-        SceneLoader.LoadScene(SceneNames.Mall);
+        SceneLoader.LoadSceneWithInit(SceneNames.Mall, () =>
+        {
+            // Phase 1: 구조 초기화
+            StatsSystem.Instance.Initialize();
+            ProgressSystem.Instance.Initialize();
+            UnlockedFoodManager.Instance?.Initialize();
+            InventoryManager.Instance?.Initialize();
+            RecipeDataManager.Instance?.Initialize();
+            RecipeLookupService.Instance?.Initialize();
+
+            // Phase 2: 새 게임 초기값 설정
+            StatsSystem.Instance.SetTime(5, 0);
+            StatsSystem.Instance.SetMoney(8000);
+            StatsSystem.Instance.SetStamina(100);
+            ProgressSystem.Instance.phaseData.Day = 0;
+            InventoryManager.Instance?.ResetToDefault();
+            UnlockedFoodManager.Instance?.UnlockDefaultRecipes();
+            DeliveryNpcDialogueInteraction.ResetAll();
+            FarmTileStorage.Clear();
+
+            // Phase 3: 시드 초기화
+            int now = (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            StatsSystem.Instance.GetSaveData().immutableSeed = now;
+            GameRandom.InitSession(now, now + 1);
+            GameRandom.InitDay(0);
+
+            // Phase 4: 초기 상태 저장
+            SaveManager.SaveAll();
+
+            HUDManager.Instance?.Initialize();
+            Debug.Log("[GameStart] New Game started");
+        });
     }
     private void OpenSetting()
     {

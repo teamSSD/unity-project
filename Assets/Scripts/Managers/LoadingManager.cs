@@ -25,15 +25,16 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
     }
 
     /// <summary>
-    /// Additive 씬 전환: 이전 씬 unload + 새 씬 additive load + SetActiveScene
+    /// Additive 씬 전환: fade-in → initAction → 이전 씬 unload → 새 씬 additive load → SetActiveScene → fade-out
+    /// initAction은 화면이 불투명한 상태에서 실행돼야 하는 무거운 동기 초기화(예: SaveManager.LoadAll).
     /// </summary>
-    public void LoadSceneAdditive(string sceneName, string previousScene, System.Action onComplete = null)
+    public void LoadSceneAdditive(string sceneName, string previousScene, System.Action onComplete = null, System.Action initAction = null)
     {
         if (isLoading) return;
-        StartCoroutine(LoadSceneAdditiveCoroutine(sceneName, previousScene, onComplete));
+        StartCoroutine(LoadSceneAdditiveCoroutine(sceneName, previousScene, onComplete, initAction));
     }
 
-    private IEnumerator LoadSceneAdditiveCoroutine(string sceneName, string previousScene, System.Action onComplete = null)
+    private IEnumerator LoadSceneAdditiveCoroutine(string sceneName, string previousScene, System.Action onComplete, System.Action initAction)
     {
         isLoading = true;
         UILockManager.Lock(UILockManager.Owner.Loading);
@@ -50,6 +51,13 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
             yield return null;
         }
         canvasGroup.alpha = 1f;
+
+        // 페이드 인 직후 화면이 완전 가려진 상태에서 무거운 동기 초기화 실행
+        if (initAction != null)
+        {
+            initAction.Invoke();
+            yield return null; // 초기화 직후 한 프레임 양보
+        }
 
         // Unload previous
         if (!string.IsNullOrEmpty(previousScene))
@@ -68,6 +76,10 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
         while (!op.isDone) yield return null;
 
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
+
+        // 씬 활성화 = Awake/Start 일괄 실행 = 한 프레임 스파이크 가능.
+        // 불투명한 동안 한 프레임 흘려보내 스파이크를 흡수.
+        yield return null;
 
         // Fade out
         t = 0f;

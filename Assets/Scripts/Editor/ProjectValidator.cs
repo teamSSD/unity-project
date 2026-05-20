@@ -145,7 +145,7 @@ public class ProjectValidator : EditorWindow
         try
         {
             ValidateSingletons();
-            ValidateActionDatabase();
+
             ValidateScriptableObjects();
             ValidateMonoBehaviours();
             ValidatePrefabs();
@@ -199,57 +199,6 @@ public class ProjectValidator : EditorWindow
         }
     }
 
-    private void ValidateActionDatabase()
-    {
-        var allActionTypes = System.Enum.GetValues(typeof(ActionType)).Cast<ActionType>();
-        int validCount = 0;
-        int missingCount = 0;
-
-        foreach (ActionType actionType in allActionTypes)
-        {
-            if (actionType == ActionType.None) continue;
-
-            if (!ActionDatabase.Exists(actionType))
-            {
-                missingCount++;
-                results.Add(new ValidationResult
-                {
-                    category = "❌ Missing Action in Database",
-                    message = $"ActionType.{actionType} is not defined in ActionDatabase!",
-                    severity = Severity.Error,
-                    actionHint = $"Add ActionType.{actionType} to ActionDatabase._actions dictionary"
-                });
-            }
-            else
-            {
-                // Validate content
-                var info = ActionDatabase.GetInfo(actionType);
-                if (string.IsNullOrEmpty(info.DisplayName))
-                {
-                    results.Add(new ValidationResult
-                    {
-                        category = "⚠️ Incomplete Action Info",
-                        message = $"ActionType.{actionType} has empty DisplayName",
-                        severity = Severity.Warning
-                    });
-                }
-                else
-                {
-                    validCount++;
-                }
-            }
-        }
-
-        if (missingCount == 0 && validCount > 0)
-        {
-            results.Add(new ValidationResult
-            {
-                category = "ActionDatabase Check",
-                message = $"All {validCount} actions are defined in ActionDatabase",
-                severity = Severity.Pass
-            });
-        }
-    }
 
     private void ValidateScriptableObjects()
     {

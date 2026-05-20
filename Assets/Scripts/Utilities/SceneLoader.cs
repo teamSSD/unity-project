@@ -30,15 +30,32 @@ public static class SceneLoader
     /// </summary>
     public static void LoadScene(string sceneName)
     {
+        LoadSceneInternal(sceneName, initAction: null);
+    }
+
+    /// <summary>
+    /// 씬 전환 + 페이드 인이 끝난 뒤(화면 가려진 상태)에 무거운 초기화 실행.
+    /// 게임 시작/세이브 로드처럼 디스크 I/O 동기 호출에 사용.
+    /// </summary>
+    public static void LoadSceneWithInit(string sceneName, System.Action initAction)
+    {
+        LoadSceneInternal(sceneName, initAction);
+    }
+
+    private static void LoadSceneInternal(string sceneName, System.Action initAction)
+    {
         if (LoadingManager.Instance != null)
         {
-            LoadingManager.Instance.LoadSceneAdditive(sceneName, currentGameplayScene, () =>
-            {
-                currentGameplayScene = sceneName;
-            });
+            LoadingManager.Instance.LoadSceneAdditive(
+                sceneName,
+                currentGameplayScene,
+                onComplete: () => currentGameplayScene = sceneName,
+                initAction: initAction);
         }
         else
         {
+            // LoadingManager 없는 fallback: init을 우선 동기 실행 후 직접 로드
+            initAction?.Invoke();
             var runner = GetCoroutineRunner();
             if (runner != null)
                 runner.StartCoroutine(LoadSceneDirectCoroutine(sceneName));

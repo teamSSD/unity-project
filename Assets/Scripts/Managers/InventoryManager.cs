@@ -115,6 +115,12 @@ public class InventoryManager : SingletonMonoBehaviour<InventoryManager>, LoadIn
         return total;
     }
 
+    public List<InventoryBatch> GetBatches(FoodData food)
+    {
+        if (food == null || !inventory.TryGetValue(food, out var batches)) return new List<InventoryBatch>();
+        return new List<InventoryBatch>(batches);
+    }
+
     public List<(FoodData food, IngredientData ingredient)> LoadIngredientsByCategory(IngredientDisplayCategory category)
     {
         return inventory
