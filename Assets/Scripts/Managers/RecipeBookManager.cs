@@ -38,6 +38,13 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     private Button closeButton;
     private InventoryPageController inventoryPageController;
 
+    // 북마크 RT (선택 시 가로 늘림)
+    private RectTransform menuBookmarkRT;
+    private RectTransform inventoryBookmarkRT;
+    private const float BookmarkWidthUnselected = 95f;
+    private const float BookmarkWidthSelected   = 105f;
+    private const float BookmarkHeight          = 45f;
+
     private enum Page { Inventory, Menu }
     private Page lastPage = Page.Menu;
 
@@ -64,6 +71,23 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
 
         closeButton = bookRoot.transform.Find("Button_Close")?.GetComponentInChildren<Button>();
         inventoryPageController = inventory.GetComponentInChildren<InventoryPageController>(true);
+
+        // 북마크는 페이지 밖(Page 직속 형제). 클릭 와이어도 여기서.
+        var page = bookRoot.transform.Find("Page");
+        var menuBM = page?.Find("MainRecipe_BookMark");
+        var invBM  = page?.Find("Inventory_BookMark");
+        if (menuBM != null)
+        {
+            menuBookmarkRT = menuBM.GetComponent<RectTransform>();
+            var btn = menuBM.GetComponent<Button>();
+            if (btn != null) btn.onClick.AddListener(OpenMenu);
+        }
+        if (invBM != null)
+        {
+            inventoryBookmarkRT = invBM.GetComponent<RectTransform>();
+            var btn = invBM.GetComponent<Button>();
+            if (btn != null) btn.onClick.AddListener(OpenInventory);
+        }
 
         isRecipeBookActive = false;
         canvas.enabled = false;
@@ -133,9 +157,22 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         SetPageContent(mainMenu, page == mainMenu);
     }
 
+    private void UpdateBookmarkSelection(Page selected)
+    {
+        if (menuBookmarkRT != null)
+            menuBookmarkRT.sizeDelta = new Vector2(
+                selected == Page.Menu ? BookmarkWidthSelected : BookmarkWidthUnselected,
+                BookmarkHeight);
+        if (inventoryBookmarkRT != null)
+            inventoryBookmarkRT.sizeDelta = new Vector2(
+                selected == Page.Inventory ? BookmarkWidthSelected : BookmarkWidthUnselected,
+                BookmarkHeight);
+    }
+
     private void SetPageContent(GameObject panel, bool active)
     {
-        for (int i = 1; i < panel.transform.childCount; i++)
+        // 북마크가 더 이상 안에 없음 → 모든 자식 토글
+        for (int i = 0; i < panel.transform.childCount; i++)
             panel.transform.GetChild(i).gameObject.SetActive(active);
     }
 
@@ -143,6 +180,7 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     {
         lastPage = Page.Inventory;
         ShowOnlyPage(inventory);
+        UpdateBookmarkSelection(Page.Inventory);
         CloseMenuCard();
         inventoryPageController?.Refresh();
     }
@@ -151,6 +189,7 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     {
         lastPage = Page.Menu;
         ShowOnlyPage(mainMenu);
+        UpdateBookmarkSelection(Page.Menu);
         CloseMenuCard();
         if (UnlockedFoodManager.Instance != null)
         {

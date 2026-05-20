@@ -130,6 +130,36 @@ public class InventoryManager : SingletonMonoBehaviour<InventoryManager>, LoadIn
     }
 
     /// <summary>
+    /// 새 종류가 카테고리 슬롯 한계에 막히는지 검사.
+    /// 이미 보유 중인 종류는 수량 누적이라 항상 true.
+    /// 카테고리 정의가 없으면 통과.
+    /// </summary>
+    public bool CanAcceptType(FoodData food)
+    {
+        if (food == null) return false;
+        if (food.ingredient == null) return true;
+
+        // 이미 1개 이상 보유 중이면 슬롯 추가 소모 없음
+        if (inventory.TryGetValue(food, out var batches) && batches.Count > 0) return true;
+
+        string upgradeType = UpgradeTypeFromCategory(food.ingredient.display);
+        if (string.IsNullOrEmpty(upgradeType)) return true;
+
+        var stg = StorageUpgradeManager.Instance;
+        int max = stg != null ? stg.GetCurrentData(upgradeType)?.value ?? int.MaxValue : int.MaxValue;
+        int unique = LoadIngredientsByCategory(food.ingredient.display).Count;
+        return unique < max;
+    }
+
+    private static string UpgradeTypeFromCategory(IngredientDisplayCategory c) => c switch
+    {
+        IngredientDisplayCategory.UpperShelf   => "upperShelf",
+        IngredientDisplayCategory.LowerShelf   => "lowerShelf",
+        IngredientDisplayCategory.Refrigerator => "refrigerator",
+        _ => null,
+    };
+
+    /// <summary>
     /// 텃밭 수확물을 인벤토리에 추가 (cropId → FoodData 검색 후 AddFood)
     /// </summary>
     public void AddHarvestedCrop(string cropId, int amount)

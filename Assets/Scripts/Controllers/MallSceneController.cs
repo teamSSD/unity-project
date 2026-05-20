@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
@@ -20,6 +21,12 @@ public class MallSceneController : MonoBehaviour
     private void Start()
     {
         Debug.Log("[MallSceneController] Mall scene started");
+
+        // 키보드 nav(Submit/Move)가 player 이동키와 충돌해 무심코 버튼이 selected 되면
+        // Space로 goHomeButton 같은 게 트리거되어 의도치 않은 UI(메뉴 선택)가 뜸.
+        // 마우스 클릭은 그대로 작동하므로 nav만 차단.
+        if (EventSystem.current != null)
+            EventSystem.current.sendNavigationEvents = false;
 
         if (SceneLoader.MallReturnPosition.HasValue)
         {
