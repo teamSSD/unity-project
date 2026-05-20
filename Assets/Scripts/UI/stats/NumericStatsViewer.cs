@@ -1,10 +1,13 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class NumericStatsViewer : MonoBehaviour
 {
-    [SerializeField] private Text moneyText;
-    [SerializeField] private Text staminaText;
+    [SerializeField] private TextMeshProUGUI moneyText;
+    [SerializeField] private TextMeshProUGUI staminaText;
+    [SerializeField] private Image moneyIcon;
+    [SerializeField] private Image staminaIcon;
 
     private bool subscribed;
 
@@ -52,12 +55,12 @@ public class NumericStatsViewer : MonoBehaviour
     private void UpdateMoney(int value)
     {
         if (moneyText != null)
-            moneyText.text = $"G {value:N0}";
+            moneyText.text = $"<b><color=#FFD700>G</color></b> {value:N0}";
     }
 
     private void UpdateStamina(int value)
     {
         if (staminaText != null)
-            staminaText.text = $"STA {value}";
+            staminaText.text = $"{value}/100";
     }
 }
