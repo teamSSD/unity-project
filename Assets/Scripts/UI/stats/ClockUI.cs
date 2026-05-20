@@ -18,6 +18,9 @@ public class ClockUI : MonoBehaviour
 
     void OnEnable()
     {
+        if (StatsSystem.Instance == null)
+            return;
+
         StatsSystem.Instance.OnTimeChanged += SetTargetTime;
         SetTargetTime(StatsSystem.Instance.GetHour(), StatsSystem.Instance.GetMinute());
         currentHourAngle  = targetHourAngle;

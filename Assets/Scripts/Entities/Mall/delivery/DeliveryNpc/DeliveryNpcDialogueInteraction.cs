@@ -10,13 +10,21 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
     private static Dictionary<string, MenuSchema> questMenus;
 
     private string groupId;
+    private string prerequisiteGroupId;
+    private string npcId;
+    private string characterName;
+    private Sprite portrait;
     private bool isPlayerNear;
     private bool isTalking;
     private DialogueManager dialogueManager;
 
-    public void Init(string groupId)
+    public void Init(string groupId, string prerequisiteGroupId = "", string npcId = "", string characterName = "", Sprite portrait = null)
     {
         this.groupId = groupId;
+        this.prerequisiteGroupId = prerequisiteGroupId;
+        this.npcId = npcId;
+        this.characterName = characterName;
+        this.portrait = portrait;
         dialogueConfig = Resources.Load<DeliveryDialogueConfig>(
             $"ScriptableObjects/Dialogue/{groupId}/Config");
         if (!questStages.ContainsKey(groupId))
@@ -38,6 +46,12 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
 
     void StartDialogue()
     {
+        if (!IsQuestUnlocked())
+        {
+            StartCasualDialogue();
+            return;
+        }
+
         var stage = GetCurrentStage();
 
         // Ordering 단계에서 음식이 완성됐으면 → 자동 배달 + OrderEnd 대화로 전환
@@ -72,10 +86,40 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         dialogueManager.StartDialogue(dialogue, portraits);
     }
 
+    void StartCasualDialogue()
+    {
+        if (dialogueManager == null)
+            return;
+
+        var dialogue = CasualDialogueProvider.GetRandomDialogue(npcId);
+        if (dialogue == null)
+            return;
+
+        isTalking = true;
+        InteractPromptUI.Hide();
+
+        Dictionary<string, Sprite> portraits = null;
+        if (portrait != null && !string.IsNullOrEmpty(characterName))
+            portraits = new Dictionary<string, Sprite> { { characterName, portrait } };
+
+        dialogueManager.OnDialogueEnded += OnCasualDialogueEnded;
+        dialogueManager.StartDialogue(dialogue, portraits);
+    }
+
     void OnDialogueEnded(string resultTag)
     {
         dialogueManager.OnDialogueEnded -= OnDialogueEnded;
         AdvanceQuestStage(resultTag);
+
+        if (this != null && gameObject.activeInHierarchy)
+            StartCoroutine(ResetTalkingNextFrame());
+        else
+            isTalking = false;
+    }
+
+    void OnCasualDialogueEnded(string resultTag)
+    {
+        dialogueManager.OnDialogueEnded -= OnCasualDialogueEnded;
 
         if (this != null && gameObject.activeInHierarchy)
             StartCoroutine(ResetTalkingNextFrame());
@@ -108,6 +152,9 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
 
     void AdvanceQuestStage(string resultTag)
     {
+        if (!IsQuestUnlocked())
+            return;
+
         var current = GetCurrentStage();
 
         switch (current)
@@ -144,6 +191,12 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         return questStages.TryGetValue(groupId, out var stage)
             ? stage
             : DeliveryQuestStage.Normal;
+    }
+
+    bool IsQuestUnlocked()
+    {
+        return string.IsNullOrEmpty(prerequisiteGroupId) ||
+            GetQuestStage(prerequisiteGroupId) == DeliveryQuestStage.Completed;
     }
 
     // --- 외부 API: 퀘스트 단계 수동 전환 ---
@@ -220,6 +273,7 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         if (csv == null) return;
 
         var lines = csv.text.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);
+        // CSV 헤더: GroupId, MenuName, MainMenuId, MainMenu2Id, SideMenu1Id, SideMenu2Id, SideMenu3Id
         for (int i = 1; i < lines.Length; i++)
         {
             var t = lines[i].Split(',');
@@ -227,18 +281,24 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
 
             string gId = t[0].Trim();
             string menuName = t[1].Trim();
-            FoodData main = t.Length > 2 && !string.IsNullOrEmpty(t[2].Trim())
-                ? SearchDataUtil.GetFoodDataById(t[2].Trim()) : null;
+
+            var mains = new List<FoodData>();
+            for (int j = 2; j <= 3 && j < t.Length; j++)
+            {
+                string id = t[j].Trim();
+                if (!string.IsNullOrEmpty(id))
+                    mains.Add(SearchDataUtil.GetFoodDataById(id));
+            }
 
             var sides = new List<FoodData>();
-            for (int j = 3; j < Mathf.Min(t.Length, 6); j++)
+            for (int j = 4; j < Mathf.Min(t.Length, 7); j++)
             {
                 string id = t[j].Trim();
                 if (!string.IsNullOrEmpty(id))
                     sides.Add(SearchDataUtil.GetFoodDataById(id));
             }
 
-            questMenus[gId] = new MenuSchema(menuName, -1, main, sides);
+            questMenus[gId] = new MenuSchema(menuName, -1, mains, sides);
         }
     }
 

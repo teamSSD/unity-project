@@ -18,6 +18,9 @@ public class LinearGauge : MonoBehaviour
 
     void OnEnable()
     {
+        if (StatsSystem.Instance == null)
+            return;
+
         StatsSystem.Instance.OnStaminaChanged += UpdateGauge;
         UpdateGauge(StatsSystem.Instance.GetStamina());
     }
@@ -30,7 +33,11 @@ public class LinearGauge : MonoBehaviour
 
     private void UpdateGauge(int currentValue)
     {
-        if (fillImage == null) Debug.LogWarning("Gauge Image Unset");
+        if (fillImage == null)
+        {
+            Debug.LogWarning("Gauge Image Unset");
+            return;
+        }
 
         if (currentValue > 40)
         {

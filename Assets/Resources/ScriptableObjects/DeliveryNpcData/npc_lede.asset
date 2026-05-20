@@ -18,3 +18,4 @@ MonoBehaviour:
   position: {x: 27, y: -5.9}
   state: 0
   groupId: lede_solo
+  prerequisiteGroupId: seraph_solo

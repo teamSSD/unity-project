@@ -3,10 +3,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// 개별 메뉴 항목(음식)을 나타내는 UI 스크립트.
-/// 음식 이미지, 이름, 조리 도구 아이콘 및 선택 상태(체크박스)를 관리합니다.
-/// </summary>
 public class MenuSelectionItem : MonoBehaviour
 {
     [Header("UI Components")]
@@ -73,7 +69,6 @@ public class MenuSelectionItem : MonoBehaviour
             }
         }
 
-        // 초기 체크박스 상태는 꺼짐
         SetSelection(false);
     }
 

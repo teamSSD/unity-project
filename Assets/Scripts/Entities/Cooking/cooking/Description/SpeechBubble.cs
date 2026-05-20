@@ -1,14 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class SpeechBubble : MonoBehaviour
 {
-    [SerializeField] private TextMeshPro contents;
+    [SerializeField] private TextMeshProUGUI contents;
+    [SerializeField] private RectTransform tail;
 
-    public void setContents(string contents)
+    public void setContents(string text)
     {
-        this.contents.text = contents;
+        contents.text = text;
+    }
+
+    public void PlaceNear(Bounds targetBounds)
+    {
+        Camera cam = Camera.main;
+
+        RectTransform rt = GetComponent<RectTransform>();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
+
+        Vector2 worldSize = new Vector2(
+            rt.rect.width * rt.lossyScale.x,
+            rt.rect.height * rt.lossyScale.y
+        );
+
+        bool placeRight = cam.WorldToViewportPoint(targetBounds.center).x < 0.5f;
+
+        tail.localScale = new Vector3(placeRight ? 1f : -1f, 1f, 1f);
+
+        float tailX = placeRight ? -rt.rect.width * 0.40f : rt.rect.width * 0.40f;
+        float tailY = -rt.rect.height * 0.5f - tail.rect.height * 0.5f + 52f;
+        tail.anchoredPosition = new Vector2(tailX, tailY);
+
+        transform.position = WorldUIPositioner.Calculate(cam, targetBounds, worldSize);
     }
 }

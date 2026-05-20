@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c1edf5f463144e8899df60084af9d8e, type: 3}
+  m_Name: Config
+  m_EditorClassIdentifier: Game.Runtime::DeliveryDialogueConfig
+  firstMeet: {fileID: 11400000, guid: deb1ceb582f6e493998c2c7230b50aaf, type: 2}
+  normal: {fileID: 11400000, guid: d50557833363845009df39422b6f5930, type: 2}
+  questStart: {fileID: 11400000, guid: eccac6bda76ec4acd8411486993f93fe, type: 2}
+  ordering: {fileID: 11400000, guid: e72b60db2d6014bc98b1b3ed069c24c7, type: 2}
+  orderEnd: {fileID: 11400000, guid: e0e06783763a24485bc16fc569db12fd, type: 2}

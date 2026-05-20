@@ -148,9 +148,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5910a6b2697b40c3894f8476c50e0aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::UISoundManager
-  uiBookSfx: {fileID: 8300000, guid: d69ef296295da44cbbdfda58fc9d737b, type: 3}
-  buttonClickSfx: {fileID: 8300000, guid: 106fc2d7777444390ba727c44c627804, type: 3}
-  npcBlipSfx: {fileID: 8300000, guid: 31d1f57fdea9543c3936e613ecc34c47, type: 3}
+  uiBookSfx: {fileID: 8300000, guid: 31d1f57fdea9543c3936e613ecc34c47, type: 3}
+  buttonClickSfx: {fileID: 8300000, guid: d69ef296295da44cbbdfda58fc9d737b, type: 3}
 --- !u!4 &283219274
 Transform:
   m_ObjectHideFlags: 0

@@ -7,6 +7,7 @@ public class DeliveryNpcView : MonoBehaviour
     [SerializeField] private GameObject speechBubblePrefab;
     private string groupId;
     private string characterName;
+    private string prerequisiteGroupId;
 
     public string NpcId => npcId;
     public string GroupId => groupId;
@@ -25,6 +26,7 @@ public class DeliveryNpcView : MonoBehaviour
         npcId = data.id;
         groupId = data.groupId;
         characterName = data.characterName;
+        prerequisiteGroupId = data.prerequisiteGroupId;
 
         ApplyState(stateOverride ?? data.state);
     }
@@ -47,7 +49,7 @@ public class DeliveryNpcView : MonoBehaviour
                 if (!string.IsNullOrEmpty(groupId))
                 {
                     var dialogue = gameObject.AddComponent<DeliveryNpcDialogueInteraction>();
-                    dialogue.Init(groupId);
+                    dialogue.Init(groupId, prerequisiteGroupId, npcId, characterName, spriteRenderer.sprite);
                 }
                 else
                 {

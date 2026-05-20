@@ -82,17 +82,12 @@ public class OrderTicketModel : MonoBehaviour
         var foods = bento.getFoodList();
         if (foods.Count == 0) return false;
 
-        // 메인 확인
-        if (menuSchema.mainMenu == null || foods[0].foodData.id != menuSchema.mainMenu.id)
-            return false;
+        var expected = menuSchema.mainMenus.Select(m => m.id)
+            .Concat(menuSchema.sideMenus.Select(s => s.id))
+            .OrderBy(x => x).ToList();
+        var actual = foods.Select(f => f.foodData.id).OrderBy(x => x).ToList();
 
-        // 사이드 확인: 정확히 같은 구성이어야 함
-        var expectedSides = menuSchema.sideMenus
-            .Select(s => s.id).OrderBy(x => x).ToList();
-        var actualSides = foods.Skip(1)
-            .Select(f => f.foodData.id).OrderBy(x => x).ToList();
-
-        return expectedSides.SequenceEqual(actualSides);
+        return expected.SequenceEqual(actual);
     }
 
     private IEnumerator waitAndTake(float time, BentoModel bento) // buy에서 수정

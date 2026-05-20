@@ -16,6 +16,9 @@ public class SmoothMoneyText : MonoBehaviour
 
     void OnEnable()
     {
+        if (StatsSystem.Instance == null)
+            return;
+
         StatsSystem.Instance.OnMoneyChanged += SetTargetValue;
         int currentMoney = StatsSystem.Instance.GetMoney();
         SetTargetValue(currentMoney);

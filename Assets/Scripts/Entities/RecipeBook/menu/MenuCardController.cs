@@ -25,21 +25,12 @@ public class MenuCardController : MonoBehaviour
     private Transform recipeContainer;
     private Transform ingredientContainer;
 
-    private static readonly Color EnableButton = new Color(222f / 255f, 215f / 255f, 207f / 255f, 1f); // #DED7CF
-    private static readonly Color EnableText = new Color(0.286f, 0.259f, 0.259f, 1f);
-    private static readonly Color DisableButton = new Color(139f / 255f, 125f / 255f, 109f / 255f, 1f); // #8B7D6D
-    private static readonly Color DisableText = new Color(0.388f, 0.353f, 0.333f, 1f);
+    private static readonly Color EnableButton = new Color(243f / 255f, 222f / 255f, 208f / 255f, 1f); // #F3DED0
+    private static readonly Color EnableText = new Color(88f / 255f, 60f / 255f, 40f / 255f, 1f); // #583C28
+    private static readonly Color DisableButton = new Color(218f / 255f, 175f / 255f, 144f / 255f, 1f); // #DAAF90
+    private static readonly Color DisableText = new Color(98f / 255f, 70f / 255f, 52f / 255f, 1f); // #624634
 
-
-    private static readonly Dictionary<string, string> MinigameLabels = new()
-    {
-        { "M001", "Grill" },
-        { "M002", "Boil" },
-        { "M004", "Mix" },
-        { "M005", "Sauce" },
-        { "M006", "Slice" },
-        { "M007", "Roast" },
-    };
+    private const float RecipeDesiredSpacing = 10f;
 
     private GameObject recipeLineTemplate;
     private GameObject itemTemplate;
@@ -228,7 +219,7 @@ public class MenuCardController : MonoBehaviour
         // === Input 섹션 ===
         Transform inputContainer = line.Find("Input");
         if (inputContainer != null)
-            PopulateInputSection(inputContainer, recipe);
+            PopulateInputSection(inputContainer, recipe, toolData);
 
         // === Minigame 섹션 ===
         Transform minigame = line.Find("Minigame");
@@ -239,26 +230,21 @@ public class MenuCardController : MonoBehaviour
             if (minigameBg != null)
                 minigameBg.enabled = false;
 
-            // 조리법 라벨 (영어, Bold, 24pt)
+            // 조리법 라벨은 도구 아이콘으로 대체하고, 구분자만 남긴다.
             TextMeshProUGUI label = minigame.Find("Text (TMP)")?.GetComponent<TextMeshProUGUI>();
-            if (label != null)
-            {
-                label.text = GetMinigameLabel(recipe.minigameId);
-                label.fontSize = 24;
-                label.fontStyle = FontStyles.Bold;
-            }
+            if (label != null) label.gameObject.SetActive(false);
 
-            // 화살표 (글씨 위에 배치, 색상 글씨와 동일)
             Transform arrow = minigame.Find("Arrow");
             if (arrow != null)
             {
-                arrow.SetAsFirstSibling();
+                arrow.gameObject.SetActive(true);
                 TextMeshProUGUI arrowText = arrow.GetComponent<TextMeshProUGUI>();
                 if (arrowText != null)
                 {
-                    arrowText.text = "\u2192";
-                    arrowText.fontSize = 24;
-                    if (label != null) arrowText.color = label.color;
+                    arrowText.text = ">";
+                    arrowText.fontSize = 28;
+                    arrowText.fontStyle = FontStyles.Bold;
+                    arrowText.alignment = TextAlignmentOptions.Center;
                 }
             }
         }
@@ -272,11 +258,12 @@ public class MenuCardController : MonoBehaviour
         }
     }
 
-    private void PopulateInputSection(Transform inputContainer, RecipeData recipe)
+    private void PopulateInputSection(Transform inputContainer, RecipeData recipe, CookingToolData toolData)
     {
         // 기존 아이템 수와 필요한 수 비교
         int existingCount = inputContainer.childCount;
-        int neededCount = recipe.inputs.Count;
+        int ingredientCount = recipe.inputs.Count;
+        int neededCount = ingredientCount + (toolData != null ? 1 : 0);
 
         // 부족하면 첫 번째 자식을 복제
         if (existingCount > 0)
@@ -294,11 +281,18 @@ public class MenuCardController : MonoBehaviour
             inputContainer.GetChild(i).gameObject.SetActive(false);
 
         // 각 입력 재료 설정
-        for (int i = 0; i < neededCount; i++)
+        for (int i = 0; i < ingredientCount; i++)
         {
             Transform item = inputContainer.GetChild(i);
             item.gameObject.SetActive(true);
             PopulateInputItem(item, recipe.inputs[i].food);
+        }
+
+        if (toolData != null)
+        {
+            Transform toolItem = inputContainer.GetChild(ingredientCount);
+            toolItem.gameObject.SetActive(true);
+            PopulateToolItem(toolItem, toolData);
         }
 
         // 동적 간격 조절 (할당된 공간에 맞춰서 줄이기)
@@ -324,13 +318,9 @@ public class MenuCardController : MonoBehaviour
             LayoutRebuilder.ForceRebuildLayoutImmediate(container);
         }
 
-        // 가용 너비 계산: 부모 너비에서 Minigame 및 Result 섹션이 차지할 최소 공간을 제외
-        float availableWidth = 250f; // 기본 안전값
-        if (parentRT != null && parentRT.rect.width > 0)
-        {
-            // 카드 전체 너비에서 Minigame 영역(약 120px) + Result 영역(70px) + 여유를 고려하여 약 200px 차감
-            availableWidth = Mathf.Max(100f, parentRT.rect.width - 200f);
-        }
+        float availableWidth = container.rect.width;
+        if (availableWidth <= 0)
+            availableWidth = EstimateInputWidthFromRecipeLine(container, parentRT);
 
         int activeCount = 0;
         float itemWidth = 0;
@@ -343,7 +333,6 @@ public class MenuCardController : MonoBehaviour
                 if (itemWidth == 0)
                 {
                     var rt = child.GetComponent<RectTransform>();
-                    // 프리팹에서는 너비가 0일 수 있으므로 기본값 70을 대비책으로 사용
                     itemWidth = (rt != null && rt.rect.width > 0) ? rt.rect.width : 70f;
                 }
             }
@@ -358,8 +347,12 @@ public class MenuCardController : MonoBehaviour
 
         float totalChildWidth = activeCount * itemWidth;
 
-        // 실제 가용 너비를 초과할 때만 겹치도록 설정
-        if (totalChildWidth > availableWidth)
+        // 기본은 겹치지 않고, 부족할 때만 Input 영역 안에서 겹친다.
+        if (totalChildWidth + RecipeDesiredSpacing * (activeCount - 1) <= availableWidth)
+        {
+            layoutGroup.spacing = RecipeDesiredSpacing;
+        }
+        else if (totalChildWidth > availableWidth)
         {
             // (가용 너비 - 아이템 총합) / (간격 개수)
             float neededSpacing = (availableWidth - totalChildWidth) / (activeCount - 1);
@@ -370,6 +363,41 @@ public class MenuCardController : MonoBehaviour
         {
             layoutGroup.spacing = 0;
         }
+    }
+
+    private float EstimateInputWidthFromRecipeLine(RectTransform inputContainer, RectTransform recipeLine)
+    {
+        const float fallbackInputWidth = 520f;
+        if (recipeLine == null || recipeLine.rect.width <= 0)
+            return fallbackInputWidth;
+
+        float reservedWidth = 0f;
+        int activeSiblingCount = 0;
+        var lineLayout = recipeLine.GetComponent<HorizontalLayoutGroup>();
+
+        foreach (Transform sibling in recipeLine)
+        {
+            if (!sibling.gameObject.activeSelf)
+                continue;
+
+            activeSiblingCount++;
+            if (sibling == inputContainer.transform)
+                continue;
+
+            float width = 0f;
+            var layout = sibling.GetComponent<LayoutElement>();
+            if (layout != null && layout.preferredWidth > 0)
+                width = layout.preferredWidth;
+            else if (sibling is RectTransform siblingRect && siblingRect.rect.width > 0)
+                width = siblingRect.rect.width;
+
+            reservedWidth += width;
+        }
+
+        if (lineLayout != null && activeSiblingCount > 1)
+            reservedWidth += lineLayout.spacing * (activeSiblingCount - 1);
+
+        return Mathf.Max(120f, recipeLine.rect.width - reservedWidth);
     }
 
     private void PopulateInputItem(Transform item, FoodData food)
@@ -413,6 +441,23 @@ public class MenuCardController : MonoBehaviour
         }
     }
 
+    private void PopulateToolItem(Transform item, CookingToolData toolData)
+    {
+        Image toolImage = item.Find("Tool")?.GetComponent<Image>();
+        Image ingredientImage = item.Find("Ingredient")?.GetComponent<Image>();
+
+        if (toolImage != null)
+        {
+            toolImage.gameObject.SetActive(false);
+        }
+
+        if (ingredientImage != null)
+        {
+            ingredientImage.gameObject.SetActive(true);
+            ingredientImage.sprite = toolData.defaultImage;
+        }
+    }
+
     private void PopulateResultItem(Transform item, FoodData food, string toolId, CookingToolData toolData)
     {
         Image toolImage = item.Find("Tool")?.GetComponent<Image>();
@@ -429,11 +474,6 @@ public class MenuCardController : MonoBehaviour
         ingredientImage.sprite = !string.IsNullOrEmpty(toolId)
             ? food.GetImageForTool(toolId)
             : food.image;
-    }
-
-    private string GetMinigameLabel(string minigameId)
-    {
-        return MinigameLabels.TryGetValue(minigameId, out string label) ? label : "조리";
     }
 
     public void OpenRecipe()

@@ -43,7 +43,6 @@ public class MenuCardOverlay : MonoBehaviour
         cardRect.anchorMax = new Vector2(0.5f, 0.5f);
         cardRect.pivot = new Vector2(0.5f, 0.5f);
         cardRect.anchoredPosition = Vector2.zero;
-        cardRect.sizeDelta = new Vector2(500, 850);
 
         cardGO.GetComponent<MenuCardController>().InitSlot(foodId);
         CreateCloseButton(overlay.transform, cardRect);

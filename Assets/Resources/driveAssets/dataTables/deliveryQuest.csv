@@ -1,7 +1,7 @@
-GroupId,MenuName,MainMenuId,SideMenu1Id,SideMenu2Id,SideMenu3Id
-power_room_pair,전력실 도시락,I060,I046,I058,
-sranya_solo,새벽국 도시락,I034,I056,,
-pajama_solo,구룡면 도시락,I039,,,
-moai_solo,스테이크 도시락,I049,,,
-nimo_solo,삼각밥 도시락,I053,,,
-lede_solo,고기정식 도시락,I044,I046,,
+GroupId,MenuName,MainMenuId,MainMenu2Id,SideMenu1Id,SideMenu2Id,SideMenu3Id
+power_room_pair,전력실 도시락,I044,,I058,,
+night_market,야시장 도시락,I039,I049,,,
+nimo_solo,새벽국 도시락,I034,,,,
+seraph_solo,네온 샐러드,I060,,I056,,
+lede_solo,삼각밥 도시락,I053,,,,
+gabriel_solo,기계장 고기정식,I044,,,,

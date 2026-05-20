@@ -187,7 +187,7 @@ public class FoodModel : MonoBehaviour
                 SchemaInstance.foodData.description
             );
 
-            tooltipController.PositionTooltip(new Vector3(2, 1.5f, 0));
+            tooltipController.RequestPositionNear(GetComponent<SpriteRenderer>().bounds, forceRight: true);
         }
     }
 

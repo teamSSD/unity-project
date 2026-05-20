@@ -11,15 +11,19 @@ public class Receipt : MonoBehaviour
     
     public void Set(MenuSchema menuSchema, bool isDelivery = false)
     {
-        GameObject main = Instantiate(linePrefab, transform);
-        main.GetComponent<ReceiptLine>().Set(menuSchema.mainMenu.ingredientName, 1);
-        main.transform.localPosition = std;
+        int lineIndex = 0;
+        foreach (var m in menuSchema.mainMenus)
+        {
+            GameObject main = Instantiate(linePrefab, transform);
+            main.GetComponent<ReceiptLine>().Set(m.ingredientName, 1);
+            main.transform.localPosition = std + off * lineIndex++;
+        }
 
         for (int i = 0; i < menuSchema.sideMenus.Count; i++)
         {
             GameObject side = Instantiate(linePrefab, transform);
             side.GetComponent<ReceiptLine>().Set(menuSchema.sideMenus[i].ingredientName, 1);
-            side.transform.localPosition = std + off * (i+1);
+            side.transform.localPosition = std + off * lineIndex++;
         }
 
         orderNumber.text = isDelivery

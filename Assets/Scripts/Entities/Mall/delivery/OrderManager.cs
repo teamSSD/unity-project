@@ -115,9 +115,10 @@ public class OrderManager : SingletonMonoBehaviour<OrderManager>,
         // 퀘스트 수주 시 해당 레시피 해금
         if (UnlockedFoodManager.Instance != null)
         {
-            if (menu.mainMenu != null)
+            foreach (var main in menu.mainMenus)
             {
-                UnlockedFoodManager.Instance.UnlockRecipe(menu.mainMenu.id);
+                if (main != null)
+                    UnlockedFoodManager.Instance.UnlockRecipe(main.id);
             }
 
             if (menu.sideMenus != null)

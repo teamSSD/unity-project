@@ -18,3 +18,4 @@ MonoBehaviour:
   position: {x: -21.2, y: 5.4}
   state: 0
   groupId: nimo_solo
+  prerequisiteGroupId: night_market

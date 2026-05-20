@@ -89,10 +89,9 @@ public class OrderingCustomer : MonoBehaviour
     private void say(string message)
     {
         speechBubble = Instantiate(speechBubblePrefab);
-
         speechBubbleScript = speechBubble.GetComponent<SpeechBubble>();
         speechBubbleScript.setContents(message);
-        speechBubble.transform.position = this.transform.position + new Vector3(-2.5f, 4, 0);
+        speechBubbleScript.PlaceNear(GetComponent<SpriteRenderer>().bounds);
     }
 
     public void DestroyObject()

@@ -79,17 +79,12 @@ public class CookingToolModel : MonoBehaviour
                 .ToList();
 
             cookingToolDescriptionScript.setIngredients(ingredientNames);
-
-            // Position tooltip based on screen location (adaptive left/right)
-            Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, transform.position);
-            float offsetX = screenPos.x < Screen.width * 0.5f ? 3f : -3f;
-
-            tooltipController.PositionTooltip(new Vector3(offsetX, 1.5f, 0));
+            tooltipController.RequestPositionNear(GetComponent<SpriteRenderer>().bounds);
         }
         else
         {
-            // Show result
             cookingToolDescriptionScript.setResult(SchemaInstance.GetResult().foodData.ingredientName);
+            tooltipController.RequestPositionNear(GetComponent<SpriteRenderer>().bounds);
         }
     }
 

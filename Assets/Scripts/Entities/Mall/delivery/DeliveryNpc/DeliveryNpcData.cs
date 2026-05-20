@@ -8,6 +8,7 @@ public class DeliveryNpcData : ScriptableObject, CsvParsable
     public Vector2 position;
     public DeliveryNpcState state;
     public string groupId;
+    public string prerequisiteGroupId;
 
     public void Init(string[] args)
     {

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e01c5fde229bc46c9af25c4e9958cba9, type: 3}
+  m_Name: npc_seraph
+  m_EditorClassIdentifier: Game.Runtime::DeliveryNpcData
+  id: npc_seraph
+  characterName: "\uC138\uB77C\uD504"
+  sprite: {fileID: 0}
+  position: {x: 5, y: -7.2}
+  state: 0
+  groupId: seraph_solo
+  prerequisiteGroupId: nimo_solo

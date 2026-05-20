@@ -70,12 +70,11 @@ public class TakingCustomer : MonoBehaviour
     private void say(string message)
     {
         GameObject speechBubble = Instantiate(speechBubblePrefab);
-        speechBubble.transform.parent = this.gameObject.transform;
-
         SpeechBubble speechBubbleScript = speechBubble.GetComponent<SpeechBubble>();
         speechBubbleScript.setContents(message);
-        speechBubble.transform.position = this.transform.position + new Vector3(-3f, 4, 0);
-        
+        speechBubbleScript.PlaceNear(GetComponent<SpriteRenderer>().bounds);
+        Destroy(speechBubble, 3f);
+
         SoundManager.Instance.Play2DSFX(takeSoundEffect, 0.3f);
     }
 }
