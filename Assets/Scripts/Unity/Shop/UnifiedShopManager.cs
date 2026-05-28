@@ -343,7 +343,7 @@ public class UnifiedShopManager : MonoBehaviour
 
     private void PopulateFarmList()
     {
-        var mgr = FarmUpgradeManager.Instance;
+        var mgr = GameSessionRoot.Instance?.FarmUpgrade;
         if (mgr == null) return;
         foreach (var type in mgr.GetAllTypes())
         {
@@ -362,7 +362,7 @@ public class UnifiedShopManager : MonoBehaviour
 
     private void ShowFarmDetail(string type)
     {
-        var mgr = FarmUpgradeManager.Instance;
+        var mgr = GameSessionRoot.Instance?.FarmUpgrade;
         if (mgr == null) return;
         var cur = mgr.GetCurrentData(type);
         bool isMax = mgr.IsMax(type);

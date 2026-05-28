@@ -20,7 +20,7 @@ public class Farm : MonoBehaviour
     private TimePhaseProvider phaseProvider;
 
     private bool playerIn = false;
-    public bool IsLocked => farmIndex >= (int)(FarmUpgradeManager.Instance?.GetCurrentData("tile")?.value ?? 3);
+    public bool IsLocked => farmIndex >= (int)(GameSessionRoot.Instance?.FarmUpgrade?.GetCurrentData("tile")?.value ?? 3);
 
     private void Start()
     {
@@ -43,7 +43,7 @@ public class Farm : MonoBehaviour
         // 빈 타일이면 자동 심기
         if (!IsLocked && tile.IsEmpty())
         {
-            CropData randomCrop = CropDataManager.Instance.GetRandomCropByWeight();
+            CropData randomCrop = GameSessionRoot.Instance.CropCatalog.GetRandomCropByWeight();
             if (randomCrop != null)
             {
                 cropData = randomCrop;
@@ -77,14 +77,14 @@ public class Farm : MonoBehaviour
             }
             else if (tile.IsHarvestable())
             {
-                int harvestCount = (int)(FarmUpgradeManager.Instance?.GetCurrentData("harvestCount")?.value ?? 5);
+                int harvestCount = (int)(GameSessionRoot.Instance?.FarmUpgrade?.GetCurrentData("harvestCount")?.value ?? 5);
                 if (tile.Harvest(out string id, out int crops, harvestCount))
                 {
                     Debug.Log($"[Farm] Harvested! [{id}] x{crops}");
                     InventoryManager.Instance?.AddHarvestedCrop(id, crops);
 
                     // 수확 후 자동 심기
-                    CropData nextCrop = CropDataManager.Instance.GetRandomCropByWeight();
+                    CropData nextCrop = GameSessionRoot.Instance.CropCatalog.GetRandomCropByWeight();
                     if (nextCrop != null)
                     {
                         cropData = nextCrop;

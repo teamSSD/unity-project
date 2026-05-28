@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -13,6 +14,17 @@ public class GameSaveData
     public StorageUpgradeSaveData storageUpgrades = new();
     public FarmUpgradeSaveData farmUpgrades = new();
     public FarmTilesSaveData farmTiles = new();
+}
+
+/// <summary>
+/// 농장 업그레이드 디스크 직렬화 형식. GameSaveData.farmUpgrades 슬롯에 그대로 보존
+/// (디스크 호환성 유지를 위해 기존 shape 유지). GardenPersistent와 SaveManager에서 변환.
+/// </summary>
+[System.Serializable]
+public class FarmUpgradeSaveData
+{
+    public List<string> types  = new();
+    public List<int>    levels = new();
 }
 
 /// <summary>
@@ -64,8 +76,16 @@ public static class SaveManager
             save.toolUpgrades = ToolUpgradeManager.Instance.GetSaveData();
         if (StorageUpgradeManager.Instance != null)
             save.storageUpgrades = StorageUpgradeManager.Instance.GetSaveData();
-        if (FarmUpgradeManager.Instance != null)
-            save.farmUpgrades = FarmUpgradeManager.Instance.GetSaveData();
+
+        if (GameSessionRoot.Instance != null)
+        {
+            var gp = GameSessionRoot.Instance.State.garden.persistent;
+            save.farmUpgrades = new FarmUpgradeSaveData
+            {
+                types  = new List<string>(gp.upgradeTypes),
+                levels = new List<int>(gp.upgradeLevels)
+            };
+        }
 
         save.farmTiles = FarmTileStorage.GetSaveData();
 
@@ -101,7 +121,25 @@ public static class SaveManager
 
         ToolUpgradeManager.Instance?.ApplySaveData(save.toolUpgrades);
         StorageUpgradeManager.Instance?.ApplySaveData(save.storageUpgrades);
-        FarmUpgradeManager.Instance?.ApplySaveData(save.farmUpgrades);
+
+        if (GameSessionRoot.Instance != null && save.farmUpgrades != null)
+        {
+            // 서비스 초기화 시 채워진 타입 목록을 유지하며 saved level만 덮어쓰기.
+            var gp = GameSessionRoot.Instance.State.garden.persistent;
+            for (int i = 0; i < save.farmUpgrades.types.Count; i++)
+            {
+                string type = save.farmUpgrades.types[i];
+                int level = save.farmUpgrades.levels[i];
+                int idx = gp.upgradeTypes.IndexOf(type);
+                if (idx >= 0) gp.upgradeLevels[idx] = level;
+                else
+                {
+                    gp.upgradeTypes.Add(type);
+                    gp.upgradeLevels.Add(level);
+                }
+            }
+        }
+
         FarmTileStorage.ApplySaveData(save.farmTiles);
 
         // Phase 2: PhaseData에서 piggyback 데이터 로드

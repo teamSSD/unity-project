@@ -6,7 +6,11 @@ using UnityEngine;
 /// Managers 씬에 배치된 GameObject에 부착, 인스펙터에서 각 catalog 에셋 드래그 등록.
 /// Resources.Load/LoadAll을 대체하는 cross-cutting 인프라.
 /// 사용: CatalogProvider.Food.GetById("I001") / CatalogProvider.Food.All / CatalogProvider.Prefabs.recipeBook
+///
+/// DefaultExecutionOrder(-1000): 같은 씬의 다른 SingletonMonoBehaviour보다 먼저 Awake되어
+/// 그들의 Awake에서 CatalogProvider.X 접근이 안전하도록 보장 (GameSessionRoot 등).
 /// </summary>
+[DefaultExecutionOrder(-1000)]
 public class CatalogProvider : SingletonMonoBehaviour<CatalogProvider>
 {
     [Header("Cooking Domain")]

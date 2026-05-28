@@ -154,7 +154,7 @@ public class ShopDetailPanel : MonoBehaviour
         {
             UpgradeKind.Tool    => ToolUpgradeManager.Instance?.TryUpgrade(upgradeId)    ?? false,
             UpgradeKind.Storage => StorageUpgradeManager.Instance?.TryUpgrade(upgradeId) ?? false,
-            UpgradeKind.Farm    => FarmUpgradeManager.Instance?.TryUpgrade(upgradeId)    ?? false,
+            UpgradeKind.Farm    => GameSessionRoot.Instance?.FarmUpgrade?.TryUpgrade(upgradeId)    ?? false,
             _                   => false,
         };
         if (success) UnifiedShopManager.Instance?.NotifyUpgradeApplied();
