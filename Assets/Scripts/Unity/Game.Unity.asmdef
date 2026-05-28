@@ -4,7 +4,8 @@
     "references": [
         "Game.Schema",
         "Game.Domain",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
