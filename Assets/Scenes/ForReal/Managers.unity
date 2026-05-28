@@ -119,96 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &283219272
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 283219274}
-  - component: {fileID: 283219273}
-  m_Layer: 0
-  m_Name: UISoundManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &283219273
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 283219272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5910a6b2697b40c3894f8476c50e0aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.Runtime::UISoundManager
-  uiBookSfx: {fileID: 8300000, guid: 31d1f57fdea9543c3936e613ecc34c47, type: 3}
-  buttonClickSfx: {fileID: 8300000, guid: d69ef296295da44cbbdfda58fc9d737b, type: 3}
---- !u!4 &283219274
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 283219272}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1038998006
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1038998008}
-  - component: {fileID: 1038998007}
-  m_Layer: 0
-  m_Name: GlobalButtonSfxManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1038998007
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1038998006}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2659872b241e54d68b526c5ff61f0a1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.Runtime::GlobalButtonSfxManager
---- !u!4 &1038998008
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1038998006}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1503211004
 GameObject:
   m_ObjectHideFlags: 0
@@ -297,6 +207,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::SoundManager
   bgmSource: {fileID: 0}
   sfxSource: {fileID: 0}
+  uiBookSfx: {fileID: 8300000, guid: 31d1f57fdea9543c3936e613ecc34c47, type: 3}
+  buttonClickSfx: {fileID: 8300000, guid: d69ef296295da44cbbdfda58fc9d737b, type: 3}
 --- !u!4 &1678895036
 Transform:
   m_ObjectHideFlags: 0
@@ -317,6 +229,4 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1678895036}
-  - {fileID: 283219274}
-  - {fileID: 1038998008}
   - {fileID: 1503211006}

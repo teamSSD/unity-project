@@ -98,8 +98,8 @@ public class DialogueManager : MonoBehaviour
         portraitContainer.SetActive(portraits != null && portraits.Count > 0);
 
         dialoguePanel.SetActive(true);
-        UISoundManager.Instance?.PlayUIBook();
-        GlobalButtonSfxManager.Instance?.RegisterButtons(dialoguePanel.transform);
+        SoundManager.Instance?.PlayUIBook();
+        SoundManager.Instance?.RegisterButtons(dialoguePanel.transform);
         if (playerMove != null) playerMove.enabled = false;
         ShowCurrentEntry();
     }

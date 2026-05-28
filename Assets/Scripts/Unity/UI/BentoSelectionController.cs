@@ -162,8 +162,8 @@ public class BentoSelectionController : MonoBehaviour
         UILockManager.Lock(UILockManager.Owner.BentoSelection);
         onConfirmCallback = onConfirm;
         gameObject.SetActive(true);
-        UISoundManager.Instance?.PlayUIBook();
-        GlobalButtonSfxManager.Instance?.RegisterButtons(transform);
+        SoundManager.Instance?.PlayUIBook();
+        SoundManager.Instance?.RegisterButtons(transform);
         InitializeController();
     }
 
