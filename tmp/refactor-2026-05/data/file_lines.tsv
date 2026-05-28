@@ -11,10 +11,13 @@
 17	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/ToolUpgradeData.cs
 57	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/CatalogSO.cs
 10	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/CookingToolCatalogSO.cs
+51	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/CropSpriteCatalogSO.cs
+22	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/CsvCatalogSO.cs
 21	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/DeliveryNpcCatalogSO.cs
 51	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/DialogueConfigCatalogSO.cs
 10	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/FoodCatalogSO.cs
 10	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/IngredientCatalogSO.cs
+24	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/PrefabCatalogSO.cs
 10	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/RecipeCatalogSO.cs
 118	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/GameRandom.cs
 54	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/ResourcePaths.cs
@@ -38,7 +41,7 @@
 16	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Events/GameEventBase.cs
 37	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Events/IntEvent.cs
 37	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Events/StringEvent.cs
-46	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Common/CsvModelConverter.cs
+48	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Common/CsvModelConverter.cs
 6	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Common/IBentoValidator.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Common/INpcInteraction.cs
 9	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Common/IOrderCommand.cs
@@ -60,12 +63,12 @@
 22	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Shop/ItemShopSlotInfo.cs
 115	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ActionSelectionManager.cs
 28	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/BootLoader.cs
-43	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/CatalogProvider.cs
+68	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/CatalogProvider.cs
 190	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ClickStateUtil.cs
 56	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/DragSortingBump.cs
 112	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
 54	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GlobalButtonSfxManager.cs
-34	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HUDManager.cs
+32	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HUDManager.cs
 118	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HorizontalCameraMove.cs
 57	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HoverStateUtil.cs
 37	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/IdleSceneController.cs
@@ -85,7 +88,7 @@
 73	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettingsUIManager.cs
 55	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettlementManager.cs
 34	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SingletonMonoBehaviour.cs
-152	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SoundManager.cs
+149	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SoundManager.cs
 119	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SpriteStackRenderer.cs
 101	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/StatsSystem.cs
 29	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SubSceneController.cs
@@ -152,7 +155,7 @@
 100	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/CasualDialogueProvider.cs
 40	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/CasualNpcInteraction.cs
 12	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DeliveryNpcContext.cs
-340	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DeliveryNpcDialogueInteraction.cs
+339	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DeliveryNpcDialogueInteraction.cs
 41	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DeliveryNpcInteraction.cs
 95	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DeliveryNpcOrderInteraction.cs
 72	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DeliveryNpcReceiptInteraction.cs
@@ -173,7 +176,7 @@
 42	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/ShopListRow.cs
 94	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/StorageUpgradeManager.cs
 102	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/ToolUpgradeManager.cs
-442	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/UnifiedShopManager.cs
+439	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/UnifiedShopManager.cs
 70	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/BentoCategoryUI.cs
 182	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/BentoSelectionController.cs
 55	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/BentoSlotUI.cs

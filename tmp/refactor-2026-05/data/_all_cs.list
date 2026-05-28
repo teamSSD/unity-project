@@ -19,10 +19,13 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/SpriteFallbackAutoRegister.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/CatalogSO.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/CookingToolCatalogSO.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/CropSpriteCatalogSO.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/CsvCatalogSO.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/DeliveryNpcCatalogSO.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/DialogueConfigCatalogSO.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/FoodCatalogSO.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/IngredientCatalogSO.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/PrefabCatalogSO.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/RecipeCatalogSO.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/GameRandom.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/ResourcePaths.cs

@@ -21,7 +21,7 @@ public class ToolUpgradeManager : MonoBehaviour
     void LoadTable()
     {
         upgradeTable = new Dictionary<string, List<ToolUpgradeData>>();
-        var rows = CsvModelConverter.Parse<ToolUpgradeData>(ResourcePaths.DataTable.ToolUpgrade);
+        var rows = CsvModelConverter.Parse<ToolUpgradeData>(CatalogProvider.Csvs?.toolUpgrade);
         foreach (var row in rows)
         {
             if (!upgradeTable.ContainsKey(row.toolId))

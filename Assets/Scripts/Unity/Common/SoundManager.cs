@@ -12,9 +12,7 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
 
     private CancellationTokenSource _loopFadeCts;
 
-    private static readonly string BGM_COOKING = "Sound/bgm/bgm_preperation_theme";
-    private static readonly string BGM_MALL    = "Sound/bgm/bgm_mall_theme";
-    private static readonly string BGM_NIGHT   = "Sound/bgm/bgm_night_theme";
+    // BGM 클립은 CatalogProvider.BgmX로 액세스 (Resources.Load 폐기)
 
     protected override void OnSingletonAwake()
     {
@@ -54,25 +52,24 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
 
     private void UpdateBGM()
     {
-        string path = SelectBGMPath();
-        if (path == null)
+        AudioClip clip = SelectBGMClip();
+        if (clip == null)
         {
             bgmSource.Stop();
             bgmSource.clip = null;
             return;
         }
-        AudioClip clip = Resources.Load<AudioClip>(path);
-        if (clip == null || bgmSource.clip == clip) return;
+        if (bgmSource.clip == clip) return;
         bgmSource.clip = clip;
         bgmSource.Play();
     }
 
-    private string SelectBGMPath()
+    private AudioClip SelectBGMClip()
     {
         string scene = SceneManager.GetActiveScene().name;
         if (scene == "Boot" || scene == "GameStart") return null;
-        if (ProgressSystem.Instance?.phaseData?.Phase == PhaseType.Night) return BGM_NIGHT;
-        return scene == "Cooking" ? BGM_COOKING : BGM_MALL;
+        if (ProgressSystem.Instance?.phaseData?.Phase == PhaseType.Night) return CatalogProvider.BgmNight;
+        return scene == "Cooking" ? CatalogProvider.BgmCooking : CatalogProvider.BgmMall;
     }
 
     // ── BGM 볼륨 ──

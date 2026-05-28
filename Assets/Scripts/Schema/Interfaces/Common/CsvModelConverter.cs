@@ -16,17 +16,19 @@ public class CsvParsingException : Exception
 
 public static class CsvModelConverter
 {
-    public static List<T> Parse<T>(string resourcePath) where T : CsvParsable, new()
+    /// <summary>
+    /// TextAsset CSV를 파싱해 T 리스트 반환. CatalogProvider.Csvs.X로 자산 획득 후 전달.
+    /// </summary>
+    public static List<T> Parse<T>(TextAsset csvAsset) where T : CsvParsable, new()
     {
         List<T> result = new List<T>();
 
-        TextAsset csvFile = Resources.Load<TextAsset>(resourcePath);
-        if (csvFile == null)
+        if (csvAsset == null)
         {
-            Debug.LogError($"[CsvModelConverter] CSV file not found: {resourcePath}");
+            Debug.LogError("[CsvModelConverter] csvAsset is null");
             return result;
         }
-        string[] lines = csvFile.text.Split(new[] { "\r\n", "\r", "\n" }, System.StringSplitOptions.None);
+        string[] lines = csvAsset.text.Split(new[] { "\r\n", "\r", "\n" }, System.StringSplitOptions.None);
 
         foreach (string line in lines.Skip(1))
         {
@@ -39,7 +41,7 @@ public static class CsvModelConverter
             }
             catch (CsvParsingException e)
             {
-                Debug.LogError($"Exception occured during parsing csv file \"{resourcePath}\" - {line}\n{e.Message}");
+                Debug.LogError($"Exception during parsing CSV \"{csvAsset.name}\" - {line}\n{e.Message}");
             }
         }
         return result;

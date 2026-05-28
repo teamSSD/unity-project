@@ -6,16 +6,14 @@ using UnityEngine;
 /// </summary>
 public class HUDManager : SingletonMonoBehaviour<HUDManager>
 {
-    private const string StatUIPrefabPath = "Prefabs/ui/StatUI";
-
     private GameObject statUIInstance;
 
     protected override void OnSingletonAwake()
     {
-        var prefab = Resources.Load<GameObject>(StatUIPrefabPath);
+        var prefab = CatalogProvider.Prefabs?.statUI;
         if (prefab == null)
         {
-            Debug.LogError("[HUDManager] StatUI prefab not found");
+            Debug.LogError("[HUDManager] StatUI prefab not in PrefabCatalog");
             return;
         }
 

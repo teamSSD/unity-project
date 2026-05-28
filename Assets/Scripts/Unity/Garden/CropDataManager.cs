@@ -18,10 +18,10 @@ public class CropDataManager : MonoBehaviour
 
     void LoadData()
     {
-        var rows = CsvModelConverter.Parse<CropData>(ResourcePaths.DataTable.CropData);
+        var rows = CsvModelConverter.Parse<CropData>(CatalogProvider.Csvs?.cropData);
         foreach (var row in rows)
         {
-            row.sprite = Resources.Load<Sprite>(row.imagePath);
+            row.sprite = CatalogProvider.CropSprites?.Get(row.imagePath);
             if (row.sprite == null)
                 Debug.LogWarning($"[CropDataManager] 스프라이트 없음: {row.imagePath}");
 

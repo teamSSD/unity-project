@@ -19,7 +19,7 @@ public class FarmUpgradeManager : MonoBehaviour
     void LoadTable()
     {
         upgradeTable = new Dictionary<string, List<FarmUpgradeData>>();
-        var rows = CsvModelConverter.Parse<FarmUpgradeData>(ResourcePaths.DataTable.FarmUpgrade);
+        var rows = CsvModelConverter.Parse<FarmUpgradeData>(CatalogProvider.Csvs?.farmUpgrade);
         foreach (var row in rows)
         {
             if (!upgradeTable.ContainsKey(row.type))

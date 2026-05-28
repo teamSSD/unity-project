@@ -268,7 +268,7 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         if (questMenus != null) return;
         questMenus = new Dictionary<string, MenuSchema>();
 
-        var csv = Resources.Load<TextAsset>(ResourcePaths.Data.DeliveryQuest);
+        var csv = CatalogProvider.Csvs?.deliveryQuest;
         if (csv == null) return;
 
         var lines = csv.text.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);

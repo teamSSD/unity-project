@@ -32,6 +32,8 @@ CookingToolModel
 CookingToolSchema
 CropData
 CropDataManager
+CropSpriteCatalogSO
+CsvCatalogSO
 CsvModelConverter
 CsvParsingException
 CustomTimer
@@ -147,6 +149,7 @@ PlayerData
 PlayerMove
 PlayerSaveLoad
 Prefab
+PrefabCatalogSO
 ProgressSystem
 RandomGeneral
 RandomNormal

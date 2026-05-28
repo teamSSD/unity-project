@@ -244,6 +244,13 @@ MonoBehaviour:
   cookingTool: {fileID: 11400000, guid: 829786f7afb6d4929ad79d4b0833a00e, type: 2}
   deliveryNpc: {fileID: 11400000, guid: 0b141f62c47854920898ffc02b24e439, type: 2}
   dialogueConfig: {fileID: 11400000, guid: bfe53bbfce58d4528b27e670e752b80d, type: 2}
+  prefabs: {fileID: 11400000, guid: 75fe56331608647b1863586a22b343a1, type: 2}
+  foodShopConfig: {fileID: 11400000, guid: eae71541312c54a23bbe22f712fe8da6, type: 2}
+  csvs: {fileID: 11400000, guid: 548d4a3881d1b44e29900254994050e1, type: 2}
+  cropSprites: {fileID: 11400000, guid: 9ef4942b94e8c439a909c0acda9a7555, type: 2}
+  bgmMall: {fileID: 8300000, guid: f2e88d222179644bf9522dbbf0974fe4, type: 3}
+  bgmCooking: {fileID: 8300000, guid: 1d30f6b7b33c14d0face99950d6bf5ee, type: 3}
+  bgmNight: {fileID: 8300000, guid: e5bfc24d070ff461dbce1867c04df9aa, type: 3}
 --- !u!4 &1503211006
 Transform:
   m_ObjectHideFlags: 0

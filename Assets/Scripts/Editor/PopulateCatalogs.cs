@@ -14,6 +14,44 @@ public static class PopulateCatalogs
 {
     private const string CatalogFolder = "Assets/Bundles/Catalogs";
 
+    [MenuItem("Tools/Catalog/Populate Crop Sprites")]
+    public static void PopulateCropSprites()
+    {
+        var catalog = AssetDatabase.LoadAssetAtPath<CropSpriteCatalogSO>($"{CatalogFolder}/CropSpriteCatalog.asset");
+        if (catalog == null) { Debug.LogError("[PopulateCatalogs] CropSpriteCatalog not found"); return; }
+        var csv = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Resources/driveAssets/dataTables/crop_data.csv");
+        if (csv == null) { Debug.LogError("[PopulateCatalogs] crop_data.csv not found"); return; }
+
+        var entries = new List<(string key, Sprite sprite)>();
+        var lines = csv.text.Split('\n');
+        for (int i = 1; i < lines.Length; i++)
+        {
+            var line = lines[i].Trim();
+            if (string.IsNullOrEmpty(line)) continue;
+            var parts = line.Split(',');
+            if (parts.Length < 4) continue;
+            var key = parts[3].Trim();
+            var sprite = Resources.Load<Sprite>(key);
+            if (sprite == null) Debug.LogWarning($"[PopulateCatalogs] Crop sprite not found: {key}");
+            entries.Add((key, sprite));
+        }
+
+        var so = new SerializedObject(catalog);
+        var entriesProp = so.FindProperty("entries");
+        entriesProp.ClearArray();
+        entriesProp.arraySize = entries.Count;
+        for (int i = 0; i < entries.Count; i++)
+        {
+            var el = entriesProp.GetArrayElementAtIndex(i);
+            el.FindPropertyRelative("key").stringValue = entries[i].key;
+            el.FindPropertyRelative("sprite").objectReferenceValue = entries[i].sprite;
+        }
+        so.ApplyModifiedProperties();
+        EditorUtility.SetDirty(catalog);
+        AssetDatabase.SaveAssets();
+        Debug.Log($"[PopulateCatalogs] CropSpriteCatalog populated with {entries.Count} entries");
+    }
+
     [MenuItem("Tools/Catalog/Populate All Catalogs")]
     public static void PopulateAll()
     {
