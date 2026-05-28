@@ -1,0 +1,16 @@
+{
+    "name": "Game.Domain",
+    "rootNamespace": "Game.Domain",
+    "references": [
+        "Game.Schema"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

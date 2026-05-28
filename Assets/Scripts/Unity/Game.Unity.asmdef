@@ -1,0 +1,18 @@
+{
+    "name": "Game.Unity",
+    "rootNamespace": "Game.Unity",
+    "references": [
+        "Game.Schema",
+        "Game.Domain",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,6 +1,8 @@
 ﻿<Solution>
-  <Project Path="Game.Runtime.csproj" />
+  <Project Path="Game.Unity.csproj" />
+  <Project Path="Game.Schema.csproj" />
   <Project Path="Tests.EditMode.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="Game.Editor.csproj" />
+  <Project Path="Game.Domain.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
 </Solution>

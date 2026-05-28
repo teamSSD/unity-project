@@ -1,0 +1,198 @@
+# Auto-generated Phase 2-A mapping draft
+# Format: source<TAB>destination<TAB>asmdef<TAB>feature<TAB>note
+# Review needed. Especially: feature=?, complex Models split
+Assets/Scripts/Controllers/BootLoader.cs	Assets/Scripts/Unity/Common/BootLoader.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Controllers/GameStart.cs	Assets/Scripts/Unity/Common/GameStart.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Controllers/IdleSceneController.cs	Assets/Scripts/Unity/Common/IdleSceneController.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Controllers/MallSceneController.cs	Assets/Scripts/Unity/Common/MallSceneController.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Controllers/SubSceneController.cs	Assets/Scripts/Unity/Common/SubSceneController.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/BaseStorage.cs	Assets/Scripts/Unity/Cooking/BaseStorage.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/Bento/BentoBehavior.cs	Assets/Scripts/Unity/Cooking/BentoBehavior.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/Bento/BentoModel.cs	Assets/Scripts/Unity/Cooking/BentoModel.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/Bento/BentoPositionModel.cs	Assets/Scripts/Unity/Cooking/BentoPositionModel.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/Bento/BentoSetModel.cs	Assets/Scripts/Unity/Cooking/BentoSetModel.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/CookingBackgroundController.cs	Assets/Scripts/Unity/Cooking/CookingBackgroundController.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/CookingTool/CookingToolBehavior.cs	Assets/Scripts/Unity/Cooking/CookingToolBehavior.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/CookingTool/CookingToolModel.cs	Assets/Scripts/Unity/Cooking/CookingToolModel.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/CookingTool/CookingToolSchema.cs	Assets/Scripts/Schema/State/Cooking/CookingToolSchema.cs	Schema/State	Cooking	POCO wrapper (Schema 명칭)
+Assets/Scripts/Entities/Cooking/cooking/Description/CookingToolDescription.cs	Assets/Scripts/Unity/Cooking/CookingToolDescription.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/Description/IngredientDescription.cs	Assets/Scripts/Unity/Cooking/IngredientDescription.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/Description/Receipt.cs	Assets/Scripts/Unity/Cooking/Receipt.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/Description/ReceiptLine.cs	Assets/Scripts/Unity/Cooking/ReceiptLine.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/Description/SpeechBubble.cs	Assets/Scripts/Unity/Cooking/SpeechBubble.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/Enums/ResourcePaths.cs	Assets/Scripts/Domain/Cooking/ResourcePaths.cs	Domain	Cooking	static 유틸
+Assets/Scripts/Entities/Cooking/cooking/Enums/Tags.cs	Assets/Scripts/Domain/Cooking/Tags.cs	Domain	Cooking	static 유틸
+Assets/Scripts/Entities/Cooking/cooking/Food/FoodBehavior.cs	Assets/Scripts/Unity/Cooking/FoodBehavior.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/Food/FoodModel.cs	Assets/Scripts/Unity/Cooking/FoodModel.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/Food/FoodSchema.cs	Assets/Scripts/Schema/State/Cooking/FoodSchema.cs	Schema/State	Cooking	POCO wrapper (Schema 명칭)
+Assets/Scripts/Entities/Cooking/cooking/LowerShelf.cs	Assets/Scripts/Unity/Cooking/LowerShelf.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/OrderTicket/OrderTicketBehavior.cs	Assets/Scripts/Unity/Cooking/OrderTicketBehavior.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/OrderTicket/OrderTicketModel.cs	Assets/Scripts/Unity/Cooking/OrderTicketModel.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/Refrigerator.cs	Assets/Scripts/Unity/Cooking/Refrigerator.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/RefrigeratorBehavior.cs	Assets/Scripts/Unity/Cooking/RefrigeratorBehavior.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/UpperShelf.cs	Assets/Scripts/Unity/Cooking/UpperShelf.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/cooking/dataType/FoodData.cs	Assets/Scripts/Schema/Config/Cooking/FoodData.cs	Schema/Config	Cooking	ScriptableObject
+Assets/Scripts/Entities/Cooking/cooking/dataType/IngredientData.cs	Assets/Scripts/Schema/Config/Cooking/IngredientData.cs	Schema/Config	Cooking	ScriptableObject
+Assets/Scripts/Entities/Cooking/cooking/dataType/MenuSchema.cs	Assets/Scripts/Schema/State/Cooking/MenuSchema.cs	Schema/State	Cooking	POCO wrapper (Schema 명칭)
+Assets/Scripts/Entities/Cooking/cooking/dataType/MenuSelection.cs	Assets/Scripts/Schema/State/Cooking/MenuSelection.cs	Schema/State	Cooking	[Serializable] POCO
+Assets/Scripts/Entities/Cooking/cooking/dataType/RecipeData.cs	Assets/Scripts/Schema/Config/Cooking/RecipeData.cs	Schema/Config	Cooking	ScriptableObject
+Assets/Scripts/Entities/Cooking/customer/OrderingCustomer.cs	Assets/Scripts/Unity/Cooking/OrderingCustomer.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/customer/TakingCustomer.cs	Assets/Scripts/Unity/Cooking/TakingCustomer.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/customer/WaitingCustomer.cs	Assets/Scripts/Unity/Cooking/WaitingCustomer.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Cooking/minigame/MinigameResult.cs	Assets/Scripts/Unity/Cooking/MinigameResult.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Entities/Garden/Farm.cs	Assets/Scripts/Unity/Garden/Farm.cs	Unity	Garden	MonoBehaviour
+Assets/Scripts/Entities/Garden/FarmTile.cs	Assets/Scripts/Domain/Garden/FarmTile.cs	Domain	Garden	순수 C# 클래스+SaveData
+Assets/Scripts/Entities/Garden/FarmUpgradeData.cs	Assets/Scripts/Domain/Garden/FarmUpgradeData.cs	Domain	Garden	순수 C# 클래스
+Assets/Scripts/Entities/Garden/GardenShopSlot.cs	Assets/Scripts/Unity/Garden/GardenShopSlot.cs	Unity	Garden	MonoBehaviour
+Assets/Scripts/Entities/ItemShop/FoodShopConfigSO.cs	Assets/Scripts/Schema/Config/Shop/FoodShopConfigSO.cs	Schema/Config	Shop	ScriptableObject
+Assets/Scripts/Entities/ItemShop/ShopConfigSO.cs	Assets/Scripts/Schema/Config/Shop/ShopConfigSO.cs	Schema/Config	Shop	ScriptableObject
+Assets/Scripts/Entities/ItemShop/ShopDetailPanel.cs	Assets/Scripts/Unity/Shop/ShopDetailPanel.cs	Unity	Shop	MonoBehaviour
+Assets/Scripts/Entities/ItemShop/ShopListRow.cs	Assets/Scripts/Unity/Shop/ShopListRow.cs	Unity	Shop	MonoBehaviour
+Assets/Scripts/Entities/ItemShop/dataType/ItemShopSlotInfo.cs	Assets/Scripts/Schema/State/Shop/ItemShopSlotInfo.cs	Schema/State	Shop	[Serializable] POCO
+Assets/Scripts/Entities/ItemShop/dataType/StorageUpgradeData.cs	Assets/Scripts/Domain/Shop/StorageUpgradeData.cs	Domain	Shop	순수 C# 클래스
+Assets/Scripts/Entities/ItemShop/dataType/ToolUpgradeData.cs	Assets/Scripts/Domain/Shop/ToolUpgradeData.cs	Domain	Shop	순수 C# 클래스
+Assets/Scripts/Entities/Mall/CameraFollow.cs	Assets/Scripts/Unity/Mall/CameraFollow.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/Dialogue/CasualDialogueProvider.cs	Assets/Scripts/Domain/Mall/CasualDialogueProvider.cs	Domain	Mall	static 유틸
+Assets/Scripts/Entities/Mall/Dialogue/CasualNpcInteraction.cs	Assets/Scripts/Unity/Mall/CasualNpcInteraction.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/Dialogue/DialogueManager.cs	Assets/Scripts/Unity/Mall/DialogueManager.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/Dialogue/DialogueSO.cs	Assets/Scripts/Schema/Config/Mall/DialogueSO.cs	Schema/Config	Mall	ScriptableObject
+Assets/Scripts/Entities/Mall/Dialogue/NPCDialogue.cs	Assets/Scripts/Unity/Mall/NPCDialogue.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/DynamicBoundaryWalls.cs	Assets/Scripts/Unity/Mall/DynamicBoundaryWalls.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/FarmPathInteraction.cs	Assets/Scripts/Unity/Mall/FarmPathInteraction.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/PlayerMove.cs	Assets/Scripts/Unity/Mall/PlayerMove.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/SceneTransitionInteraction.cs	Assets/Scripts/Unity/Mall/SceneTransitionInteraction.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/StairsInteraction.cs	Assets/Scripts/Unity/Mall/StairsInteraction.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/UnifiedShopInteraction.cs	Assets/Scripts/Unity/Mall/UnifiedShopInteraction.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryDialogueConfig.cs	Assets/Scripts/Schema/Config/Mall/DeliveryDialogueConfig.cs	Schema/Config	Mall	ScriptableObject
+Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryNpcContext.cs	Assets/Scripts/Unity/Mall/DeliveryNpcContext.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryNpcData.cs	Assets/Scripts/Schema/Config/Mall/DeliveryNpcData.cs	Schema/Config	Mall	ScriptableObject
+Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryNpcDialogueInteraction.cs	Assets/Scripts/Unity/Mall/DeliveryNpcDialogueInteraction.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryNpcInteraction.cs	Assets/Scripts/Unity/Mall/DeliveryNpcInteraction.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryNpcOrderInteraction.cs	Assets/Scripts/Unity/Mall/DeliveryNpcOrderInteraction.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryNpcReceiptInteraction.cs	Assets/Scripts/Unity/Mall/DeliveryNpcReceiptInteraction.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryNpcSpawner.cs	Assets/Scripts/Unity/Mall/DeliveryNpcSpawner.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryNpcState.cs	Assets/Scripts/Schema/Config/Mall/DeliveryNpcState.cs	Schema/Config	Mall	enum
+Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryNpcView.cs	Assets/Scripts/Unity/Mall/DeliveryNpcView.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryQuestStage.cs	Assets/Scripts/Schema/Config/Mall/DeliveryQuestStage.cs	Schema/Config	Mall	enum
+Assets/Scripts/Entities/Mall/delivery/DeliveryOrderData.cs	Assets/Scripts/Schema/State/Mall/DeliveryOrderData.cs	Schema/State	Mall	[Serializable] POCO
+Assets/Scripts/Entities/Mall/delivery/OrderManager.cs	Assets/Scripts/Unity/Mall/OrderManager.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/Entities/RecipeBook/Enums/ActionType.cs	Assets/Scripts/Schema/Config/UI/ActionType.cs	Schema/Config	UI	enum
+Assets/Scripts/Entities/RecipeBook/inventory/InventoryPageController.cs	Assets/Scripts/Unity/UI/InventoryPageController.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/Entities/RecipeBook/inventory/InventorySlot.cs	Assets/Scripts/Unity/UI/InventorySlot.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/Entities/RecipeBook/menu/MenuCardController.cs	Assets/Scripts/Unity/UI/MenuCardController.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/Entities/RecipeBook/menu/MenuCardOverlay.cs	Assets/Scripts/Unity/UI/MenuCardOverlay.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/Entities/RecipeBook/menu/MenuSlot.cs	Assets/Scripts/Unity/UI/MenuSlot.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/Entities/SO/CookingToolData.cs	Assets/Scripts/Schema/Config/Common/CookingToolData.cs	Schema/Config	Common	ScriptableObject
+Assets/Scripts/Entities/SO/CropData.cs	Assets/Scripts/Schema/Config/Common/CropData.cs	Schema/Config	Common	CSV-loaded read-only POCO
+Assets/Scripts/Entities/SO/CustomerData.cs	Assets/Scripts/Schema/Config/Common/CustomerData.cs	Schema/Config	Common	ScriptableObject
+Assets/Scripts/Entities/Stats/BasicStats.cs	Assets/Scripts/Schema/State/Common/BasicStats.cs	Schema/State	Common	[Serializable] POCO
+Assets/Scripts/Interfaces/Cooking/ISelectMenu.cs	Assets/Scripts/Schema/Interfaces/Cooking/ISelectMenu.cs	Schema/Interfaces	Cooking	interface
+Assets/Scripts/Interfaces/Cooking/LoadInventoryUsecase.cs	Assets/Scripts/Schema/Interfaces/Cooking/LoadInventoryUsecase.cs	Schema/Interfaces	Cooking	interface
+Assets/Scripts/Interfaces/Cooking/PlayMinigameUsecase.cs	Assets/Scripts/Schema/Interfaces/Cooking/PlayMinigameUsecase.cs	Schema/Interfaces	Cooking	interface
+Assets/Scripts/Interfaces/Cooking/RecipeBookMenuProvider.cs	Assets/Scripts/Domain/Cooking/RecipeBookMenuProvider.cs	Domain	Cooking	순수 C# 클래스
+Assets/Scripts/Interfaces/Cooking/SearchRecipeUsecase.cs	Assets/Scripts/Schema/Interfaces/Cooking/SearchRecipeUsecase.cs	Schema/Interfaces	Cooking	interface
+Assets/Scripts/Interfaces/Gardening/TimePhaseProvider.cs	Assets/Scripts/Schema/Interfaces/Garden/TimePhaseProvider.cs	Schema/Interfaces	Garden	interface
+Assets/Scripts/Interfaces/IBentoValidator.cs	Assets/Scripts/Schema/Interfaces/Common/IBentoValidator.cs	Schema/Interfaces	Common	interface
+Assets/Scripts/Interfaces/INpcInteraction.cs	Assets/Scripts/Schema/Interfaces/Common/INpcInteraction.cs	Schema/Interfaces	Common	interface
+Assets/Scripts/Interfaces/IOrderCommand.cs	Assets/Scripts/Schema/Interfaces/Common/IOrderCommand.cs	Schema/Interfaces	Common	interface
+Assets/Scripts/Interfaces/IOrderReader.cs	Assets/Scripts/Schema/Interfaces/Common/IOrderReader.cs	Schema/Interfaces	Common	interface
+Assets/Scripts/Interfaces/IUnlockedFoodProvider.cs	Assets/Scripts/Schema/Interfaces/Common/IUnlockedFoodProvider.cs	Schema/Interfaces	Common	interface
+Assets/Scripts/Managers/ActionSelectionManager.cs	Assets/Scripts/Unity/Common/ActionSelectionManager.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Managers/GlobalButtonSfxManager.cs	Assets/Scripts/Unity/Common/GlobalButtonSfxManager.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Managers/HUDManager.cs	Assets/Scripts/Unity/Common/HUDManager.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Managers/InventoryManager.cs	Assets/Scripts/Unity/Common/InventoryManager.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Managers/LoadingManager.cs	Assets/Scripts/Unity/Common/LoadingManager.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Managers/RecipeBookManager.cs	Assets/Scripts/Unity/Common/RecipeBookManager.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Managers/RecipeDataManager.cs	Assets/Scripts/Unity/Common/RecipeDataManager.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Managers/RecipeLookupService.cs	Assets/Scripts/Unity/Common/RecipeLookupService.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Managers/SettingsUIManager.cs	Assets/Scripts/Unity/Common/SettingsUIManager.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Managers/SoundManager.cs	Assets/Scripts/Unity/Common/SoundManager.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Managers/UIManager.cs	Assets/Scripts/Unity/Common/UIManager.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Managers/UISoundManager.cs	Assets/Scripts/Unity/Common/UISoundManager.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Managers/UnlockedFoodManager.cs	Assets/Scripts/Unity/Common/UnlockedFoodManager.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Managers/cooking/CookingSceneManager.cs	Assets/Scripts/Unity/Cooking/CookingSceneManager.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Managers/cooking/CustomerLifecycle.cs	Assets/Scripts/Domain/Cooking/CustomerLifecycle.cs	Domain	Cooking	순수 C# 클래스
+Assets/Scripts/Managers/cooking/CustomerManager.cs	Assets/Scripts/Unity/Cooking/CustomerManager.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Managers/cooking/CustomerSpawner.cs	Assets/Scripts/Unity/Cooking/CustomerSpawner.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Managers/cooking/OrderTicketController.cs	Assets/Scripts/Unity/Cooking/OrderTicketController.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Managers/cooking/StatManager.cs	Assets/Scripts/Unity/Cooking/StatManager.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Managers/garden/CropDataManager.cs	Assets/Scripts/Unity/Garden/CropDataManager.cs	Unity	Garden	MonoBehaviour
+Assets/Scripts/Managers/garden/FarmTileStorage.cs	Assets/Scripts/Domain/Garden/FarmTileStorage.cs	Domain	Garden	static 유틸+SaveData
+Assets/Scripts/Managers/garden/FarmUpgradeManager.cs	Assets/Scripts/Unity/Garden/FarmUpgradeManager.cs	Unity	Garden	MonoBehaviour
+Assets/Scripts/Managers/shop/StorageUpgradeManager.cs	Assets/Scripts/Unity/Shop/StorageUpgradeManager.cs	Unity	Shop	MonoBehaviour
+Assets/Scripts/Managers/shop/ToolUpgradeManager.cs	Assets/Scripts/Unity/Shop/ToolUpgradeManager.cs	Unity	Shop	MonoBehaviour
+Assets/Scripts/Managers/shop/UnifiedShopManager.cs	Assets/Scripts/Unity/Shop/UnifiedShopManager.cs	Unity	Shop	MonoBehaviour
+Assets/Scripts/Systems/Commons/InventorySaveData.cs	Assets/Scripts/Schema/State/Common/InventorySaveData.cs	Schema/State	Common	[Serializable] POCO
+Assets/Scripts/Systems/Commons/PhaseData.cs	Assets/Scripts/Schema/State/Common/PhaseData.cs	Schema/State	Common	[Serializable] POCO
+Assets/Scripts/Systems/Commons/PhaseType.cs	Assets/Scripts/Schema/Config/Common/PhaseType.cs	Schema/Config	Common	enum
+Assets/Scripts/Systems/Commons/PlayerSaveLoad.cs	Assets/Scripts/Unity/Common/PlayerSaveLoad.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Systems/Commons/ProgressSystem.cs	Assets/Scripts/Unity/Common/ProgressSystem.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Systems/Commons/SettlementManager.cs	Assets/Scripts/Unity/Common/SettlementManager.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Systems/Commons/StatsSystem.cs	Assets/Scripts/Unity/Common/StatsSystem.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Systems/Commons/TimeManager.cs	Assets/Scripts/Unity/Common/TimeManager.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Systems/Commons/WeatherSystem.cs	Assets/Scripts/Unity/Common/WeatherSystem.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Systems/GardenSystem/ButtonHover.cs	Assets/Scripts/Unity/Garden/ButtonHover.cs	Unity	Garden	MonoBehaviour
+Assets/Scripts/Systems/MiniGameSystem/ClickMiniGame.cs	Assets/Scripts/Unity/Cooking/ClickMiniGame.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Systems/MiniGameSystem/FireMiniGame.cs	Assets/Scripts/Unity/Cooking/FireMiniGame.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Systems/MiniGameSystem/GriddleMinigame.cs	Assets/Scripts/Unity/Cooking/GriddleMinigame.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Systems/MiniGameSystem/MiniGameAbstract.cs	Assets/Scripts/Unity/Cooking/MiniGameAbstract.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Systems/MiniGameSystem/MiniGameManager.cs	Assets/Scripts/Unity/Cooking/MiniGameManager.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Systems/MiniGameSystem/MixMiniGame.cs	Assets/Scripts/Unity/Cooking/MixMiniGame.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Systems/MiniGameSystem/SauceMiniGame.cs	Assets/Scripts/Unity/Cooking/SauceMiniGame.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Systems/MiniGameSystem/SliceMiniGame.cs	Assets/Scripts/Unity/Cooking/SliceMiniGame.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Systems/MiniGameSystem/helper/ArrowButton.cs	Assets/Scripts/Unity/Cooking/ArrowButton.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Systems/MiniGameSystem/helper/ButtonAnimator.cs	Assets/Scripts/Unity/Cooking/ButtonAnimator.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Systems/MiniGameSystem/helper/GuidedButtonAnimator.cs	Assets/Scripts/Unity/Cooking/GuidedButtonAnimator.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Systems/MiniGameSystem/helper/MouseAnimator.cs	Assets/Scripts/Unity/Cooking/MouseAnimator.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/Systems/MiniGameSystem/helper/SliceScorer.cs	Assets/Scripts/Domain/Cooking/SliceScorer.cs	Domain	Cooking	순수 C# 클래스
+Assets/Scripts/Systems/MiniGameSystem/helper/SliceVisualizer.cs	Assets/Scripts/Unity/Cooking/SliceVisualizer.cs	Unity	Cooking	MonoBehaviour
+Assets/Scripts/UI/BentoCategoryUI.cs	Assets/Scripts/Unity/UI/BentoCategoryUI.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/BentoSelectionController.cs	Assets/Scripts/Unity/UI/BentoSelectionController.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/BentoSlotUI.cs	Assets/Scripts/Unity/UI/BentoSlotUI.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/FlexibleGridCell.cs	Assets/Scripts/Unity/UI/FlexibleGridCell.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/FullScreenSelector.cs	Assets/Scripts/Unity/UI/FullScreenSelector.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/InteractPromptUI.cs	Assets/Scripts/Domain/UI/InteractPromptUI.cs	Domain	UI	static 유틸
+Assets/Scripts/UI/LayoutForceRebuild.cs	Assets/Scripts/Unity/UI/LayoutForceRebuild.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/MenuSelectionItem.cs	Assets/Scripts/Unity/UI/MenuSelectionItem.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/MinAspectRatio.cs	Assets/Scripts/Unity/UI/MinAspectRatio.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/PhaseActionSelector.cs	Assets/Scripts/Unity/UI/PhaseActionSelector.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/RecipeBookToggleButton.cs	Assets/Scripts/Unity/UI/RecipeBookToggleButton.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/ScreenResolutionSelector.cs	Assets/Scripts/Unity/UI/ScreenResolutionSelector.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/SettingsController.cs	Assets/Scripts/Unity/UI/SettingsController.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/Settlement/SettlementController.cs	Assets/Scripts/Unity/Mall/SettlementController.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/UI/Settlement/SettlementLineItemUI.cs	Assets/Scripts/Unity/Mall/SettlementLineItemUI.cs	Unity	Mall	MonoBehaviour
+Assets/Scripts/UI/TooltipController.cs	Assets/Scripts/Unity/UI/TooltipController.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/UIColors.cs	Assets/Scripts/Domain/UI/UIColors.cs	Domain	UI	static 유틸
+Assets/Scripts/UI/ValidationFeedbackUI.cs	Assets/Scripts/Unity/UI/ValidationFeedbackUI.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/WorldUIPositioner.cs	Assets/Scripts/Domain/UI/WorldUIPositioner.cs	Domain	UI	static 유틸
+Assets/Scripts/UI/general/GaugeUI.cs	Assets/Scripts/Unity/UI/GaugeUI.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/stats/ClockUI.cs	Assets/Scripts/Unity/UI/ClockUI.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/stats/MoneyUI.cs	Assets/Scripts/Unity/UI/MoneyUI.cs	Unity	UI	MonoBehaviour [filename≠class]
+Assets/Scripts/UI/stats/NumericStatsViewer.cs	Assets/Scripts/Unity/UI/NumericStatsViewer.cs	Unity	UI	MonoBehaviour
+Assets/Scripts/UI/stats/StaminaGauge.cs	Assets/Scripts/Unity/UI/StaminaGauge.cs	Unity	UI	MonoBehaviour [filename≠class]
+Assets/Scripts/Utilities/ManagerBootstrap.cs	Assets/Scripts/Domain/Common/ManagerBootstrap.cs	Domain	Common	static 유틸
+Assets/Scripts/Utilities/MenuValidator.cs	Assets/Scripts/Domain/Common/MenuValidator.cs	Domain	Common	static 유틸
+Assets/Scripts/Utilities/SaveManager.cs	Assets/Scripts/Domain/Common/SaveManager.cs	Domain	Common	static 유틸+SaveData
+Assets/Scripts/Utilities/SceneLoader.cs	Assets/Scripts/Domain/Common/SceneLoader.cs	Domain	Common	static 유틸
+Assets/Scripts/Utilities/SceneNames.cs	Assets/Scripts/Domain/Common/SceneNames.cs	Domain	Common	static 유틸
+Assets/Scripts/Utilities/SearchDataUtil.cs	Assets/Scripts/Domain/Common/SearchDataUtil.cs	Domain	Common	순수 C# 클래스
+Assets/Scripts/Utilities/SingletonMonoBehaviour.cs	Assets/Scripts/Unity/Common/SingletonMonoBehaviour.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Utilities/SpriteStackRenderer.cs	Assets/Scripts/Unity/Common/SpriteStackRenderer.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Utilities/UILockManager.cs	Assets/Scripts/Domain/Common/UILockManager.cs	Domain	Common	static 유틸
+Assets/Scripts/Utilities/VisibleStateUtil.cs	Assets/Scripts/Unity/Common/VisibleStateUtil.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Utilities/dataIO/CsvModelConverter.cs	Assets/Scripts/Domain/Common/CsvModelConverter.cs	Domain	Common	static 유틸
+Assets/Scripts/Utilities/dataIO/DataSaveUtil.cs	Assets/Scripts/Domain/Common/DataSaveUtil.cs	Domain	Common	순수 C# 클래스
+Assets/Scripts/Utilities/editor/SpriteAssetAlignWithText.cs	Assets/Scripts/Editor/SpriteAssetAlignWithText.cs	Editor	Editor	에디터 도구
+Assets/Scripts/Utilities/editor/SpriteFallbackAutoRegister.cs	Assets/Scripts/Editor/SpriteFallbackAutoRegister.cs	Editor	Editor	에디터 도구
+Assets/Scripts/Utilities/mouseControl/ClickStateUtil.cs	Assets/Scripts/Unity/Common/ClickStateUtil.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Utilities/mouseControl/DragSortingBump.cs	Assets/Scripts/Unity/Common/DragSortingBump.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Utilities/mouseControl/HorizontalCameraMove.cs	Assets/Scripts/Unity/Common/HorizontalCameraMove.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Utilities/mouseControl/HoverStateUtil.cs	Assets/Scripts/Unity/Common/HoverStateUtil.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Utilities/mouseControl/ScanColliderUtil.cs	Assets/Scripts/Unity/Common/ScanColliderUtil.cs	Unity	Common	MonoBehaviour
+Assets/Scripts/Utilities/randoms/GameRandom.cs	Assets/Scripts/Domain/Common/GameRandom.cs	Domain	Common	static 유틸
+Assets/Scripts/Utilities/randoms/RandomGeneral.cs	Assets/Scripts/Domain/Common/RandomGeneral.cs	Domain	Common	static 유틸
+Assets/Scripts/Utilities/randoms/RandomNormal.cs	Assets/Scripts/Domain/Common/RandomNormal.cs	Domain	Common	static 유틸
+Assets/Editor/DeliveryDataExporter.cs	Assets/Scripts/Editor/DeliveryDataExporter.cs	Editor	?	에디터 도구
+Assets/Editor/IngredientImageConsistencyChecker.cs	Assets/Scripts/Editor/IngredientImageConsistencyChecker.cs	Editor	?	에디터 도구
+Assets/Scripts/Editor/BuildSettingsHelper.cs	Assets/Scripts/Editor/BuildSettingsHelper.cs	Editor	Common	에디터 도구
+Assets/Scripts/Editor/ProjectValidator.cs	Assets/Scripts/Editor/ProjectValidator.cs	Editor	Common	에디터 도구

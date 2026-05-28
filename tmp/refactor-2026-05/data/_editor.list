@@ -1,4 +1,6 @@
-/Users/hogun/UnityProjects/My project/unity-project/Assets/Editor/DeliveryDataExporter.cs
-/Users/hogun/UnityProjects/My project/unity-project/Assets/Editor/IngredientImageConsistencyChecker.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/BuildSettingsHelper.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/DeliveryDataExporter.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/IngredientImageConsistencyChecker.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/ProjectValidator.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/SpriteAssetAlignWithText.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/SpriteFallbackAutoRegister.cs
