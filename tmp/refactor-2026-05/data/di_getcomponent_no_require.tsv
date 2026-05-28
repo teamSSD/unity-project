@@ -1,7 +1,5 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ClickStateUtil.cs	SpriteRenderer
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/DragSortingBump.cs	SpriteRenderer
-/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GlobalButtonSfxManager.cs	Button
-/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GlobalButtonSfxManager.cs	Slider
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/LoadingManager.cs	RectTransform
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/MallSceneController.cs	BentoSelectionController
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/PlayerSaveLoad.cs	GameManager
@@ -13,6 +11,8 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ScanColliderUtil.cs	Collider2D
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettingsUIManager.cs	Image
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettingsUIManager.cs	RectTransform
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SoundManager.cs	Button
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SoundManager.cs	Slider
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SpriteStackRenderer.cs	SpriteRenderer
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/UIManager.cs	RectTransform
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/VisibleStateUtil.cs	Renderer

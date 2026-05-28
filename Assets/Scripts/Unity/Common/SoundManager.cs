@@ -1,8 +1,9 @@
-using System;
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SoundManager : SingletonMonoBehaviour<SoundManager>
 {
@@ -10,9 +11,12 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     public AudioSource sfxSource;
     private AudioSource loopSfxSource;
 
-    private CancellationTokenSource _loopFadeCts;
+    [Header("UI SFX")]
+    [SerializeField] private AudioClip uiBookSfx;
+    [SerializeField] private AudioClip buttonClickSfx;
 
-    // BGM 클립은 CatalogProvider.BgmX로 액세스 (Resources.Load 폐기)
+    private CancellationTokenSource _loopFadeCts;
+    private readonly HashSet<int> _registeredButtons = new HashSet<int>();
 
     protected override void OnSingletonAwake()
     {
@@ -21,12 +25,14 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         if (loopSfxSource == null) loopSfxSource = CreateAudioSource("LoopSFXSpeaker", loop: true);
 
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
         SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
         if (ProgressSystem.Instance != null)
             ProgressSystem.Instance.OnPhaseChanged -= OnPhaseChanged;
     }
@@ -36,6 +42,18 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         if (ProgressSystem.Instance != null)
             ProgressSystem.Instance.OnPhaseChanged += OnPhaseChanged;
         UpdateBGM();
+        RegisterButtons(null);
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ScanButtonsNextFrameAsync().Forget();
+    }
+
+    private async UniTaskVoid ScanButtonsNextFrameAsync()
+    {
+        await UniTask.Yield(cancellationToken: this.GetCancellationTokenOnDestroy());
+        RegisterButtons(null);
     }
 
     private void OnActiveSceneChanged(Scene prev, Scene next)
@@ -83,6 +101,30 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     {
         if (clip == null) return;
         sfxSource.PlayOneShot(clip, volume);
+    }
+
+    // ── UI SFX (UISoundManager에서 흡수) ──
+
+    public void PlayUIBook()      => Play2DSFX(uiBookSfx);
+    public void PlayButtonClick() => Play2DSFX(buttonClickSfx);
+
+    // ── 버튼 자동 등록 (GlobalButtonSfxManager에서 흡수) ──
+
+    public void RegisterButtons(Transform root)
+    {
+        Button[] buttons = root != null
+            ? root.GetComponentsInChildren<Button>(true)
+            : FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        foreach (var btn in buttons)
+        {
+            int id = btn.GetInstanceID();
+            if (_registeredButtons.Contains(id)) continue;
+            if (btn.GetComponentInParent<Slider>() != null) continue;
+
+            _registeredButtons.Add(id);
+            btn.onClick.AddListener(PlayButtonClick);
+        }
     }
 
     // ── 루프 SFX (미니게임 조리음) ──

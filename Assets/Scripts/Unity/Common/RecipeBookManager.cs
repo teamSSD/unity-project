@@ -122,8 +122,8 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
             return;
         }
 
-        UISoundManager.Instance?.PlayUIBook();
-        GlobalButtonSfxManager.Instance?.RegisterButtons(transform);
+        SoundManager.Instance?.PlayUIBook();
+        SoundManager.Instance?.RegisterButtons(transform);
 
         switch (lastPage)
         {

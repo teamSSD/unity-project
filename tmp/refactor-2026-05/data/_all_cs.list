@@ -75,7 +75,6 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ClickStateUtil.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/DragSortingBump.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
-/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GlobalButtonSfxManager.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HUDManager.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HorizontalCameraMove.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HoverStateUtil.cs
@@ -103,7 +102,6 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TestSceneInit.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TimeManager.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/UIManager.cs
-/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/UISoundManager.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/UnlockedFoodManager.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/VisibleStateUtil.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/WeatherSystem.cs

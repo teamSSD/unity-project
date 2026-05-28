@@ -1,5 +1,4 @@
 26	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
-1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GlobalButtonSfxManager.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/InventoryManager.cs
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/MallSceneController.cs
 13	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ProgressSystem.cs
@@ -14,7 +13,6 @@
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SubSceneController.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TestSceneInit.cs
 8	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TimeManager.cs
-2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/UISoundManager.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/UnlockedFoodManager.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/BentoModel.cs
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CookingBackgroundController.cs

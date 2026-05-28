@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TimeManager : MonoBehaviour
+public class TimeManager : SingletonMonoBehaviour<TimeManager>
 {
-    public static TimeManager Instance { get; private set; }
-
     [Header("Global Time Settings")]
     [SerializeField] private float gameTimeScale = 120f;
     [SerializeField] private int startHour = 11;
@@ -47,16 +45,6 @@ public class TimeManager : MonoBehaviour
     private List<CustomTimer> activeTimers = new List<CustomTimer>();
     private int timerIdCounter = 0;
 
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-    }
-
     private void Start()
     {
         InitializeTime();
@@ -75,9 +63,10 @@ public class TimeManager : MonoBehaviour
         StatsSystem.Instance.OnTimeChanged += PlayTickingSfx;
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         StatsSystem.Instance.OnTimeChanged -= PlayTickingSfx;
+        base.OnDestroy();
     }
 
     // --- Global Time Controls ---

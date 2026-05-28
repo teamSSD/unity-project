@@ -99,8 +99,8 @@ public class UnifiedShopManager : MonoBehaviour
 
         UILockManager.Lock(UILockManager.Owner.Shop);
         bookInstance.SetActive(true);
-        UISoundManager.Instance?.PlayUIBook();
-        GlobalButtonSfxManager.Instance?.RegisterButtons(bookInstance.transform);
+        SoundManager.Instance?.PlayUIBook();
+        SoundManager.Instance?.RegisterButtons(bookInstance.transform);
         SwitchTab(tab);
     }
 
