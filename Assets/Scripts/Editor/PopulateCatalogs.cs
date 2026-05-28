@@ -31,7 +31,10 @@ public static class PopulateCatalogs
             var parts = line.Split(',');
             if (parts.Length < 4) continue;
             var key = parts[3].Trim();
+            // Resources.Load 우선 시도 (이전 위치), 실패 시 Bundles AssetDatabase 시도
             var sprite = Resources.Load<Sprite>(key);
+            if (sprite == null)
+                sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/Bundles/{key}.png");
             if (sprite == null) Debug.LogWarning($"[PopulateCatalogs] Crop sprite not found: {key}");
             entries.Add((key, sprite));
         }
