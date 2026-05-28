@@ -3,11 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MenuCardController : MonoBehaviour
+public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
 {
-    private static MenuCardController instance;
-    public static MenuCardController Instance => instance;
-
     private static bool isMenuCardActive = false;
     public static bool IsMenuCardActive => isMenuCardActive;
 
@@ -38,14 +35,8 @@ public class MenuCardController : MonoBehaviour
     private List<GameObject> spawnedLines = new List<GameObject>();
     private List<GameObject> spawnedIngredientLines = new List<GameObject>();
 
-    private void Awake()
+    protected override void OnSingletonAwake()
     {
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        instance = this;
         isMenuCardActive = false;
 
         BindReferences();
@@ -511,7 +502,6 @@ public class MenuCardController : MonoBehaviour
     public void CloseMenuCard()
     {
         isMenuCardActive = false;
-        instance = null;
         Destroy(gameObject);
     }
 

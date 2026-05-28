@@ -9,10 +9,8 @@ using TMPro;
 /// Displays visual feedback for order validation results
 /// Shows grade, score, and reward with color-coded feedback
 /// </summary>
-public class ValidationFeedbackUI : MonoBehaviour
+public class ValidationFeedbackUI : SingletonMonoBehaviour<ValidationFeedbackUI>
 {
-    public static ValidationFeedbackUI Instance { get; private set; }
-
     [Header("UI References")]
     [SerializeField] private GameObject feedbackPanel;
     [SerializeField] private TextMeshProUGUI gradeText;
@@ -26,31 +24,19 @@ public class ValidationFeedbackUI : MonoBehaviour
 
     private CancellationTokenSource _currentCts;
 
-    void Awake()
+    protected override void OnSingletonAwake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-
-        // Hide panel initially
         if (feedbackPanel != null)
         {
             feedbackPanel.SetActive(false);
         }
     }
 
-    void OnDestroy()
+    protected override void OnDestroy()
     {
         _currentCts?.Cancel();
         _currentCts?.Dispose();
-        if (Instance == this)
-        {
-            Instance = null;
-        }
+        base.OnDestroy();
     }
 
     /// <summary>
