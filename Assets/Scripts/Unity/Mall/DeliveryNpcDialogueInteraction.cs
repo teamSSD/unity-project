@@ -25,8 +25,7 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         this.npcId = npcId;
         this.characterName = characterName;
         this.portrait = portrait;
-        dialogueConfig = Resources.Load<DeliveryDialogueConfig>(
-            $"ScriptableObjects/Dialogue/{groupId}/Config");
+        dialogueConfig = CatalogProvider.DialogueConfig?.GetByGroupId(groupId);
         if (!questStages.ContainsKey(groupId))
             questStages[groupId] = DeliveryQuestStage.Normal;
     }
@@ -269,7 +268,7 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         if (questMenus != null) return;
         questMenus = new Dictionary<string, MenuSchema>();
 
-        var csv = Resources.Load<TextAsset>(ResourcePaths.Data.DeliveryQuest);
+        var csv = CatalogProvider.Csvs?.deliveryQuest;
         if (csv == null) return;
 
         var lines = csv.text.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);

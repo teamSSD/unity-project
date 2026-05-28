@@ -19,7 +19,7 @@ public class StorageUpgradeManager : MonoBehaviour
     void LoadTable()
     {
         upgradeTable = new Dictionary<string, List<StorageUpgradeData>>();
-        var rows = CsvModelConverter.Parse<StorageUpgradeData>(ResourcePaths.DataTable.StorageUpgrade);
+        var rows = CsvModelConverter.Parse<StorageUpgradeData>(CatalogProvider.Csvs?.storageUpgrade);
         foreach (var row in rows)
         {
             if (!upgradeTable.ContainsKey(row.type))

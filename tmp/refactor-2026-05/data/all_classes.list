@@ -17,18 +17,23 @@ ButtonHover
 CameraFollow
 CasualDialogueProvider
 CasualNpcInteraction
+CatalogProvider
+CatalogSO
 ClickMiniGame
 ClickStateUtil
 ClockUI
 CookingBackgroundController
 CookingSceneManager
 CookingToolBehavior
+CookingToolCatalogSO
 CookingToolData
 CookingToolDescription
 CookingToolModel
 CookingToolSchema
 CropData
 CropDataManager
+CropSpriteCatalogSO
+CsvCatalogSO
 CsvModelConverter
 CsvParsingException
 CustomTimer
@@ -40,6 +45,7 @@ Data
 DataSaveUtil
 DataTable
 DeliveryDialogueConfig
+DeliveryNpcCatalogSO
 DeliveryNpcContext
 DeliveryNpcData
 DeliveryNpcDialogueInteraction
@@ -51,6 +57,7 @@ DeliveryNpcView
 DeliveryOrderData
 DeliveryQuestSaveData
 DialogueChoice
+DialogueConfigCatalogSO
 DialogueEntry
 DialogueLine
 DialogueManager
@@ -72,6 +79,7 @@ FireMiniGame
 FlexibleGridCell
 FloatEvent
 FoodBehavior
+FoodCatalogSO
 FoodData
 FoodModel
 FoodSchema
@@ -91,6 +99,7 @@ HUDManager
 HorizontalCameraMove
 HoverStateUtil
 IdleSceneController
+IngredientCatalogSO
 IngredientData
 IngredientDescription
 IntEvent
@@ -140,6 +149,7 @@ PlayerData
 PlayerMove
 PlayerSaveLoad
 Prefab
+PrefabCatalogSO
 ProgressSystem
 RandomGeneral
 RandomNormal
@@ -148,6 +158,7 @@ ReceiptLine
 RecipeBookManager
 RecipeBookMenuProvider
 RecipeBookToggleButton
+RecipeCatalogSO
 RecipeData
 RecipeDataManager
 RecipeIngredient

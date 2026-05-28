@@ -21,8 +21,8 @@ public static class CasualDialogueProvider
     {
         npcLines = new Dictionary<string, List<Line>>();
 
-        var csv = Resources.Load<TextAsset>(ResourcePaths.Data.NpcCasualDialogue);
-        if (csv == null) { Debug.LogError("[CasualDialogue] CSV not found"); return; }
+        var csv = CatalogProvider.Csvs?.npcCasualDialogue;
+        if (csv == null) { Debug.LogError("[CasualDialogue] CSV not in CatalogProvider"); return; }
 
         var lines = csv.text.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);
         for (int i = 1; i < lines.Length; i++)

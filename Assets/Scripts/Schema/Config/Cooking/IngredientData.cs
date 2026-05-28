@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public enum IngredientDisplayCategory
@@ -35,16 +34,17 @@ public class IngredientData : ScriptableObject, CsvParsable
     {
         return id.GetHashCode();
     }
-    
+
     public void Init(string[] args)
     {
+#if UNITY_EDITOR
         if (args.Length < 6) return;
-
         this.id = args[0].Trim();
         this.description = args[1].Trim();
-        this.display = (IngredientDisplayCategory) Enum.Parse(typeof(IngredientDisplayCategory), args[2].Trim());
+        this.display = (IngredientDisplayCategory)System.Enum.Parse(typeof(IngredientDisplayCategory), args[2].Trim());
         int.TryParse(args[3].Trim(), out this.defaultPrice);
-        this.tag = (IngredientTag) Enum.Parse(typeof(IngredientTag), args[4].Trim());
+        this.tag = (IngredientTag)System.Enum.Parse(typeof(IngredientTag), args[4].Trim());
         int.TryParse(args[5].Trim(), out this.expirationDay);
+#endif
     }
 }

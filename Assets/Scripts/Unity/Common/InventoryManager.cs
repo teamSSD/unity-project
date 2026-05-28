@@ -29,9 +29,9 @@ public class InventoryManager : SingletonMonoBehaviour<InventoryManager>, LoadIn
 
     private void LoadAllFoodData()
     {
-        FoodData[] foods = Resources.LoadAll<FoodData>(ResourcePaths.Data.FoodData);
-        allFoodData = new List<FoodData>(foods);
-        Debug.Log($"[InventoryManager] Loaded {allFoodData.Count} food data assets");
+        var catalog = CatalogProvider.Food?.All;
+        allFoodData = catalog != null ? new List<FoodData>(catalog) : new List<FoodData>();
+        Debug.Log($"[InventoryManager] Loaded {allFoodData.Count} food data from catalog");
     }
 
     // 시작 메뉴(옥상오믈렛, 기계장, 루미젤리, 환기구연어) 원재료

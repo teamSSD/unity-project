@@ -34,7 +34,7 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
         backdrop.GetComponent<Image>().raycastTarget = true;
         backdrop.SetActive(false);
 
-        var prefab = Resources.Load<GameObject>(ResourcePaths.Prefab.Settings);
+        var prefab = CatalogProvider.Prefabs?.settings;
         settingsPanel = Instantiate(prefab, canvasGO.transform);
         settingsPanel.SetActive(false);
     }

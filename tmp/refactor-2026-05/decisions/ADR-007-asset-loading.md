@@ -1,24 +1,53 @@
-# ADR-007: Asset Loading — Resources → Addressables 전면 마이그레이션
+# ADR-007: Asset Loading — Resources → ScriptableObject Catalog 패턴
 
-**상태**: **ACCEPTED** (2026-05-28)  
-**카테고리**: Phase 2-D로 승격 (Progressive → 전면 수행)
+**상태**: **ACCEPTED v3** (2026-05-28)  
+**카테고리**: Phase 2-D로 승격
 
-## TL;DR (v2 결정 요약)
+## TL;DR (v3 결정 요약 — Addressables 폐기, Catalog 채택)
 
-**Resources.Load 36회 → Addressables 전면 마이그레이션 (Phase 2-D).**
-- `Assets/Resources/` 폴더 비움 (잔존 = 명백한 미사용)
-- `resources_load = 0` 하드 타깃
-- 시점: asmdef 마이그레이션(Phase 2-A) 직후
-- 하네스 추가: `09_addressables_audit.sh` (그룹 등록 키 vs 코드 참조)
+**Resources.Load 36회 → ScriptableObject Catalog + SerializeField 인스펙터 직접 연결.**
+- `Addressables 패키지 도입 안 함` (이 규모 게임에 과함)
+- LoadAll/동적 키 패턴 → `XCatalogSO` (FoodCatalog, RecipeCatalog 등 ~7개)
+- 단일 프리팹/오디오 → SerializeField 인스펙터 연결
+- 자산은 Resources/에서 일반 경로로 이동 (catalog가 ref하면 빌드 자동 포함)
+- `Assets/Resources/` 폴더 최종 비움 (또는 외부 패키지만 잔존)
+- `resources_load = 0` 하드 타깃 (게이트 유지)
 
-## v1과의 차이
+## v2 → v3 변화 이유
 
-| 항목 | v1 (보수) | v2 (수정) |
-|---|---|---|
-| 추천 | D (보류) | **C (전면 마이그레이션)** |
-| 트리거 조건 | 빌드 사이즈/메모리 압박 시 | **즉시 수행** |
-| Resources/ 폴더 | 유지 | **비움 (잔존 = 미사용 신호)** |
-| 시점 | 미정 | Phase 2-D |
+사용자 지적: "굳이 간접 연결할 필요 있나? 인스펙터로 다 연결하면 안 되나?"
+
+Resources.Load 36회의 실제 분포:
+- LoadAll 10회 (FoodData 등 200+개) → SerializeField로 200개 끌어 놓기 비현실. **Catalog SO 필요**
+- 동적 키 ~8회 (`$"Dialogue/{groupId}/Config"` 등) → 런타임 변수, SerializeField 불가. **Catalog SO 필요**
+- 단일 프리팹/SO/오디오 ~18회 → **SerializeField로 충분**
+
+ADR-002 SO 하이브리드 결정과 일관됨. Addressables 학습/그룹관리 부담 제거.
+
+## 버전 변화 요약
+
+| 항목 | v1 (보류) | v2 (Addressables 전면) | v3 (Catalog 채택) |
+|---|---|---|---|
+| 추천 | D (보류) | C (Addressables 전면) | **Catalog + SerializeField** |
+| 외부 패키지 | 없음 | Addressables 도입 | **없음** |
+| Resources/ 폴더 | 유지 | 비움 | **비움** |
+| 동적 키 처리 | — | AssetReference | **Catalog.GetById** |
+| LoadAll 처리 | — | Addressables 그룹 라벨 | **Catalog.All() / List** |
+| 새 자산 추가 | — | 그룹 등록 | **Catalog 인스펙터 드래그** |
+
+## v3 적용할 Catalog 7개
+
+| Catalog | 대체할 LoadAll/동적 키 |
+|---|---|
+| FoodCatalogSO | `Resources.LoadAll<FoodData>("...")` 5사이트 + `$"FoodData/{id}"` 동적 |
+| RecipeCatalogSO | `LoadAll<RecipeData>` |
+| IngredientCatalogSO | `LoadAll<IngredientData>` + `$"IngredientData/{id}"` |
+| CookingToolCatalogSO | `LoadAll<CookingToolData>` |
+| DeliveryNpcCatalogSO | `LoadAll<DeliveryNpcData>` |
+| CropCatalogSO | `CropData.imagePath` Resources.Load Sprite |
+| DialogueConfigCatalogSO | `$"Dialogue/{groupId}/Config"` 동적 |
+
+단일 프리팹/오디오/설정 SO (~18회)는 SerializeField로 인스펙터 직접 연결.
 
 ## v2 결정 근거
 

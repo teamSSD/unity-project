@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17467846a49f7479ea7d73e52fa7c82a, type: 3}
+  m_Name: CropSpriteCatalog
+  m_EditorClassIdentifier: Game.Schema::Game.Schema.Catalog.CropSpriteCatalogSO
+  entries:
+  - key: driveAssets/art/item/cooking/food/item_garlic_raw
+    sprite: {fileID: 21300000, guid: 44fbd87ff0b0a40e78a35c8a362c903f, type: 3}
+  - key: driveAssets/art/item/cooking/food/item_eggplant_raw
+    sprite: {fileID: 21300000, guid: c1eaaabd35c024ec5914120e651fe3bd, type: 3}
+  - key: driveAssets/art/item/cooking/food/item_insulatingMushroom_raw
+    sprite: {fileID: 21300000, guid: 720b27fc6ab154ef4955bcb9b411f4dc, type: 3}
+  - key: driveAssets/art/item/cooking/food/item_dawnHerb_raw
+    sprite: {fileID: 21300000, guid: ae98d61c8372e4b948005e6e78ea08e6, type: 3}
+  - key: driveAssets/art/item/cooking/food/item_steelRoot_raw
+    sprite: {fileID: 21300000, guid: 6c57db27de326442db20f24e45cd9483, type: 3}
+  - key: driveAssets/art/item/cooking/food/item_greenOnion_raw
+    sprite: {fileID: 21300000, guid: 3d04bc952aa204831862e9d070859b7a, type: 3}
+  - key: driveAssets/art/item/cooking/food/item_cheongyangLeaf_raw
+    sprite: {fileID: 21300000, guid: 2ad88b14694c34f9faa68b912f52dd7a, type: 3}
+  - key: driveAssets/art/item/cooking/food/item_lumiLeaf_raw
+    sprite: {fileID: 21300000, guid: 81f23b2f09b91406da0ba45c6d1e9ac6, type: 3}
+  - key: driveAssets/art/item/cooking/food/item_lightTomato_raw
+    sprite: {fileID: 21300000, guid: 4e81d6487e836439b98f05410f280ed7, type: 3}
+  - key: driveAssets/art/item/cooking/food/item_windBean_raw
+    sprite: {fileID: 21300000, guid: 91bf69d172f4241ba9af1480ed591269, type: 3}
+  - key: driveAssets/art/item/cooking/food/item_electricFlower_raw
+    sprite: {fileID: 21300000, guid: daa7b24fd849e477bb3be829d6e4f623, type: 3}
+  - key: driveAssets/art/item/cooking/food/item_moonRoot_raw
+    sprite: {fileID: 21300000, guid: 6ba2a56621d6c445694509c23c3356b7, type: 3}
+  - key: driveAssets/art/item/cooking/food/item_onion_raw
+    sprite: {fileID: 21300000, guid: b6756a62bcc074cf48b655cfb064ff99, type: 3}

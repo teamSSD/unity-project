@@ -34,6 +34,7 @@ public class FoodData : ScriptableObject, CsvParsable
 
     public void Init(string[] args)
     {
+#if UNITY_EDITOR
         if (args.Length != 6) throw new CsvParsingException("length of args isn't match.");
         try
         {
@@ -47,10 +48,8 @@ public class FoodData : ScriptableObject, CsvParsable
             availableTools = new List<string>(args[4].Split('/'));
             type = (FoodType)Enum.Parse(typeof(FoodType), args[5].Trim());
 
-            // Variant 스프라이트 로드
             string baseName = args[3].Trim().Replace("_raw", "");
 
-            // Tool variants
             if (type == FoodType.INGREDIENT)
             {
                 foreach (string toolId in availableTools)
@@ -65,11 +64,9 @@ public class FoodData : ScriptableObject, CsvParsable
                     toolVariants[i] = Resources.Load<Sprite>(ResourcePaths.Art.Food + baseName + toolSuffixes[i]);
             }
 
-            // Piece variant (커팅 미니게임용)
             if (type == FoodType.INGREDIENT && availableTools.Contains("T004"))
                 pieceSprite = Resources.Load<Sprite>(ResourcePaths.Art.Food + baseName + "_piece");
 
-            // Bento variants
             if (type == FoodType.MAIN || type == FoodType.SIDE)
             {
                 for (int i = 0; i < 4; i++)
@@ -80,6 +77,7 @@ public class FoodData : ScriptableObject, CsvParsable
         {
             throw new CsvParsingException($"Exception occured during parsing \nmessage : {e.Message}");
         }
+#endif
     }
 
     public Sprite GetRepresentativeBentoImage()

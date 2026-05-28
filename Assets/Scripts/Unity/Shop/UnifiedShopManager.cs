@@ -14,9 +14,6 @@ public class UnifiedShopManager : MonoBehaviour
 
     public static UnifiedShopManager Instance { get; private set; }
 
-    private const string BookPrefabPath = "Prefabs/Shop/ShopBook";
-    private const string RowPrefabPath  = "Prefabs/Shop/ShopListRow";
-
     // 런타임 책 참조
     private GameObject bookInstance;
     private Transform  listContent;       // Page_L/Scroll/Viewport/Content
@@ -51,8 +48,8 @@ public class UnifiedShopManager : MonoBehaviour
 
     private void SpawnBook()
     {
-        var prefab = Resources.Load<GameObject>(BookPrefabPath);
-        if (prefab == null) { Debug.LogError("[UnifiedShop] ShopBook prefab not found"); return; }
+        var prefab = CatalogProvider.Prefabs?.shopBook;
+        if (prefab == null) { Debug.LogError("[UnifiedShop] ShopBook prefab not in PrefabCatalog"); return; }
 
         // Canvas 래퍼 — 매니저 자식으로 두어 라이프사이클 공유 (Screen Space Overlay)
         var wrapper = new GameObject("ShopBookCanvas",
@@ -155,7 +152,7 @@ public class UnifiedShopManager : MonoBehaviour
 
     private GameObject GetRowPrefab()
     {
-        if (cachedRowPrefab == null) cachedRowPrefab = Resources.Load<GameObject>(RowPrefabPath);
+        if (cachedRowPrefab == null) cachedRowPrefab = CatalogProvider.Prefabs?.shopRow;
         return cachedRowPrefab;
     }
 
@@ -200,8 +197,8 @@ public class UnifiedShopManager : MonoBehaviour
         int today = StatsSystem.Instance.GetDay();
         if (cachedDay != today || cachedItemList == null)
         {
-            var config = Resources.Load<ShopConfigSO>(ResourcePaths.SO.FoodShopConfig);
-            if (config == null) { Debug.LogError("[UnifiedShop] FoodShopConfig not found"); return; }
+            var config = CatalogProvider.FoodShopConfig;
+            if (config == null) { Debug.LogError("[UnifiedShop] FoodShopConfig not in CatalogProvider"); return; }
             cachedItemList = config.BuildSlotList();
             cachedDay = today;
             dailyPurchased.Clear();

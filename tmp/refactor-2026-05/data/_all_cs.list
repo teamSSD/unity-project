@@ -1,4 +1,3 @@
-/Users/hogun/UnityProjects/My project/unity-project/Assets/Resources/driveAssets/dataTables/parsers/CookingDataExporter.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/DataSaveUtil.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/MenuValidator.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/RandomGeneral.cs
@@ -11,14 +10,25 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/StorageUpgradeData.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/ToolUpgradeData.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/BuildSettingsHelper.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/CookingDataExporter.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/DeliveryDataExporter.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/IngredientImageConsistencyChecker.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/PopulateCatalogs.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/ProjectValidator.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/SpriteAssetAlignWithText.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/SpriteFallbackAutoRegister.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/CatalogSO.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/CookingToolCatalogSO.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/CropSpriteCatalogSO.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/CsvCatalogSO.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/DeliveryNpcCatalogSO.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/DialogueConfigCatalogSO.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/FoodCatalogSO.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/IngredientCatalogSO.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/PrefabCatalogSO.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/RecipeCatalogSO.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/GameRandom.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/ResourcePaths.cs
-/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/SearchDataUtil.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Common/CookingToolData.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Common/CropData.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Common/CustomerData.cs
@@ -61,6 +71,7 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Shop/ItemShopSlotInfo.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ActionSelectionManager.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/BootLoader.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/CatalogProvider.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ClickStateUtil.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/DragSortingBump.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
@@ -81,6 +92,7 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveManager.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ScanColliderUtil.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SceneLoader.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SearchDataUtil.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettingsUIManager.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettlementManager.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SingletonMonoBehaviour.cs

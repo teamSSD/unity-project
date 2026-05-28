@@ -34,9 +34,9 @@ public class UnlockedFoodManager : SingletonMonoBehaviour<UnlockedFoodManager>, 
 
     private void LoadAllFoodData()
     {
-        FoodData[] foods = Resources.LoadAll<FoodData>(ResourcePaths.Data.FoodData);
-        allFoodData = new List<FoodData>(foods);
-        Debug.Log($"[UnlockedFoodManager] Loaded {allFoodData.Count} total food data assets");
+        var catalog = CatalogProvider.Food?.All;
+        allFoodData = catalog != null ? new List<FoodData>(catalog) : new List<FoodData>();
+        Debug.Log($"[UnlockedFoodManager] Loaded {allFoodData.Count} total food data from catalog");
     }
 
     /// <summary>

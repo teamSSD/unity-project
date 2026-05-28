@@ -7,24 +7,24 @@ using System.Linq;
 
 public class CookingDataExporter : Editor
 {
-    private const string BaseSOPath = "Assets/Resources/ScriptableObjects";
-    private const string BaseCSVPath = "driveAssets/dataTables";
+    private const string BaseSOPath = "Assets/Bundles/ScriptableObjects";
+    private const string BaseCSVPath = "Assets/Bundles/driveAssets/dataTables";
 
     [MenuItem("Tools/Export Recipes to SO")]
     public static void ExportAll()
     {
         ExportData<IngredientData>(
-            $"{BaseCSVPath}/ingredient", 
+            $"{BaseCSVPath}/ingredient.csv",
             $"{BaseSOPath}/IngredientData"
         );
 
         ExportData<FoodData>(
-            $"{BaseCSVPath}/food", 
+            $"{BaseCSVPath}/food.csv",
             $"{BaseSOPath}/FoodData"
         );
 
         ExportData<RecipeData>(
-            $"{BaseCSVPath}/recipe", 
+            $"{BaseCSVPath}/recipe.csv",
             $"{BaseSOPath}/RecipeData"
         );
 
@@ -34,12 +34,12 @@ public class CookingDataExporter : Editor
         Debug.Log("<color=cyan><b>[All Data Exported Successfully]</b></color>");
     }
 
-    private static void ExportData<T>(string csvPath, string savePath) where T : ScriptableObject, CsvParsable
+    private static void ExportData<T>(string csvAssetPath, string savePath) where T : ScriptableObject, CsvParsable
     {
-        TextAsset csvFile = Resources.Load<TextAsset>(csvPath);
+        TextAsset csvFile = AssetDatabase.LoadAssetAtPath<TextAsset>(csvAssetPath);
         if (csvFile == null)
         {
-            Debug.LogError($"CSV를 찾을 수 없음: {csvPath}");
+            Debug.LogError($"CSV를 찾을 수 없음: {csvAssetPath}");
             return;
         }
         

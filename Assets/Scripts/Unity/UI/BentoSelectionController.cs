@@ -47,8 +47,7 @@ public class BentoSelectionController : MonoBehaviour
         {
             // UnlockedFoodManager가 없으면 모든 레시피 로드 (폴백)
             Debug.LogWarning("[BentoSelection] UnlockedFoodManager not found, loading all recipes");
-            FoodData[] foods = Resources.LoadAll<FoodData>(ResourcePaths.Data.FoodData);
-            allFoodData = new List<FoodData>(foods);
+            allFoodData = new List<FoodData>(CatalogProvider.Food?.All ?? new List<FoodData>());
             Debug.Log($"[BentoSelection] Loaded {allFoodData.Count} food data assets (all recipes)");
         }
     }

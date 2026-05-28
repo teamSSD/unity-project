@@ -50,12 +50,12 @@ public static class ManagerBootstrap
     }
 
     /// <summary>
-    /// RecipeBookManager는 프리팹에서 로드 (특수 처리)
+    /// RecipeBookManager는 프리팹에서 로드 (특수 처리, PrefabCatalog 경유)
     /// </summary>
     private static void EnsureRecipeBookManager()
     {
         if (RecipeBookManager.HasInstance) return;
-        var prefab = Resources.Load<GameObject>(ResourcePaths.Prefab.RecipeBook);
+        var prefab = CatalogProvider.Prefabs?.recipeBook;
         if (prefab != null)
         {
             Object.Instantiate(prefab);
@@ -63,7 +63,7 @@ public static class ManagerBootstrap
         }
         else
         {
-            Debug.LogError("[ManagerBootstrap] RecipeBook prefab not found");
+            Debug.LogError("[ManagerBootstrap] RecipeBook prefab not in PrefabCatalog");
         }
     }
 }

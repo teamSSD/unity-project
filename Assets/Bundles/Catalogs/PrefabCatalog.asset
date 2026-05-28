@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3389bac81db354a3491fefd536cf8030, type: 3}
+  m_Name: PrefabCatalog
+  m_EditorClassIdentifier: Game.Schema::Game.Schema.Catalog.PrefabCatalogSO
+  recipeBook: {fileID: 860260944345430814, guid: a1cc086ed530c9f41a66d25a121ce040, type: 3}
+  settings: {fileID: 6987581108975791713, guid: 60dbc3a72506c415389b5c11733e330f, type: 3}
+  ingredientDescription: {fileID: 7176344860844445279, guid: e399713bb8d2c4dcea52d6a9a1c93fee, type: 3}
+  cookingToolDescription: {fileID: 8741771434616529297, guid: 1b3fec945fb144ca7adb2756960dd742, type: 3}
+  statUI: {fileID: 8286282955327488422, guid: a492104fd98044f57b5f227a21e4d5e3, type: 3}
+  shopBook: {fileID: 860260944345430814, guid: 19fcf08d77f8545d5a6b4a98e2a190f1, type: 3}
+  shopRow: {fileID: 6130162722029096702, guid: 582eafc089b9143c18182ecbb5b84d97, type: 3}

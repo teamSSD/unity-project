@@ -7,8 +7,8 @@ using System.Linq;
 
 public class DeliveryDataExporter : Editor
 {
-    private const string BaseSOPath = "Assets/Resources/ScriptableObjects";
-    private const string BaseCSVPath = "driveAssets/dataTables";
+    private const string BaseSOPath = "Assets/Bundles/ScriptableObjects";
+    private const string BaseCSVPath = "Assets/Bundles/driveAssets/dataTables";
 
     [MenuItem("Tools/Export Delivery to SO")]
     public static void ExportAll()
@@ -23,18 +23,18 @@ public class DeliveryDataExporter : Editor
     static void ExportNpcs()
     {
         ExportCsvParsable<DeliveryNpcData>(
-            $"{BaseCSVPath}/deliveryNPC",
+            $"{BaseCSVPath}/deliveryNPC.csv",
             $"{BaseSOPath}/DeliveryNpcData"
         );
     }
 
-    private static void ExportCsvParsable<T>(string csvPath, string savePath)
+    private static void ExportCsvParsable<T>(string csvAssetPath, string savePath)
         where T : ScriptableObject, CsvParsable
     {
-        TextAsset csvFile = Resources.Load<TextAsset>(csvPath);
+        TextAsset csvFile = AssetDatabase.LoadAssetAtPath<TextAsset>(csvAssetPath);
         if (csvFile == null)
         {
-            Debug.LogError($"CSV를 찾을 수 없음: {csvPath}");
+            Debug.LogError($"CSV를 찾을 수 없음: {csvAssetPath}");
             return;
         }
 
@@ -239,7 +239,7 @@ public class DeliveryDataExporter : Editor
 
     static Dictionary<string, DialogRow> ParseDialogCSV()
     {
-        var csv = Resources.Load<TextAsset>($"{BaseCSVPath}/dialog");
+        var csv = AssetDatabase.LoadAssetAtPath<TextAsset>($"{BaseCSVPath}/dialog.csv");
         if (csv == null) { Debug.LogError("dialog.csv not found"); return null; }
 
         var rows = new Dictionary<string, DialogRow>();
@@ -269,7 +269,7 @@ public class DeliveryDataExporter : Editor
 
     static Dictionary<string, List<BranchRow>> ParseBranchCSV()
     {
-        var csv = Resources.Load<TextAsset>($"{BaseCSVPath}/dialogBranch");
+        var csv = AssetDatabase.LoadAssetAtPath<TextAsset>($"{BaseCSVPath}/dialogBranch.csv");
         if (csv == null) { Debug.LogError("dialogBranch.csv not found"); return null; }
 
         var groups = new Dictionary<string, List<BranchRow>>();
