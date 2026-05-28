@@ -1,0 +1,323 @@
+# Refactor Baseline Report
+
+_생성일: 2026-05-28 10:38:35_
+_프로젝트: /Users/hogun/UnityProjects/My project/unity-project_
+
+## 1. 파일/라인 통계
+
+| 범주 | 파일 수 | 총 라인 |
+|---|---:|---:|
+| 런타임 | 191 | 15226 |
+| 에디터 | 4 | 923 |
+| 테스트 | 9 | 1016 |
+
+## 2. 파일 라인 분포 (런타임)
+
+| 구간 | 파일 수 |
+|---|---:|
+| 0-50 | 91 |
+| 51-100 | 50 |
+| 101-200 | 38 |
+| 201-300 | 6 |
+| 301-500 | 5 |
+| 501+ | 1 |
+
+### 상위 10개
+
+- **594** lines — Assets/Scripts/Entities/RecipeBook/menu/MenuCardController.cs
+- **442** lines — Assets/Scripts/Managers/shop/UnifiedShopManager.cs
+- **422** lines — Assets/Scripts/Managers/cooking/CustomerManager.cs
+- **340** lines — Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryNpcDialogueInteraction.cs
+- **307** lines — Assets/Scripts/Entities/Mall/Dialogue/DialogueManager.cs
+- **302** lines — Assets/Scripts/Managers/InventoryManager.cs
+- **269** lines — Assets/Scripts/Utilities/MenuValidator.cs
+- **264** lines — Assets/Scripts/Managers/RecipeBookManager.cs
+- **258** lines — Assets/Scripts/Entities/Cooking/cooking/Food/FoodModel.cs
+- **235** lines — Assets/Scripts/Entities/RecipeBook/inventory/InventoryPageController.cs
+
+## 3. 함수 길이 분포
+
+총 메서드 추출: 726개 (휴리스틱 추정)
+
+| 라인 수 구간 | 메서드 수 | 비율 |
+|---|---:|---:|
+| 1-10 | 454 | 62.5% |
+| 11-20 | 153 | 21.1% |
+| 21-40 | 95 | 13.1% |
+| 41-60 | 22 | 3.0% |
+| 61+ | 2 | 0.3% |
+
+### 상위 15개
+
+- **62** lines — `AdjustSpacing` in Assets/Scripts/Entities/RecipeBook/menu/MenuCardController.cs
+- **61** lines — `LoadSceneAdditiveCoroutine` in Assets/Scripts/Managers/LoadingManager.cs
+- **53** lines — `Start` in Assets/Scripts/Controllers/MallSceneController.cs
+- **52** lines — `InitSlot` in Assets/Scripts/Entities/RecipeBook/menu/MenuCardController.cs
+- **51** lines — `PopulateRecipeLine` in Assets/Scripts/Entities/RecipeBook/menu/MenuCardController.cs
+- **51** lines — `OnUpdate` in Assets/Scripts/Systems/MiniGameSystem/FireMiniGame.cs
+- **51** lines — `OnOrderDelivered` in Assets/Scripts/Managers/cooking/CustomerLifecycle.cs
+- **50** lines — `ComputeConvexHull` in Assets/Scripts/Entities/Cooking/cooking/Food/FoodModel.cs
+- **49** lines — `Init` in Assets/Scripts/Entities/Cooking/cooking/dataType/FoodData.cs
+- **49** lines — `DetectState` in Assets/Scripts/Utilities/mouseControl/ClickStateUtil.cs
+- **47** lines — `GenerateFeedback` in Assets/Scripts/Utilities/MenuValidator.cs
+- **46** lines — `AdjustSelectedAssets` in Assets/Scripts/Utilities/editor/SpriteAssetAlignWithText.cs
+- **45** lines — `LoadMenusFromProgress` in Assets/Scripts/Managers/RecipeDataManager.cs
+- **45** lines — `HandleCustomerSpawning` in Assets/Scripts/Managers/cooking/CustomerManager.cs
+- **44** lines — `OnSingletonAwake` in Assets/Scripts/Managers/RecipeBookManager.cs
+
+## 4. 들여쓰기 뎁스 (파일별 최대, 4-space 기준)
+
+| 최대 뎁스 | 파일 수 |
+|---:|---:|
+| 3 | 60 |
+| 4 | 50 |
+| 5 | 16 |
+| 6 | 11 |
+| 7 | 1 |
+| ≥8 | 0 |
+
+### 깊은 뎁스 상위 10개
+
+- depth **7** — Assets/Scripts/UI/TooltipController.cs
+- depth **6** — Assets/Scripts/Systems/MiniGameSystem/helper/SliceVisualizer.cs
+- depth **6** — Assets/Scripts/Managers/cooking/CustomerManager.cs
+- depth **6** — Assets/Scripts/Managers/cooking/CookingSceneManager.cs
+- depth **6** — Assets/Scripts/Managers/InventoryManager.cs
+- depth **6** — Assets/Scripts/Entities/RecipeBook/menu/MenuSlot.cs
+- depth **6** — Assets/Scripts/Entities/RecipeBook/menu/MenuCardController.cs
+- depth **6** — Assets/Scripts/Entities/Mall/delivery/OrderManager.cs
+- depth **6** — Assets/Scripts/Entities/Garden/Farm.cs
+- depth **6** — Assets/Scripts/Entities/Cooking/customer/WaitingCustomer.cs
+
+## 5. 안티패턴 카운트
+
+| 패턴 | 발생 수 |
+|---|---:|
+| singleton_decl | 9 |
+| instance_access | 318 |
+| public_mutable_field | 0 |
+| static_mutable_field | 0 |
+| find_object | 14 |
+| send_message | 0 |
+| resources_load | 36 |
+| debug_log | 101 |
+| empty_catch | 0 |
+| todo_comment | 0 |
+| yield_return_null | 21 |
+| case_label | 31 |
+| event_subscribe | 73 |
+| event_unsubscribe | 45 |
+| serialize_field | 251 |
+| camera_main | 17 |
+| mono_behaviour_class | 99 |
+| magic_number_lines (대략) | 207 |
+
+## 6. Singleton 보유 파일
+
+- Assets/Scripts/Entities/RecipeBook/menu/MenuCardController.cs
+- Assets/Scripts/Managers/garden/CropDataManager.cs
+- Assets/Scripts/Managers/garden/FarmUpgradeManager.cs
+- Assets/Scripts/Managers/shop/StorageUpgradeManager.cs
+- Assets/Scripts/Managers/shop/ToolUpgradeManager.cs
+- Assets/Scripts/Managers/shop/UnifiedShopManager.cs
+- Assets/Scripts/Systems/Commons/TimeManager.cs
+- Assets/Scripts/UI/ValidationFeedbackUI.cs
+- Assets/Scripts/Utilities/SingletonMonoBehaviour.cs
+
+## 7. DI Safety
+
+| 항목 | 값 |
+|---|---:|
+| 클래스 내부에서 `.Instance` 호출 (1+ 발생 파일) | 68 |
+| Awake/Start/OnEnable에서 `.Instance` 접근 (메서드 수) | 17 |
+| `[SerializeField]` 있는데 `OnValidate` 없음 (파일) | 68 |
+| `GetComponent<X>` 있는데 `[RequireComponent(typeof(X))]` 없음 | 112 |
+| 자체 Singleton (`SingletonMonoBehaviour<T>` 미상속) | 8 |
+| Entities/ 안에서 `.Instance` 접근 | 25 |
+
+### 7.1 Hidden Dependency 상위 10개 (`.Instance` 호출 많은 파일)
+
+- **27** — Assets/Scripts/Utilities/SaveManager.cs
+- **26** — Assets/Scripts/Controllers/GameStart.cs
+- **13** — Assets/Scripts/Systems/Commons/ProgressSystem.cs
+- **12** — Assets/Scripts/Managers/shop/UnifiedShopManager.cs
+- **12** — Assets/Scripts/Entities/ItemShop/ShopDetailPanel.cs
+- **11** — Assets/Scripts/UI/stats/ClockUI.cs
+- **10** — Assets/Scripts/Entities/Garden/Farm.cs
+- **9** — Assets/Scripts/UI/stats/NumericStatsViewer.cs
+- **9** — Assets/Scripts/Managers/cooking/CustomerManager.cs
+- **8** — Assets/Scripts/UI/BentoSelectionController.cs
+
+### 7.2 Awake/Start/OnEnable에서 `.Instance` 접근
+
+- `Start` — Assets/Scripts/Controllers/GameStart.cs:11
+- `Start` — Assets/Scripts/Controllers/MallSceneController.cs:21
+- `Start` — Assets/Scripts/Entities/Cooking/cooking/CookingBackgroundController.cs:9
+- `Awake` — Assets/Scripts/Entities/Cooking/cooking/LowerShelf.cs:9
+- `Start` — Assets/Scripts/Entities/Cooking/cooking/OrderTicket/OrderTicketModel.cs:32
+- `Awake` — Assets/Scripts/Entities/Cooking/cooking/Refrigerator.cs:9
+- `Awake` — Assets/Scripts/Entities/Cooking/cooking/UpperShelf.cs:9
+- `Start` — Assets/Scripts/Entities/Cooking/customer/WaitingCustomer.cs:53
+- `Start` — Assets/Scripts/Entities/Garden/Farm.cs:25
+- `Start` — Assets/Scripts/Managers/SoundManager.cs:34
+- `Start` — Assets/Scripts/Managers/cooking/CookingSceneManager.cs:20
+- `OnEnable` — Assets/Scripts/Managers/cooking/StatManager.cs:14
+- `OnEnable` — Assets/Scripts/UI/SettingsController.cs:24
+- `Awake` — Assets/Scripts/UI/TooltipController.cs:38
+- `OnEnable` — Assets/Scripts/UI/stats/ClockUI.cs:19
+- `OnEnable` — Assets/Scripts/UI/stats/MoneyUI.cs:17
+- `OnEnable` — Assets/Scripts/UI/stats/StaminaGauge.cs:19
+
+### 7.3 `[SerializeField]` 있는데 `OnValidate` 없는 파일 (상위 15)
+
+- Assets/Scripts/Controllers/GameStart.cs
+- Assets/Scripts/Controllers/IdleSceneController.cs
+- Assets/Scripts/Controllers/MallSceneController.cs
+- Assets/Scripts/Controllers/SubSceneController.cs
+- Assets/Scripts/Entities/Cooking/cooking/BaseStorage.cs
+- Assets/Scripts/Entities/Cooking/cooking/Bento/BentoBehavior.cs
+- Assets/Scripts/Entities/Cooking/cooking/Bento/BentoModel.cs
+- Assets/Scripts/Entities/Cooking/cooking/CookingBackgroundController.cs
+- Assets/Scripts/Entities/Cooking/cooking/CookingTool/CookingToolBehavior.cs
+- Assets/Scripts/Entities/Cooking/cooking/CookingTool/CookingToolModel.cs
+- Assets/Scripts/Entities/Cooking/cooking/Description/CookingToolDescription.cs
+- Assets/Scripts/Entities/Cooking/cooking/Description/IngredientDescription.cs
+- Assets/Scripts/Entities/Cooking/cooking/Description/Receipt.cs
+- Assets/Scripts/Entities/Cooking/cooking/Description/ReceiptLine.cs
+- Assets/Scripts/Entities/Cooking/cooking/Description/SpeechBubble.cs
+- ... 외 53개
+
+### 7.4 `GetComponent<X>` ← `[RequireComponent(typeof(X))]` 부재
+
+- Assets/Scripts/Controllers/MallSceneController.cs — missing `BentoSelectionController`
+- Assets/Scripts/Entities/Cooking/cooking/Bento/BentoSetModel.cs — missing `BentoBehavior`
+- Assets/Scripts/Entities/Cooking/cooking/CookingTool/CookingToolModel.cs — missing `CookingToolDescription`
+- Assets/Scripts/Entities/Cooking/cooking/Description/Receipt.cs — missing `ReceiptLine`
+- Assets/Scripts/Entities/Cooking/cooking/Description/SpeechBubble.cs — missing `RectTransform`
+- Assets/Scripts/Entities/Cooking/cooking/Food/FoodModel.cs — missing `IngredientDescription`
+- Assets/Scripts/Entities/Cooking/cooking/Food/FoodModel.cs — missing `PolygonCollider2D`
+- Assets/Scripts/Entities/Cooking/cooking/Food/FoodModel.cs — missing `SpriteRenderer`
+- Assets/Scripts/Entities/Cooking/cooking/OrderTicket/OrderTicketModel.cs — missing `Renderer`
+- Assets/Scripts/Entities/Cooking/cooking/OrderTicket/OrderTicketModel.cs — missing `ScanColliderUtil`
+- Assets/Scripts/Entities/Cooking/cooking/OrderTicket/OrderTicketModel.cs — missing `SpriteRenderer`
+- Assets/Scripts/Entities/Cooking/cooking/RefrigeratorBehavior.cs — missing `Collider2D`
+- Assets/Scripts/Entities/Cooking/customer/OrderingCustomer.cs — missing `PolygonCollider2D`
+- Assets/Scripts/Entities/Cooking/customer/OrderingCustomer.cs — missing `SpeechBubble`
+- Assets/Scripts/Entities/Cooking/customer/OrderingCustomer.cs — missing `SpriteRenderer`
+- Assets/Scripts/Entities/Cooking/customer/TakingCustomer.cs — missing `PolygonCollider2D`
+- Assets/Scripts/Entities/Cooking/customer/TakingCustomer.cs — missing `SpeechBubble`
+- Assets/Scripts/Entities/Cooking/customer/TakingCustomer.cs — missing `SpriteRenderer`
+- Assets/Scripts/Entities/Cooking/customer/WaitingCustomer.cs — missing `GaugeUI`
+- Assets/Scripts/Entities/Cooking/customer/WaitingCustomer.cs — missing `PolygonCollider2D`
+- ... 외 92개
+
+### 7.5 자체 Singleton (`SingletonMonoBehaviour<T>` 미상속)
+
+- Assets/Scripts/Entities/RecipeBook/menu/MenuCardController.cs
+- Assets/Scripts/Managers/garden/CropDataManager.cs
+- Assets/Scripts/Managers/garden/FarmUpgradeManager.cs
+- Assets/Scripts/Managers/shop/StorageUpgradeManager.cs
+- Assets/Scripts/Managers/shop/ToolUpgradeManager.cs
+- Assets/Scripts/Managers/shop/UnifiedShopManager.cs
+- Assets/Scripts/Systems/Commons/TimeManager.cs
+- Assets/Scripts/UI/ValidationFeedbackUI.cs
+
+### 7.6 `Entities/` 안에서 `.Instance` 접근 (3-Layer 위반 후보)
+
+- Assets/Scripts/Entities/Cooking/cooking/Bento/BentoModel.cs
+- Assets/Scripts/Entities/Cooking/cooking/CookingBackgroundController.cs
+- Assets/Scripts/Entities/Cooking/cooking/CookingTool/CookingToolModel.cs
+- Assets/Scripts/Entities/Cooking/cooking/LowerShelf.cs
+- Assets/Scripts/Entities/Cooking/cooking/OrderTicket/OrderTicketModel.cs
+- Assets/Scripts/Entities/Cooking/cooking/Refrigerator.cs
+- Assets/Scripts/Entities/Cooking/cooking/RefrigeratorBehavior.cs
+- Assets/Scripts/Entities/Cooking/cooking/UpperShelf.cs
+- Assets/Scripts/Entities/Cooking/customer/TakingCustomer.cs
+- Assets/Scripts/Entities/Cooking/customer/WaitingCustomer.cs
+- Assets/Scripts/Entities/Garden/Farm.cs
+- Assets/Scripts/Entities/Garden/FarmTile.cs
+- Assets/Scripts/Entities/ItemShop/ShopDetailPanel.cs
+- Assets/Scripts/Entities/Mall/Dialogue/CasualDialogueProvider.cs
+- Assets/Scripts/Entities/Mall/Dialogue/DialogueManager.cs
+- Assets/Scripts/Entities/Mall/PlayerMove.cs
+- Assets/Scripts/Entities/Mall/UnifiedShopInteraction.cs
+- Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryNpcDialogueInteraction.cs
+- Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryNpcOrderInteraction.cs
+- Assets/Scripts/Entities/Mall/delivery/DeliveryNpc/DeliveryNpcReceiptInteraction.cs
+- Assets/Scripts/Entities/Mall/delivery/OrderManager.cs
+- Assets/Scripts/Entities/RecipeBook/inventory/InventoryPageController.cs
+- Assets/Scripts/Entities/RecipeBook/menu/MenuCardController.cs
+- Assets/Scripts/Entities/RecipeBook/menu/MenuCardOverlay.cs
+- Assets/Scripts/Entities/RecipeBook/menu/MenuSlot.cs
+
+## 8. 테스트 커버리지 프록시
+
+- 런타임 클래스: **211**
+- 테스트에서 언급되는 클래스: **16** (7.6%)
+
+### 참조되는 클래스
+- Data
+- FoodData
+- FoodSchema
+- GameStart
+- IngredientData
+- InventoryManager
+- MenuSchema
+- MenuSelection
+- MenuValidator
+- ProgressSystem
+- Refrigerator
+- ResourcePaths
+- StatsSystem
+- UILockManager
+- UpperShelf
+- WeatherSystem
+
+## 9. 이벤트 누수 후보
+
+- **5** 누수 후보 — Assets/Scripts/Managers/cooking/CustomerManager.cs
+- **3** 누수 후보 — Assets/Scripts/Systems/MiniGameSystem/FireMiniGame.cs
+- **2** 누수 후보 — Assets/Scripts/Utilities/randoms/GameRandom.cs
+- **2** 누수 후보 — Assets/Scripts/Utilities/MenuValidator.cs
+- **2** 누수 후보 — Assets/Scripts/Systems/MiniGameSystem/MixMiniGame.cs
+- **2** 누수 후보 — Assets/Scripts/Systems/Commons/TimeManager.cs
+- **2** 누수 후보 — Assets/Scripts/Systems/Commons/StatsSystem.cs
+- **2** 누수 후보 — Assets/Scripts/Managers/InventoryManager.cs
+- **2** 누수 후보 — Assets/Scripts/Entities/RecipeBook/menu/MenuCardController.cs
+- **2** 누수 후보 — Assets/Scripts/Entities/Cooking/customer/TakingCustomer.cs
+- **1** 누수 후보 — Assets/Scripts/Utilities/mouseControl/HorizontalCameraMove.cs
+- **1** 누수 후보 — Assets/Scripts/UI/ValidationFeedbackUI.cs
+- **1** 누수 후보 — Assets/Scripts/UI/TooltipController.cs
+- **1** 누수 후보 — Assets/Scripts/UI/BentoCategoryUI.cs
+- **1** 누수 후보 — Assets/Scripts/Systems/MiniGameSystem/helper/SliceScorer.cs
+
+## 10. .meta 무결성
+
+- .cs 파일 중 .meta 누락: **0**
+- 고아 .meta: **0**
+
+## 11. Async Adoption (UniTask 마이그레이션 추적, ADR-005)
+
+| 지표 | 값 | 목표 (Phase 2-C 후) |
+|---|---:|---:|
+| `IEnumerator` 메서드 | 21 | 0 |
+| `yield` 문 | 32 | 0 |
+| `StartCoroutine` 호출 | 22 | 0 |
+| `async UniTask` 메서드 | 0 | (증가) |
+| `await` 문 | 0 | (증가) |
+| UniTask using 파일 수 | 0 | (증가) |
+
+## 12. Asset Loading (Addressables 마이그레이션 추적, ADR-007)
+
+| 지표 | 값 | 목표 (Phase 2-D 후) |
+|---|---:|---:|
+| `Resources.Load` 호출 | 36 | 0 |
+| `Assets/Resources/` 파일 수 | 717 | 0 |
+| `AssetReference` 선언 | 0 | (증가) |
+| `LoadAssetAsync` 호출 | 0 | (증가) |
+| `InstantiateAsync` 호출 | 0 | (증가) |
+| Addressables using 파일 수 | 0 | (증가) |
+
+---
+
+_재실행: `bash tmp/refactor-2026-05/harness/run_all.sh`_

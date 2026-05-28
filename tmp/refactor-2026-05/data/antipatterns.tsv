@@ -1,11 +1,11 @@
 singleton_decl	9
-instance_access	318
+instance_access	320
 public_mutable_field	0
 static_mutable_field	0
 find_object	14
 send_message	0
 resources_load	36
-debug_log	101
+debug_log	98
 empty_catch	0
 todo_comment	0
 yield_return_null	21
@@ -14,4 +14,4 @@ event_subscribe	73
 event_unsubscribe	45
 serialize_field	251
 camera_main	17
-mono_behaviour_class	99
+mono_behaviour_class	100

@@ -177,8 +177,6 @@ SliceVisualizer
 SmoothMoneyText
 SoundManager
 SpeechBubble
-SpriteAssetSelectionAdjuster
-SpriteFallbackAutoRegister
 SpriteStackRenderer
 StairsInteraction
 StatManager
@@ -190,6 +188,7 @@ StorageUpgradeSaveData
 SubSceneController
 Tags
 TakingCustomer
+TestSceneInit
 TimeManager
 ToolRowData
 ToolUpgradeData

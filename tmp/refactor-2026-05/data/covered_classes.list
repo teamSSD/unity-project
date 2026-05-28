@@ -7,7 +7,6 @@ InventoryManager
 MenuSchema
 MenuSelection
 MenuValidator
-ProgressSystem
 Refrigerator
 ResourcePaths
 StatsSystem
