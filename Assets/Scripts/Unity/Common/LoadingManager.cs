@@ -1,4 +1,4 @@
-using System.Collections;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -21,7 +21,7 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
     public void LoadScene(string sceneName)
     {
         if (isLoading) return;
-        StartCoroutine(LoadSceneCoroutine(sceneName));
+        LoadSceneAsync(sceneName).Forget();
     }
 
     /// <summary>
@@ -31,32 +31,23 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
     public void LoadSceneAdditive(string sceneName, string previousScene, System.Action onComplete = null, System.Action initAction = null)
     {
         if (isLoading) return;
-        StartCoroutine(LoadSceneAdditiveCoroutine(sceneName, previousScene, onComplete, initAction));
+        LoadSceneAdditiveAsync(sceneName, previousScene, onComplete, initAction).Forget();
     }
 
-    private IEnumerator LoadSceneAdditiveCoroutine(string sceneName, string previousScene, System.Action onComplete, System.Action initAction)
+    private async UniTaskVoid LoadSceneAdditiveAsync(string sceneName, string previousScene, System.Action onComplete, System.Action initAction)
     {
         isLoading = true;
         UILockManager.Lock(UILockManager.Owner.Loading);
 
         // Fade in
         canvas.enabled = true;
-        canvasGroup.alpha = 0f;
-
-        float t = 0f;
-        while (t < FADE_DURATION)
-        {
-            t += Time.unscaledDeltaTime;
-            canvasGroup.alpha = Mathf.Clamp01(t / FADE_DURATION);
-            yield return null;
-        }
-        canvasGroup.alpha = 1f;
+        await FadeAsync(0f, 1f, FADE_DURATION);
 
         // 페이드 인 직후 화면이 완전 가려진 상태에서 무거운 동기 초기화 실행
         if (initAction != null)
         {
             initAction.Invoke();
-            yield return null; // 초기화 직후 한 프레임 양보
+            await UniTask.Yield(); // 초기화 직후 한 프레임 양보
         }
 
         // Unload previous
@@ -66,29 +57,20 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
             if (scene.isLoaded)
             {
                 var unload = SceneManager.UnloadSceneAsync(scene);
-                if (unload != null)
-                    while (!unload.isDone) yield return null;
+                if (unload != null) await unload;
             }
         }
 
         // Additive load
-        var op = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-        while (!op.isDone) yield return null;
-
+        await SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
 
         // 씬 활성화 = Awake/Start 일괄 실행 = 한 프레임 스파이크 가능.
         // 불투명한 동안 한 프레임 흘려보내 스파이크를 흡수.
-        yield return null;
+        await UniTask.Yield();
 
         // Fade out
-        t = 0f;
-        while (t < FADE_DURATION)
-        {
-            t += Time.unscaledDeltaTime;
-            canvasGroup.alpha = 1f - Mathf.Clamp01(t / FADE_DURATION);
-            yield return null;
-        }
+        await FadeAsync(1f, 0f, FADE_DURATION);
 
         canvas.enabled = false;
         isLoading = false;
@@ -96,40 +78,37 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
         onComplete?.Invoke();
     }
 
-    private IEnumerator LoadSceneCoroutine(string sceneName)
+    private async UniTaskVoid LoadSceneAsync(string sceneName)
     {
         isLoading = true;
         UILockManager.Lock(UILockManager.Owner.Loading);
 
         // Fade in
         canvas.enabled = true;
-        canvasGroup.alpha = 0f;
-
-        float t = 0f;
-        while (t < FADE_DURATION)
-        {
-            t += Time.unscaledDeltaTime;
-            canvasGroup.alpha = Mathf.Clamp01(t / FADE_DURATION);
-            yield return null;
-        }
-        canvasGroup.alpha = 1f;
+        await FadeAsync(0f, 1f, FADE_DURATION);
 
         // Async load
-        AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
-        while (!op.isDone) yield return null;
+        await SceneManager.LoadSceneAsync(sceneName);
 
         // Fade out
-        t = 0f;
-        while (t < FADE_DURATION)
-        {
-            t += Time.unscaledDeltaTime;
-            canvasGroup.alpha = 1f - Mathf.Clamp01(t / FADE_DURATION);
-            yield return null;
-        }
+        await FadeAsync(1f, 0f, FADE_DURATION);
 
         canvas.enabled = false;
         isLoading = false;
         UILockManager.Unlock(UILockManager.Owner.Loading);
+    }
+
+    private async UniTask FadeAsync(float from, float to, float duration)
+    {
+        canvasGroup.alpha = from;
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            canvasGroup.alpha = Mathf.Lerp(from, to, Mathf.Clamp01(t / duration));
+            await UniTask.Yield();
+        }
+        canvasGroup.alpha = to;
     }
 
     private void BuildLoadingUI()
@@ -161,5 +140,4 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
         bgRect.offsetMin = Vector2.zero;
         bgRect.offsetMax = Vector2.zero;
     }
-
 }
