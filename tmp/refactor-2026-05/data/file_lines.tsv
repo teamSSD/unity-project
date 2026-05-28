@@ -9,9 +9,15 @@
 15	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Garden/FarmUpgradeData.cs
 15	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/StorageUpgradeData.cs
 17	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/ToolUpgradeData.cs
+57	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/CatalogSO.cs
+10	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/CookingToolCatalogSO.cs
+21	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/DeliveryNpcCatalogSO.cs
+51	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/DialogueConfigCatalogSO.cs
+10	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/FoodCatalogSO.cs
+10	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/IngredientCatalogSO.cs
+10	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/RecipeCatalogSO.cs
 118	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/GameRandom.cs
 54	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/ResourcePaths.cs
-127	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/SearchDataUtil.cs
 28	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Common/CookingToolData.cs
 18	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Common/CropData.cs
 12	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Common/CustomerData.cs
@@ -20,7 +26,7 @@
 50	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Cooking/IngredientData.cs
 76	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Cooking/RecipeData.cs
 11	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Mall/DeliveryDialogueConfig.cs
-26	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Mall/DeliveryNpcData.cs
+30	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Mall/DeliveryNpcData.cs
 6	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Mall/DeliveryNpcState.cs
 9	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Mall/DeliveryQuestStage.cs
 29	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Mall/DialogueSO.cs
@@ -46,7 +52,7 @@
 17	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/BasicStats.cs
 26	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/InventorySaveData.cs
 19	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/PhaseData.cs
-104	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Cooking/CookingToolSchema.cs
+106	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Cooking/CookingToolSchema.cs
 15	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Cooking/FoodSchema.cs
 29	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Cooking/MenuSchema.cs
 60	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Cooking/MenuSelection.cs
@@ -54,6 +60,7 @@
 22	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Shop/ItemShopSlotInfo.cs
 115	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ActionSelectionManager.cs
 28	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/BootLoader.cs
+43	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/CatalogProvider.cs
 190	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ClickStateUtil.cs
 56	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/DragSortingBump.cs
 112	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
@@ -74,6 +81,7 @@
 147	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveManager.cs
 72	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ScanColliderUtil.cs
 82	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SceneLoader.cs
+88	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SearchDataUtil.cs
 73	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettingsUIManager.cs
 55	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettlementManager.cs
 34	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SingletonMonoBehaviour.cs
@@ -100,7 +108,7 @@
 68	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CookingSceneManager.cs
 64	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CookingToolBehavior.cs
 25	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CookingToolDescription.cs
-227	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CookingToolModel.cs
+228	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CookingToolModel.cs
 192	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CustomerLifecycle.cs
 422	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CustomerManager.cs
 189	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CustomerSpawner.cs
@@ -167,7 +175,7 @@
 102	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/ToolUpgradeManager.cs
 442	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/UnifiedShopManager.cs
 70	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/BentoCategoryUI.cs
-183	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/BentoSelectionController.cs
+182	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/BentoSelectionController.cs
 55	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/BentoSlotUI.cs
 80	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/ClockUI.cs
 49	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/FlexibleGridCell.cs

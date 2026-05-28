@@ -217,7 +217,8 @@ public class CookingToolModel : MonoBehaviour
         if (!injected) return;
         BehaviorInstance.locked = false;
         FoodData foodData = recipeData.outputFood;
-        SchemaInstance.Cook(foodData, recipeData, score);
+        int chainDepth = SearchDataUtil.GetChainDepth(foodData.id);
+        SchemaInstance.Cook(foodData, recipeData, score, chainDepth);
 
         BehaviorInstance.ResetTexture();
         string toolId = SchemaInstance.cookingToolData.id;

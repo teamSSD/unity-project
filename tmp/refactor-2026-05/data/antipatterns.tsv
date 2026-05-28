@@ -4,7 +4,7 @@ public_mutable_field	0
 static_mutable_field	0
 find_object	13
 send_message	0
-resources_load	36
+resources_load	29
 debug_log	98
 empty_catch	0
 todo_comment	0
@@ -12,6 +12,6 @@ yield_return_null	0
 case_label	31
 event_subscribe	70
 event_unsubscribe	45
-serialize_field	251
+serialize_field	259
 camera_main	17
 mono_behaviour_class	100

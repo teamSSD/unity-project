@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[Serializable]
+[System.Serializable]
 public class RecipeIngredient
 {
     public FoodData food;
@@ -42,15 +41,15 @@ public class RecipeData : ScriptableObject, CsvParsable
 
     public void Init(string[] args)
     {
+#if UNITY_EDITOR
         if (args.Length != 4) throw new CsvParsingException("length of args isn't match.");
-
         try
         {
             id = args[0].Trim();
             string outputId = args[1].Trim();
             outputFood = Resources.Load<FoodData>(ResourcePaths.SO.FoodDataById + outputId);
             minigameId = args[2].Trim();
-            inputs = args[3].Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Select(item =>
+            inputs = args[3].Split(new[] { '/' }, System.StringSplitOptions.RemoveEmptyEntries).Select(item =>
             {
                 string[] parts = item.Split('-');
                 string ingredientId = parts[0].Trim();
@@ -59,10 +58,11 @@ public class RecipeData : ScriptableObject, CsvParsable
                 return new RecipeIngredient(ingredientSO, weight);
             }).ToList();
         }
-        catch (Exception e)
+        catch (System.Exception e)
         {
-            throw new CsvParsingException($"Exception occured during parsing\nmessage : {e.Message}");
+            throw new CsvParsingException($"RecipeData parse error: {e.Message}");
         }
+#endif
     }
 
     public RecipeData() {}

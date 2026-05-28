@@ -76,7 +76,10 @@ public class CookingToolSchema
         this.locked = true;
     }
 
-    public void Cook(FoodData foodData, RecipeData recipeData, float score)
+    /// <summary>
+    /// 요리 결과 계산. chainDepth는 호출자가 제공 (Schema 레이어는 catalog 미접근).
+    /// </summary>
+    public void Cook(FoodData foodData, RecipeData recipeData, float score, int chainDepth)
     {
         int newPrice = (int) Ingredients.Join(
             recipeData.inputs,
@@ -88,7 +91,6 @@ public class CookingToolSchema
         // 체인 완성 보너스: MAIN/SIDE 완성 시 체인 깊이에 비례한 보너스
         if (foodData.type == FoodType.MAIN || foodData.type == FoodType.SIDE)
         {
-            int chainDepth = SearchDataUtil.GetChainDepth(foodData.id);
             float chainBonus = 1f + 0.15f * (chainDepth - 1);
             newPrice = (int)(newPrice * chainBonus);
         }
