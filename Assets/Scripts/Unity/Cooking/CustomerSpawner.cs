@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 /// <summary>
@@ -109,15 +110,15 @@ public class CustomerSpawner : MonoBehaviour
 
         if (onCompleted != null)
         {
-            StartCoroutine(InvokeAfterDelay(3f, onCompleted));
+            InvokeAfterDelayAsync(3f, onCompleted).Forget();
         }
 
         return customer;
     }
 
-    private System.Collections.IEnumerator InvokeAfterDelay(float delay, Action action)
+    private async UniTaskVoid InvokeAfterDelayAsync(float delay, Action action)
     {
-        yield return new WaitForSeconds(delay);
+        await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: this.GetCancellationTokenOnDestroy());
         action?.Invoke();
     }
 

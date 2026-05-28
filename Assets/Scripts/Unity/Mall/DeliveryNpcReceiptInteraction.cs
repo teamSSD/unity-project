@@ -1,5 +1,6 @@
-﻿using System.Collections;
+﻿using System;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class DeliveryNpcReceiptInteraction
@@ -40,19 +41,20 @@ public class DeliveryNpcReceiptInteraction
         }
 
         hasReceived = true;
-        StartCoroutine(DeliverSequence(myOrder));
+        DeliverSequenceAsync(myOrder).Forget();
     }
 
-    private IEnumerator DeliverSequence(DeliveryOrderData order)
+    private async UniTaskVoid DeliverSequenceAsync(DeliveryOrderData order)
     {
+        var ct = this.GetCancellationTokenOnDestroy();
         Say("음식이 왔군요! 확인 중...");
 
-        yield return new WaitForSeconds(2f);
+        await UniTask.Delay(TimeSpan.FromSeconds(2f), cancellationToken: ct);
 
         int reward = OrderManager.Instance.ConsumeBento(order.questId);
         Say($"감사합니다! ({reward}원)");
 
-        yield return new WaitForSeconds(1.5f);
+        await UniTask.Delay(TimeSpan.FromSeconds(1.5f), cancellationToken: ct);
 
         Destroy(gameObject);
     }

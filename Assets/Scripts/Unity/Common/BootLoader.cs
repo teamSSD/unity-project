@@ -1,4 +1,4 @@
-using System.Collections;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,26 +7,22 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class BootLoader : MonoBehaviour
 {
-    private IEnumerator Start()
+    private async UniTaskVoid Start()
     {
         // 1. Managers 씬 additive 로드
-        var managersOp = SceneManager.LoadSceneAsync(SceneNames.Managers, LoadSceneMode.Additive);
-        while (!managersOp.isDone)
-            yield return null;
+        await SceneManager.LoadSceneAsync(SceneNames.Managers, LoadSceneMode.Additive);
 
         // 2. Managers 씬을 active로 설정 후 매니저 생성 (Boot이 아닌 Managers에 배치)
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(SceneNames.Managers));
         ManagerBootstrap.EnsureAll();
 
         // 3. GameStart 씬 additive 로드 (완료 대기)
-        var gameStartOp = SceneManager.LoadSceneAsync(SceneNames.GameStart, LoadSceneMode.Additive);
-        while (!gameStartOp.isDone)
-            yield return null;
+        await SceneManager.LoadSceneAsync(SceneNames.GameStart, LoadSceneMode.Additive);
 
         SceneLoader.SetCurrentScene(SceneNames.GameStart);
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(SceneNames.GameStart));
 
-        // 4. Boot 씬 자체 unload
+        // 4. Boot 씬 자체 unload (await하지 않음 — fire and forget)
         SceneManager.UnloadSceneAsync(SceneNames.Boot);
     }
 }

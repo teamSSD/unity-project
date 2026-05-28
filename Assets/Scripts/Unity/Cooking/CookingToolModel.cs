@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using System.Linq;
 
@@ -201,12 +202,13 @@ public class CookingToolModel : MonoBehaviour
                 SchemaInstance.cookingToolData.id,
                 SchemaInstance.Ingredients.ConvertAll(ingredient => ingredient.foodData));
 
-            StartCoroutine(playMinigameUsecase.PlayCoroutine(
+            playMinigameUsecase.PlayAsync(
                 toolId,
                 response,
                 (Vector2)this.gameObject.transform.position,
                 SchemaInstance.Ingredients.ConvertAll(ingredient => ingredient.foodData),
-                OnMinigameEnd));
+                OnMinigameEnd,
+                this.GetCancellationTokenOnDestroy()).Forget();
         }
     }
 

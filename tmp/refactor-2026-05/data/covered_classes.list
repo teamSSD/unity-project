@@ -1,8 +1,11 @@
 Data
+FloatEvent
 FoodData
 FoodSchema
+GameEvent
 GameStart
 IngredientData
+IntEvent
 InventoryManager
 MenuSchema
 MenuSelection
@@ -10,6 +13,7 @@ MenuValidator
 Refrigerator
 ResourcePaths
 StatsSystem
+StringEvent
 UILockManager
 UpperShelf
 WeatherSystem

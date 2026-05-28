@@ -1,4 +1,6 @@
-using System.Collections;
+using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -22,7 +24,7 @@ public class ValidationFeedbackUI : MonoBehaviour
     [SerializeField] private float displayDuration = 2.0f;
     [SerializeField] private float fadeDuration = 0.5f;
 
-    private Coroutine currentFeedback;
+    private CancellationTokenSource _currentCts;
 
     void Awake()
     {
@@ -43,6 +45,8 @@ public class ValidationFeedbackUI : MonoBehaviour
 
     void OnDestroy()
     {
+        _currentCts?.Cancel();
+        _currentCts?.Dispose();
         if (Instance == this)
         {
             Instance = null;
@@ -61,18 +65,33 @@ public class ValidationFeedbackUI : MonoBehaviour
             return;
         }
 
-        // Cancel previous feedback if showing
-        if (currentFeedback != null)
-        {
-            StopCoroutine(currentFeedback);
-        }
-
-        currentFeedback = StartCoroutine(ShowFeedbackCoroutine(grade, accuracyScore, reward, message));
+        RestartFeedback(ct => ShowFeedbackAsync(grade, accuracyScore, reward, message, ct));
     }
 
-    private IEnumerator ShowFeedbackCoroutine(string grade, float accuracyScore, int reward, string message)
+    /// <summary>
+    /// Show simple message feedback
+    /// </summary>
+    public void ShowMessage(string message, float duration = 2.0f)
     {
-        // Update text
+        if (feedbackPanel == null)
+        {
+            Debug.Log($"[Feedback] {message}");
+            return;
+        }
+
+        RestartFeedback(ct => ShowMessageAsync(message, duration, ct));
+    }
+
+    private void RestartFeedback(Func<CancellationToken, UniTaskVoid> task)
+    {
+        _currentCts?.Cancel();
+        _currentCts?.Dispose();
+        _currentCts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+        task(_currentCts.Token).Forget();
+    }
+
+    private async UniTaskVoid ShowFeedbackAsync(string grade, float accuracyScore, int reward, string message, CancellationToken ct)
+    {
         if (gradeText != null)
         {
             gradeText.text = grade;
@@ -80,43 +99,49 @@ public class ValidationFeedbackUI : MonoBehaviour
         }
 
         if (scoreText != null)
-        {
             scoreText.text = string.IsNullOrEmpty(message) ? $"{accuracyScore:P0}" : message;
-        }
 
         if (rewardText != null)
-        {
             rewardText.text = $"+{reward}원";
-        }
 
-        // Fade in
         feedbackPanel.SetActive(true);
         if (canvasGroup != null)
-        {
-            yield return FadeCanvasGroup(canvasGroup, 0f, 1f, fadeDuration);
-        }
+            await FadeCanvasGroupAsync(canvasGroup, 0f, 1f, fadeDuration, ct);
 
-        // Hold
-        yield return new WaitForSeconds(displayDuration);
+        await UniTask.Delay(TimeSpan.FromSeconds(displayDuration), cancellationToken: ct);
 
-        // Fade out
         if (canvasGroup != null)
-        {
-            yield return FadeCanvasGroup(canvasGroup, 1f, 0f, fadeDuration);
-        }
+            await FadeCanvasGroupAsync(canvasGroup, 1f, 0f, fadeDuration, ct);
 
         feedbackPanel.SetActive(false);
-        currentFeedback = null;
     }
 
-    private IEnumerator FadeCanvasGroup(CanvasGroup group, float startAlpha, float endAlpha, float duration)
+    private async UniTaskVoid ShowMessageAsync(string message, float duration, CancellationToken ct)
+    {
+        if (gradeText != null) gradeText.text = "";
+        if (scoreText != null) scoreText.text = message;
+        if (rewardText != null) rewardText.text = "";
+
+        feedbackPanel.SetActive(true);
+        if (canvasGroup != null)
+            await FadeCanvasGroupAsync(canvasGroup, 0f, 1f, fadeDuration, ct);
+
+        await UniTask.Delay(TimeSpan.FromSeconds(duration), cancellationToken: ct);
+
+        if (canvasGroup != null)
+            await FadeCanvasGroupAsync(canvasGroup, 1f, 0f, fadeDuration, ct);
+
+        feedbackPanel.SetActive(false);
+    }
+
+    private async UniTask FadeCanvasGroupAsync(CanvasGroup group, float startAlpha, float endAlpha, float duration, CancellationToken ct)
     {
         float elapsed = 0f;
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
             group.alpha = Mathf.Lerp(startAlpha, endAlpha, elapsed / duration);
-            yield return null;
+            await UniTask.Yield(cancellationToken: ct);
         }
         group.alpha = endAlpha;
     }
@@ -153,47 +178,5 @@ public class ValidationFeedbackUI : MonoBehaviour
             case "F": return new Color(1f, 0f, 0f); // Red
             default: return Color.white;
         }
-    }
-
-    /// <summary>
-    /// Show simple message feedback
-    /// </summary>
-    public void ShowMessage(string message, float duration = 2.0f)
-    {
-        if (feedbackPanel == null)
-        {
-            Debug.Log($"[Feedback] {message}");
-            return;
-        }
-
-        if (currentFeedback != null)
-        {
-            StopCoroutine(currentFeedback);
-        }
-
-        currentFeedback = StartCoroutine(ShowMessageCoroutine(message, duration));
-    }
-
-    private IEnumerator ShowMessageCoroutine(string message, float duration)
-    {
-        if (gradeText != null) gradeText.text = "";
-        if (scoreText != null) scoreText.text = message;
-        if (rewardText != null) rewardText.text = "";
-
-        feedbackPanel.SetActive(true);
-        if (canvasGroup != null)
-        {
-            yield return FadeCanvasGroup(canvasGroup, 0f, 1f, fadeDuration);
-        }
-
-        yield return new WaitForSeconds(duration);
-
-        if (canvasGroup != null)
-        {
-            yield return FadeCanvasGroup(canvasGroup, 1f, 0f, fadeDuration);
-        }
-
-        feedbackPanel.SetActive(false);
-        currentFeedback = null;
     }
 }

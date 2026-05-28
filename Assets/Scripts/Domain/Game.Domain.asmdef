@@ -2,7 +2,8 @@
     "name": "Game.Domain",
     "rootNamespace": "Game.Domain",
     "references": [
-        "Game.Schema"
+        "Game.Schema",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

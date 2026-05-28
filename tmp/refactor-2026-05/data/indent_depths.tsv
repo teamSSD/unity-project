@@ -27,6 +27,11 @@
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Shop/FoodShopConfigSO.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Shop/ShopConfigSO.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/UI/ActionType.cs
+4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Events/FloatEvent.cs
+4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Events/GameEvent.cs
+2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Events/GameEventBase.cs
+4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Events/IntEvent.cs
+4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Events/StringEvent.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Common/CsvModelConverter.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Common/IBentoValidator.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Common/INpcInteraction.cs
@@ -35,7 +40,7 @@
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Common/IUnlockedFoodProvider.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Cooking/ISelectMenu.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Cooking/LoadInventoryUsecase.cs
-1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Cooking/PlayMinigameUsecase.cs
+2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Cooking/PlayMinigameUsecase.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Cooking/SearchRecipeUsecase.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Garden/TimePhaseProvider.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/BasicStats.cs
@@ -48,7 +53,7 @@
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Mall/DeliveryOrderData.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Shop/ItemShopSlotInfo.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ActionSelectionManager.cs
-3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/BootLoader.cs
+2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/BootLoader.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ClickStateUtil.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/DragSortingBump.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
@@ -58,7 +63,7 @@
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HoverStateUtil.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/IdleSceneController.cs
 6	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/InventoryManager.cs
-5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/LoadingManager.cs
+4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/LoadingManager.cs
 6	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/MallSceneController.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ManagerBootstrap.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/PlayerSaveLoad.cs
@@ -68,7 +73,7 @@
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeLookupService.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveManager.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ScanColliderUtil.cs
-5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SceneLoader.cs
+4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SceneLoader.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettingsUIManager.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettlementManager.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SingletonMonoBehaviour.cs
@@ -145,7 +150,7 @@
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DeliveryNpcReceiptInteraction.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DeliveryNpcSpawner.cs
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DeliveryNpcView.cs
-5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DialogueManager.cs
+6	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DialogueManager.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DynamicBoundaryWalls.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/FarmPathInteraction.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/NPCDialogue.cs

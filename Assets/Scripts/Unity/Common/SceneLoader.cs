@@ -1,4 +1,4 @@
-using System.Collections;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -56,13 +56,11 @@ public static class SceneLoader
         {
             // LoadingManager 없는 fallback: init을 우선 동기 실행 후 직접 로드
             initAction?.Invoke();
-            var runner = GetCoroutineRunner();
-            if (runner != null)
-                runner.StartCoroutine(LoadSceneDirectCoroutine(sceneName));
+            LoadSceneDirectAsync(sceneName).Forget();
         }
     }
 
-    private static IEnumerator LoadSceneDirectCoroutine(string sceneName)
+    private static async UniTaskVoid LoadSceneDirectAsync(string sceneName)
     {
         string previousScene = currentGameplayScene;
 
@@ -72,22 +70,13 @@ public static class SceneLoader
             if (scene.isLoaded)
             {
                 var unload = SceneManager.UnloadSceneAsync(scene);
-                if (unload != null)
-                    while (!unload.isDone) yield return null;
+                if (unload != null) await unload;
             }
         }
 
-        var load = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-        while (!load.isDone) yield return null;
+        await SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
         currentGameplayScene = sceneName;
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
-    }
-
-    private static MonoBehaviour GetCoroutineRunner()
-    {
-        if (LoadingManager.Instance != null) return LoadingManager.Instance;
-        if (ProgressSystem.Instance != null) return ProgressSystem.Instance;
-        return Object.FindFirstObjectByType<MonoBehaviour>();
     }
 }

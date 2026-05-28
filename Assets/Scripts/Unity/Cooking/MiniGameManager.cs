@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 /*
 MiniGameManager.cs
@@ -28,12 +30,11 @@ public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
 
     private static Vector2 offset = new Vector2(0f, 4.5f);
 
-    public IEnumerator<float> PlayCoroutine(string toolId, RecipeData recipeData, Vector2 position, List<FoodData> ingredients, Action<RecipeData, float> onCompleted)
+    public async UniTask PlayAsync(string toolId, RecipeData recipeData, Vector2 position, List<FoodData> ingredients, Action<RecipeData, float> onCompleted, CancellationToken ct = default)
     {
         GameObject prefab = GetPrefab(toolId, recipeData);
+        if (prefab == null) return;
         prefab.GetComponent<MiniGameAbstract>().scoringPrefab = MinigameResultPrefab;
-
-        if (prefab == null) yield break;
         prefab.transform.position = position + offset;
 
         bool isFinished = false;
@@ -54,14 +55,10 @@ public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
         };
         UILockManager.Lock(UILockManager.Owner.Minigame);
         currentGame.StartGame();
-        while (!isFinished)
-        {
-            yield return 0f;
-        }
-        while (currentGame != null)
-        {
-            yield return 0f;
-        }
+
+        await UniTask.WaitUntil(() => isFinished, cancellationToken: ct);
+        await UniTask.WaitUntil(() => currentGame == null, cancellationToken: ct);
+
         UILockManager.Unlock(UILockManager.Owner.Minigame);
         onCompleted?.Invoke(recipeData, finalScore);
     }

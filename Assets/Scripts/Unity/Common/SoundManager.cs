@@ -1,4 +1,6 @@
-using System.Collections;
+using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,7 +10,7 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     public AudioSource sfxSource;
     private AudioSource loopSfxSource;
 
-    private Coroutine _loopFadeCoroutine;
+    private CancellationTokenSource _loopFadeCts;
 
     private static readonly string BGM_COOKING = "Sound/bgm/bgm_preperation_theme";
     private static readonly string BGM_MALL    = "Sound/bgm/bgm_mall_theme";
@@ -91,17 +93,17 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     public void PlayLoopSFX(AudioClip clip, float fadeIn = 0.2f)
     {
         if (clip == null) return;
-        if (_loopFadeCoroutine != null) StopCoroutine(_loopFadeCoroutine);
+        RestartLoopFade();
         loopSfxSource.clip = clip;
         loopSfxSource.volume = 0f;
         loopSfxSource.Play();
-        _loopFadeCoroutine = StartCoroutine(FadeLoopSFX(0f, 1f, fadeIn));
+        FadeLoopSFXAsync(0f, 1f, fadeIn, _loopFadeCts.Token).Forget();
     }
 
     public void StopLoopSFX(float fadeOut = 0.2f)
     {
-        if (_loopFadeCoroutine != null) StopCoroutine(_loopFadeCoroutine);
-        _loopFadeCoroutine = StartCoroutine(FadeAndStopLoopSFX(fadeOut));
+        RestartLoopFade();
+        FadeAndStopLoopSFXAsync(fadeOut, _loopFadeCts.Token).Forget();
     }
 
     public void SetLoopSFXVolume(float volume)
@@ -109,22 +111,29 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         loopSfxSource.volume = Mathf.Clamp01(volume);
     }
 
-    private IEnumerator FadeLoopSFX(float from, float to, float duration)
+    private void RestartLoopFade()
+    {
+        _loopFadeCts?.Cancel();
+        _loopFadeCts?.Dispose();
+        _loopFadeCts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+    }
+
+    private async UniTask FadeLoopSFXAsync(float from, float to, float duration, CancellationToken ct)
     {
         float elapsed = 0f;
         while (elapsed < duration)
         {
             loopSfxSource.volume = Mathf.Lerp(from, to, elapsed / duration);
             elapsed += Time.deltaTime;
-            yield return null;
+            await UniTask.Yield(cancellationToken: ct);
         }
         loopSfxSource.volume = to;
     }
 
-    private IEnumerator FadeAndStopLoopSFX(float duration)
+    private async UniTaskVoid FadeAndStopLoopSFXAsync(float duration, CancellationToken ct)
     {
         float start = loopSfxSource.volume;
-        yield return StartCoroutine(FadeLoopSFX(start, 0f, duration));
+        await FadeLoopSFXAsync(start, 0f, duration, ct);
         loopSfxSource.Stop();
         loopSfxSource.clip = null;
     }

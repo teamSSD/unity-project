@@ -1,6 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class GriddleMinigame : MiniGameAbstract
@@ -21,11 +22,11 @@ public class GriddleMinigame : MiniGameAbstract
     private Queue<Vector2Int> _directionQueue = new Queue<Vector2Int>();
     private List<ArrowButton> _activeArrows = new List<ArrowButton>();
     private List<Vector2Int> _activeDirections = new List<Vector2Int>();
-    
+
     private int _processedCount = 0;
     private int _successCount = 0;
     private const int MaxVisibleCount = 3;
-    private Coroutine _volumeSpikeCoroutine;
+    private CancellationTokenSource _volumeSpikeCts;
 
     private readonly List<Vector2Int> _directionPool = new List<Vector2Int> {
         Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
@@ -40,6 +41,12 @@ public class GriddleMinigame : MiniGameAbstract
         }
     }
 
+    private void OnDestroy()
+    {
+        _volumeSpikeCts?.Cancel();
+        _volumeSpikeCts?.Dispose();
+    }
+
     private void InitializeQueue()
     {
         for (int i = 0; i < totalArrowCount; i++)
@@ -52,12 +59,12 @@ public class GriddleMinigame : MiniGameAbstract
 
         Vector2Int dir = _directionQueue.Dequeue();
         GameObject go = Instantiate(arrowPrefab, arrowSpawnParent);
-        
+
         if (go.TryGetComponent(out ArrowButton arrowScript))
         {
             float angle = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
             go.transform.rotation = Quaternion.Euler(0, 0, -angle);
-            
+
             _activeArrows.Add(arrowScript);
             _activeDirections.Add(dir);
             UpdateVisualPositions(); // 생성 시 초기 위치 설정
@@ -70,7 +77,7 @@ public class GriddleMinigame : MiniGameAbstract
         {
             _activeArrows[i].transform.localPosition = new Vector3(0, i * spacing, 0);
 
-            float factor = 1.0f - (i * 0.3f); 
+            float factor = 1.0f - (i * 0.3f);
 
             SpriteRenderer sr = _activeArrows[i].GetComponentInChildren<SpriteRenderer>();
 
@@ -90,8 +97,7 @@ public class GriddleMinigame : MiniGameAbstract
         if (inputDir != Vector2Int.zero && _activeArrows.Count > 0)
         {
             CheckAnswer(inputDir);
-            if (_volumeSpikeCoroutine != null) StopCoroutine(_volumeSpikeCoroutine);
-            _volumeSpikeCoroutine = StartCoroutine(VolumeSpike());
+            RestartVolumeSpike();
         }
     }
 
@@ -128,23 +134,22 @@ public class GriddleMinigame : MiniGameAbstract
         _activeDirections.RemoveAt(0);
         _processedCount++;
 
-        // 시각적 처리를 위한 코루틴 실행
-        StartCoroutine(ProcessArrowEffect(targetArrow));
+        // 시각적 처리를 위해 async fire-and-forget
+        ProcessArrowEffectAsync(targetArrow, this.GetCancellationTokenOnDestroy()).Forget();
 
         if (_processedCount >= totalArrowCount)
             EndGame();
     }
 
-    private IEnumerator ProcessArrowEffect(ArrowButton target)
+    private async UniTaskVoid ProcessArrowEffectAsync(ArrowButton target, CancellationToken ct)
     {
         // 1. 이펙트용 부모로 이동 (대기열 위치 계산에서 제외됨)
         target.transform.SetParent(effectParent);
 
         // 2. 애니메이션이 진행되는 동안 대기 (0.25초)
-        yield return new WaitForSeconds(0.25f);
+        await UniTask.Delay(System.TimeSpan.FromSeconds(0.25f), cancellationToken: ct);
 
-        // 3. 이펙트 오브젝트 파괴
-        Destroy(target.gameObject);
+        if (target != null) Destroy(target.gameObject);
 
         // 4. 이펙트가 끝난 시점에 다음 화살표를 채우고 위치를 내림
         SpawnNextArrow();
@@ -154,10 +159,18 @@ public class GriddleMinigame : MiniGameAbstract
     protected override void OnGameStarted() => SoundManager.Instance?.PlayLoopSFX(loopSfx, 0.2f);
     protected override void OnGameEnded()   => SoundManager.Instance?.StopLoopSFX(0.2f);
 
-    private IEnumerator VolumeSpike()
+    private void RestartVolumeSpike()
+    {
+        _volumeSpikeCts?.Cancel();
+        _volumeSpikeCts?.Dispose();
+        _volumeSpikeCts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+        VolumeSpikeAsync(_volumeSpikeCts.Token).Forget();
+    }
+
+    private async UniTaskVoid VolumeSpikeAsync(CancellationToken ct)
     {
         SoundManager.Instance?.SetLoopSFXVolume(1f);
-        yield return new WaitForSeconds(0.15f);
+        await UniTask.Delay(System.TimeSpan.FromSeconds(0.15f), cancellationToken: ct);
         SoundManager.Instance?.SetLoopSFXVolume(baseLoopVolume);
     }
 

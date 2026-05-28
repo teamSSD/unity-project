@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -26,12 +26,12 @@ public class GlobalButtonSfxManager : SingletonMonoBehaviour<GlobalButtonSfxMana
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        StartCoroutine(ScanNextFrame());
+        ScanNextFrameAsync().Forget();
     }
 
-    private IEnumerator ScanNextFrame()
+    private async UniTaskVoid ScanNextFrameAsync()
     {
-        yield return null;
+        await UniTask.Yield(cancellationToken: this.GetCancellationTokenOnDestroy());
         RegisterButtons(null);
     }
 

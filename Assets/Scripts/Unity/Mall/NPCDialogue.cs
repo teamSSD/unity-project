@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class NPCDialogue : MonoBehaviour
@@ -48,12 +48,12 @@ public class NPCDialogue : MonoBehaviour
     void OnDialogueEnded(string resultTag)
     {
         dialogueManager.OnDialogueEnded -= OnDialogueEnded;
-        StartCoroutine(ResetTalkingNextFrame());
+        ResetTalkingNextFrameAsync().Forget();
     }
 
-    IEnumerator ResetTalkingNextFrame()
+    private async UniTaskVoid ResetTalkingNextFrameAsync()
     {
-        yield return null;
+        await UniTask.Yield(cancellationToken: this.GetCancellationTokenOnDestroy());
         isTalking = false;
         if (isPlayerNear)
             InteractPromptUI.Show("*press spacebar to talk*");

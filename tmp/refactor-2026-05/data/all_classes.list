@@ -70,12 +70,15 @@ FarmUpgradeManager
 FarmUpgradeSaveData
 FireMiniGame
 FlexibleGridCell
+FloatEvent
 FoodBehavior
 FoodData
 FoodModel
 FoodSchema
 FoodShopConfigSO
 FullScreenSelector
+GameEvent
+GameEventBase
 GameRandom
 GameSaveData
 GameStart
@@ -90,6 +93,7 @@ HoverStateUtil
 IdleSceneController
 IngredientData
 IngredientDescription
+IntEvent
 InteractPromptUI
 InventoryBatch
 InventoryBatchEntry
@@ -185,6 +189,7 @@ StorageRowData
 StorageUpgradeData
 StorageUpgradeManager
 StorageUpgradeSaveData
+StringEvent
 SubSceneController
 Tags
 TakingCustomer
