@@ -1,0 +1,17 @@
+Start	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Controllers/GameStart.cs:11
+Start	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Controllers/MallSceneController.cs:21
+Start	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Entities/Cooking/cooking/CookingBackgroundController.cs:9
+Awake	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Entities/Cooking/cooking/LowerShelf.cs:9
+Start	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Entities/Cooking/cooking/OrderTicket/OrderTicketModel.cs:32
+Awake	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Entities/Cooking/cooking/Refrigerator.cs:9
+Awake	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Entities/Cooking/cooking/UpperShelf.cs:9
+Start	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Entities/Cooking/customer/WaitingCustomer.cs:53
+Start	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Entities/Garden/Farm.cs:25
+Start	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Managers/SoundManager.cs:34
+Start	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Managers/cooking/CookingSceneManager.cs:20
+OnEnable	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Managers/cooking/StatManager.cs:14
+OnEnable	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/UI/SettingsController.cs:24
+Awake	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/UI/TooltipController.cs:38
+OnEnable	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/UI/stats/ClockUI.cs:19
+OnEnable	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/UI/stats/MoneyUI.cs:17
+OnEnable	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/UI/stats/StaminaGauge.cs:19
