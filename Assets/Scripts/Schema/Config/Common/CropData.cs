@@ -6,7 +6,7 @@ public class CropData : CsvParsable
     public int    growPhaseCount;
     public float  spawnWeight;
     public string imagePath;
-    public Sprite sprite; // CropDataManager.LoadData()에서 Resources.Load
+    public Sprite sprite;
 
     public void Init(string[] f)
     {

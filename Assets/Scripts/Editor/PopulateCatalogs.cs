@@ -19,7 +19,7 @@ public static class PopulateCatalogs
     {
         var catalog = AssetDatabase.LoadAssetAtPath<CropSpriteCatalogSO>($"{CatalogFolder}/CropSpriteCatalog.asset");
         if (catalog == null) { Debug.LogError("[PopulateCatalogs] CropSpriteCatalog not found"); return; }
-        var csv = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Resources/driveAssets/dataTables/crop_data.csv");
+        var csv = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Bundles/driveAssets/dataTables/crop_data.csv");
         if (csv == null) { Debug.LogError("[PopulateCatalogs] crop_data.csv not found"); return; }
 
         var entries = new List<(string key, Sprite sprite)>();
