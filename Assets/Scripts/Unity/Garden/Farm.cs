@@ -43,7 +43,7 @@ public class Farm : MonoBehaviour
         // 빈 타일이면 자동 심기
         if (!IsLocked && tile.IsEmpty())
         {
-            CropData randomCrop = CropDataManager.Instance.GetRandomCropByWeight();
+            CropData randomCrop = GameSessionRoot.Instance.CropCatalog.GetRandomCropByWeight();
             if (randomCrop != null)
             {
                 cropData = randomCrop;
@@ -84,7 +84,7 @@ public class Farm : MonoBehaviour
                     InventoryManager.Instance?.AddHarvestedCrop(id, crops);
 
                     // 수확 후 자동 심기
-                    CropData nextCrop = CropDataManager.Instance.GetRandomCropByWeight();
+                    CropData nextCrop = GameSessionRoot.Instance.CropCatalog.GetRandomCropByWeight();
                     if (nextCrop != null)
                     {
                         cropData = nextCrop;

@@ -69,7 +69,7 @@ public class FarmTile
             crop = null;
             return;
         }
-        crop = CropDataManager.Instance?.GetCropById(data.cropId);
+        crop = GameSessionRoot.Instance?.CropCatalog.GetCropById(data.cropId);
         plantedPhase = data.plantedPhase;
     }
 }

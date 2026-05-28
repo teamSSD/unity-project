@@ -38,7 +38,6 @@ public static class ManagerBootstrap
         Ensure<ToolUpgradeManager>();
         Ensure<StorageUpgradeManager>();
         Ensure<FarmUpgradeManager>();
-        Ensure<CropDataManager>();
         Ensure<LoadingManager>();
         Ensure<HUDManager>();
         Ensure<UIManager>();
