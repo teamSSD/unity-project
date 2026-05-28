@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -50,12 +50,12 @@ public class InventoryPageController : MonoBehaviour
 
         RebuildNestedLayout();
         // 첫 활성화 직후엔 CSF 체인이 0으로 잡힐 수 있어, 한 프레임 뒤 재실행
-        if (isActiveAndEnabled) StartCoroutine(RebuildNextFrame());
+        if (isActiveAndEnabled) RebuildNextFrameAsync().Forget();
     }
 
-    private IEnumerator RebuildNextFrame()
+    private async UniTaskVoid RebuildNextFrameAsync()
     {
-        yield return null;
+        await UniTask.Yield(cancellationToken: this.GetCancellationTokenOnDestroy());
         RebuildNestedLayout();
     }
 

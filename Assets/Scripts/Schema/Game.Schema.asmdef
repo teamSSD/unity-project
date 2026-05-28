@@ -1,7 +1,9 @@
 {
     "name": "Game.Schema",
     "rootNamespace": "Game.Schema",
-    "references": [],
+    "references": [
+        "UniTask"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

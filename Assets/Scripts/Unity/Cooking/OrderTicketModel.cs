@@ -1,7 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 [RequireComponent(typeof(OrderTicketBehavior))]
@@ -51,7 +51,7 @@ public class OrderTicketModel : MonoBehaviour
             {
                 IsAttached = true;
                 collision.BehaviorInstance.locked = true; // 완성된 도시락은 이동 불가
-                StartCoroutine(waitAndTake(GameRandom.NormalRange(GameRandom.Variable, 0.5f, 1.5f), collision));
+                WaitAndTakeAsync(GameRandom.NormalRange(GameRandom.Variable, 0.5f, 1.5f), collision).Forget();
 
                 GetComponent<SpriteRenderer>().enabled = false;
                 foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = false;
@@ -90,9 +90,10 @@ public class OrderTicketModel : MonoBehaviour
         return expected.SequenceEqual(actual);
     }
 
-    private IEnumerator waitAndTake(float time, BentoModel bento) // buy에서 수정
+    private async UniTaskVoid WaitAndTakeAsync(float time, BentoModel bento)
     {
-        yield return new WaitForSeconds(time);
+        await UniTask.Delay(TimeSpan.FromSeconds(time), cancellationToken: this.GetCancellationTokenOnDestroy());
+        if (bento == null) return;
 
         FoodSchema main = bento.getFoodList()[0];
         List<FoodSchema> sides = bento.getFoodList();

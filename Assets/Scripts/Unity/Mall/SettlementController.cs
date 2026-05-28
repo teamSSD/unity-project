@@ -1,4 +1,4 @@
-using System.Collections;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
@@ -30,7 +30,7 @@ public class SettlementController : MonoBehaviour
     {
         BuildUI();
         if (saveStatusText != null) saveStatusText.text = "";
-        StartCoroutine(SaveRoutine());
+        SaveRoutineAsync().Forget();
     }
 
     void Update()
@@ -42,10 +42,10 @@ public class SettlementController : MonoBehaviour
         }
     }
 
-    private IEnumerator SaveRoutine()
+    private async UniTaskVoid SaveRoutineAsync()
     {
         if (saveStatusText != null) saveStatusText.text = "저장 중...";
-        yield return null;
+        await UniTask.Yield(cancellationToken: this.GetCancellationTokenOnDestroy());
         ProgressSystem.Instance.PassDay();
         if (saveStatusText != null) saveStatusText.text = "아무 키나 눌러서 계속";
         waitingForInput = true;

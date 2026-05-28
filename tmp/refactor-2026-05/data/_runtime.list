@@ -27,6 +27,11 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Shop/FoodShopConfigSO.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Shop/ShopConfigSO.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/UI/ActionType.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Events/FloatEvent.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Events/GameEvent.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Events/GameEventBase.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Events/IntEvent.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Events/StringEvent.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Common/CsvModelConverter.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Common/IBentoValidator.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Common/INpcInteraction.cs

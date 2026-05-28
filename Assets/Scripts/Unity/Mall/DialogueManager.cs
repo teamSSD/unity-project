@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine;
@@ -29,7 +32,7 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private AudioClip npcBlipSfx;
 
     private bool _isTyping;
-    private Coroutine _typingCoroutine;
+    private CancellationTokenSource _typingCts;
     private string _currentLineText;
 
     // 분기 응답 재생 상태
@@ -151,8 +154,10 @@ public class DialogueManager : MonoBehaviour
     {
         ApplyPortrait(line);
 
-        if (_typingCoroutine != null) StopCoroutine(_typingCoroutine);
-        _typingCoroutine = StartCoroutine(TypeText(line.text));
+        _typingCts?.Cancel();
+        _typingCts?.Dispose();
+        _typingCts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+        TypeTextAsync(line.text, _typingCts.Token).Forget();
     }
 
     void ApplyPortrait(DialogueLine line)
@@ -174,31 +179,36 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator TypeText(string text)
+    private async UniTaskVoid TypeTextAsync(string text, CancellationToken ct)
     {
         _currentLineText = text;
         _isTyping = true;
         dialogueText.text = "";
         int charIndex = 0;
-        foreach (char c in text)
+        try
         {
-            dialogueText.text += c;
-            if (!char.IsWhiteSpace(c))
+            foreach (char c in text)
             {
-                charIndex++;
-                if (charIndex % 3 == 0)
-                    SoundManager.Instance?.Play2DSFX(npcBlipSfx, 0.7f);
+                dialogueText.text += c;
+                if (!char.IsWhiteSpace(c))
+                {
+                    charIndex++;
+                    if (charIndex % 3 == 0)
+                        SoundManager.Instance?.Play2DSFX(npcBlipSfx, 0.7f);
+                }
+                await UniTask.Delay(TimeSpan.FromSeconds(0.04f), cancellationToken: ct);
             }
-            yield return new WaitForSeconds(0.04f);
         }
-        _isTyping = false;
-        _typingCoroutine = null;
+        catch (OperationCanceledException) { /* Skip */ }
+        finally
+        {
+            _isTyping = false;
+        }
     }
 
     private void SkipTyping()
     {
-        if (_typingCoroutine != null) StopCoroutine(_typingCoroutine);
-        _typingCoroutine = null;
+        _typingCts?.Cancel();
         dialogueText.text = _currentLineText ?? "";
         _isTyping = false;
     }
@@ -295,12 +305,12 @@ public class DialogueManager : MonoBehaviour
         waitingForChoice = false;
 
         // 1프레임 지연 Unlock — 같은 프레임에서 Space가 재진입하는 것을 방지
-        StartCoroutine(DelayedUnlock(resultTag));
+        DelayedUnlockAsync(resultTag).Forget();
     }
 
-    private System.Collections.IEnumerator DelayedUnlock(string resultTag)
+    private async UniTaskVoid DelayedUnlockAsync(string resultTag)
     {
-        yield return null;
+        await UniTask.Yield(cancellationToken: this.GetCancellationTokenOnDestroy());
         UILockManager.Unlock(UILockManager.Owner.Dialogue);
         OnDialogueEnded?.Invoke(resultTag);
     }
