@@ -14,6 +14,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     public GameState State { get; private set; }
 
     public CropCatalogService CropCatalog { get; private set; }
+    public FarmUpgradeService FarmUpgrade { get; private set; }
 
     protected override void OnSingletonAwake()
     {
@@ -27,5 +28,13 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
         foreach (var row in cropRows)
             row.sprite = CatalogProvider.CropSprites?.Get(row.imagePath);
         CropCatalog = new CropCatalogService(cropRows);
+
+        var farmRows = CsvModelConverter.Parse<FarmUpgradeData>(CatalogProvider.Csvs?.farmUpgrade);
+        FarmUpgrade = new FarmUpgradeService(
+            State.garden.persistent,
+            farmRows,
+            new StatsMoneyAdapter(),
+            new SettlementExpenseAdapter()
+        );
     }
 }

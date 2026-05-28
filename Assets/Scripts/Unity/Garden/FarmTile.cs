@@ -22,7 +22,7 @@ public class FarmTile
         if (crop == null) return false;
 
         int passed = phaseProvider.CurrentPhaseIndex - plantedPhase;
-        float timeReduction = FarmUpgradeManager.Instance?.GetCurrentData("timeReduction")?.value ?? 0f;
+        float timeReduction = GameSessionRoot.Instance?.FarmUpgrade?.GetCurrentData("timeReduction")?.value ?? 0f;
         int requiredPhases = Mathf.CeilToInt(crop.growPhaseCount * (1f - timeReduction));
         return passed >= requiredPhases;
     }

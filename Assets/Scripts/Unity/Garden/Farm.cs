@@ -20,7 +20,7 @@ public class Farm : MonoBehaviour
     private TimePhaseProvider phaseProvider;
 
     private bool playerIn = false;
-    public bool IsLocked => farmIndex >= (int)(FarmUpgradeManager.Instance?.GetCurrentData("tile")?.value ?? 3);
+    public bool IsLocked => farmIndex >= (int)(GameSessionRoot.Instance?.FarmUpgrade?.GetCurrentData("tile")?.value ?? 3);
 
     private void Start()
     {
@@ -77,7 +77,7 @@ public class Farm : MonoBehaviour
             }
             else if (tile.IsHarvestable())
             {
-                int harvestCount = (int)(FarmUpgradeManager.Instance?.GetCurrentData("harvestCount")?.value ?? 5);
+                int harvestCount = (int)(GameSessionRoot.Instance?.FarmUpgrade?.GetCurrentData("harvestCount")?.value ?? 5);
                 if (tile.Harvest(out string id, out int crops, harvestCount))
                 {
                     Debug.Log($"[Farm] Harvested! [{id}] x{crops}");

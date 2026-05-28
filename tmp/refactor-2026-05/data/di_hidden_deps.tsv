@@ -1,14 +1,17 @@
+1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/IMoneyService.cs
 26	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/InventoryManager.cs
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/MallSceneController.cs
 13	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ProgressSystem.cs
 8	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeBookManager.cs
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeDataManager.cs
-27	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveManager.cs
+28	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveManager.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SceneLoader.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettingsUIManager.cs
+1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettlementExpenseAdapter.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettlementManager.cs
 8	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SoundManager.cs
+3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/StatsMoneyAdapter.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/StatsSystem.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SubSceneController.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TestSceneInit.cs
@@ -38,7 +41,6 @@
 6	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/WaitingCustomer.cs
 10	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Garden/Farm.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Garden/FarmTile.cs
-3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Garden/FarmUpgradeManager.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/CasualDialogueProvider.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DeliveryNpcDialogueInteraction.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DeliveryNpcOrderInteraction.cs
