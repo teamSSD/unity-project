@@ -25,8 +25,7 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         this.npcId = npcId;
         this.characterName = characterName;
         this.portrait = portrait;
-        dialogueConfig = Resources.Load<DeliveryDialogueConfig>(
-            $"ScriptableObjects/Dialogue/{groupId}/Config");
+        dialogueConfig = CatalogProvider.DialogueConfig?.GetByGroupId(groupId);
         if (!questStages.ContainsKey(groupId))
             questStages[groupId] = DeliveryQuestStage.Normal;
     }
