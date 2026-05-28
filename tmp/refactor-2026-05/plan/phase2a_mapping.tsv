@@ -14,7 +14,7 @@ Assets/Scripts/Entities/Cooking/cooking/Bento/BentoSetModel.cs	Assets/Scripts/Un
 Assets/Scripts/Entities/Cooking/cooking/CookingBackgroundController.cs	Assets/Scripts/Unity/Cooking/CookingBackgroundController.cs	Unity	Cooking	MonoBehaviour
 Assets/Scripts/Entities/Cooking/cooking/CookingTool/CookingToolBehavior.cs	Assets/Scripts/Unity/Cooking/CookingToolBehavior.cs	Unity	Cooking	MonoBehaviour
 Assets/Scripts/Entities/Cooking/cooking/CookingTool/CookingToolModel.cs	Assets/Scripts/Unity/Cooking/CookingToolModel.cs	Unity	Cooking	MonoBehaviour
-Assets/Scripts/Entities/Cooking/cooking/CookingTool/CookingToolSchema.cs	Assets/Scripts/Domain/Cooking/CookingToolSchema.cs	Domain	Cooking	순수 C# 클래스
+Assets/Scripts/Entities/Cooking/cooking/CookingTool/CookingToolSchema.cs	Assets/Scripts/Schema/State/Cooking/CookingToolSchema.cs	Schema/State	Cooking	POCO wrapper (Schema 명칭)
 Assets/Scripts/Entities/Cooking/cooking/Description/CookingToolDescription.cs	Assets/Scripts/Unity/Cooking/CookingToolDescription.cs	Unity	Cooking	MonoBehaviour
 Assets/Scripts/Entities/Cooking/cooking/Description/IngredientDescription.cs	Assets/Scripts/Unity/Cooking/IngredientDescription.cs	Unity	Cooking	MonoBehaviour
 Assets/Scripts/Entities/Cooking/cooking/Description/Receipt.cs	Assets/Scripts/Unity/Cooking/Receipt.cs	Unity	Cooking	MonoBehaviour
@@ -24,7 +24,7 @@ Assets/Scripts/Entities/Cooking/cooking/Enums/ResourcePaths.cs	Assets/Scripts/Do
 Assets/Scripts/Entities/Cooking/cooking/Enums/Tags.cs	Assets/Scripts/Domain/Cooking/Tags.cs	Domain	Cooking	static 유틸
 Assets/Scripts/Entities/Cooking/cooking/Food/FoodBehavior.cs	Assets/Scripts/Unity/Cooking/FoodBehavior.cs	Unity	Cooking	MonoBehaviour
 Assets/Scripts/Entities/Cooking/cooking/Food/FoodModel.cs	Assets/Scripts/Unity/Cooking/FoodModel.cs	Unity	Cooking	MonoBehaviour
-Assets/Scripts/Entities/Cooking/cooking/Food/FoodSchema.cs	Assets/Scripts/Domain/Cooking/FoodSchema.cs	Domain	Cooking	순수 C# 클래스
+Assets/Scripts/Entities/Cooking/cooking/Food/FoodSchema.cs	Assets/Scripts/Schema/State/Cooking/FoodSchema.cs	Schema/State	Cooking	POCO wrapper (Schema 명칭)
 Assets/Scripts/Entities/Cooking/cooking/LowerShelf.cs	Assets/Scripts/Unity/Cooking/LowerShelf.cs	Unity	Cooking	MonoBehaviour
 Assets/Scripts/Entities/Cooking/cooking/OrderTicket/OrderTicketBehavior.cs	Assets/Scripts/Unity/Cooking/OrderTicketBehavior.cs	Unity	Cooking	MonoBehaviour
 Assets/Scripts/Entities/Cooking/cooking/OrderTicket/OrderTicketModel.cs	Assets/Scripts/Unity/Cooking/OrderTicketModel.cs	Unity	Cooking	MonoBehaviour
@@ -33,7 +33,7 @@ Assets/Scripts/Entities/Cooking/cooking/RefrigeratorBehavior.cs	Assets/Scripts/U
 Assets/Scripts/Entities/Cooking/cooking/UpperShelf.cs	Assets/Scripts/Unity/Cooking/UpperShelf.cs	Unity	Cooking	MonoBehaviour
 Assets/Scripts/Entities/Cooking/cooking/dataType/FoodData.cs	Assets/Scripts/Schema/Config/Cooking/FoodData.cs	Schema/Config	Cooking	ScriptableObject
 Assets/Scripts/Entities/Cooking/cooking/dataType/IngredientData.cs	Assets/Scripts/Schema/Config/Cooking/IngredientData.cs	Schema/Config	Cooking	ScriptableObject
-Assets/Scripts/Entities/Cooking/cooking/dataType/MenuSchema.cs	Assets/Scripts/Domain/Cooking/MenuSchema.cs	Domain	Cooking	순수 C# 클래스
+Assets/Scripts/Entities/Cooking/cooking/dataType/MenuSchema.cs	Assets/Scripts/Schema/State/Cooking/MenuSchema.cs	Schema/State	Cooking	POCO wrapper (Schema 명칭)
 Assets/Scripts/Entities/Cooking/cooking/dataType/MenuSelection.cs	Assets/Scripts/Schema/State/Cooking/MenuSelection.cs	Schema/State	Cooking	[Serializable] POCO
 Assets/Scripts/Entities/Cooking/cooking/dataType/RecipeData.cs	Assets/Scripts/Schema/Config/Cooking/RecipeData.cs	Schema/Config	Cooking	ScriptableObject
 Assets/Scripts/Entities/Cooking/customer/OrderingCustomer.cs	Assets/Scripts/Unity/Cooking/OrderingCustomer.cs	Unity	Cooking	MonoBehaviour
@@ -83,7 +83,7 @@ Assets/Scripts/Entities/RecipeBook/menu/MenuCardController.cs	Assets/Scripts/Uni
 Assets/Scripts/Entities/RecipeBook/menu/MenuCardOverlay.cs	Assets/Scripts/Unity/UI/MenuCardOverlay.cs	Unity	UI	MonoBehaviour
 Assets/Scripts/Entities/RecipeBook/menu/MenuSlot.cs	Assets/Scripts/Unity/UI/MenuSlot.cs	Unity	UI	MonoBehaviour
 Assets/Scripts/Entities/SO/CookingToolData.cs	Assets/Scripts/Schema/Config/Common/CookingToolData.cs	Schema/Config	Common	ScriptableObject
-Assets/Scripts/Entities/SO/CropData.cs	Assets/Scripts/Domain/Common/CropData.cs	Domain	Common	순수 C# 클래스
+Assets/Scripts/Entities/SO/CropData.cs	Assets/Scripts/Schema/Config/Common/CropData.cs	Schema/Config	Common	CSV-loaded read-only POCO
 Assets/Scripts/Entities/SO/CustomerData.cs	Assets/Scripts/Schema/Config/Common/CustomerData.cs	Schema/Config	Common	ScriptableObject
 Assets/Scripts/Entities/Stats/BasicStats.cs	Assets/Scripts/Schema/State/Common/BasicStats.cs	Schema/State	Common	[Serializable] POCO
 Assets/Scripts/Interfaces/Cooking/ISelectMenu.cs	Assets/Scripts/Schema/Interfaces/Cooking/ISelectMenu.cs	Schema/Interfaces	Cooking	interface
