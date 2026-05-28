@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5861926654a244daeb53fc825cce2f1b, type: 3}
+  m_Name: OnDeliveryAccepted
+  m_EditorClassIdentifier: Game.Schema::Game.Schema.Events.StringEvent
+  description: "DeliveryNpc\uC640 \uC0C1\uD638\uC791\uC6A9\uD574 \uBC30\uB2EC \uD018\uC2A4\uD2B8\uB97C
+    \uC218\uB77D\uD55C \uC9C1\uD6C4 \uBC1C\uD589 (\uAC12: questId).\n\uAD6C\uB3C5
+    \uD6C4\uBCF4: OrderManager (\uBC30\uB2EC \uD050 \uCD94\uAC00), Quest UI \uAC31\uC2E0"
