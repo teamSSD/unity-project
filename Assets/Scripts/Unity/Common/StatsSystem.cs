@@ -1,6 +1,11 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// 글로벌 통계(시간/날짜/스태미너/돈) 접근 facade.
+/// 상태는 GameSessionRoot.State.stats(BasicStats POCO)에 보관 — 이 클래스는 무상태 어댑터.
+/// 이벤트 발행 + Unity 사이드이펙트(SFX) 만 담당.
+/// </summary>
 public class StatsSystem : SingletonMonoBehaviour<StatsSystem>
 {
     public event Action<int, int> OnTimeChanged;
@@ -12,42 +17,47 @@ public class StatsSystem : SingletonMonoBehaviour<StatsSystem>
     [Header("SFX")]
     [SerializeField] private AudioClip cashDrawerSfx;
 
-    private BasicStats basicStats = new BasicStats();
+    private static BasicStats Stats =>
+        GameSessionRoot.Instance != null ? GameSessionRoot.Instance.State.stats : null;
 
     public void Initialize()
     {
-        basicStats = new BasicStats();
+        if (GameSessionRoot.Instance != null)
+            GameSessionRoot.Instance.State.stats = new BasicStats();
         Debug.Log("[StatsSystem] Initialized");
     }
 
-    public BasicStats GetSaveData() => basicStats;
+    public BasicStats GetSaveData() => Stats;
 
     public void ApplySaveData(BasicStats data)
     {
-        basicStats = data;
-        Debug.Log($"[StatsSystem] Save data applied - Stamina: {basicStats.stamina}, Money: {basicStats.money}, Day: {basicStats.day}, Time: {basicStats.time}");
+        if (GameSessionRoot.Instance == null) return;
+        GameSessionRoot.Instance.State.stats = data;
+        Debug.Log($"[StatsSystem] Save data applied - Stamina: {data.stamina}, Money: {data.money}, Day: {data.day}, Time: {data.time}");
     }
 
     // ── Day ──
-    public int GetDay() => basicStats.day;
+    public int GetDay() => Stats?.day ?? 0;
 
     public void AddDay(int value)
     {
-        basicStats.day += value;
-        OnDayChanged?.Invoke(basicStats.day);
+        if (Stats == null) return;
+        Stats.day += value;
+        OnDayChanged?.Invoke(Stats.day);
     }
 
     // ── Time ──
-    public int GetHour() => basicStats.time / 60;
-    public int GetMinute() => basicStats.time % 60;
+    public int GetHour() => (Stats?.time ?? 0) / 60;
+    public int GetMinute() => (Stats?.time ?? 0) % 60;
 
     public void AddTime(int hour, int minute)
     {
-        basicStats.time += hour * 60 + minute;
+        if (Stats == null) return;
+        Stats.time += hour * 60 + minute;
 
-        if (basicStats.time >= 1440)
+        if (Stats.time >= 1440)
         {
-            basicStats.time %= 1440;
+            Stats.time %= 1440;
             AddDay(1);
         }
 
@@ -56,7 +66,8 @@ public class StatsSystem : SingletonMonoBehaviour<StatsSystem>
 
     public void SetTime(int hour, int minute)
     {
-        basicStats.time = Mathf.Clamp(hour * 60 + minute, 0, 1439);
+        if (Stats == null) return;
+        Stats.time = Mathf.Clamp(hour * 60 + minute, 0, 1439);
         BroadcastTime();
     }
 
@@ -66,36 +77,38 @@ public class StatsSystem : SingletonMonoBehaviour<StatsSystem>
     }
 
     // ── Stamina ──
-    public int GetStamina() => basicStats.stamina;
+    public int GetStamina() => Stats?.stamina ?? 0;
 
     public void SetStamina(int value)
     {
-        basicStats.stamina = value;
-        OnStaminaChanged?.Invoke(basicStats.stamina);
+        if (Stats == null) return;
+        Stats.stamina = value;
+        OnStaminaChanged?.Invoke(Stats.stamina);
         if (value <= 0)
             OnStaminaExhausted?.Invoke();
     }
 
-    public void SubStamina(int value) => SetStamina(basicStats.stamina - value);
+    public void SubStamina(int value) => SetStamina((Stats?.stamina ?? 0) - value);
 
     // ── Money ──
-    public int GetMoney() => basicStats.money;
+    public int GetMoney() => Stats?.money ?? 0;
 
     public void SetMoney(int value)
     {
-        basicStats.money = Mathf.Max(0, value);
-        OnMoneyChanged?.Invoke(basicStats.money);
+        if (Stats == null) return;
+        Stats.money = Mathf.Max(0, value);
+        OnMoneyChanged?.Invoke(Stats.money);
     }
 
     public void AddMoney(int value)
     {
-        SetMoney(basicStats.money + value);
+        SetMoney((Stats?.money ?? 0) + value);
         SoundManager.Instance?.Play2DSFX(cashDrawerSfx);
     }
 
     public void SubMoney(int value)
     {
-        SetMoney(basicStats.money - value);
+        SetMoney((Stats?.money ?? 0) - value);
         SoundManager.Instance?.Play2DSFX(cashDrawerSfx);
     }
 }

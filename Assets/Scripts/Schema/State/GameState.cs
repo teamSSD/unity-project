@@ -14,5 +14,9 @@ namespace Game.Schema.State
         public GardenState garden = new GardenState();
         public ShopState shop = new ShopState();
         public MallState mall = new MallState();
+
+        // 글로벌 게임 상태 (System 카테고리 매니저들이 facade로 접근)
+        public BasicStats stats = new BasicStats();
+        public PhaseData phase = new PhaseData();
     }
 }

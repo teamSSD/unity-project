@@ -2,26 +2,29 @@ using UnityEngine;
 
 public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>, TimePhaseProvider
 {
-    public PhaseData phaseData{get; private set;}
+    // 상태는 GameSessionRoot.State.phase에 보관. 이 facade는 backward-compat 접근만 제공.
+    public PhaseData phaseData =>
+        GameSessionRoot.Instance != null ? GameSessionRoot.Instance.State.phase : null;
 
-    // TimePhaseProvider 구현
     private int cumulativePhaseIndex;
     public int CurrentPhaseIndex => cumulativePhaseIndex;
     public int TotalPhaseCount => 5; // Preparation ~ Night
 
     public void Initialize()
     {
-        phaseData = new PhaseData();
+        if (GameSessionRoot.Instance != null)
+            GameSessionRoot.Instance.State.phase = new PhaseData();
         cumulativePhaseIndex = 0;
-        WeatherSystem.Instance?.UpdateWeather(phaseData.Day);
+        WeatherSystem.Instance?.UpdateWeather(phaseData?.Day ?? 0);
         Debug.Log("[ProgressSystem] Initialized");
     }
 
     public void ApplySaveData(PhaseData data)
     {
-        phaseData = data;
+        if (GameSessionRoot.Instance != null)
+            GameSessionRoot.Instance.State.phase = data;
         cumulativePhaseIndex = data.Day * TotalPhaseCount + (int)data.Phase;
-        WeatherSystem.Instance?.UpdateWeather(phaseData.Day);
+        WeatherSystem.Instance?.UpdateWeather(data.Day);
     }
 
     public event System.Action<PhaseType> OnPhaseChanged;

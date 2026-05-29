@@ -9,8 +9,13 @@ using UnityEngine;
 /// GameState POCO 보관 + 모든 Service의 wiring 진입점.
 /// Managers 씬에 단 1개 배치 (기존 Singleton 매니저들이 점진 흡수됨).
 ///
+/// DefaultExecutionOrder(-999): CatalogProvider(-1000) 다음으로 Awake — 같은 씬의
+/// 다른 SingletonMonoBehaviour(StatsSystem 등) facade가 Awake 시 GameSessionRoot.State
+/// 안전 접근 보장.
+///
 /// Phase 3-C 진행에 따라 Service 필드/wiring이 추가됨.
 /// </summary>
+[DefaultExecutionOrder(-999)]
 public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
 {
     public GameState State { get; private set; }
