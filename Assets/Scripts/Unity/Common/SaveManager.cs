@@ -87,7 +87,11 @@ public static class SaveManager
             };
         }
 
-        save.farmTiles = FarmTileStorage.GetSaveData();
+        if (GameSessionRoot.Instance != null)
+        {
+            var gpTiles = GameSessionRoot.Instance.State.garden.persistent.tiles;
+            save.farmTiles = new FarmTilesSaveData { tiles = (FarmTileSaveData[])gpTiles.Clone() };
+        }
 
         // Phase 3: 단일 파일로 저장
         DataSaveUtil.SaveData(save, SavePath);
@@ -140,7 +144,13 @@ public static class SaveManager
             }
         }
 
-        FarmTileStorage.ApplySaveData(save.farmTiles);
+        if (GameSessionRoot.Instance != null)
+        {
+            var gpTiles = GameSessionRoot.Instance.State.garden.persistent.tiles;
+            for (int i = 0; i < gpTiles.Length; i++)
+                gpTiles[i] = (save.farmTiles?.tiles != null && i < save.farmTiles.tiles.Length)
+                    ? save.farmTiles.tiles[i] : null;
+        }
 
         // Phase 2: PhaseData에서 piggyback 데이터 로드
         UnlockedFoodManager.Instance?.LoadUnlocksFromProgress();
