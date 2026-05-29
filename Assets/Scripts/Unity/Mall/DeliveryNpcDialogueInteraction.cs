@@ -6,7 +6,7 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
 {
     private DeliveryDialogueConfig dialogueConfig;
 
-    private static readonly Dictionary<string, DeliveryQuestStage> questStages = new();
+    // questStages는 GameState.mall.persistent에 흡수 (3-C-3-a, DeliveryQuestService 경유).
     private static Dictionary<string, MenuSchema> questMenus;
 
     private string groupId;
@@ -26,8 +26,17 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         this.characterName = characterName;
         this.portrait = portrait;
         dialogueConfig = CatalogProvider.DialogueConfig?.GetByGroupId(groupId);
-        if (!questStages.ContainsKey(groupId))
-            questStages[groupId] = DeliveryQuestStage.Normal;
+        // 첫 진입은 Normal(이미 알던 사이) 기본값으로 시작. 이전 SetStage 없으면 Service가 FirstMeet 반환하므로
+        // 명시적으로 Normal 셋팅하여 기존 동작 유지.
+        var svc = GameSessionRoot.Instance?.DeliveryQuest;
+        if (svc != null && !MallPersistentHasGroup(groupId))
+            svc.SetStage(groupId, DeliveryQuestStage.Normal);
+    }
+
+    private static bool MallPersistentHasGroup(string groupId)
+    {
+        var gp = GameSessionRoot.Instance?.State.mall.persistent;
+        return gp != null && gp.questGroupIds.Contains(groupId);
     }
 
     void Start()
@@ -61,7 +70,7 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
             if (order != null && order.state == DeliveryOrderState.Cooked)
             {
                 OrderManager.Instance.ConsumeBento(qId);
-                questStages[groupId] = DeliveryQuestStage.OrderEnd;
+                GameSessionRoot.Instance?.DeliveryQuest.SetStage(groupId, DeliveryQuestStage.OrderEnd);
                 stage = DeliveryQuestStage.OrderEnd;
             }
         }
@@ -154,42 +163,46 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         if (!IsQuestUnlocked())
             return;
 
+        var svc = GameSessionRoot.Instance?.DeliveryQuest;
+        if (svc == null) return;
+
         var current = GetCurrentStage();
 
         switch (current)
         {
             case DeliveryQuestStage.FirstMeet:
-                questStages[groupId] = DeliveryQuestStage.Normal;
+                svc.SetStage(groupId, DeliveryQuestStage.Normal);
                 break;
 
             case DeliveryQuestStage.Normal:
-                questStages[groupId] = DeliveryQuestStage.QuestStart;
+                svc.SetStage(groupId, DeliveryQuestStage.QuestStart);
                 break;
 
             case DeliveryQuestStage.QuestStart:
                 if (resultTag == "accept")
                 {
                     CreateQuestOrder();
-                    questStages[groupId] = DeliveryQuestStage.Ordering;
+                    svc.SetStage(groupId, DeliveryQuestStage.Ordering);
                 }
                 break;
 
             case DeliveryQuestStage.Ordering:
                 // Cooked 판정은 StartDialogue()에서 처리
-                // 아직 요리 안 됐으면 스테이지 유지
                 break;
 
             case DeliveryQuestStage.OrderEnd:
-                questStages[groupId] = DeliveryQuestStage.Completed;
+                svc.SetStage(groupId, DeliveryQuestStage.Completed);
                 break;
         }
     }
 
     DeliveryQuestStage GetCurrentStage()
     {
-        return questStages.TryGetValue(groupId, out var stage)
-            ? stage
-            : DeliveryQuestStage.Normal;
+        var svc = GameSessionRoot.Instance?.DeliveryQuest;
+        if (svc == null) return DeliveryQuestStage.Normal;
+        var stage = svc.GetStage(groupId);
+        // Service는 미등록 시 FirstMeet 반환하지만, 이 클래스는 Normal을 기본값으로 사용
+        return MallPersistentHasGroup(groupId) ? stage : DeliveryQuestStage.Normal;
     }
 
     bool IsQuestUnlocked()
@@ -198,17 +211,16 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
             GetQuestStage(prerequisiteGroupId) == DeliveryQuestStage.Completed;
     }
 
-    // --- 외부 API: 퀘스트 단계 수동 전환 ---
+    // --- 외부 API: 퀘스트 단계 수동 전환 (Service 위임) ---
     public static void SetQuestStage(string groupId, DeliveryQuestStage stage)
     {
-        questStages[groupId] = stage;
+        GameSessionRoot.Instance?.DeliveryQuest.SetStage(groupId, stage);
     }
 
     public static DeliveryQuestStage GetQuestStage(string groupId)
     {
-        return questStages.TryGetValue(groupId, out var stage)
-            ? stage
-            : DeliveryQuestStage.FirstMeet;
+        return GameSessionRoot.Instance?.DeliveryQuest.GetStage(groupId)
+            ?? DeliveryQuestStage.FirstMeet;
     }
 
     // --- 플레이어 근접 감지 ---
@@ -304,36 +316,10 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
     // --- 리셋 (New Game) ---
     public static void ResetAll()
     {
-        questStages.Clear();
+        GameSessionRoot.Instance?.DeliveryQuest.Clear();
         questMenus = null;
-    }
-
-    // --- 저장/로드 (SaveManager에서 호출) ---
-    public static DeliveryQuestSaveData GetSaveData()
-    {
-        var data = new DeliveryQuestSaveData();
-        foreach (var kv in questStages)
-        {
-            data.groupIds.Add(kv.Key);
-            data.stages.Add((int)kv.Value);
-        }
-        return data;
-    }
-
-    public static void ApplySaveData(DeliveryQuestSaveData data)
-    {
-        questStages.Clear();
-        for (int i = 0; i < data.groupIds.Count; i++)
-            questStages[data.groupIds[i]] = (DeliveryQuestStage)data.stages[i];
     }
 
     // INpcInteraction (자동 트리거 비활성 - Space 키 사용)
     public void Interact() { }
-}
-
-[System.Serializable]
-public class DeliveryQuestSaveData
-{
-    public List<string> groupIds = new();
-    public List<int> stages = new();
 }

@@ -48,6 +48,16 @@ public class ToolUpgradeSaveData
 }
 
 /// <summary>
+/// NPC별 배달 퀘스트 진행도 디스크 직렬화 형식. MallPersistent와 SaveManager에서 변환.
+/// </summary>
+[System.Serializable]
+public class DeliveryQuestSaveData
+{
+    public List<string> groupIds = new();
+    public List<int>    stages   = new();
+}
+
+/// <summary>
 /// 게임 데이터 저장/로드 유틸리티.
 /// 모든 JSON 디스크 I/O를 일원화 — 개별 매니저는 DataSaveUtil을 직접 호출하지 않음.
 /// 단일 파일(gamedata.json)에 모든 데이터 통합 저장.
@@ -90,7 +100,15 @@ public static class SaveManager
         if (OrderManager.Instance != null)
             save.orders = OrderManager.Instance.GetSaveData();
 
-        save.deliveryQuest = DeliveryNpcDialogueInteraction.GetSaveData();
+        if (GameSessionRoot.Instance != null)
+        {
+            var mp = GameSessionRoot.Instance.State.mall.persistent;
+            save.deliveryQuest = new DeliveryQuestSaveData
+            {
+                groupIds = new List<string>(mp.questGroupIds),
+                stages   = new List<int>(mp.questStages)
+            };
+        }
 
         if (GameSessionRoot.Instance != null)
         {
@@ -148,7 +166,12 @@ public static class SaveManager
         if (OrderManager.Instance != null)
             OrderManager.Instance.ApplySaveData(save.orders);
 
-        DeliveryNpcDialogueInteraction.ApplySaveData(save.deliveryQuest);
+        if (GameSessionRoot.Instance != null && save.deliveryQuest != null)
+        {
+            var mp = GameSessionRoot.Instance.State.mall.persistent;
+            mp.questGroupIds = new List<string>(save.deliveryQuest.groupIds);
+            mp.questStages   = new List<int>(save.deliveryQuest.stages);
+        }
 
         if (GameSessionRoot.Instance != null && save.farmUpgrades != null)
         {

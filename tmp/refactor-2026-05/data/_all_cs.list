@@ -11,6 +11,7 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Garden/CropCatalogService.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Garden/FarmUpgradeData.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Garden/FarmUpgradeService.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Mall/DeliveryQuestService.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/PurchaseService.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/StorageUpgradeData.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/StorageUpgradeService.cs
@@ -80,6 +81,8 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Garden/GardenPersistent.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Garden/GardenState.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Mall/DeliveryOrderData.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Mall/MallPersistent.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Mall/MallState.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Shop/ItemShopSlotInfo.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Shop/ShopPersistent.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Shop/ShopState.cs

@@ -1,4 +1,5 @@
 using Game.Domain.Garden;
+using Game.Domain.Mall;
 using Game.Domain.Shop;
 using Game.Schema.State;
 using UnityEngine;
@@ -19,6 +20,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     public StorageUpgradeService StorageUpgrade { get; private set; }
     public ToolUpgradeService ToolUpgrade { get; private set; }
     public PurchaseService Purchase { get; private set; }
+    public DeliveryQuestService DeliveryQuest { get; private set; }
 
     protected override void OnSingletonAwake()
     {
@@ -46,5 +48,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
         ToolUpgrade = new ToolUpgradeService(State.shop.persistent, toolRows, money, expense);
 
         Purchase = new PurchaseService(CatalogProvider.FoodShopConfig);
+
+        DeliveryQuest = new DeliveryQuestService(State.mall.persistent);
     }
 }
