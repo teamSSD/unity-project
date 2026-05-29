@@ -22,6 +22,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     public PurchaseService Purchase { get; private set; }
     public DeliveryQuestService DeliveryQuest { get; private set; }
     public OrderService Order { get; private set; }
+    public QuestMenuCatalog QuestMenus { get; private set; }
 
     protected override void OnSingletonAwake()
     {
@@ -52,5 +53,41 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
 
         DeliveryQuest = new DeliveryQuestService(State.mall.persistent);
         Order = new OrderService(money);
+        QuestMenus = new QuestMenuCatalog(ParseQuestMenus());
+    }
+
+    private static System.Collections.Generic.IEnumerable<(string groupId, MenuSchema menu)> ParseQuestMenus()
+    {
+        var csv = CatalogProvider.Csvs?.deliveryQuest;
+        if (csv == null) yield break;
+
+        // CSV 헤더: GroupId, MenuName, MainMenuId, MainMenu2Id, SideMenu1Id, SideMenu2Id, SideMenu3Id
+        var lines = csv.text.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);
+        for (int i = 1; i < lines.Length; i++)
+        {
+            var t = lines[i].Split(',');
+            if (t.Length < 2) continue;
+
+            string gId = t[0].Trim();
+            string menuName = t[1].Trim();
+
+            var mains = new System.Collections.Generic.List<FoodData>();
+            for (int j = 2; j <= 3 && j < t.Length; j++)
+            {
+                string id = t[j].Trim();
+                if (!string.IsNullOrEmpty(id))
+                    mains.Add(SearchDataUtil.GetFoodDataById(id));
+            }
+
+            var sides = new System.Collections.Generic.List<FoodData>();
+            for (int j = 4; j < Mathf.Min(t.Length, 7); j++)
+            {
+                string id = t[j].Trim();
+                if (!string.IsNullOrEmpty(id))
+                    sides.Add(SearchDataUtil.GetFoodDataById(id));
+            }
+
+            yield return (gId, new MenuSchema(menuName, -1, mains, sides));
+        }
     }
 }

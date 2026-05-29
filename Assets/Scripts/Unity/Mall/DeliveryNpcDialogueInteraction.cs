@@ -7,7 +7,7 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
     private DeliveryDialogueConfig dialogueConfig;
 
     // questStages는 GameState.mall.persistent에 흡수 (3-C-3-a, DeliveryQuestService 경유).
-    private static Dictionary<string, MenuSchema> questMenus;
+    // questMenus는 QuestMenuCatalog에 흡수 (3-C-3-c, GameSessionRoot.QuestMenus 경유).
 
     private string groupId;
     private string prerequisiteGroupId;
@@ -250,8 +250,8 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
     // --- 퀘스트 주문 생성 ---
     void CreateQuestOrder()
     {
-        LoadQuestMenus();
-        if (!questMenus.TryGetValue(groupId, out var template)) return;
+        var template = GameSessionRoot.Instance?.QuestMenus.GetByGroupId(groupId);
+        if (template == null) return;
 
         var orderSvc = GameSessionRoot.Instance?.Order;
         if (orderSvc == null) return;
@@ -293,49 +293,10 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         UnlockedFoodManager.Instance.PrepareForSave();
     }
 
-    static void LoadQuestMenus()
-    {
-        if (questMenus != null) return;
-        questMenus = new Dictionary<string, MenuSchema>();
-
-        var csv = CatalogProvider.Csvs?.deliveryQuest;
-        if (csv == null) return;
-
-        var lines = csv.text.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);
-        // CSV 헤더: GroupId, MenuName, MainMenuId, MainMenu2Id, SideMenu1Id, SideMenu2Id, SideMenu3Id
-        for (int i = 1; i < lines.Length; i++)
-        {
-            var t = lines[i].Split(',');
-            if (t.Length < 2) continue;
-
-            string gId = t[0].Trim();
-            string menuName = t[1].Trim();
-
-            var mains = new List<FoodData>();
-            for (int j = 2; j <= 3 && j < t.Length; j++)
-            {
-                string id = t[j].Trim();
-                if (!string.IsNullOrEmpty(id))
-                    mains.Add(SearchDataUtil.GetFoodDataById(id));
-            }
-
-            var sides = new List<FoodData>();
-            for (int j = 4; j < Mathf.Min(t.Length, 7); j++)
-            {
-                string id = t[j].Trim();
-                if (!string.IsNullOrEmpty(id))
-                    sides.Add(SearchDataUtil.GetFoodDataById(id));
-            }
-
-            questMenus[gId] = new MenuSchema(menuName, -1, mains, sides);
-        }
-    }
-
     // --- 리셋 (New Game) ---
     public static void ResetAll()
     {
         GameSessionRoot.Instance?.DeliveryQuest.Clear();
-        questMenus = null;
     }
 
     // INpcInteraction (자동 트리거 비활성 - Space 키 사용)
