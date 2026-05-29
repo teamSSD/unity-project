@@ -19,4 +19,10 @@ public class StatsMoneyAdapter : IMoneyService
         StatsSystem.Instance.SubMoney(amount);
         return true;
     }
+
+    public void Add(int amount)
+    {
+        if (StatsSystem.Instance == null || amount <= 0) return;
+        StatsSystem.Instance.AddMoney(amount);
+    }
 }

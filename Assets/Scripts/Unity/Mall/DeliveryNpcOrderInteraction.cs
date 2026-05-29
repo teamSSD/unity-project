@@ -46,7 +46,8 @@ public class DeliveryNpcOrderInteraction
     {
         string questId = Guid.NewGuid().ToString();
 
-        OrderManager.Instance.GenerateOrder(menuSchema, questId, npcView.NpcId);
+        GameSessionRoot.Instance?.Order.GenerateOrder(menuSchema, questId, npcView.NpcId);
+        DeliveryNpcDialogueInteraction.UnlockMenuRecipes(menuSchema);
         CreateReceipt();
     }
 

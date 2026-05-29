@@ -28,7 +28,7 @@ public class DeliveryNpcReceiptInteraction
 
         // 1. 이 NPC(npcId)에 해당하는 주문 찾기
         DeliveryOrderData myOrder =
-            OrderManager.Instance.GetOrders()
+            GameSessionRoot.Instance?.Order.GetOrders()
                 .FirstOrDefault(order =>
                     order.npcId == npcView.NpcId &&
                     order.state == DeliveryOrderState.Cooked);
@@ -51,7 +51,7 @@ public class DeliveryNpcReceiptInteraction
 
         await UniTask.Delay(TimeSpan.FromSeconds(2f), cancellationToken: ct);
 
-        int reward = OrderManager.Instance.ConsumeBento(order.questId);
+        int reward = GameSessionRoot.Instance?.Order.ConsumeBento(order.questId) ?? 0;
         Say($"감사합니다! ({reward}원)");
 
         await UniTask.Delay(TimeSpan.FromSeconds(1.5f), cancellationToken: ct);

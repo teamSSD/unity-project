@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -8,7 +9,7 @@ public class GameSaveData
     public PhaseData phase = new();
     public BasicStats stats = new();
     public InventorySaveData inventory = new();
-    public OrderManager.OrderSaveData orders = new();
+    public OrderSaveData orders = new();
     public DeliveryQuestSaveData deliveryQuest = new();
     public ToolUpgradeSaveData toolUpgrades = new();
     public StorageUpgradeSaveData storageUpgrades = new();
@@ -45,6 +46,16 @@ public class ToolUpgradeSaveData
 {
     public List<string> ids    = new();
     public List<int>    levels = new();
+}
+
+/// <summary>
+/// NPC별 배달 퀘스트 진행도 디스크 직렬화 형식. MallPersistent와 SaveManager에서 변환.
+/// </summary>
+[System.Serializable]
+public class DeliveryQuestSaveData
+{
+    public List<string> groupIds = new();
+    public List<int>    stages   = new();
 }
 
 /// <summary>
@@ -87,10 +98,34 @@ public static class SaveManager
         if (InventoryManager.Instance != null)
             save.inventory = InventoryManager.Instance.GetSaveData();
 
-        if (OrderManager.Instance != null)
-            save.orders = OrderManager.Instance.GetSaveData();
+        if (GameSessionRoot.Instance != null)
+        {
+            var orderSvc = GameSessionRoot.Instance.Order;
+            var saved = new OrderSaveData();
+            foreach (var order in orderSvc.GetOrders())
+            {
+                saved.entries.Add(new OrderEntry
+                {
+                    questId = order.questId,
+                    orderNumber = order.orderNumber,
+                    menuName = order.menuSchema?.name ?? "",
+                    mainMenuId = order.menuSchema?.mainMenu?.id ?? "",
+                    sideMenuIds = order.menuSchema?.sideMenus?
+                        .Select(f => f?.id ?? "").ToList() ?? new List<string>(),
+                    state = (int)order.state,
+                    npcId = order.npcId,
+                    cookedPrice = order.cookedPrice
+                });
+            }
+            save.orders = saved;
 
-        save.deliveryQuest = DeliveryNpcDialogueInteraction.GetSaveData();
+            var mp = GameSessionRoot.Instance.State.mall.persistent;
+            save.deliveryQuest = new DeliveryQuestSaveData
+            {
+                groupIds = new List<string>(mp.questGroupIds),
+                stages   = new List<int>(mp.questStages)
+            };
+        }
 
         if (GameSessionRoot.Instance != null)
         {
@@ -145,10 +180,43 @@ public static class SaveManager
         if (InventoryManager.Instance != null)
             InventoryManager.Instance.ApplySaveData(save.inventory);
 
-        if (OrderManager.Instance != null)
-            OrderManager.Instance.ApplySaveData(save.orders);
+        if (GameSessionRoot.Instance != null && save.orders != null)
+        {
+            var orderSvc = GameSessionRoot.Instance.Order;
+            var rebuilt = new List<DeliveryOrderData>();
+            foreach (var entry in save.orders.entries)
+            {
+                var sideMenus = entry.sideMenuIds
+                    .Where(id => !string.IsNullOrEmpty(id))
+                    .Select(id => SearchDataUtil.GetFoodDataById(id))
+                    .Where(f => f != null)
+                    .ToList();
 
-        DeliveryNpcDialogueInteraction.ApplySaveData(save.deliveryQuest);
+                rebuilt.Add(new DeliveryOrderData
+                {
+                    questId = entry.questId,
+                    orderNumber = entry.orderNumber,
+                    menuSchema = new MenuSchema(
+                        entry.menuName,
+                        entry.orderNumber,
+                        !string.IsNullOrEmpty(entry.mainMenuId)
+                            ? SearchDataUtil.GetFoodDataById(entry.mainMenuId) : null,
+                        sideMenus
+                    ),
+                    state = (DeliveryOrderState)entry.state,
+                    npcId = entry.npcId,
+                    cookedPrice = entry.cookedPrice
+                });
+            }
+            orderSvc.SetOrders(rebuilt);
+        }
+
+        if (GameSessionRoot.Instance != null && save.deliveryQuest != null)
+        {
+            var mp = GameSessionRoot.Instance.State.mall.persistent;
+            mp.questGroupIds = new List<string>(save.deliveryQuest.groupIds);
+            mp.questStages   = new List<int>(save.deliveryQuest.stages);
+        }
 
         if (GameSessionRoot.Instance != null && save.farmUpgrades != null)
         {
@@ -231,7 +299,7 @@ public static class SaveManager
         save.phase = DataSaveUtil.LoadData(new PhaseData(), oldProgress);
         save.stats = DataSaveUtil.LoadData(new BasicStats(), Dir + "/stats");
         save.inventory = DataSaveUtil.LoadData(new InventorySaveData(), Dir + "/inventory");
-        save.orders = DataSaveUtil.LoadData(new OrderManager.OrderSaveData(), Dir + "/orders");
+        save.orders = DataSaveUtil.LoadData(new OrderSaveData(), Dir + "/orders");
         save.deliveryQuest = DataSaveUtil.LoadData(new DeliveryQuestSaveData(), Dir + "/deliveryQuest");
 
         DataSaveUtil.SaveData(save, SavePath);

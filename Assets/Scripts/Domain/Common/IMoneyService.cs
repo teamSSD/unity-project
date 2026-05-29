@@ -8,5 +8,6 @@ namespace Game.Domain.Common
     {
         int Current { get; }
         bool TrySpend(int amount);
+        void Add(int amount);
     }
 }
