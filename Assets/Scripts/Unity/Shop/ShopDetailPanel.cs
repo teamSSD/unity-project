@@ -130,7 +130,7 @@ public class ShopDetailPanel : MonoBehaviour
         SettlementManager.Instance?.AddExpense("재료 구매", total);
         InventoryManager.Instance?.AddFood(itemFood, itemQty);
 
-        UnifiedShopManager.Instance?.NotifyItemPurchased(itemFood, itemQty);
+        ShopUIAdapter.Instance?.NotifyItemPurchased(itemFood, itemQty);
     }
 
     private void UpdateQtyDisplay()
@@ -157,6 +157,6 @@ public class ShopDetailPanel : MonoBehaviour
             UpgradeKind.Farm    => GameSessionRoot.Instance?.FarmUpgrade?.TryUpgrade(upgradeId)    ?? false,
             _                   => false,
         };
-        if (success) UnifiedShopManager.Instance?.NotifyUpgradeApplied();
+        if (success) ShopUIAdapter.Instance?.NotifyUpgradeApplied();
     }
 }

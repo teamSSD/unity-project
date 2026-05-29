@@ -11,6 +11,7 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Garden/CropCatalogService.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Garden/FarmUpgradeData.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Garden/FarmUpgradeService.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/PurchaseService.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/StorageUpgradeData.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/StorageUpgradeService.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/ToolUpgradeData.cs
@@ -193,7 +194,7 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/UnifiedShopInteraction.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/ShopDetailPanel.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/ShopListRow.cs
-/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/UnifiedShopManager.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/ShopUIAdapter.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/BentoCategoryUI.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/BentoSelectionController.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/BentoSlotUI.cs

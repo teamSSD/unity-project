@@ -4,23 +4,21 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 통합 상점 매니저.
+/// 통합 상점 UI Adapter (Phase 3-C-2-c: UnifiedShopManager에서 rename + PurchaseService 분리).
 /// ShopBook.prefab(레시피북 메타포)을 런타임에 인스턴스화.
-/// 탭 4개(재료/도구/창고/농장)를 인덱스로 전환, 카트 없이 한 행씩 즉시 구매/업그레이드.
+/// 탭 4개(재료/도구/창고/농장) 전환, 한 행씩 즉시 구매/업그레이드.
+/// 영구/일일 상태는 PurchaseService(POCO)에 위임, 이 클래스는 순수 UI.
 /// </summary>
-public class UnifiedShopManager : MonoBehaviour
+public class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
 {
     public enum Tab { Item, Tool, Storage, Farm }
 
-    public static UnifiedShopManager Instance { get; private set; }
-
-    // 런타임 책 참조
     private GameObject bookInstance;
-    private Transform  listContent;       // Page_L/Scroll/Viewport/Content
-    private TextMeshProUGUI headerLabel;  // Page_L/Header
-    private ShopDetailPanel detailPanel;  // Page_R 의 컴포넌트
+    private Transform  listContent;
+    private TextMeshProUGUI headerLabel;
+    private ShopDetailPanel detailPanel;
     private Button closeButton;
-    private Button[] bookmarkButtons = new Button[4]; // Tab.Item~Farm
+    private Button[] bookmarkButtons = new Button[4];
 
     private GameObject cachedRowPrefab;
     private readonly List<ShopListRow> currentRows = new();
@@ -28,20 +26,12 @@ public class UnifiedShopManager : MonoBehaviour
 
     private Tab currentTab = Tab.Item;
 
-    // 인덱스 탭 사이즈 — 가로 길이만 선택 시 늘림
     private const float BookmarkWidthUnselected = 70f;
     private const float BookmarkWidthSelected   = 105f;
     private const float BookmarkHeight          = 45f;
 
-    // 재료 탭 일일 캐시
-    private int cachedDay = -1;
-    private List<ItemShopSlotInfo> cachedItemList;
-    private readonly Dictionary<FoodData, int> dailyPurchased = new();
-
-    private void Awake()
+    protected override void OnSingletonAwake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-        Instance = this;
         if (transform.parent == null) DontDestroyOnLoad(gameObject);
         SpawnBook();
     }
@@ -49,9 +39,8 @@ public class UnifiedShopManager : MonoBehaviour
     private void SpawnBook()
     {
         var prefab = CatalogProvider.Prefabs?.shopBook;
-        if (prefab == null) { Debug.LogError("[UnifiedShop] ShopBook prefab not in PrefabCatalog"); return; }
+        if (prefab == null) { Debug.LogError("[ShopUIAdapter] ShopBook prefab not in PrefabCatalog"); return; }
 
-        // Canvas 래퍼 — 매니저 자식으로 두어 라이프사이클 공유 (Screen Space Overlay)
         var wrapper = new GameObject("ShopBookCanvas",
             typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         wrapper.transform.SetParent(transform, false);
@@ -74,7 +63,6 @@ public class UnifiedShopManager : MonoBehaviour
         closeButton = book.Find("Button_Close")?.GetComponent<Button>();
         if (closeButton != null) closeButton.onClick.AddListener(CloseShop);
 
-        // 인덱스 탭 4개 (BookMark_Item / Tool / Storage / Farm)
         for (int i = 0; i < 4; i++)
         {
             var bm = book.Find($"Page/ShopPage/BookMark_{(Tab)i}");
@@ -89,8 +77,6 @@ public class UnifiedShopManager : MonoBehaviour
 
         bookInstance.SetActive(false);
     }
-
-    // ─── 열기 / 닫기 ─────────────────────────────────────────────────
 
     public void OpenShop(Tab tab = Tab.Item)
     {
@@ -110,8 +96,6 @@ public class UnifiedShopManager : MonoBehaviour
         if (bookInstance != null) bookInstance.SetActive(false);
         UILockManager.Unlock(UILockManager.Owner.Shop);
     }
-
-    // ─── 탭 전환 ─────────────────────────────────────────────────────
 
     private void SwitchTab(Tab tab)
     {
@@ -189,25 +173,17 @@ public class UnifiedShopManager : MonoBehaviour
         }
     }
 
-    // ─── 재료 탭 ─────────────────────────────────────────────────────
-
     private void PopulateItemList()
     {
-        // 일일 캐시
-        int today = StatsSystem.Instance.GetDay();
-        if (cachedDay != today || cachedItemList == null)
-        {
-            var config = CatalogProvider.FoodShopConfig;
-            if (config == null) { Debug.LogError("[UnifiedShop] FoodShopConfig not in CatalogProvider"); return; }
-            cachedItemList = config.BuildSlotList();
-            cachedDay = today;
-            dailyPurchased.Clear();
-        }
+        var purchase = GameSessionRoot.Instance?.Purchase;
+        if (purchase == null) return;
 
-        foreach (var info in cachedItemList)
+        int today = StatsSystem.Instance.GetDay();
+        var slots = purchase.GetItemListForDay(today);
+
+        foreach (var info in slots)
         {
-            int already = dailyPurchased.TryGetValue(info.item, out var v) ? v : 0;
-            int remaining = Mathf.Max(0, info.stock - already);
+            int remaining = purchase.GetRemaining(info);
             int price = info.item.ingredient != null ? info.item.ingredient.defaultPrice : 0;
 
             AddRow(
@@ -222,15 +198,16 @@ public class UnifiedShopManager : MonoBehaviour
 
     public void NotifyItemPurchased(FoodData item, int qty)
     {
-        if (dailyPurchased.ContainsKey(item)) dailyPurchased[item] += qty;
-        else dailyPurchased[item] = qty;
+        var purchase = GameSessionRoot.Instance?.Purchase;
+        purchase?.NotifyPurchased(item, qty);
 
-        // 해당 행 갱신 + 선택돼 있으면 detail 도 갱신
         foreach (var row in currentRows)
         {
             if (row.UserData is ItemRowData d && d.Food == item)
             {
-                d.RemainingStock = Mathf.Max(0, d.Stock - dailyPurchased[item]);
+                d.RemainingStock = purchase != null
+                    ? Mathf.Max(0, d.Stock - purchase.GetPurchasedToday(item))
+                    : d.RemainingStock;
                 row.SetData(item.image, item.ingredientName,
                     $"재고 {d.RemainingStock}/{d.Stock}", $"{d.UnitPrice}G", d);
                 if (selectedRow == row) detailPanel?.ShowItem(d.Food, d.UnitPrice, d.RemainingStock);
@@ -238,8 +215,6 @@ public class UnifiedShopManager : MonoBehaviour
             }
         }
     }
-
-    // ─── 도구 탭 ─────────────────────────────────────────────────────
 
     private void PopulateToolList()
     {
@@ -292,8 +267,6 @@ public class UnifiedShopManager : MonoBehaviour
         detailPanel?.ShowUpgrade(ShopDetailPanel.UpgradeKind.Tool, id, tool?.defaultImage, title, desc, levelText, costText, canUpgrade);
     }
 
-    // ─── 창고 탭 ─────────────────────────────────────────────────────
-
     private void PopulateStorageList()
     {
         var mgr = GameSessionRoot.Instance?.StorageUpgrade;
@@ -338,8 +311,6 @@ public class UnifiedShopManager : MonoBehaviour
         }
         detailPanel?.ShowUpgrade(ShopDetailPanel.UpgradeKind.Storage, type, null, StorageTypeName(type), desc, levelText, costText, canUpgrade);
     }
-
-    // ─── 농장 탭 ─────────────────────────────────────────────────────
 
     private void PopulateFarmList()
     {
@@ -386,15 +357,10 @@ public class UnifiedShopManager : MonoBehaviour
         detailPanel?.ShowUpgrade(ShopDetailPanel.UpgradeKind.Farm, type, null, FarmTypeName(type), desc, levelText, costText, canUpgrade);
     }
 
-    // ─── 업그레이드 후 갱신 ──────────────────────────────────────────
-
     public void NotifyUpgradeApplied()
     {
-        // 현재 탭 전체 리로드 (가격/레벨 일괄 갱신)
         SwitchTab(currentTab);
     }
-
-    // ─── 표시 보조 ───────────────────────────────────────────────────
 
     private static string StorageTypeName(string type) => type switch
     {
@@ -423,8 +389,6 @@ public class UnifiedShopManager : MonoBehaviour
             _               => $"{cur}→{next}",
         };
     }
-
-    // ─── 행 UserData 타입 ────────────────────────────────────────────
 
     private class ItemRowData
     {

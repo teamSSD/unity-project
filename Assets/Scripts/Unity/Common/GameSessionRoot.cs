@@ -18,6 +18,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     public FarmUpgradeService FarmUpgrade { get; private set; }
     public StorageUpgradeService StorageUpgrade { get; private set; }
     public ToolUpgradeService ToolUpgrade { get; private set; }
+    public PurchaseService Purchase { get; private set; }
 
     protected override void OnSingletonAwake()
     {
@@ -43,5 +44,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
 
         var toolRows = CsvModelConverter.Parse<ToolUpgradeData>(CatalogProvider.Csvs?.toolUpgrade);
         ToolUpgrade = new ToolUpgradeService(State.shop.persistent, toolRows, money, expense);
+
+        Purchase = new PurchaseService(CatalogProvider.FoodShopConfig);
     }
 }

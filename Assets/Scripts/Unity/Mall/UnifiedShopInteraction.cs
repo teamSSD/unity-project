@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class UnifiedShopInteraction : MonoBehaviour
 {
-    [SerializeField] private UnifiedShopManager.Tab targetTab = UnifiedShopManager.Tab.Item;
+    [SerializeField] private ShopUIAdapter.Tab targetTab = ShopUIAdapter.Tab.Item;
 
     private bool isPlayerNear = false;
 
@@ -13,7 +13,7 @@ public class UnifiedShopInteraction : MonoBehaviour
         {
             isPlayerNear = false;
             InteractPromptUI.Hide();
-            UnifiedShopManager.Instance.OpenShop(targetTab);
+            ShopUIAdapter.Instance.OpenShop(targetTab);
         }
     }
 
