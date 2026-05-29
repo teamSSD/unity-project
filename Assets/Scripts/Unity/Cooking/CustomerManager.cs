@@ -124,9 +124,9 @@ public class CustomerManager : MonoBehaviour
 
     private void CreateDeliveryTickets()
     {
-        if (OrderManager.Instance == null) return;
+        if (GameSessionRoot.Instance?.Order == null) return;
 
-        foreach (var order in OrderManager.Instance.GetOrders())
+        foreach (var order in GameSessionRoot.Instance?.Order.GetOrders())
         {
             if (order.state != DeliveryOrderState.Ordered) continue;
 
@@ -150,7 +150,7 @@ public class CustomerManager : MonoBehaviour
                     foreach (var food in sides)
                         if (food != null) totalPrice += food.Price;
 
-                OrderManager.Instance.MarkCookedWithPrice(
+                GameSessionRoot.Instance?.Order.MarkCookedWithPrice(
                     capturedOrder.questId, totalPrice);
             };
         }

@@ -33,7 +33,6 @@ public static class ManagerBootstrap
         Ensure<InventoryManager>();
         Ensure<RecipeDataManager>();
         Ensure<RecipeLookupService>();
-        Ensure<OrderManager>();
         Ensure<ActionSelectionManager>();
         Ensure<LoadingManager>();
         Ensure<HUDManager>();

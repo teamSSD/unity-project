@@ -21,6 +21,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     public ToolUpgradeService ToolUpgrade { get; private set; }
     public PurchaseService Purchase { get; private set; }
     public DeliveryQuestService DeliveryQuest { get; private set; }
+    public OrderService Order { get; private set; }
 
     protected override void OnSingletonAwake()
     {
@@ -50,5 +51,6 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
         Purchase = new PurchaseService(CatalogProvider.FoodShopConfig);
 
         DeliveryQuest = new DeliveryQuestService(State.mall.persistent);
+        Order = new OrderService(money);
     }
 }

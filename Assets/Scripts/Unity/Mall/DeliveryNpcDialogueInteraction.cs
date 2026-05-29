@@ -66,10 +66,10 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         if (stage == DeliveryQuestStage.Ordering)
         {
             string qId = $"quest_{groupId}";
-            var order = OrderManager.Instance?.GetOrder(qId);
+            var order = GameSessionRoot.Instance?.Order?.GetOrder(qId);
             if (order != null && order.state == DeliveryOrderState.Cooked)
             {
-                OrderManager.Instance.ConsumeBento(qId);
+                GameSessionRoot.Instance?.Order.ConsumeBento(qId);
                 GameSessionRoot.Instance?.DeliveryQuest.SetStage(groupId, DeliveryQuestStage.OrderEnd);
                 stage = DeliveryQuestStage.OrderEnd;
             }
@@ -253,16 +253,20 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         LoadQuestMenus();
         if (!questMenus.TryGetValue(groupId, out var template)) return;
 
+        var orderSvc = GameSessionRoot.Instance?.Order;
+        if (orderSvc == null) return;
+
         var menu = new MenuSchema(
             template.name,
-            OrderManager.Instance.GetOrders().Count + 1,
+            orderSvc.GetOrders().Count + 1,
             template.mainMenu,
             template.sideMenus
         );
 
         string questId = $"quest_{groupId}";
         var npcView = GetComponent<DeliveryNpcView>();
-        OrderManager.Instance.GenerateOrder(menu, questId, npcView?.NpcId ?? "");
+        orderSvc.GenerateOrder(menu, questId, npcView?.NpcId ?? "");
+        UnlockMenuRecipes(menu);
 
         var context = GetComponent<DeliveryNpcContext>();
         if (context?.receiptPrefab != null)
@@ -273,6 +277,20 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         }
 
         Debug.Log($"[DeliveryQuest] Order created: {menu}");
+    }
+
+    /// <summary>
+    /// 메뉴의 모든 main/side 레시피를 해금. OrderService에서 분리한 부수효과를 호출자가 담당.
+    /// </summary>
+    public static void UnlockMenuRecipes(MenuSchema menu)
+    {
+        if (UnlockedFoodManager.Instance == null || menu == null) return;
+        foreach (var main in menu.mainMenus)
+            if (main != null) UnlockedFoodManager.Instance.UnlockRecipe(main.id);
+        if (menu.sideMenus != null)
+            foreach (var side in menu.sideMenus)
+                if (side != null) UnlockedFoodManager.Instance.UnlockRecipe(side.id);
+        UnlockedFoodManager.Instance.PrepareForSave();
     }
 
     static void LoadQuestMenus()

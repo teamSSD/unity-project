@@ -56,7 +56,7 @@ public class GameStart : MonoBehaviour
             InventoryManager.Instance?.Initialize();
             RecipeDataManager.Instance?.Initialize();
             RecipeLookupService.Instance?.Initialize();
-            OrderManager.Instance?.Initialize();
+            GameSessionRoot.Instance?.Order.Clear();
 
             // Phase 2: 저장 데이터 로드
             SaveManager.LoadAll();
