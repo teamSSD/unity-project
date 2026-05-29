@@ -131,7 +131,7 @@ public class InventoryPageController : MonoBehaviour
 
     private int GetSlotCount(string upgradeType)
     {
-        var data = StorageUpgradeManager.Instance?.GetCurrentData(upgradeType);
+        var data = GameSessionRoot.Instance?.StorageUpgrade?.GetCurrentData(upgradeType);
         return data != null ? data.value : 0;
     }
 

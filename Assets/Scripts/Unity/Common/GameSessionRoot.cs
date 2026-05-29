@@ -1,4 +1,5 @@
 using Game.Domain.Garden;
+using Game.Domain.Shop;
 using Game.Schema.State;
 using UnityEngine;
 
@@ -15,6 +16,9 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
 
     public CropCatalogService CropCatalog { get; private set; }
     public FarmUpgradeService FarmUpgrade { get; private set; }
+    public StorageUpgradeService StorageUpgrade { get; private set; }
+    public ToolUpgradeService ToolUpgrade { get; private set; }
+    public PurchaseService Purchase { get; private set; }
 
     protected override void OnSingletonAwake()
     {
@@ -29,12 +33,18 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
             row.sprite = CatalogProvider.CropSprites?.Get(row.imagePath);
         CropCatalog = new CropCatalogService(cropRows);
 
+        var money = new StatsMoneyAdapter();
+        var expense = new SettlementExpenseAdapter();
+
         var farmRows = CsvModelConverter.Parse<FarmUpgradeData>(CatalogProvider.Csvs?.farmUpgrade);
-        FarmUpgrade = new FarmUpgradeService(
-            State.garden.persistent,
-            farmRows,
-            new StatsMoneyAdapter(),
-            new SettlementExpenseAdapter()
-        );
+        FarmUpgrade = new FarmUpgradeService(State.garden.persistent, farmRows, money, expense);
+
+        var storageRows = CsvModelConverter.Parse<StorageUpgradeData>(CatalogProvider.Csvs?.storageUpgrade);
+        StorageUpgrade = new StorageUpgradeService(State.shop.persistent, storageRows, money, expense);
+
+        var toolRows = CsvModelConverter.Parse<ToolUpgradeData>(CatalogProvider.Csvs?.toolUpgrade);
+        ToolUpgrade = new ToolUpgradeService(State.shop.persistent, toolRows, money, expense);
+
+        Purchase = new PurchaseService(CatalogProvider.FoodShopConfig);
     }
 }

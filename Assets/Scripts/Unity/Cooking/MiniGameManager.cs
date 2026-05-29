@@ -44,7 +44,7 @@ public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
         currentGame = go.GetComponent<MiniGameAbstract>();
         currentGame.SetIngredients(ingredients, toolId);
 
-        var upgradeData = ToolUpgradeManager.Instance?.GetCurrentData(toolId);
+        var upgradeData = GameSessionRoot.Instance?.ToolUpgrade?.GetCurrentData(toolId);
         float multiplier = upgradeData?.durationMultiplier ?? 1f;
         int staminaCost = upgradeData?.staminaCost ?? 5;
         currentGame.ApplyUpgrade(multiplier, staminaCost);

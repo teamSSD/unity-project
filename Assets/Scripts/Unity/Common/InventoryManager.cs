@@ -145,7 +145,7 @@ public class InventoryManager : SingletonMonoBehaviour<InventoryManager>, LoadIn
         string upgradeType = UpgradeTypeFromCategory(food.ingredient.display);
         if (string.IsNullOrEmpty(upgradeType)) return true;
 
-        var stg = StorageUpgradeManager.Instance;
+        var stg = GameSessionRoot.Instance?.StorageUpgrade;
         int max = stg != null ? stg.GetCurrentData(upgradeType)?.value ?? int.MaxValue : int.MaxValue;
         int unique = LoadIngredientsByCategory(food.ingredient.display).Count;
         return unique < max;

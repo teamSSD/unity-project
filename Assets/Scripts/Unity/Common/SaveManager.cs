@@ -28,6 +28,26 @@ public class FarmUpgradeSaveData
 }
 
 /// <summary>
+/// 저장소 업그레이드 디스크 직렬화 형식. ShopPersistent와 SaveManager에서 변환.
+/// </summary>
+[System.Serializable]
+public class StorageUpgradeSaveData
+{
+    public List<string> types  = new();
+    public List<int>    levels = new();
+}
+
+/// <summary>
+/// 조리 도구 업그레이드 디스크 직렬화 형식. ShopPersistent와 SaveManager에서 변환.
+/// </summary>
+[System.Serializable]
+public class ToolUpgradeSaveData
+{
+    public List<string> ids    = new();
+    public List<int>    levels = new();
+}
+
+/// <summary>
 /// 게임 데이터 저장/로드 유틸리티.
 /// 모든 JSON 디스크 I/O를 일원화 — 개별 매니저는 DataSaveUtil을 직접 호출하지 않음.
 /// 단일 파일(gamedata.json)에 모든 데이터 통합 저장.
@@ -72,11 +92,6 @@ public static class SaveManager
 
         save.deliveryQuest = DeliveryNpcDialogueInteraction.GetSaveData();
 
-        if (ToolUpgradeManager.Instance != null)
-            save.toolUpgrades = ToolUpgradeManager.Instance.GetSaveData();
-        if (StorageUpgradeManager.Instance != null)
-            save.storageUpgrades = StorageUpgradeManager.Instance.GetSaveData();
-
         if (GameSessionRoot.Instance != null)
         {
             var gp = GameSessionRoot.Instance.State.garden.persistent;
@@ -84,6 +99,18 @@ public static class SaveManager
             {
                 types  = new List<string>(gp.upgradeTypes),
                 levels = new List<int>(gp.upgradeLevels)
+            };
+
+            var sp = GameSessionRoot.Instance.State.shop.persistent;
+            save.storageUpgrades = new StorageUpgradeSaveData
+            {
+                types  = new List<string>(sp.storageTypes),
+                levels = new List<int>(sp.storageLevels)
+            };
+            save.toolUpgrades = new ToolUpgradeSaveData
+            {
+                ids    = new List<string>(sp.toolIds),
+                levels = new List<int>(sp.toolLevels)
             };
         }
 
@@ -123,9 +150,6 @@ public static class SaveManager
 
         DeliveryNpcDialogueInteraction.ApplySaveData(save.deliveryQuest);
 
-        ToolUpgradeManager.Instance?.ApplySaveData(save.toolUpgrades);
-        StorageUpgradeManager.Instance?.ApplySaveData(save.storageUpgrades);
-
         if (GameSessionRoot.Instance != null && save.farmUpgrades != null)
         {
             // 서비스 초기화 시 채워진 타입 목록을 유지하며 saved level만 덮어쓰기.
@@ -140,6 +164,40 @@ public static class SaveManager
                 {
                     gp.upgradeTypes.Add(type);
                     gp.upgradeLevels.Add(level);
+                }
+            }
+        }
+
+        if (GameSessionRoot.Instance != null && save.storageUpgrades != null)
+        {
+            var sp = GameSessionRoot.Instance.State.shop.persistent;
+            for (int i = 0; i < save.storageUpgrades.types.Count; i++)
+            {
+                string type = save.storageUpgrades.types[i];
+                int level = save.storageUpgrades.levels[i];
+                int idx = sp.storageTypes.IndexOf(type);
+                if (idx >= 0) sp.storageLevels[idx] = level;
+                else
+                {
+                    sp.storageTypes.Add(type);
+                    sp.storageLevels.Add(level);
+                }
+            }
+        }
+
+        if (GameSessionRoot.Instance != null && save.toolUpgrades != null)
+        {
+            var sp = GameSessionRoot.Instance.State.shop.persistent;
+            for (int i = 0; i < save.toolUpgrades.ids.Count; i++)
+            {
+                string id = save.toolUpgrades.ids[i];
+                int level = save.toolUpgrades.levels[i];
+                int idx = sp.toolIds.IndexOf(id);
+                if (idx >= 0) sp.toolLevels[idx] = level;
+                else
+                {
+                    sp.toolIds.Add(id);
+                    sp.toolLevels.Add(level);
                 }
             }
         }

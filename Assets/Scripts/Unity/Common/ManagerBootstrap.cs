@@ -35,14 +35,12 @@ public static class ManagerBootstrap
         Ensure<RecipeLookupService>();
         Ensure<OrderManager>();
         Ensure<ActionSelectionManager>();
-        Ensure<ToolUpgradeManager>();
-        Ensure<StorageUpgradeManager>();
         Ensure<LoadingManager>();
         Ensure<HUDManager>();
         Ensure<UIManager>();
         Ensure<WeatherSystem>();
         Ensure<SettlementManager>();
-        Ensure<UnifiedShopManager>();
+        Ensure<ShopUIAdapter>();
         Ensure<SettingsUIManager>();
         EnsureRecipeBookManager();
     }
