@@ -36,9 +36,10 @@ public class Farm : MonoBehaviour
 
         tile = new FarmTile(phaseProvider);
 
-        // 저장된 타일 상태 복원
-        var saved = FarmTileStorage.GetTileData(farmIndex);
-        if (saved != null) tile.ApplySaveData(saved);
+        // 저장된 타일 상태 복원 (GardenPersistent.tiles)
+        var gp = GameSessionRoot.Instance?.State.garden.persistent;
+        if (gp != null && farmIndex >= 0 && farmIndex < gp.tiles.Length && gp.tiles[farmIndex] != null)
+            tile.ApplySaveData(gp.tiles[farmIndex]);
 
         // 빈 타일이면 자동 심기
         if (!IsLocked && tile.IsEmpty())
@@ -57,8 +58,13 @@ public class Farm : MonoBehaviour
 
     private void OnDestroy()
     {
-        // 씬 나가기 전에 타일 상태 저장
-        if (tile != null) FarmTileStorage.SetTileData(farmIndex, tile.GetSaveData());
+        // 씬 나가기 전에 타일 상태 저장 (GardenPersistent.tiles)
+        if (tile != null)
+        {
+            var gp = GameSessionRoot.Instance?.State.garden.persistent;
+            if (gp != null && farmIndex >= 0 && farmIndex < gp.tiles.Length)
+                gp.tiles[farmIndex] = tile.GetSaveData();
+        }
 
         if (ProgressSystem.Instance != null)
             ProgressSystem.Instance.OnPhaseChanged -= OnPhaseChangedHandler;

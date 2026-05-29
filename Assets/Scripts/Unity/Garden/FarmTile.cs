@@ -74,9 +74,3 @@ public class FarmTile
     }
 }
 
-[System.Serializable]
-public class FarmTileSaveData
-{
-    public string cropId = "";
-    public int plantedPhase;
-}

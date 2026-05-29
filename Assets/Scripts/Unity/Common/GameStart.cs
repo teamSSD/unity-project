@@ -90,7 +90,9 @@ public class GameStart : MonoBehaviour
             InventoryManager.Instance?.ResetToDefault();
             UnlockedFoodManager.Instance?.UnlockDefaultRecipes();
             DeliveryNpcDialogueInteraction.ResetAll();
-            FarmTileStorage.Clear();
+            if (GameSessionRoot.Instance != null)
+                System.Array.Clear(GameSessionRoot.Instance.State.garden.persistent.tiles, 0,
+                    GameSessionRoot.Instance.State.garden.persistent.tiles.Length);
 
             // Phase 3: 시드 초기화
             int now = (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();

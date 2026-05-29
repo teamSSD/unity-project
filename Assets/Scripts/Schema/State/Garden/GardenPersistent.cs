@@ -13,5 +13,8 @@ namespace Game.Schema.State.Garden
     {
         public List<string> upgradeTypes  = new();
         public List<int>    upgradeLevels = new();
+
+        public const int TileCount = 8;
+        public FarmTileSaveData[] tiles = new FarmTileSaveData[TileCount];
     }
 }
