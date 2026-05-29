@@ -152,8 +152,8 @@ public class ShopDetailPanel : MonoBehaviour
     {
         bool success = upgradeKind switch
         {
-            UpgradeKind.Tool    => ToolUpgradeManager.Instance?.TryUpgrade(upgradeId)    ?? false,
-            UpgradeKind.Storage => StorageUpgradeManager.Instance?.TryUpgrade(upgradeId) ?? false,
+            UpgradeKind.Tool    => GameSessionRoot.Instance?.ToolUpgrade?.TryUpgrade(upgradeId)    ?? false,
+            UpgradeKind.Storage => GameSessionRoot.Instance?.StorageUpgrade?.TryUpgrade(upgradeId) ?? false,
             UpgradeKind.Farm    => GameSessionRoot.Instance?.FarmUpgrade?.TryUpgrade(upgradeId)    ?? false,
             _                   => false,
         };

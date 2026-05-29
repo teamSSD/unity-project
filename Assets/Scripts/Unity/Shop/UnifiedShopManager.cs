@@ -243,7 +243,7 @@ public class UnifiedShopManager : MonoBehaviour
 
     private void PopulateToolList()
     {
-        var mgr = ToolUpgradeManager.Instance;
+        var mgr = GameSessionRoot.Instance?.ToolUpgrade;
         if (mgr == null) return;
         foreach (var id in mgr.GetAllToolIds())
         {
@@ -263,7 +263,7 @@ public class UnifiedShopManager : MonoBehaviour
 
     private void ShowToolDetail(string id)
     {
-        var mgr = ToolUpgradeManager.Instance;
+        var mgr = GameSessionRoot.Instance?.ToolUpgrade;
         if (mgr == null) return;
         var tool = SearchDataUtil.GetCookingToolDataById(id);
         var cur  = mgr.GetCurrentData(id);
@@ -296,7 +296,7 @@ public class UnifiedShopManager : MonoBehaviour
 
     private void PopulateStorageList()
     {
-        var mgr = StorageUpgradeManager.Instance;
+        var mgr = GameSessionRoot.Instance?.StorageUpgrade;
         if (mgr == null) return;
         foreach (var type in mgr.GetAllTypes())
         {
@@ -315,7 +315,7 @@ public class UnifiedShopManager : MonoBehaviour
 
     private void ShowStorageDetail(string type)
     {
-        var mgr = StorageUpgradeManager.Instance;
+        var mgr = GameSessionRoot.Instance?.StorageUpgrade;
         if (mgr == null) return;
         var cur = mgr.GetCurrentData(type);
         bool isMax = mgr.IsMax(type);

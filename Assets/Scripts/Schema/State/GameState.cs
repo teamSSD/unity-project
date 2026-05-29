@@ -1,4 +1,5 @@
 using Game.Schema.State.Garden;
+using Game.Schema.State.Shop;
 
 namespace Game.Schema.State
 {
@@ -10,5 +11,6 @@ namespace Game.Schema.State
     public class GameState
     {
         public GardenState garden = new GardenState();
+        public ShopState shop = new ShopState();
     }
 }
