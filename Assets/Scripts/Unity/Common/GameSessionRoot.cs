@@ -1,3 +1,4 @@
+using Game.Domain.Common;
 using Game.Domain.Garden;
 using Game.Domain.Mall;
 using Game.Domain.Shop;
@@ -28,6 +29,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     public DeliveryQuestService DeliveryQuest { get; private set; }
     public OrderService Order { get; private set; }
     public QuestMenuCatalog QuestMenus { get; private set; }
+    public InventoryService Inventory { get; private set; }
 
     protected override void OnSingletonAwake()
     {
@@ -59,6 +61,9 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
         DeliveryQuest = new DeliveryQuestService(State.mall.persistent);
         Order = new OrderService(money);
         QuestMenus = new QuestMenuCatalog(ParseQuestMenus());
+
+        var foodCatalog = CatalogProvider.Food?.All;
+        Inventory = new InventoryService(foodCatalog, StorageUpgrade);
     }
 
     private static System.Collections.Generic.IEnumerable<(string groupId, MenuSchema menu)> ParseQuestMenus()
