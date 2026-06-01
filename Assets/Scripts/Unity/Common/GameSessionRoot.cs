@@ -56,14 +56,15 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
         var toolRows = CsvModelConverter.Parse<ToolUpgradeData>(CatalogProvider.Csvs?.toolUpgrade);
         ToolUpgrade = new ToolUpgradeService(State.shop.persistent, toolRows, money, expense);
 
-        Purchase = new PurchaseService(CatalogProvider.FoodShopConfig);
+        // Inventory를 Purchase보다 먼저 wiring (Purchase가 의존)
+        var foodCatalog = CatalogProvider.Food?.All;
+        Inventory = new InventoryService(foodCatalog, StorageUpgrade);
+
+        Purchase = new PurchaseService(CatalogProvider.FoodShopConfig, Inventory, money, expense);
 
         DeliveryQuest = new DeliveryQuestService(State.mall.persistent);
         Order = new OrderService(money);
         QuestMenus = new QuestMenuCatalog(ParseQuestMenus());
-
-        var foodCatalog = CatalogProvider.Food?.All;
-        Inventory = new InventoryService(foodCatalog, StorageUpgrade);
     }
 
     private static System.Collections.Generic.IEnumerable<(string groupId, MenuSchema menu)> ParseQuestMenus()

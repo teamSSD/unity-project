@@ -30,7 +30,7 @@ public class PurchaseServiceTest
     [Test]
     public void NullConfig_ReturnsEmptyList()
     {
-        var svc = new PurchaseService(null);
+        var svc = new PurchaseService(null, null, null, null);
         Assert.AreEqual(0, svc.GetItemListForDay(1).Count);
     }
 
@@ -40,7 +40,7 @@ public class PurchaseServiceTest
         var food = NewFood("F001");
         var cfg = ScriptableObject.CreateInstance<FakeShopConfig>();
         cfg.slots.Add(Slot(food, 5));
-        var svc = new PurchaseService(cfg);
+        var svc = new PurchaseService(cfg, null, null, null);
 
         var slots1 = svc.GetItemListForDay(1);
         var slots2 = svc.GetItemListForDay(1);
@@ -58,7 +58,7 @@ public class PurchaseServiceTest
         var food = NewFood("F001");
         var cfg = ScriptableObject.CreateInstance<FakeShopConfig>();
         cfg.slots.Add(Slot(food, 5));
-        var svc = new PurchaseService(cfg);
+        var svc = new PurchaseService(cfg, null, null, null);
 
         svc.GetItemListForDay(1);
         svc.NotifyPurchased(food, 2);
@@ -77,7 +77,7 @@ public class PurchaseServiceTest
         var food = NewFood("F001");
         var cfg = ScriptableObject.CreateInstance<FakeShopConfig>();
         cfg.slots.Add(Slot(food, 5));
-        var svc = new PurchaseService(cfg);
+        var svc = new PurchaseService(cfg, null, null, null);
 
         svc.GetItemListForDay(1);
         svc.NotifyPurchased(food, 3);
@@ -98,7 +98,7 @@ public class PurchaseServiceTest
         var food = NewFood("F001");
         var cfg = ScriptableObject.CreateInstance<FakeShopConfig>();
         cfg.slots.Add(Slot(food, 3));
-        var svc = new PurchaseService(cfg);
+        var svc = new PurchaseService(cfg, null, null, null);
 
         svc.GetItemListForDay(1);
         svc.NotifyPurchased(food, 100); // 과초과

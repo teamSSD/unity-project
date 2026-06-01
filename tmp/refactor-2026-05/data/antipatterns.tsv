@@ -1,11 +1,11 @@
 singleton_decl	1
-instance_access	310
+instance_access	303
 public_mutable_field	0
 static_mutable_field	0
 find_object	13
 send_message	0
 resources_load	14
-debug_log	29
+debug_log	26
 empty_catch	0
 todo_comment	0
 yield_return_null	0

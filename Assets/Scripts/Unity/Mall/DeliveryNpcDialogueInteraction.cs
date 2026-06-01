@@ -292,7 +292,7 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
         if (menu.sideMenus != null)
             foreach (var side in menu.sideMenus)
                 if (side != null) UnlockedFoodManager.Instance.UnlockRecipe(side.id);
-        UnlockedFoodManager.Instance.PrepareForSave();
+        // PrepareForSave 제거 (H 해결) — 다음 SaveAll에서 GetSaveData()가 직접 dump
     }
 
     // --- 리셋 (New Game) ---

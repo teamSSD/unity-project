@@ -167,6 +167,7 @@ Receipt
 ReceiptLine
 RecipeBookManager
 RecipeBookMenuProvider
+RecipeBookSaveData
 RecipeBookToggleButton
 RecipeCatalogSO
 RecipeData
@@ -234,6 +235,7 @@ UILockManager
 UIManager
 UnifiedShopInteraction
 UnlockedFoodManager
+UnlockedRecipesSaveData
 UpperShelf
 ValidationFeedbackUI
 VisibleStateUtil

@@ -14,6 +14,29 @@ public class GameSaveData
     public StorageUpgradeSaveData storageUpgrades = new();
     public FarmUpgradeSaveData farmUpgrades = new();
     public FarmTilesSaveData farmTiles = new();
+    // Phase 2 Sprint 2: piggyback 매니저 분리 (H) — RecipeData/UnlockedFood를 자체 슬롯으로
+    public RecipeBookSaveData recipeBook = new();
+    public UnlockedRecipesSaveData unlockedRecipes = new();
+}
+
+/// <summary>
+/// 도시락 선택 디스크 직렬화 형식. RecipeDataManager가 자체 보유.
+/// PhaseData.SelectedMenus (legacy) 자리에서 분리 (H).
+/// </summary>
+[System.Serializable]
+public class RecipeBookSaveData
+{
+    public List<string> selectedMenus = new(); // "mainId|side1,side2,..."
+}
+
+/// <summary>
+/// 해금 레시피 ID 목록 디스크 형식. UnlockedFoodManager가 자체 보유.
+/// PhaseData.UnlockedRecipes (legacy) 자리에서 분리 (H).
+/// </summary>
+[System.Serializable]
+public class UnlockedRecipesSaveData
+{
+    public List<string> recipeIds = new();
 }
 
 /// <summary>
@@ -82,10 +105,6 @@ public static class SaveManager
     /// </summary>
     public static void SaveAll()
     {
-        // piggyback 데이터를 PhaseData에 준비
-        RecipeDataManager.Instance?.PrepareForSave();
-        UnlockedFoodManager.Instance?.PrepareForSave();
-
         var save = new GameSaveData();
 
         // 글로벌 facade 매니저
@@ -97,6 +116,10 @@ public static class SaveManager
         GardenSaveAdapter.Capture(save);
         ShopSaveAdapter.Capture(save);
         MallSaveAdapter.Capture(save);
+
+        // Self-contained 매니저 (piggyback 분리 후, H 해결)
+        if (RecipeDataManager.Instance != null) save.recipeBook = RecipeDataManager.Instance.GetSaveData();
+        if (UnlockedFoodManager.Instance != null) save.unlockedRecipes = UnlockedFoodManager.Instance.GetSaveData();
 
         DataSaveUtil.SaveData(save, SavePath);
     }
@@ -120,9 +143,21 @@ public static class SaveManager
         ShopSaveAdapter.Apply(save);
         MallSaveAdapter.Apply(save);
 
-        // piggyback 데이터 (PhaseData에 얹혀 있음 — H 미해결)
-        UnlockedFoodManager.Instance?.LoadUnlocksFromProgress();
-        RecipeDataManager.Instance?.LoadMenusFromProgress();
+        // Self-contained 매니저: 신규 슬롯 우선, 비어있으면 legacy PhaseData fallback
+        if (UnlockedFoodManager.Instance != null)
+        {
+            if (save.unlockedRecipes != null && save.unlockedRecipes.recipeIds.Count > 0)
+                UnlockedFoodManager.Instance.ApplySaveData(save.unlockedRecipes);
+            else
+                UnlockedFoodManager.Instance.LoadUnlocksFromProgressLegacy();
+        }
+        if (RecipeDataManager.Instance != null)
+        {
+            if (save.recipeBook != null && save.recipeBook.selectedMenus.Count > 0)
+                RecipeDataManager.Instance.ApplySaveData(save.recipeBook);
+            else
+                RecipeDataManager.Instance.LoadMenusFromProgressLegacy();
+        }
     }
 
     /// <summary>

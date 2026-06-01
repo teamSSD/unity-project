@@ -107,18 +107,12 @@ public class RecipeDataManager : SingletonMonoBehaviour<RecipeDataManager>
     }
 
     /// <summary>
-    /// 선택된 메뉴 데이터를 PhaseData에 준비 (SaveManager에서 호출)
+    /// 도시락 선택을 자체 SaveData로 직렬화 (SaveManager가 호출).
+    /// piggyback 패턴 (PhaseData.SelectedMenus) 폐기, self-contained.
     /// </summary>
-    public void PrepareForSave()
+    public RecipeBookSaveData GetSaveData()
     {
-        if (ProgressSystem.Instance?.phaseData == null)
-        {
-            Debug.LogWarning("[RecipeDataManager] Cannot prepare: ProgressSystem not available");
-            return;
-        }
-
-        var selectedMenuData = new List<string>();
-
+        var data = new RecipeBookSaveData();
         for (int i = 0; i < menuSelections.Length; i++)
         {
             var menu = menuSelections[i];
@@ -126,62 +120,58 @@ public class RecipeDataManager : SingletonMonoBehaviour<RecipeDataManager>
             {
                 string mainId = menu.MainMenu?.id ?? "";
                 string sidesIds = string.Join(",", menu.SideMenus.ConvertAll(f => f.id));
-                selectedMenuData.Add($"{mainId}|{sidesIds}");
+                data.selectedMenus.Add($"{mainId}|{sidesIds}");
             }
             else
             {
-                selectedMenuData.Add("");
+                data.selectedMenus.Add("");
             }
         }
-
-        ProgressSystem.Instance.phaseData.SelectedMenus = selectedMenuData;
+        return data;
     }
 
     /// <summary>
-    /// ProgressSystem에서 메뉴 데이터 로드
+    /// 디스크에서 로드된 RecipeBookSaveData 적용.
     /// </summary>
-    public void LoadMenusFromProgress()
+    public void ApplySaveData(RecipeBookSaveData data)
     {
-        if (ProgressSystem.Instance?.phaseData?.SelectedMenus == null)
-        {
-            return;
-        }
+        if (data == null || data.selectedMenus == null) return;
+        ApplyMenuList(data.selectedMenus);
+    }
 
-        var savedMenus = ProgressSystem.Instance.phaseData.SelectedMenus;
+    /// <summary>
+    /// Legacy fallback: PhaseData.SelectedMenus(piggyback)에서 로드. RecipeBookSaveData가 비어있을 때.
+    /// </summary>
+    public void LoadMenusFromProgressLegacy()
+    {
+        if (ProgressSystem.Instance?.phaseData?.SelectedMenus == null) return;
+        ApplyMenuList(ProgressSystem.Instance.phaseData.SelectedMenus);
+    }
 
+    private void ApplyMenuList(List<string> savedMenus)
+    {
         for (int i = 0; i < Mathf.Min(savedMenus.Count, menuSelections.Length); i++)
         {
             string menuData = savedMenus[i];
             if (string.IsNullOrEmpty(menuData)) continue;
 
-            // 파싱: "MainMenuId|Side1,Side2,Side3"
             string[] parts = menuData.Split('|');
             if (parts.Length != 2) continue;
 
             string mainId = parts[0];
             string[] sideIds = parts[1].Split(new[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
 
-            // 메인 메뉴 설정
             if (!string.IsNullOrEmpty(mainId))
             {
                 FoodData mainFood = CatalogProvider.Food?.GetById(mainId);
-                if (mainFood != null)
-                {
-                    menuSelections[i].SetMain(mainFood);
-                }
+                if (mainFood != null) menuSelections[i].SetMain(mainFood);
             }
 
-            // 사이드 메뉴 설정
             foreach (string sideId in sideIds)
             {
                 FoodData sideFood = CatalogProvider.Food?.GetById(sideId);
-                if (sideFood != null)
-                {
-                    menuSelections[i].AddSide(sideFood);
-                }
+                if (sideFood != null) menuSelections[i].AddSide(sideFood);
             }
         }
-
     }
-
 }

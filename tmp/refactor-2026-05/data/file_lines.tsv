@@ -15,7 +15,7 @@
 44	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Mall/DeliveryQuestService.cs
 72	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Mall/OrderService.cs
 22	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Mall/QuestMenuCatalog.cs
-49	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/PurchaseService.cs
+84	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/PurchaseService.cs
 15	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/StorageUpgradeData.cs
 83	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/StorageUpgradeService.cs
 17	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/ToolUpgradeData.cs
@@ -89,7 +89,7 @@
 72	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/CatalogProvider.cs
 190	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ClickStateUtil.cs
 56	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/DragSortingBump.cs
-103	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameSessionRoot.cs
+104	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameSessionRoot.cs
 117	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
 32	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HUDManager.cs
 122	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HorizontalCameraMove.cs
@@ -102,13 +102,13 @@
 52	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/PlayerSaveLoad.cs
 108	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ProgressSystem.cs
 268	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeBookManager.cs
-187	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeDataManager.cs
+177	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeDataManager.cs
 105	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeLookupService.cs
 33	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RequiredFieldValidator.cs
 52	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveAdapters/GardenSaveAdapter.cs
 88	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveAdapters/MallSaveAdapter.cs
 50	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveAdapters/ShopSaveAdapter.cs
-161	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveManager.cs
+196	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveManager.cs
 74	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ScanColliderUtil.cs
 82	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SceneLoader.cs
 87	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SearchDataUtil.cs
@@ -124,7 +124,7 @@
 12	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TestSceneInit.cs
 209	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TimeManager.cs
 112	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/UIManager.cs
-179	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/UnlockedFoodManager.cs
+172	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/UnlockedFoodManager.cs
 52	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/VisibleStateUtil.cs
 19	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/WeatherSystem.cs
 22	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/ArrowButton.cs
@@ -196,7 +196,7 @@
 30	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/SettlementLineItemUI.cs
 50	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/StairsInteraction.cs
 41	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/UnifiedShopInteraction.cs
-166	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/ShopDetailPanel.cs
+159	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/ShopDetailPanel.cs
 47	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/ShopListRow.cs
 403	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Shop/ShopUIAdapter.cs
 70	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/BentoCategoryUI.cs

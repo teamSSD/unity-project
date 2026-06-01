@@ -121,16 +121,10 @@ public class ShopDetailPanel : MonoBehaviour
 
     private void OnBuyClicked()
     {
-        if (itemFood == null || itemQty <= 0) return;
-        int total = itemQty * itemUnitPrice;
-        if (StatsSystem.Instance == null || StatsSystem.Instance.GetMoney() < total) return;
-        if (InventoryManager.Instance != null && !InventoryManager.Instance.CanAcceptType(itemFood)) return;
-
-        StatsSystem.Instance.SubMoney(total);
-        SettlementManager.Instance?.AddExpense("재료 구매", total);
-        InventoryManager.Instance?.AddFood(itemFood, itemQty);
-
-        ShopUIAdapter.Instance?.NotifyItemPurchased(itemFood, itemQty);
+        var purchase = GameSessionRoot.Instance?.Purchase;
+        if (purchase == null) return;
+        if (purchase.TryBuy(itemFood, itemQty, itemUnitPrice))
+            ShopUIAdapter.Instance?.NotifyItemPurchased(itemFood, itemQty);
     }
 
     private void UpdateQtyDisplay()
@@ -140,9 +134,8 @@ public class ShopDetailPanel : MonoBehaviour
         if (priceLabel != null) priceLabel.text = $"{total}G";
         if (buyBtn != null)
         {
-            bool affordable    = total <= (StatsSystem.Instance?.GetMoney() ?? 0);
-            bool acceptType    = InventoryManager.Instance == null || InventoryManager.Instance.CanAcceptType(itemFood);
-            buyBtn.interactable = itemQty > 0 && affordable && acceptType;
+            bool canBuy = GameSessionRoot.Instance?.Purchase?.CanBuy(itemFood, total) ?? false;
+            buyBtn.interactable = itemQty > 0 && canBuy;
         }
     }
 

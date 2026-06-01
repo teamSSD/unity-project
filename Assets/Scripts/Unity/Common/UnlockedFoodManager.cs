@@ -38,27 +38,35 @@ public class UnlockedFoodManager : SingletonMonoBehaviour<UnlockedFoodManager>, 
     }
 
     /// <summary>
-    /// 해금 데이터를 ProgressSystem에서 로드
+    /// 자체 SaveData로 직렬화 (SaveManager가 호출). piggyback (PhaseData.UnlockedRecipes) 폐기.
     /// </summary>
-    public void LoadUnlocksFromProgress()
+    public UnlockedRecipesSaveData GetSaveData()
     {
-        if (ProgressSystem.Instance?.phaseData == null)
-        {
-            Debug.LogWarning("[UnlockedFoodManager] ProgressSystem not ready, using default unlocks");
-            UnlockDefaultRecipes();
-            return;
-        }
+        return new UnlockedRecipesSaveData { recipeIds = unlockedRecipeIds.ToList() };
+    }
 
-        var unlockedList = ProgressSystem.Instance.phaseData.UnlockedRecipes;
-        if (unlockedList == null || unlockedList.Count == 0)
-        {
-            Debug.Log("[UnlockedFoodManager] No unlocked recipes in save data, using defaults");
-            UnlockDefaultRecipes();
-        }
+    /// <summary>
+    /// 디스크에서 로드된 UnlockedRecipesSaveData 적용. 비어있으면 기본값 해금.
+    /// </summary>
+    public void ApplySaveData(UnlockedRecipesSaveData data)
+    {
+        if (data != null && data.recipeIds != null && data.recipeIds.Count > 0)
+            unlockedRecipeIds = new HashSet<string>(data.recipeIds);
         else
-        {
+            UnlockDefaultRecipes();
+    }
+
+    /// <summary>
+    /// Legacy fallback: PhaseData.UnlockedRecipes (piggyback)에서 로드.
+    /// UnlockedRecipesSaveData가 비어있을 때만 호출.
+    /// </summary>
+    public void LoadUnlocksFromProgressLegacy()
+    {
+        var unlockedList = ProgressSystem.Instance?.phaseData?.UnlockedRecipes;
+        if (unlockedList != null && unlockedList.Count > 0)
             unlockedRecipeIds = new HashSet<string>(unlockedList);
-        }
+        else
+            UnlockDefaultRecipes();
     }
 
     /// <summary>
@@ -87,9 +95,7 @@ public class UnlockedFoodManager : SingletonMonoBehaviour<UnlockedFoodManager>, 
         {
             UnlockRecipe(id);
         }
-
-        PrepareForSave();
-        Debug.Log($"[UnlockedFoodManager] Default recipes unlocked: {defaultMains.Length} mains + {defaultSides.Length} sides");
+        // PrepareForSave 제거 — 자체 GetSaveData()가 직접 dump
     }
 
     /// <summary>
@@ -123,19 +129,6 @@ public class UnlockedFoodManager : SingletonMonoBehaviour<UnlockedFoodManager>, 
         foreach (var food in allFoodData)
         {
             unlockedRecipeIds.Add(food.id);
-        }
-        PrepareForSave();
-        Debug.Log($"[UnlockedFoodManager] All {unlockedRecipeIds.Count} recipes unlocked");
-    }
-
-    /// <summary>
-    /// 해금 데이터를 PhaseData에 준비 (SaveManager에서 호출)
-    /// </summary>
-    public void PrepareForSave()
-    {
-        if (ProgressSystem.Instance?.phaseData != null)
-        {
-            ProgressSystem.Instance.phaseData.UnlockedRecipes = unlockedRecipeIds.ToList();
         }
     }
 
