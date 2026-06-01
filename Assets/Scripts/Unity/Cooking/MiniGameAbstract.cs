@@ -62,7 +62,7 @@ public abstract class MiniGameAbstract : MonoBehaviour
         isPlaying = false;
         OnGameEnded();
 
-        StatsSystem.Instance.SubStamina(upgradedStaminaCost);
+        GameSessionRoot.Instance?.Stats.SubStamina(upgradedStaminaCost);
 
         float score = CalculateScore();
 

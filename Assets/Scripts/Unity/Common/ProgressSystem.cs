@@ -50,17 +50,17 @@ public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>, TimePhaseP
     {
         switch (phase)
         {
-            case PhaseType.Preparation: StatsSystem.Instance.SetTime(5, 0);  break;
-            case PhaseType.Morning:     StatsSystem.Instance.SetTime(7, 0);  break;
-            case PhaseType.Afternoon:   StatsSystem.Instance.SetTime(12, 0); break;
-            case PhaseType.Evening:     StatsSystem.Instance.SetTime(17, 0); break;
-            case PhaseType.Night:       StatsSystem.Instance.SetTime(22, 0); break;
+            case PhaseType.Preparation: GameSessionRoot.Instance?.Stats.SetTime(5, 0);  break;
+            case PhaseType.Morning:     GameSessionRoot.Instance?.Stats.SetTime(7, 0);  break;
+            case PhaseType.Afternoon:   GameSessionRoot.Instance?.Stats.SetTime(12, 0); break;
+            case PhaseType.Evening:     GameSessionRoot.Instance?.Stats.SetTime(17, 0); break;
+            case PhaseType.Night:       GameSessionRoot.Instance?.Stats.SetTime(22, 0); break;
         }
     }
 
     public void PassDay()
     {
-        StatsSystem.Instance.SubMoney(SettlementManager.ManagementFee);
+        GameSessionRoot.Instance?.Stats.SubMoney(SettlementManager.ManagementFee);
 
         phaseData.Day++;
         phaseData.Phase = PhaseType.Preparation;
@@ -68,7 +68,7 @@ public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>, TimePhaseP
         SetPhaseTime(phaseData.Phase);
         OnPhaseChanged?.Invoke(phaseData.Phase);
 
-        StatsSystem.Instance.SetStamina(100);
+        GameSessionRoot.Instance?.Stats.SetStamina(100);
         GameRandom.InitDay(phaseData.Day);
         InventoryManager.Instance?.AdvanceDay();
         WeatherSystem.Instance?.UpdateWeather(phaseData.Day);
@@ -80,7 +80,7 @@ public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>, TimePhaseP
 
     public void Die()
     {
-        StatsSystem.Instance.SetStamina(0);
+        GameSessionRoot.Instance?.Stats.SetStamina(0);
         PassDay();
     }
 

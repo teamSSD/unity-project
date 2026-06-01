@@ -1,5 +1,5 @@
 singleton_decl	1
-instance_access	303
+instance_access	285
 public_mutable_field	0
 static_mutable_field	0
 find_object	13
@@ -10,8 +10,8 @@ empty_catch	0
 todo_comment	0
 yield_return_null	0
 case_label	31
-event_subscribe	72
-event_unsubscribe	52
+event_subscribe	73
+event_unsubscribe	53
 serialize_field	267
 camera_main	17
-mono_behaviour_class	92
+mono_behaviour_class	93

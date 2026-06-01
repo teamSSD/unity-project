@@ -16,7 +16,7 @@ public class SmoothMoneyText : MonoBehaviour
 
     void OnEnable()
     {
-        var stats = StatsSystem.Instance;
+        var stats = GameSessionRoot.Instance?.Stats;
         if (stats == null) return;
 
         stats.OnMoneyChanged += SetTargetValue;
@@ -27,7 +27,7 @@ public class SmoothMoneyText : MonoBehaviour
 
     void OnDisable()
     {
-        var stats = StatsSystem.Instance;
+        var stats = GameSessionRoot.Instance?.Stats;
         if (stats != null) stats.OnMoneyChanged -= SetTargetValue;
     }
 

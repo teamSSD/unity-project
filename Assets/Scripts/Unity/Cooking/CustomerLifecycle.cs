@@ -103,7 +103,7 @@ public class CustomerLifecycle
 
         // Calculate and award money (using actual food prices)
         int reward = MenuValidator.CalculateReward(menuSchema, mainMenu, sideMenus);
-        StatsSystem.Instance.AddMoney(reward);
+        GameSessionRoot.Instance?.Stats.AddMoney(reward);
 
         Debug.Log($"[CustomerLifecycle] Reward: {reward}원 (Score: {validation.AccuracyScore:F2})");
 

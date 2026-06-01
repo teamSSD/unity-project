@@ -35,11 +35,11 @@ public class TakingCustomer : MonoBehaviour
 
        if (matchCount == menuSchema.sideMenus.Count + 1)
         {
-            StatsSystem.Instance.AddMoney(totalPrice);
+            GameSessionRoot.Instance?.Stats.AddMoney(totalPrice);
             say(customerData.satisfiedMessage);
             return;
         }
-        StatsSystem.Instance.AddMoney((int) (totalPrice * 0.7f));
+        GameSessionRoot.Instance?.Stats.AddMoney((int) (totalPrice * 0.7f));
         say(customerData.unsatisfiedMessage);
     }
 

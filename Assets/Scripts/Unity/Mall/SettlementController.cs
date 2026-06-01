@@ -55,7 +55,7 @@ public class SettlementController : MonoBehaviour
     {
         var sm = SettlementManager.Instance;
         var ps = ProgressSystem.Instance;
-        var ss = StatsSystem.Instance;
+        var ss = GameSessionRoot.Instance?.Stats;
 
         if (ps != null)
             dayText.text = $"{ps.phaseData.Day}일차 정산";

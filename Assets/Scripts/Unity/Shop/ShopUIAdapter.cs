@@ -178,7 +178,7 @@ public class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
         var purchase = GameSessionRoot.Instance?.Purchase;
         if (purchase == null) return;
 
-        int today = StatsSystem.Instance.GetDay();
+        int today = GameSessionRoot.Instance?.Stats.GetDay() ?? 0;
         var slots = purchase.GetItemListForDay(today);
 
         foreach (var info in slots)
@@ -262,7 +262,7 @@ public class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
             levelText = $"Lv.{cur.level} → Lv.{next.level}";
             costText  = $"{next.cost}G";
             desc      = $"미니게임 시간 {cur.durationMultiplier * 100:0}%→{next.durationMultiplier * 100:0}%  /  스태미나 {cur.staminaCost}→{next.staminaCost}";
-            canUpgrade = (StatsSystem.Instance?.GetMoney() ?? 0) >= next.cost;
+            canUpgrade = (GameSessionRoot.Instance?.Stats?.GetMoney() ?? 0) >= next.cost;
         }
         detailPanel?.ShowUpgrade(ShopDetailPanel.UpgradeKind.Tool, id, tool?.defaultImage, title, desc, levelText, costText, canUpgrade);
     }
@@ -307,7 +307,7 @@ public class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
             levelText = $"Lv.{cur.level} → Lv.{next.level}";
             costText  = $"{next.cost}G";
             desc      = $"{StorageTypeName(type)} {cur.value}칸→{next.value}칸";
-            canUpgrade = (StatsSystem.Instance?.GetMoney() ?? 0) >= next.cost;
+            canUpgrade = (GameSessionRoot.Instance?.Stats?.GetMoney() ?? 0) >= next.cost;
         }
         detailPanel?.ShowUpgrade(ShopDetailPanel.UpgradeKind.Storage, type, null, StorageTypeName(type), desc, levelText, costText, canUpgrade);
     }
@@ -352,7 +352,7 @@ public class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
             levelText = $"Lv.{cur.level} → Lv.{next.level}";
             costText  = $"{next.cost}G";
             desc      = FarmValueLabel(type, cur.value, next.value);
-            canUpgrade = (StatsSystem.Instance?.GetMoney() ?? 0) >= next.cost;
+            canUpgrade = (GameSessionRoot.Instance?.Stats?.GetMoney() ?? 0) >= next.cost;
         }
         detailPanel?.ShowUpgrade(ShopDetailPanel.UpgradeKind.Farm, type, null, FarmTypeName(type), desc, levelText, costText, canUpgrade);
     }

@@ -56,16 +56,19 @@ public class TimeManager : SingletonMonoBehaviour<TimeManager>
         breakAction = null;
         breakTargetTime = endHour * 60 + endMinute;
 
-        StatsSystem.Instance.SetTime(startHour, startMinute);
-        
-        // Ticking SFX 구독
-        StatsSystem.Instance.OnTimeChanged -= PlayTickingSfx;
-        StatsSystem.Instance.OnTimeChanged += PlayTickingSfx;
+        var stats = GameSessionRoot.Instance?.Stats;
+        if (stats != null)
+        {
+            stats.SetTime(startHour, startMinute);
+            stats.OnTimeChanged -= PlayTickingSfx;
+            stats.OnTimeChanged += PlayTickingSfx;
+        }
     }
 
     protected override void OnDestroy()
     {
-        StatsSystem.Instance.OnTimeChanged -= PlayTickingSfx;
+        var stats = GameSessionRoot.Instance?.Stats;
+        if (stats != null) stats.OnTimeChanged -= PlayTickingSfx;
         base.OnDestroy();
     }
 
@@ -174,11 +177,11 @@ public class TimeManager : SingletonMonoBehaviour<TimeManager>
 
         while (gameTimer >= secondsPerGameMinute)
         {
-            StatsSystem.Instance.AddTime(0, 1);
+            var stats = GameSessionRoot.Instance?.Stats;
+            if (stats == null) break;
+            stats.AddTime(0, 1);
             gameTimer -= secondsPerGameMinute;
-            
-            // 틱이 흐를 때 마감시간 도달 여부 체크
-            CheckBreakPoint(StatsSystem.Instance.GetHour() * 60 + StatsSystem.Instance.GetMinute());
+            CheckBreakPoint(stats.GetHour() * 60 + stats.GetMinute());
         }
 
         // 2. Local Timers Update

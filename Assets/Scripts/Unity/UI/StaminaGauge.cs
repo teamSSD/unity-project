@@ -18,7 +18,7 @@ public class LinearGauge : MonoBehaviour
 
     void OnEnable()
     {
-        var stats = StatsSystem.Instance;
+        var stats = GameSessionRoot.Instance?.Stats;
         if (stats == null) return;
 
         stats.OnStaminaChanged += UpdateGauge;
@@ -27,7 +27,7 @@ public class LinearGauge : MonoBehaviour
 
     void OnDisable()
     {
-        var stats = StatsSystem.Instance;
+        var stats = GameSessionRoot.Instance?.Stats;
         if (stats != null) stats.OnStaminaChanged -= UpdateGauge;
     }
 

@@ -18,7 +18,7 @@ public class ClockUI : MonoBehaviour
 
     void OnEnable()
     {
-        var stats = StatsSystem.Instance;
+        var stats = GameSessionRoot.Instance?.Stats;
         if (stats == null) return;
 
         stats.OnTimeChanged += SetTargetTime;
@@ -30,7 +30,7 @@ public class ClockUI : MonoBehaviour
 
     void OnDisable()
     {
-        var stats = StatsSystem.Instance;
+        var stats = GameSessionRoot.Instance?.Stats;
         if (stats != null) stats.OnTimeChanged -= SetTargetTime;
     }
 

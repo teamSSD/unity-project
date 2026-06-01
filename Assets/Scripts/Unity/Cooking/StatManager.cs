@@ -13,7 +13,7 @@ public class StatManager : MonoBehaviour
 
     void OnEnable()
     {
-        var stats = StatsSystem.Instance;
+        var stats = GameSessionRoot.Instance?.Stats;
         if (stats != null) stats.OnStaminaExhausted += OnStaminaExhausted;
         var time = TimeManager.Instance;
         if (time != null) time.OnTimeEnd += OnTimeEnd;
@@ -21,7 +21,7 @@ public class StatManager : MonoBehaviour
 
     void OnDisable()
     {
-        var stats = StatsSystem.Instance;
+        var stats = GameSessionRoot.Instance?.Stats;
         if (stats != null) stats.OnStaminaExhausted -= OnStaminaExhausted;
         var time = TimeManager.Instance;
         if (time != null) time.OnTimeEnd -= OnTimeEnd;

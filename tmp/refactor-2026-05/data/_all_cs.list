@@ -6,6 +6,7 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/RandomGeneral.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/RandomNormal.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/SceneNames.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/StatsService.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/UILockManager.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Cooking/SliceScorer.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Cooking/Tags.cs
@@ -20,6 +21,7 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/StorageUpgradeService.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/ToolUpgradeData.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Shop/ToolUpgradeService.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/.!26633!SpriteAssetAlignWithText.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/BuildSettingsHelper.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/CookingDataExporter.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Editor/DeliveryDataExporter.cs
@@ -126,8 +128,8 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SingletonMonoBehaviour.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SoundManager.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SpriteStackRenderer.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/StatsAudioAdapter.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/StatsMoneyAdapter.cs
-/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/StatsSystem.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SubSceneController.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TestSceneInit.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TimeManager.cs

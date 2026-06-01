@@ -11,7 +11,7 @@ public class GameStart : MonoBehaviour
     void Start()
     {
         // Boot 씬을 거치지 않고 직접 Play한 경우 매니저 보장
-        if (StatsSystem.Instance == null)
+        if (GameSessionRoot.Instance?.Stats == null)
             ManagerBootstrap.EnsureAll();
 
         UILockManager.Lock(UILockManager.Owner.GameStart);
@@ -54,9 +54,10 @@ public class GameStart : MonoBehaviour
             SaveManager.LoadAll();
 
             // Continue: 저장된 시드 복원
-            var stats = StatsSystem.Instance.GetSaveData();
-            GameRandom.InitSession(stats.immutableSeed, (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-            GameRandom.InitDay(StatsSystem.Instance.GetDay());
+            var stats = GameSessionRoot.Instance.Stats;
+            var saveData = stats.GetSaveData();
+            GameRandom.InitSession(saveData.immutableSeed, (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            GameRandom.InitDay(stats.GetDay());
 
             HUDManager.Instance?.Initialize();
         });
@@ -72,7 +73,7 @@ public class GameStart : MonoBehaviour
 
             // NewGame: 새 시드 생성
             int now = (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            StatsSystem.Instance.GetSaveData().immutableSeed = now;
+            GameSessionRoot.Instance.Stats.GetSaveData().immutableSeed = now;
             GameRandom.InitSession(now, now + 1);
             GameRandom.InitDay(0);
 
@@ -84,7 +85,7 @@ public class GameStart : MonoBehaviour
     /// <summary>구조 초기화 — Continue/NewGame 공통 (G 중복 제거).</summary>
     private static void InitializeManagers()
     {
-        StatsSystem.Instance.Initialize();
+        GameSessionRoot.Instance?.Stats.Reset();
         ProgressSystem.Instance.Initialize();
         UnlockedFoodManager.Instance?.Initialize();
         InventoryManager.Instance?.Initialize();
@@ -95,9 +96,9 @@ public class GameStart : MonoBehaviour
     /// <summary>New Game 전용 초기값 설정.</summary>
     private static void ApplyNewGameDefaults()
     {
-        StatsSystem.Instance.SetTime(5, 0);
-        StatsSystem.Instance.SetMoney(8000);
-        StatsSystem.Instance.SetStamina(100);
+        GameSessionRoot.Instance?.Stats.SetTime(5, 0);
+        GameSessionRoot.Instance?.Stats.SetMoney(8000);
+        GameSessionRoot.Instance?.Stats.SetStamina(100);
         ProgressSystem.Instance.phaseData.Day = 0;
         InventoryManager.Instance?.ResetToDefault();
         UnlockedFoodManager.Instance?.UnlockDefaultRecipes();

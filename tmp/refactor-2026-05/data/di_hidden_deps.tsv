@@ -1,5 +1,5 @@
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/IMoneyService.cs
-23	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
+22	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/InventoryManager.cs
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/MallSceneController.cs
 18	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ProgressSystem.cs
@@ -15,11 +15,11 @@
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettlementExpenseAdapter.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettlementManager.cs
 7	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SoundManager.cs
-5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/StatsMoneyAdapter.cs
-7	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/StatsSystem.cs
+3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/StatsAudioAdapter.cs
+1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/StatsMoneyAdapter.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SubSceneController.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TestSceneInit.cs
-8	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TimeManager.cs
+5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TimeManager.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/UnlockedFoodManager.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/BentoModel.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CookingBackgroundController.cs
@@ -63,7 +63,7 @@
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/MenuSelectionItem.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/MenuSlot.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/MoneyUI.cs
-9	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/NumericStatsViewer.cs
+3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/NumericStatsViewer.cs
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/PhaseActionSelector.cs
 7	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/SettingsController.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/StaminaGauge.cs

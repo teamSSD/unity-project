@@ -48,7 +48,7 @@ public class SettlementManager : SingletonMonoBehaviour<SettlementManager>
     // PassDay 직전에 호출 — 스냅샷 갱신 후 초기화
     public void Reset()
     {
-        DayStartMoney = StatsSystem.Instance != null ? StatsSystem.Instance.GetMoney() : 0;
+        DayStartMoney = GameSessionRoot.Instance?.Stats?.GetMoney() ?? 0;
         incomeMap.Clear();
         expenseMap.Clear();
     }

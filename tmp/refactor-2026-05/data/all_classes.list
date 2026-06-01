@@ -213,8 +213,9 @@ SpeechBubble
 SpriteStackRenderer
 StairsInteraction
 StatManager
+StatsAudioAdapter
 StatsMoneyAdapter
-StatsSystem
+StatsService
 StorageRowData
 StorageUpgradeData
 StorageUpgradeSaveData

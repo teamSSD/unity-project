@@ -25,31 +25,28 @@ public class NumericStatsViewer : MonoBehaviour
 
     private void OnDisable()
     {
-        if (!subscribed || StatsSystem.Instance == null)
-            return;
-
-        StatsSystem.Instance.OnMoneyChanged -= UpdateMoney;
-        StatsSystem.Instance.OnStaminaChanged -= UpdateStamina;
+        var stats = GameSessionRoot.Instance?.Stats;
+        if (!subscribed || stats == null) return;
+        stats.OnMoneyChanged -= UpdateMoney;
+        stats.OnStaminaChanged -= UpdateStamina;
         subscribed = false;
     }
 
     private void TrySubscribe()
     {
-        if (subscribed || StatsSystem.Instance == null)
-            return;
-
-        StatsSystem.Instance.OnMoneyChanged += UpdateMoney;
-        StatsSystem.Instance.OnStaminaChanged += UpdateStamina;
+        var stats = GameSessionRoot.Instance?.Stats;
+        if (subscribed || stats == null) return;
+        stats.OnMoneyChanged += UpdateMoney;
+        stats.OnStaminaChanged += UpdateStamina;
         subscribed = true;
     }
 
     private void RefreshAll()
     {
-        if (StatsSystem.Instance == null)
-            return;
-
-        UpdateMoney(StatsSystem.Instance.GetMoney());
-        UpdateStamina(StatsSystem.Instance.GetStamina());
+        var stats = GameSessionRoot.Instance?.Stats;
+        if (stats == null) return;
+        UpdateMoney(stats.GetMoney());
+        UpdateStamina(stats.GetStamina());
     }
 
     private void UpdateMoney(int value)
