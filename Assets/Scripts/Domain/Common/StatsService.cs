@@ -27,12 +27,39 @@ namespace Game.Domain.Common
         private BasicStats Stats => _stateAccessor?.Invoke();
 
         public BasicStats GetSaveData() => Stats;
-        public void ApplySaveData(BasicStats _) { /* GameState 라이브 참조이므로 별도 동작 불필요 */ }
+
+        /// <summary>
+        /// 디스크에서 로드된 BasicStats를 현재 GameState.stats 인스턴스에 복사.
+        /// (saved data는 JsonUtility로 deserialize된 NEW 인스턴스라 필드 복사 필요.)
+        /// 모든 이벤트 broadcast하여 UI 즉시 갱신.
+        /// </summary>
+        public void ApplySaveData(BasicStats data)
+        {
+            var s = Stats;
+            if (s == null || data == null) return;
+            s.day = data.day;
+            s.time = data.time;
+            s.stamina = data.stamina;
+            s.money = data.money;
+            s.immutableSeed = data.immutableSeed;
+            s.sessionSeed = data.sessionSeed;
+            // UI 갱신을 위해 모든 이벤트 broadcast
+            OnMoneyChanged?.Invoke(s.money);
+            OnStaminaChanged?.Invoke(s.stamina);
+            OnDayChanged?.Invoke(s.day);
+            OnTimeChanged?.Invoke(GetHour(), GetMinute());
+        }
+
         public void Reset()
         {
             var s = Stats;
             if (s == null) return;
             s.day = 0; s.time = 0; s.stamina = 0; s.money = 0;
+            // Reset 후 UI도 갱신
+            OnMoneyChanged?.Invoke(0);
+            OnStaminaChanged?.Invoke(0);
+            OnDayChanged?.Invoke(0);
+            OnTimeChanged?.Invoke(0, 0);
         }
 
         // ── Day ──
