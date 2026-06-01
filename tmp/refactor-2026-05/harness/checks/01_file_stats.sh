@@ -24,4 +24,8 @@ while IFS= read -r f; do
     printf '%s\t%s\n' "$n" "$f" >> "$OUT_LINES"
 done < "$RUNTIME_LIST"
 
+# 최대 파일 라인 수 (gate.sh에서 사용)
+MAX_LINES=$(awk -F'\t' 'BEGIN{m=0} { if ($1+0>m) m=$1+0 } END{ print m+0 }' "$OUT_LINES")
+kv_write "$OUT_KV" "max_file_lines" "$MAX_LINES"
+
 echo "file_stats: done" >&2

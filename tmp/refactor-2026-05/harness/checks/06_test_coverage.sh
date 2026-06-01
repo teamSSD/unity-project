@@ -31,5 +31,9 @@ if [ -s "$TEST_LIST" ]; then
 fi
 kv_write "$OUT_KV" "total_classes" "$TOTAL"
 kv_write "$OUT_KV" "covered_classes" "$COVERED"
+# 백분율 (정수, %)
+PCT=0
+[ "$TOTAL" -gt 0 ] && PCT=$((COVERED * 100 / TOTAL))
+kv_write "$OUT_KV" "test_coverage_pct" "$PCT"
 
-echo "test_coverage: $COVERED/$TOTAL" >&2
+echo "test_coverage: $COVERED/$TOTAL ($PCT%)" >&2

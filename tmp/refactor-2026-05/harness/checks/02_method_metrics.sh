@@ -54,4 +54,10 @@ while IFS= read -r f; do
     extract_method_lengths "$f" >> "$OUT"
 done < "$RUNTIME_LIST"
 
+# 집계 kv (gate.sh에서 사용)
+KV="$DATA_DIR/method_metrics.kv"
+awk -F'\t' '{ total++; if ($1+0>=41) over41++; if ($1+0>=61) over61++ }
+            END { printf "method_total\t%d\nmethod_over41\t%d\nmethod_over61\t%d\n",
+                  total+0, over41+0, over61+0 }' "$OUT" > "$KV"
+
 echo "method_metrics: $(wc -l < "$OUT" | tr -d ' ') methods" >&2

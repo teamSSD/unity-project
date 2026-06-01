@@ -29,4 +29,7 @@ while IFS= read -r f; do
     fi
 done < "$RUNTIME_LIST"
 
-echo "event_leaks: $(wc -l < "$OUT" | tr -d ' ') files" >&2
+N=$(wc -l < "$OUT" | tr -d ' ')
+kv_write "$DATA_DIR/event_leaks.kv" "event_leaks_files" "$N"
+
+echo "event_leaks: $N files" >&2
