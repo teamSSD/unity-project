@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
+// TooltipController는 Food 또는 CookingTool 프리팹에 부착 — 두 Model 동시 require 불가 (XOR).
+// 본문에서 GetComponent<FoodModel/CookingToolModel> null-check로 동적 분기.
 [RequireComponent(typeof(HoverStateUtil))]
 [RequireComponent(typeof(ClickStateUtil))]
 public class TooltipController : MonoBehaviour
@@ -107,4 +109,8 @@ public class TooltipController : MonoBehaviour
             ownsTooltip = false;
         }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

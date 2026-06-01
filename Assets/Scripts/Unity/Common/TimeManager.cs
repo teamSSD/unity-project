@@ -202,4 +202,8 @@ public class TimeManager : SingletonMonoBehaviour<TimeManager>
             }
         }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

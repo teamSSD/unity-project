@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Button))]
 public class MenuSelectionItem : MonoBehaviour
 {
     [Header("UI Components")]
@@ -97,4 +98,8 @@ public class MenuSelectionItem : MonoBehaviour
             }
         }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

@@ -149,4 +149,8 @@ public class SliceMiniGame : MiniGameAbstract
     public override float CalculateScore() => _scorer != null ? _scorer.GetFinalScore() : 0f;
 
     private void OnDestroy() => Cursor.visible = true;
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

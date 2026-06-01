@@ -63,4 +63,8 @@ public class NumericStatsViewer : MonoBehaviour
         if (staminaText != null)
             staminaText.text = $"{value}/100";
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

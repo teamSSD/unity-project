@@ -134,4 +134,8 @@ public class PhaseActionSelector : MonoBehaviour
     {
         UpdateUI();
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

@@ -36,4 +36,8 @@ public class GaugeUI : MonoBehaviour
             fillImage.fillAmount = targetFillAmount;
         }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

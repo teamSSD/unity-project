@@ -21,7 +21,6 @@ public class ClickMiniGame : MiniGameAbstract
         if (Input.GetKeyDown(KeyCode.Space))
         {
             clickCount++;
-            Debug.Log($"클릭 수: {clickCount}");
         }
     }
 

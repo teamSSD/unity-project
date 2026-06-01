@@ -33,7 +33,6 @@ public class RecipeLookupService : SingletonMonoBehaviour<RecipeLookupService>, 
     {
         var catalog = CatalogProvider.Recipe?.All;
         allRecipes = catalog != null ? new List<RecipeData>(catalog) : new List<RecipeData>();
-        Debug.Log($"[RecipeLookupService] Loaded {allRecipes.Count} recipes from catalog");
     }
 
     private void BuildLookupTable()
@@ -56,7 +55,6 @@ public class RecipeLookupService : SingletonMonoBehaviour<RecipeLookupService>, 
                 Debug.LogWarning($"[RecipeLookupService] Duplicate recipe key '{key}': {recipe.id} conflicts with {recipeLookup[key].id}");
         }
 
-        Debug.Log($"[RecipeLookupService] Built lookup table with {recipeLookup.Count} entries");
     }
 
     public RecipeData Search(string toolId, List<FoodData> ingredients)

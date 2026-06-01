@@ -4,6 +4,7 @@ using UnityEngine;
 /// <summary>
 /// 물리 콜라이더를 스캔하여 지정된 컴포넌트나 태그를 가진 객체를 탐색합니다.
 /// </summary>
+[RequireComponent(typeof(Collider2D))]
 public class ScanColliderUtil : MonoBehaviour
 {
     private readonly List<Collider2D> _overlapBuffer = new List<Collider2D>(16);

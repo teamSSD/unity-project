@@ -16,7 +16,6 @@ public class ProgressSystem : SingletonMonoBehaviour<ProgressSystem>, TimePhaseP
             GameSessionRoot.Instance.State.phase = new PhaseData();
         cumulativePhaseIndex = 0;
         WeatherSystem.Instance?.UpdateWeather(phaseData?.Day ?? 0);
-        Debug.Log("[ProgressSystem] Initialized");
     }
 
     public void ApplySaveData(PhaseData data)

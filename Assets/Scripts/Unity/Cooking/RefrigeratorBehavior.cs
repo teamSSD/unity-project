@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(Collider2D))]
 public class RefrigeratorBehavior : MonoBehaviour
 {
     public bool hideWhenMouseOver = true;

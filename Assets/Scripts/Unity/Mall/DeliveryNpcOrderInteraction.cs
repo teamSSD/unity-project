@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+[RequireComponent(typeof(DeliveryNpcContext))]
+[RequireComponent(typeof(DeliveryNpcView))]
 public class DeliveryNpcOrderInteraction
     : MonoBehaviour, INpcInteraction
 {

@@ -63,4 +63,8 @@ public class MenuSlot : MonoBehaviour
     {
         RecipeBookManager.Instance.OpenMenuCardR(Id);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

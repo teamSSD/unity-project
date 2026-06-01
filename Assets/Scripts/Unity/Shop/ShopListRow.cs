@@ -7,6 +7,7 @@ using UnityEngine.UI;
 /// 데이터 타입(재료/업그레이드)에 무관하게 공통 표시: 아이콘, 이름, 좌측 보조정보, 우측 보조정보.
 /// 클릭 시 매니저 콜백.
 /// </summary>
+[RequireComponent(typeof(Button))]
 public class ShopListRow : MonoBehaviour
 {
     [SerializeField] private Image iconImage;
@@ -39,4 +40,8 @@ public class ShopListRow : MonoBehaviour
     {
         if (selectionOverlay != null) selectionOverlay.enabled = selected;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

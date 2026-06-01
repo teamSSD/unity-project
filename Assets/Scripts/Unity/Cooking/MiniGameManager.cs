@@ -80,4 +80,8 @@ public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
 
         return null;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

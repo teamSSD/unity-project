@@ -25,4 +25,8 @@ public class DynamicBoundaryWalls : MonoBehaviour
         var col = go.AddComponent<BoxCollider2D>();
         col.size = new Vector2(wallThickness, wallHeight);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

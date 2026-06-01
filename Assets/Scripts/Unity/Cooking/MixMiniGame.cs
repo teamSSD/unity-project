@@ -125,4 +125,8 @@ public class MixMiniGame : MiniGameAbstract
             stackRenderer.DrawMany(sprites);
         }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

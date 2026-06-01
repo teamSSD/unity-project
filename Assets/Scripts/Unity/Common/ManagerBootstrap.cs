@@ -18,7 +18,6 @@ public static class ManagerBootstrap
 
         var go = new GameObject(typeof(T).Name);
         var component = go.AddComponent<T>();
-        Debug.Log($"[ManagerBootstrap] Created {typeof(T).Name}");
         return component;
     }
 
@@ -54,7 +53,6 @@ public static class ManagerBootstrap
         if (prefab != null)
         {
             Object.Instantiate(prefab);
-            Debug.Log("[ManagerBootstrap] Created RecipeBookManager from prefab");
         }
         else
         {

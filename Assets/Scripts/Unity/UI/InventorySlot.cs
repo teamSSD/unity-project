@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Button))]
 public class InventorySlot : MonoBehaviour
 {
     [SerializeField] private Image foodIcon;
@@ -51,4 +52,8 @@ public class InventorySlot : MonoBehaviour
         if (selectionOverlay != null)
             selectionOverlay.enabled = isSelected;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

@@ -18,4 +18,8 @@ public class MinAspectRatio : MonoBehaviour, ILayoutSelfController
         if (Rt.rect.height < minH)
             Rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, minH);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

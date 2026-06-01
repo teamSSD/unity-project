@@ -12,7 +12,6 @@ public class InventoryManager : SingletonMonoBehaviour<InventoryManager>, LoadIn
 
     protected override void OnSingletonAwake()
     {
-        Debug.Log("[InventoryManager] Initialized");
     }
 
     /// <summary>GameStart의 NewGame/LoadGame 진입 시 호출 — InventoryService는 GameSessionRoot Awake 시점에 이미 생성됨.</summary>

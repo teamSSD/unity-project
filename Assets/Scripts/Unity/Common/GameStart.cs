@@ -46,22 +46,14 @@ public class GameStart : MonoBehaviour
     private void ProcessContinue()
     {
         UILockManager.Unlock(UILockManager.Owner.GameStart);
-        // 무거운 초기화는 로딩 화면이 가린 상태에서 실행되도록 람다로 전달
         SceneLoader.LoadSceneWithInit(SceneNames.Mall, () =>
         {
-            // Phase 1: 구조 초기화 (디스크 I/O 없음)
-            StatsSystem.Instance.Initialize();
-            ProgressSystem.Instance.Initialize();
-            UnlockedFoodManager.Instance?.Initialize();
-            InventoryManager.Instance?.Initialize();
-            RecipeDataManager.Instance?.Initialize();
-            RecipeLookupService.Instance?.Initialize();
+            InitializeManagers();
             GameSessionRoot.Instance?.Order.Clear();
 
-            // Phase 2: 저장 데이터 로드
             SaveManager.LoadAll();
 
-            // Phase 3: 시드 초기화 (세이브에서 복원 후)
+            // Continue: 저장된 시드 복원
             var stats = StatsSystem.Instance.GetSaveData();
             GameRandom.InitSession(stats.immutableSeed, (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds());
             GameRandom.InitDay(StatsSystem.Instance.GetDay());
@@ -69,46 +61,57 @@ public class GameStart : MonoBehaviour
             HUDManager.Instance?.Initialize();
         });
     }
+
     private void NewGame()
     {
         UILockManager.Unlock(UILockManager.Owner.GameStart);
         SceneLoader.LoadSceneWithInit(SceneNames.Mall, () =>
         {
-            // Phase 1: 구조 초기화
-            StatsSystem.Instance.Initialize();
-            ProgressSystem.Instance.Initialize();
-            UnlockedFoodManager.Instance?.Initialize();
-            InventoryManager.Instance?.Initialize();
-            RecipeDataManager.Instance?.Initialize();
-            RecipeLookupService.Instance?.Initialize();
+            InitializeManagers();
+            ApplyNewGameDefaults();
 
-            // Phase 2: 새 게임 초기값 설정
-            StatsSystem.Instance.SetTime(5, 0);
-            StatsSystem.Instance.SetMoney(8000);
-            StatsSystem.Instance.SetStamina(100);
-            ProgressSystem.Instance.phaseData.Day = 0;
-            InventoryManager.Instance?.ResetToDefault();
-            UnlockedFoodManager.Instance?.UnlockDefaultRecipes();
-            DeliveryNpcDialogueInteraction.ResetAll();
-            if (GameSessionRoot.Instance != null)
-                System.Array.Clear(GameSessionRoot.Instance.State.garden.persistent.tiles, 0,
-                    GameSessionRoot.Instance.State.garden.persistent.tiles.Length);
-
-            // Phase 3: 시드 초기화
+            // NewGame: 새 시드 생성
             int now = (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             StatsSystem.Instance.GetSaveData().immutableSeed = now;
             GameRandom.InitSession(now, now + 1);
             GameRandom.InitDay(0);
 
-            // Phase 4: 초기 상태 저장
             SaveManager.SaveAll();
-
             HUDManager.Instance?.Initialize();
-            Debug.Log("[GameStart] New Game started");
         });
+    }
+
+    /// <summary>구조 초기화 — Continue/NewGame 공통 (G 중복 제거).</summary>
+    private static void InitializeManagers()
+    {
+        StatsSystem.Instance.Initialize();
+        ProgressSystem.Instance.Initialize();
+        UnlockedFoodManager.Instance?.Initialize();
+        InventoryManager.Instance?.Initialize();
+        RecipeDataManager.Instance?.Initialize();
+        RecipeLookupService.Instance?.Initialize();
+    }
+
+    /// <summary>New Game 전용 초기값 설정.</summary>
+    private static void ApplyNewGameDefaults()
+    {
+        StatsSystem.Instance.SetTime(5, 0);
+        StatsSystem.Instance.SetMoney(8000);
+        StatsSystem.Instance.SetStamina(100);
+        ProgressSystem.Instance.phaseData.Day = 0;
+        InventoryManager.Instance?.ResetToDefault();
+        UnlockedFoodManager.Instance?.UnlockDefaultRecipes();
+        DeliveryNpcDialogueInteraction.ResetAll();
+        if (GameSessionRoot.Instance != null)
+            System.Array.Clear(GameSessionRoot.Instance.State.garden.persistent.tiles, 0,
+                GameSessionRoot.Instance.State.garden.persistent.tiles.Length);
     }
     private void OpenSetting()
     {
         SettingsUIManager.Instance?.Open();
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

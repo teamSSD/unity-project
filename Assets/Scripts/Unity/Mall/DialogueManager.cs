@@ -314,4 +314,8 @@ public class DialogueManager : MonoBehaviour
         UILockManager.Unlock(UILockManager.Owner.Dialogue);
         OnDialogueEnded?.Invoke(resultTag);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

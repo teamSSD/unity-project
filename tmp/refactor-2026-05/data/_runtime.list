@@ -31,6 +31,7 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/PrefabCatalogSO.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/RecipeCatalogSO.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/GameRandom.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/RequiredAttribute.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/ResourcePaths.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Common/CookingToolData.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Common/CropData.cs
@@ -103,6 +104,10 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeBookManager.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeDataManager.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeLookupService.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RequiredFieldValidator.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveAdapters/GardenSaveAdapter.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveAdapters/MallSaveAdapter.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveAdapters/ShopSaveAdapter.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveManager.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ScanColliderUtil.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SceneLoader.cs

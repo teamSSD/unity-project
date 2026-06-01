@@ -85,7 +85,6 @@ public class CustomerManager : MonoBehaviour
             statManager.GetComponent<StatManager>().onTimeEnd += OnTimeEnd;
         }
 
-        Debug.Log($"[CustomerManager] Initialized with {salesMenus.Count} menus");
     }
 
     void Start()
@@ -121,7 +120,6 @@ public class CustomerManager : MonoBehaviour
                 spawnIntervalVariance = 4f;
                 break;
         }
-        Debug.Log($"[CustomerManager] Phase={phase}, SpawnInterval={baseSpawnInterval}±{spawnIntervalVariance}");
     }
 
     private void CreateDeliveryTickets()
@@ -214,7 +212,6 @@ public class CustomerManager : MonoBehaviour
             SoundManager.Instance.Play2DSFX(doorSfx, 0.7f);
         }
 
-        Debug.Log($"[CustomerManager] Spawned customer #{menu.orderNumber}");
     }
 
     /// <summary>
@@ -256,7 +253,6 @@ public class CustomerManager : MonoBehaviour
     /// </summary>
     private void OnCustomerLeft(CustomerLifecycle lifecycle)
     {
-        Debug.Log("[CustomerManager] Customer left without food");
         OnCustomerCompleted(lifecycle);
     }
 
@@ -279,7 +275,6 @@ public class CustomerManager : MonoBehaviour
         // Check for game end
         CheckGameEnd();
 
-        Debug.Log($"[CustomerManager] Customer completed. Active: {activeCustomers.Count}");
     }
 
     /// <summary>
@@ -330,7 +325,6 @@ public class CustomerManager : MonoBehaviour
 
         CheckGameEnd();
 
-        Debug.Log("[CustomerManager] Shop closed");
     }
 
     /// <summary>
@@ -340,7 +334,6 @@ public class CustomerManager : MonoBehaviour
     {
         if (!isOpen && !ticketController.HasActiveCustomerTickets())
         {
-            Debug.Log("[CustomerManager] Game End");
             LogSessionSummary();
             OnGameEnd?.Invoke();
         }
@@ -419,12 +412,6 @@ public class CustomerManager : MonoBehaviour
         float avgScore = totalOrders > 0 ? totalAccuracyScore / totalOrders : 0f;
         float perfectRate = totalOrders > 0 ? (float)perfectOrders / totalOrders * 100f : 0f;
 
-        Debug.Log("========== Session Summary ==========");
-        Debug.Log($"Total Orders: {totalOrders}");
-        Debug.Log($"Perfect Orders: {perfectOrders} ({perfectRate:F1}%)");
-        Debug.Log($"Average Score: {avgScore:F2} ({MenuValidator.GetGrade(avgScore)})");
-        Debug.Log($"Total Earnings: {totalEarnings}원");
-        Debug.Log("=====================================");
 
         if (totalEarnings > 0 && SettlementManager.Instance != null && ProgressSystem.Instance != null)
             SettlementManager.Instance.AddIncome(PhaseToLabel(ProgressSystem.Instance.phaseData.Phase), totalEarnings);
@@ -438,4 +425,8 @@ public class CustomerManager : MonoBehaviour
         PhaseType.Night     => "야간 영업",
         _                   => "영업"
     };
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

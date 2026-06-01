@@ -77,4 +77,8 @@ public class ClockUI : MonoBehaviour
             fillImage.rectTransform.localRotation = Quaternion.Euler(0, 0, currentFillAngle);
         }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

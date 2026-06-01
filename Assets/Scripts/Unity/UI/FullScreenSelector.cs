@@ -42,4 +42,8 @@ public class FullScreenSelector : MonoBehaviour
     {
         label.text = Labels[currentIndex];
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

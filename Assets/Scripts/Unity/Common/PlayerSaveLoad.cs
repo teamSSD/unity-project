@@ -35,7 +35,6 @@ public class PlayerSaveLoad : MonoBehaviour
 
         string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(path, json);
-        Debug.Log("저장 완료: " + path);
     }
 
     public void LoadPlayerData()
@@ -45,11 +44,9 @@ public class PlayerSaveLoad : MonoBehaviour
             string loadedJson = File.ReadAllText(path);
             PlayerData loaded = JsonUtility.FromJson<PlayerData>(loadedJson);
 
-            Debug.Log($"로드된 데이터 → 이름:{loaded.playerName}, 점수:{loaded.score}");
         }
         else
         {
-            Debug.Log("저장된 데이터 없음");
         }
     }
 }

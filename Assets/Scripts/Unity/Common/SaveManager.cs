@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -78,211 +77,52 @@ public static class SaveManager
     }
 
     /// <summary>
-    /// 모든 게임 데이터를 디스크에 저장.
-    /// PassDay()와 NewGame()에서만 호출.
+    /// 모든 게임 데이터를 디스크에 저장. PassDay/NewGame에서만 호출.
+    /// 도메인별 Adapter가 GameSaveData 슬롯 채움.
     /// </summary>
     public static void SaveAll()
     {
-        // Phase 1: piggyback 데이터를 PhaseData에 준비
+        // piggyback 데이터를 PhaseData에 준비
         RecipeDataManager.Instance?.PrepareForSave();
         UnlockedFoodManager.Instance?.PrepareForSave();
 
-        // Phase 2: GameSaveData 조립
         var save = new GameSaveData();
 
-        if (ProgressSystem.Instance != null)
-            save.phase = ProgressSystem.Instance.phaseData;
-
+        // 글로벌 facade 매니저
+        if (ProgressSystem.Instance != null) save.phase = ProgressSystem.Instance.phaseData;
         save.stats = StatsSystem.Instance.GetSaveData();
+        if (InventoryManager.Instance != null) save.inventory = InventoryManager.Instance.GetSaveData();
 
-        if (InventoryManager.Instance != null)
-            save.inventory = InventoryManager.Instance.GetSaveData();
+        // 도메인 Adapter
+        GardenSaveAdapter.Capture(save);
+        ShopSaveAdapter.Capture(save);
+        MallSaveAdapter.Capture(save);
 
-        if (GameSessionRoot.Instance != null)
-        {
-            var orderSvc = GameSessionRoot.Instance.Order;
-            var saved = new OrderSaveData();
-            foreach (var order in orderSvc.GetOrders())
-            {
-                saved.entries.Add(new OrderEntry
-                {
-                    questId = order.questId,
-                    orderNumber = order.orderNumber,
-                    menuName = order.menuSchema?.name ?? "",
-                    mainMenuId = order.menuSchema?.mainMenu?.id ?? "",
-                    sideMenuIds = order.menuSchema?.sideMenus?
-                        .Select(f => f?.id ?? "").ToList() ?? new List<string>(),
-                    state = (int)order.state,
-                    npcId = order.npcId,
-                    cookedPrice = order.cookedPrice
-                });
-            }
-            save.orders = saved;
-
-            var mp = GameSessionRoot.Instance.State.mall.persistent;
-            save.deliveryQuest = new DeliveryQuestSaveData
-            {
-                groupIds = new List<string>(mp.questGroupIds),
-                stages   = new List<int>(mp.questStages)
-            };
-        }
-
-        if (GameSessionRoot.Instance != null)
-        {
-            var gp = GameSessionRoot.Instance.State.garden.persistent;
-            save.farmUpgrades = new FarmUpgradeSaveData
-            {
-                types  = new List<string>(gp.upgradeTypes),
-                levels = new List<int>(gp.upgradeLevels)
-            };
-
-            var sp = GameSessionRoot.Instance.State.shop.persistent;
-            save.storageUpgrades = new StorageUpgradeSaveData
-            {
-                types  = new List<string>(sp.storageTypes),
-                levels = new List<int>(sp.storageLevels)
-            };
-            save.toolUpgrades = new ToolUpgradeSaveData
-            {
-                ids    = new List<string>(sp.toolIds),
-                levels = new List<int>(sp.toolLevels)
-            };
-        }
-
-        if (GameSessionRoot.Instance != null)
-        {
-            var gpTiles = GameSessionRoot.Instance.State.garden.persistent.tiles;
-            save.farmTiles = new FarmTilesSaveData { tiles = (FarmTileSaveData[])gpTiles.Clone() };
-        }
-
-        // Phase 3: 단일 파일로 저장
         DataSaveUtil.SaveData(save, SavePath);
-
-        Debug.Log("[SaveManager] All data saved");
     }
 
     /// <summary>
-    /// 모든 게임 데이터를 디스크에서 로드.
-    /// ProcessContinue()에서만 호출.
+    /// 모든 게임 데이터를 디스크에서 로드. ProcessContinue에서만 호출.
+    /// 도메인별 Adapter가 GameSaveData 슬롯을 GameState 트리에 적용.
     /// </summary>
     public static void LoadAll()
     {
         MigrateLegacyIfNeeded();
-
         var save = DataSaveUtil.LoadData(new GameSaveData(), SavePath);
 
-        // Phase 1: 각 매니저에 분배
-        if (ProgressSystem.Instance != null)
-            ProgressSystem.Instance.ApplySaveData(save.phase);
-
+        // 글로벌 facade 매니저
+        if (ProgressSystem.Instance != null) ProgressSystem.Instance.ApplySaveData(save.phase);
         StatsSystem.Instance.ApplySaveData(save.stats);
+        if (InventoryManager.Instance != null) InventoryManager.Instance.ApplySaveData(save.inventory);
 
-        if (InventoryManager.Instance != null)
-            InventoryManager.Instance.ApplySaveData(save.inventory);
+        // 도메인 Adapter
+        GardenSaveAdapter.Apply(save);
+        ShopSaveAdapter.Apply(save);
+        MallSaveAdapter.Apply(save);
 
-        if (GameSessionRoot.Instance != null && save.orders != null)
-        {
-            var orderSvc = GameSessionRoot.Instance.Order;
-            var rebuilt = new List<DeliveryOrderData>();
-            foreach (var entry in save.orders.entries)
-            {
-                var sideMenus = entry.sideMenuIds
-                    .Where(id => !string.IsNullOrEmpty(id))
-                    .Select(id => SearchDataUtil.GetFoodDataById(id))
-                    .Where(f => f != null)
-                    .ToList();
-
-                rebuilt.Add(new DeliveryOrderData
-                {
-                    questId = entry.questId,
-                    orderNumber = entry.orderNumber,
-                    menuSchema = new MenuSchema(
-                        entry.menuName,
-                        entry.orderNumber,
-                        !string.IsNullOrEmpty(entry.mainMenuId)
-                            ? SearchDataUtil.GetFoodDataById(entry.mainMenuId) : null,
-                        sideMenus
-                    ),
-                    state = (DeliveryOrderState)entry.state,
-                    npcId = entry.npcId,
-                    cookedPrice = entry.cookedPrice
-                });
-            }
-            orderSvc.SetOrders(rebuilt);
-        }
-
-        if (GameSessionRoot.Instance != null && save.deliveryQuest != null)
-        {
-            var mp = GameSessionRoot.Instance.State.mall.persistent;
-            mp.questGroupIds = new List<string>(save.deliveryQuest.groupIds);
-            mp.questStages   = new List<int>(save.deliveryQuest.stages);
-        }
-
-        if (GameSessionRoot.Instance != null && save.farmUpgrades != null)
-        {
-            // 서비스 초기화 시 채워진 타입 목록을 유지하며 saved level만 덮어쓰기.
-            var gp = GameSessionRoot.Instance.State.garden.persistent;
-            for (int i = 0; i < save.farmUpgrades.types.Count; i++)
-            {
-                string type = save.farmUpgrades.types[i];
-                int level = save.farmUpgrades.levels[i];
-                int idx = gp.upgradeTypes.IndexOf(type);
-                if (idx >= 0) gp.upgradeLevels[idx] = level;
-                else
-                {
-                    gp.upgradeTypes.Add(type);
-                    gp.upgradeLevels.Add(level);
-                }
-            }
-        }
-
-        if (GameSessionRoot.Instance != null && save.storageUpgrades != null)
-        {
-            var sp = GameSessionRoot.Instance.State.shop.persistent;
-            for (int i = 0; i < save.storageUpgrades.types.Count; i++)
-            {
-                string type = save.storageUpgrades.types[i];
-                int level = save.storageUpgrades.levels[i];
-                int idx = sp.storageTypes.IndexOf(type);
-                if (idx >= 0) sp.storageLevels[idx] = level;
-                else
-                {
-                    sp.storageTypes.Add(type);
-                    sp.storageLevels.Add(level);
-                }
-            }
-        }
-
-        if (GameSessionRoot.Instance != null && save.toolUpgrades != null)
-        {
-            var sp = GameSessionRoot.Instance.State.shop.persistent;
-            for (int i = 0; i < save.toolUpgrades.ids.Count; i++)
-            {
-                string id = save.toolUpgrades.ids[i];
-                int level = save.toolUpgrades.levels[i];
-                int idx = sp.toolIds.IndexOf(id);
-                if (idx >= 0) sp.toolLevels[idx] = level;
-                else
-                {
-                    sp.toolIds.Add(id);
-                    sp.toolLevels.Add(level);
-                }
-            }
-        }
-
-        if (GameSessionRoot.Instance != null)
-        {
-            var gpTiles = GameSessionRoot.Instance.State.garden.persistent.tiles;
-            for (int i = 0; i < gpTiles.Length; i++)
-                gpTiles[i] = (save.farmTiles?.tiles != null && i < save.farmTiles.tiles.Length)
-                    ? save.farmTiles.tiles[i] : null;
-        }
-
-        // Phase 2: PhaseData에서 piggyback 데이터 로드
+        // piggyback 데이터 (PhaseData에 얹혀 있음 — H 미해결)
         UnlockedFoodManager.Instance?.LoadUnlocksFromProgress();
         RecipeDataManager.Instance?.LoadMenusFromProgress();
-
-        Debug.Log("[SaveManager] All data loaded");
     }
 
     /// <summary>

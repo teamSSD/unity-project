@@ -159,4 +159,8 @@ public class ShopDetailPanel : MonoBehaviour
         };
         if (success) ShopUIAdapter.Instance?.NotifyUpgradeApplied();
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

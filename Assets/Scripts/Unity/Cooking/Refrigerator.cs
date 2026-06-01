@@ -21,4 +21,8 @@ public class Refrigerator : BaseStorage
             yOffset + (index / linePerEntity) * yInterval,
             0f);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

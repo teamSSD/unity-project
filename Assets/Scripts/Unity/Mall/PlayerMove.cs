@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class PlayerMove : MonoBehaviour
 {
     public float moveSpeed = 5f;
@@ -60,4 +62,8 @@ public class PlayerMove : MonoBehaviour
         if (rb != null)
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

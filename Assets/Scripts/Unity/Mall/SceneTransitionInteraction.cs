@@ -37,4 +37,8 @@ public class SceneTransitionInteraction : MonoBehaviour
             InteractPromptUI.Hide();
         }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

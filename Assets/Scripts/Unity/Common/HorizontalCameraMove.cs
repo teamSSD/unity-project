@@ -115,4 +115,8 @@ public class HorizontalCameraMove : MonoBehaviour
         var c = tr.position;
         return new Bounds(new Vector3(c.x, c.y, 0f), new Vector3(half.x * 2f, half.y * 2f, 1f));
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

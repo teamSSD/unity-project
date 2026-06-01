@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+[RequireComponent(typeof(PolygonCollider2D))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class TakingCustomer : MonoBehaviour
 {
     public GameObject speechBubblePrefab;
@@ -77,4 +79,8 @@ public class TakingCustomer : MonoBehaviour
 
         SoundManager.Instance.Play2DSFX(takeSoundEffect, 0.3f);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

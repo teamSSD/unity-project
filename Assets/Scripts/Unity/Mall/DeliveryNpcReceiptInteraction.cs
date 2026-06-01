@@ -3,6 +3,7 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
+[RequireComponent(typeof(DeliveryNpcView))]
 public class DeliveryNpcReceiptInteraction
     : MonoBehaviour, INpcInteraction
 {

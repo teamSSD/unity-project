@@ -194,4 +194,8 @@ public class GriddleMinigame : MiniGameAbstract
             stackRenderer.DrawMany(sprites);
         }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

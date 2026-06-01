@@ -47,7 +47,6 @@ public class BentoModel : MonoBehaviour
 
         if (food.foodData.type != FoodType.MAIN && food.foodData.type != FoodType.SIDE)
         {
-            Debug.Log("해당 음식은 도시락에 담을 수 없는 타입입니다 (메인/사이드 요리만 가능).");
             return false;
         }
 
@@ -77,10 +76,8 @@ public class BentoModel : MonoBehaviour
         if (foodList.Count >= 1)
         {
             BehaviorInstance.AddTexture(receiptSprite);
-            Debug.Log($"도시락 포장이 완료되었습니다.");
             return true;
         }
-        Debug.Log("아직 도시락이 완성되지 않았습니다.");
         return false;
     }
 
@@ -124,4 +121,8 @@ public class BentoModel : MonoBehaviour
         }
         return transform.position;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

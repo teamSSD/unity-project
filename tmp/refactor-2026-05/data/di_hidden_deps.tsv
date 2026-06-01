@@ -1,11 +1,15 @@
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/IMoneyService.cs
-29	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
+23	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/InventoryManager.cs
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/MallSceneController.cs
 18	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ProgressSystem.cs
 8	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeBookManager.cs
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeDataManager.cs
-34	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveManager.cs
+1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RequiredFieldValidator.cs
+4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveAdapters/GardenSaveAdapter.cs
+6	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveAdapters/MallSaveAdapter.cs
+4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveAdapters/ShopSaveAdapter.cs
+10	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveManager.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SceneLoader.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettingsUIManager.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettlementExpenseAdapter.cs

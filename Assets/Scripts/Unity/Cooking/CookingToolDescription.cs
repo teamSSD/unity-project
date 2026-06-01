@@ -23,4 +23,8 @@ public class CookingToolDescription : MonoBehaviour
     {
         contentText.text = "내용물 : " + content + "(요리됨)";
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

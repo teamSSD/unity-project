@@ -106,4 +106,8 @@ public abstract class MiniGameAbstract : MonoBehaviour
     }
 
     public virtual void SetIngredients(List<FoodData> ingredients, string toolId = null) { }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

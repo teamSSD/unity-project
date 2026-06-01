@@ -225,4 +225,8 @@ public class CookingToolModel : MonoBehaviour
         Sprite variantSprite = foodData.GetImageForTool(toolId);
         BehaviorInstance.AddTexture(variantSprite);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

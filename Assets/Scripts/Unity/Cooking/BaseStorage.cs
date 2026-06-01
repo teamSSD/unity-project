@@ -92,4 +92,8 @@ public abstract class BaseStorage : MonoBehaviour
         }
         foodModels.Clear();
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

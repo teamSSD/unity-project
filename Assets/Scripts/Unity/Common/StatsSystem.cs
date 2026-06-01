@@ -24,7 +24,6 @@ public class StatsSystem : SingletonMonoBehaviour<StatsSystem>
     {
         if (GameSessionRoot.Instance != null)
             GameSessionRoot.Instance.State.stats = new BasicStats();
-        Debug.Log("[StatsSystem] Initialized");
     }
 
     public BasicStats GetSaveData() => Stats;
@@ -33,7 +32,6 @@ public class StatsSystem : SingletonMonoBehaviour<StatsSystem>
     {
         if (GameSessionRoot.Instance == null) return;
         GameSessionRoot.Instance.State.stats = data;
-        Debug.Log($"[StatsSystem] Save data applied - Stamina: {data.stamina}, Money: {data.money}, Day: {data.day}, Time: {data.time}");
     }
 
     // ── Day ──
@@ -111,4 +109,8 @@ public class StatsSystem : SingletonMonoBehaviour<StatsSystem>
         SetMoney((Stats?.money ?? 0) - value);
         SoundManager.Instance?.Play2DSFX(cashDrawerSfx);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

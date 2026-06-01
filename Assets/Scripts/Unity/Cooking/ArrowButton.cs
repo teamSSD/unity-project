@@ -16,4 +16,8 @@ public class ArrowButton : MonoBehaviour
     {
         animator.SetTrigger(Failed);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

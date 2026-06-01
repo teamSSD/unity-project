@@ -16,7 +16,6 @@ public class ActionSelectionManager : SingletonMonoBehaviour<ActionSelectionMana
     protected override void OnSingletonAwake()
     {
         InitializeActions();
-        Debug.Log("[ActionSelectionManager] Initialized");
     }
 
     private void InitializeActions()

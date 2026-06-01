@@ -62,4 +62,8 @@ public class CookingToolBehavior : MonoBehaviour
     {
         spriteStackRenderer.DrawMany(sprites);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

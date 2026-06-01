@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
+[RequireComponent(typeof(DeliveryNpcContext))]
+[RequireComponent(typeof(DeliveryNpcView))]
 public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
 {
     private DeliveryDialogueConfig dialogueConfig;

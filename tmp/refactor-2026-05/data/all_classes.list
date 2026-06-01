@@ -93,6 +93,7 @@ GameSessionRoot
 GameStart
 GameState
 GardenPersistent
+GardenSaveAdapter
 GardenShopSlot
 GardenState
 GaugeUI
@@ -123,6 +124,7 @@ LinearGauge
 LoadingManager
 LowerShelf
 MallPersistent
+MallSaveAdapter
 MallSceneController
 MallState
 ManagerBootstrap
@@ -173,6 +175,8 @@ RecipeIngredient
 RecipeLookupService
 Refrigerator
 RefrigeratorBehavior
+RequiredAttribute
+RequiredFieldValidator
 ResourcePaths
 RodMovement
 SO
@@ -195,6 +199,7 @@ ShopConfigSO
 ShopDetailPanel
 ShopListRow
 ShopPersistent
+ShopSaveAdapter
 ShopState
 ShopUIAdapter
 SingletonMonoBehaviour

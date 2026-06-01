@@ -6,6 +6,7 @@ using TMPro;
 /// RecipeBook 열기/닫기 토글 버튼
 /// View Mode에서만 동작
 /// </summary>
+[RequireComponent(typeof(Button))]
 public class RecipeBookToggleButton : MonoBehaviour
 {
     [SerializeField] private Button toggleButton;
@@ -74,4 +75,8 @@ public class RecipeBookToggleButton : MonoBehaviour
             buttonText.text = "레시피북 열기";
         }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

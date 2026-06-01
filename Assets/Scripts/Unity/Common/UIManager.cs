@@ -57,7 +57,6 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
         CreateGlobalTooltips();
         isInitialized = true;
 
-        Debug.Log("[UIManager] Initialized with GlobalCanvas and Tooltips");
     }
 
     private void CreateGlobalCanvas()

@@ -188,4 +188,8 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         src.playOnAwake = false;
         return src;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

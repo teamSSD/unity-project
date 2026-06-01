@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+[RequireComponent(typeof(RectTransform))]
 public class SpeechBubble : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI contents;
@@ -34,4 +35,8 @@ public class SpeechBubble : MonoBehaviour
 
         transform.position = WorldUIPositioner.Calculate(cam, targetBounds, worldSize);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

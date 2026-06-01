@@ -261,4 +261,8 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     {
         CloseRecipeBook();
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

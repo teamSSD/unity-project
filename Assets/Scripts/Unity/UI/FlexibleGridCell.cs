@@ -6,6 +6,7 @@ using UnityEngine.UI;
 /// 패딩과 spacing을 고려해 columns개가 정확히 맞도록 설정.
 /// </summary>
 [RequireComponent(typeof(GridLayoutGroup))]
+[RequireComponent(typeof(RectTransform))]
 public class FlexibleGridCell : MonoBehaviour
 {
     private GridLayoutGroup grid;

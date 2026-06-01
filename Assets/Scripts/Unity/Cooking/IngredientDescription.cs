@@ -18,4 +18,8 @@ public class IngredientDescription : MonoBehaviour
     {
         countText.text = "수량 : " + count;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

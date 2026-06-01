@@ -31,4 +31,8 @@ public class CookingBackgroundController : MonoBehaviour
         if (bgEvening) bgEvening.SetActive(isEvening);
         if (bgNight)   bgNight.SetActive(isNight);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

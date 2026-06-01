@@ -150,4 +150,8 @@ public class MallSceneController : MonoBehaviour
         PhaseType.Night       => "밤",
         _                     => phase.ToString()
     };
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

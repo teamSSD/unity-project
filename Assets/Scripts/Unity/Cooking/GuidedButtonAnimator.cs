@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class GuidedButtonAnimator : MonoBehaviour
 {
     public KeyCode keyCode = KeyCode.Space;

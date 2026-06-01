@@ -66,4 +66,8 @@ public class LinearGauge : MonoBehaviour
 
         fillImage.fillAmount = (float)currentValue / maxValue;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

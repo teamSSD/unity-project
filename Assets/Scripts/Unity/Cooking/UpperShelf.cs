@@ -19,4 +19,8 @@ public class UpperShelf : BaseStorage
             yPosition,
             0f);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

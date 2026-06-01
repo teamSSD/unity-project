@@ -31,13 +31,11 @@ public class StatManager : MonoBehaviour
 
     private void OnStaminaExhausted()
     {
-        Debug.Log("[StatManager] Stamina exhausted → ending day");
         ProgressSystem.Instance?.Die();
     }
 
     private void OnTimeEnd()
     {
-        Debug.Log("[StatManager] Time ended");
         onTimeEnd.Invoke();
     }
 }

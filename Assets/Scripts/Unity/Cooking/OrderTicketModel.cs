@@ -7,6 +7,8 @@ using UnityEngine;
 [RequireComponent(typeof(OrderTicketBehavior))]
 [RequireComponent(typeof(ClickStateUtil))]
 [DisallowMultipleComponent]
+[RequireComponent(typeof(ScanColliderUtil))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class OrderTicketModel : MonoBehaviour
 {
     private OrderTicketBehavior BehaviorInstance;
@@ -101,4 +103,8 @@ public class OrderTicketModel : MonoBehaviour
         Destroy(bento.gameObject);
         onTake.Invoke(main, sides, spawnPosition);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

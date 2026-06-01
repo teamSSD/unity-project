@@ -26,4 +26,8 @@ public class SubSceneController : MonoBehaviour
         if (ps == null || !ps.PassPhase())
             SceneLoader.LoadScene(returnSceneName);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

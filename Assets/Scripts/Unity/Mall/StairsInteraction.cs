@@ -43,4 +43,8 @@ public class StairsInteraction : MonoBehaviour
         isPlayerNear = false;
         InteractPromptUI.Hide();
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

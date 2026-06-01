@@ -14,7 +14,6 @@ public class RecipeDataManager : SingletonMonoBehaviour<RecipeDataManager>
 
     protected override void OnSingletonAwake()
     {
-        Debug.Log("[RecipeDataManager] Initialized");
     }
 
     public void Initialize()
@@ -79,7 +78,6 @@ public class RecipeDataManager : SingletonMonoBehaviour<RecipeDataManager>
         {
             menu.Clear();
         }
-        Debug.Log("[RecipeDataManager] All menus cleared");
     }
 
     /// <summary>
@@ -146,7 +144,6 @@ public class RecipeDataManager : SingletonMonoBehaviour<RecipeDataManager>
     {
         if (ProgressSystem.Instance?.phaseData?.SelectedMenus == null)
         {
-            Debug.Log("[RecipeDataManager] No saved menu data to load");
             return;
         }
 
@@ -185,7 +182,6 @@ public class RecipeDataManager : SingletonMonoBehaviour<RecipeDataManager>
             }
         }
 
-        Debug.Log($"[RecipeDataManager] Loaded menu data from progress");
     }
 
 }

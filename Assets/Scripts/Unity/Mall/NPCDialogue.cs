@@ -81,4 +81,8 @@ public class NPCDialogue : MonoBehaviour
             isTalking = false;
         }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

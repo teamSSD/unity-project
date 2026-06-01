@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(ClickStateUtil))]
+[RequireComponent(typeof(PolygonCollider2D))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class OrderingCustomer : MonoBehaviour
 {
     [Header("주입해야할 필드")]
@@ -64,7 +66,6 @@ public class OrderingCustomer : MonoBehaviour
                 }
             }
             
-            Debug.Log($"[OrderingCustomer] Injected {customerData.name}. Sprite: {(sr.sprite != null ? sr.sprite.name : "NULL")}");
         }
         else
         {

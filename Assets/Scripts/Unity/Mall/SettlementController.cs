@@ -88,4 +88,8 @@ public class SettlementController : MonoBehaviour
         var item = Instantiate(lineItemPrefab, container);
         item.Set(label, amount, isExpense);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

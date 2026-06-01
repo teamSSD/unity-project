@@ -1,7 +1,7 @@
 ﻿<Solution>
   <Project Path="Game.Unity.csproj" />
+  <Project Path="Tests.EditMode.csproj" />
   <Project Path="Game.Schema.csproj" />
   <Project Path="Game.Domain.csproj" />
-  <Project Path="Tests.EditMode.csproj" />
   <Project Path="Game.Editor.csproj" />
 </Solution>

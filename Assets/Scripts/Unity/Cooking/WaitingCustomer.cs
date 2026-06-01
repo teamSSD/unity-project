@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
+[RequireComponent(typeof(PolygonCollider2D))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class WaitingCustomer : MonoBehaviour
 {
     [SerializeField] private GameObject gaugePrefab;
@@ -96,4 +98,8 @@ public class WaitingCustomer : MonoBehaviour
         if (gaugeUI != null)
             Destroy(gaugeUI);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

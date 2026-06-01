@@ -89,4 +89,8 @@ public class SettingsController : MonoBehaviour
         fullScreenSelector.SetIndex(d.fullScreen);
         SaveSettings();
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

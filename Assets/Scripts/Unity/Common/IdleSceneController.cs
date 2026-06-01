@@ -34,4 +34,8 @@ public class IdleSceneController : MonoBehaviour
 
         SceneLoader.LoadScene(sceneName);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

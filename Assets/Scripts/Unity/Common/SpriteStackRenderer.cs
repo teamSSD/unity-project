@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class SpriteStackRenderer : MonoBehaviour
 {
     [Header("Root (생략 시 이 오브젝트 하위에 생성)")]
@@ -116,4 +117,8 @@ public class SpriteStackRenderer : MonoBehaviour
         );
         sr.transform.localScale = Vector3.one * iconScale;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

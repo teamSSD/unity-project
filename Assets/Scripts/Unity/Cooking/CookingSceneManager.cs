@@ -65,4 +65,8 @@ public class CookingSceneManager : MonoBehaviour
         instance.transform.position = foodModel.GetDefaultPosition();
         return foodModel;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

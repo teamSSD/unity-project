@@ -30,4 +30,8 @@ public class Receipt : MonoBehaviour
             ? "배달 : " + menuSchema.orderNumber
             : "주문번호 : " + menuSchema.orderNumber;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

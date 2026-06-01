@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(DeliveryNpcInteraction))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class DeliveryNpcView : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -73,4 +75,8 @@ public class DeliveryNpcView : MonoBehaviour
         }
     }
 
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

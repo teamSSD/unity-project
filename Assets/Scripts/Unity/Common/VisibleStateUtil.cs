@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 
 [DisallowMultipleComponent]
+[RequireComponent(typeof(Renderer))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class VisibleStateUtil : MonoBehaviour
 {
     [Header("투명도 임계값")]

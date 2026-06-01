@@ -53,4 +53,8 @@ public class BentoBehavior : MonoBehaviour
     {
         spriteStackRenderer.Add(sprite, xy);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

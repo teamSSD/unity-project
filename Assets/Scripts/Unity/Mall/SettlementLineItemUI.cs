@@ -23,4 +23,8 @@ public class SettlementLineItemUI : MonoBehaviour
         amountText.text  = valueText;
         amountText.color = ColorNeutral;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

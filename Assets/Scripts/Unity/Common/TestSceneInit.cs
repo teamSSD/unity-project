@@ -8,7 +8,6 @@ public class TestSceneInit : MonoBehaviour
         if (progress != null)
         {
             progress.Initialize();
-            Debug.Log("ProgressSystem Initialized by TestSceneInit");
         }
     }
 }

@@ -43,4 +43,8 @@ public class SmoothMoneyText : MonoBehaviour
             currentDisplayValue = targetValue;
         uiText.text = ((int)currentDisplayValue).ToString("N0");
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

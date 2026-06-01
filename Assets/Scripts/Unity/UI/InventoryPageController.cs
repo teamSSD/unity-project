@@ -232,4 +232,8 @@ public class InventoryPageController : MonoBehaviour
         if (ratio <= barWarningRatio) return barWarning;
         return barFresh;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

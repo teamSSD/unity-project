@@ -22,7 +22,6 @@ public class RecipeBookMenuProvider : ISelectMenu
         }
 
         var menuList = RecipeDataManager.Instance.GetAllMenusAsSchema();
-        Debug.Log($"[RecipeBookMenuProvider] GetTodaysMenu() returned {menuList.Count} menus");
         foreach (var menu in menuList)
         {
             Debug.Log($"  - {menu}");

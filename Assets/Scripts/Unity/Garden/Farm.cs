@@ -80,7 +80,6 @@ public class Farm : MonoBehaviour
         {
             if (IsLocked)
             {
-                Debug.Log("This farm is locked!");
             }
             else if (tile.IsHarvestable())
             {
@@ -101,7 +100,6 @@ public class Farm : MonoBehaviour
             }
             else
             {
-                Debug.Log("Crop is still growing...");
             }
 
             OnTimePassed();

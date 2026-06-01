@@ -29,14 +29,12 @@ public class UnlockedFoodManager : SingletonMonoBehaviour<UnlockedFoodManager>, 
     public void Initialize()
     {
         LoadAllFoodData();
-        Debug.Log("[UnlockedFoodManager] Initialized");
     }
 
     private void LoadAllFoodData()
     {
         var catalog = CatalogProvider.Food?.All;
         allFoodData = catalog != null ? new List<FoodData>(catalog) : new List<FoodData>();
-        Debug.Log($"[UnlockedFoodManager] Loaded {allFoodData.Count} total food data from catalog");
     }
 
     /// <summary>
@@ -60,7 +58,6 @@ public class UnlockedFoodManager : SingletonMonoBehaviour<UnlockedFoodManager>, 
         else
         {
             unlockedRecipeIds = new HashSet<string>(unlockedList);
-            Debug.Log($"[UnlockedFoodManager] Loaded {unlockedRecipeIds.Count} unlocked recipes from save");
         }
     }
 

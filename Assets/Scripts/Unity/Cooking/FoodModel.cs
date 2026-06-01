@@ -8,6 +8,8 @@ using UnityEngine;
 [RequireComponent(typeof(HoverStateUtil))]
 [RequireComponent(typeof(TooltipController))]
 [DisallowMultipleComponent]
+[RequireComponent(typeof(PolygonCollider2D))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class FoodModel : MonoBehaviour
 {
     private FoodSchema SchemaInstance;

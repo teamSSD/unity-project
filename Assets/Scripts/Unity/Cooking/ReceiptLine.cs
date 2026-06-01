@@ -11,4 +11,8 @@ public class ReceiptLine : MonoBehaviour
         this.name.text = name;
         this.count.text = count.ToString();
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

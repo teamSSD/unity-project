@@ -61,7 +61,6 @@ public class ValidationFeedbackUI : SingletonMonoBehaviour<ValidationFeedbackUI>
     {
         if (feedbackPanel == null)
         {
-            Debug.Log($"[Feedback] {message}");
             return;
         }
 
@@ -165,4 +164,8 @@ public class ValidationFeedbackUI : SingletonMonoBehaviour<ValidationFeedbackUI>
             default: return Color.white;
         }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

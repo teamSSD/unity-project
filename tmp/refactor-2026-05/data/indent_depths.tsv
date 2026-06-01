@@ -31,6 +31,7 @@
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/PrefabCatalogSO.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Catalog/RecipeCatalogSO.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/GameRandom.cs
+0	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/RequiredAttribute.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/ResourcePaths.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Common/CookingToolData.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Config/Common/CropData.cs
@@ -89,7 +90,7 @@
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ClickStateUtil.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/DragSortingBump.cs
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameSessionRoot.cs
-5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
+4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HUDManager.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HorizontalCameraMove.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HoverStateUtil.cs
@@ -103,7 +104,11 @@
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeBookManager.cs
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeDataManager.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RecipeLookupService.cs
-7	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveManager.cs
+5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/RequiredFieldValidator.cs
+5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveAdapters/GardenSaveAdapter.cs
+7	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveAdapters/MallSaveAdapter.cs
+3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveAdapters/ShopSaveAdapter.cs
+2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SaveManager.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ScanColliderUtil.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SceneLoader.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SearchDataUtil.cs

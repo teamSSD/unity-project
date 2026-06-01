@@ -83,6 +83,5 @@ public class SearchDataUtil
     public static void Invalidate()
     {
         _chainDepthCache.Clear();
-        Debug.Log("[SearchDataUtil] Chain depth cache invalidated");
     }
 }

@@ -94,7 +94,6 @@ public class SauceMiniGame : MiniGameAbstract
 
     public override float CalculateScore()
     {
-        Debug.Log("Cal1!!!!");
         float maxPossibleDiff = Mathf.Max(targetGauge, 100f - targetGauge);;
         float diff = Mathf.Abs(currentGauge - targetGauge);
         float penaltyDiff = Mathf.Max(0, diff - tolerance);
@@ -114,4 +113,8 @@ public class SauceMiniGame : MiniGameAbstract
             stackRenderer.DrawMany(sprites);
         }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

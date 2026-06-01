@@ -96,13 +96,19 @@ while IFS= read -r f; do
     fi
 done < "$RUNTIME_LIST"
 
-# --- 4. GetComponent<X> 있는데 [RequireComponent(typeof(X))] 부재 ---
+# --- 4. self-targeted GetComponent<X> 있는데 [RequireComponent(typeof(X))] 부재 ---
+# self-targeted만 카운트: "GetComponent<X>()" (다른 객체.GetComponent도 제외).
+# 제외 패턴:
+#   - GetComponentInChildren/InParent/s — 자기 컴포넌트가 아님
+#   - X.GetComponent<Y> / obj.GetComponent<Y> — 다른 객체
+# 단순화: 라인 시작이 "{공백}GetComponent<" 또는 "= GetComponent<" 패턴만 매칭 (this 묵시).
 while IFS= read -r f; do
     [ -z "$f" ] && continue
     REQ=$(grep -oE 'RequireComponent\(typeof\([A-Za-z_][A-Za-z0-9_]*\)\)' "$f" 2>/dev/null \
         | awk '{ sub(/.*typeof\(/, ""); sub(/\)\).*/, ""); print }' | sort -u)
-    GETS=$(grep -oE 'GetComponent(InChildren|InParent|sInChildren|s)?<[A-Za-z_][A-Za-z0-9_]*>' "$f" 2>/dev/null \
-        | awk '{ sub(/.*</, ""); sub(/>$/, ""); print }' | sort -u)
+    # self-targeted: 앞에 식별자.이 없는 GetComponent<X> (또는 = / ( / 공백 후)
+    GETS=$(grep -oE '(^|[ \t=(,;])GetComponent<[A-Za-z_][A-Za-z0-9_]*>' "$f" 2>/dev/null \
+        | awk '{ sub(/.*GetComponent</, ""); sub(/>$/, ""); print }' | sort -u)
     [ -z "$GETS" ] && continue
     for g in $GETS; do
         if ! echo "$REQ" | grep -qx "$g" 2>/dev/null; then

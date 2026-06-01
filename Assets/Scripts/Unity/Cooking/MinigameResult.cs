@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class MinigameResult : MonoBehaviour
 {
     private static readonly int AppearHash = Animator.StringToHash("Appear");

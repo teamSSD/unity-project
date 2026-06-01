@@ -37,4 +37,8 @@ public class DeliveryNpcSpawner : MonoBehaviour
 
         spawnedNpcs.Clear();
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

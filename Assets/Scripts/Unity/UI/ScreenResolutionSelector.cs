@@ -65,4 +65,8 @@ void UpdateText()
         var (w, h) = Resolutions[currentIndex];
         resolutionText.text = $"{w}x{h}";
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 }

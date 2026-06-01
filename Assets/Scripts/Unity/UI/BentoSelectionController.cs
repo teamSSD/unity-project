@@ -41,14 +41,12 @@ public class BentoSelectionController : MonoBehaviour
             allFoodData.AddRange(unlockedMains);
             allFoodData.AddRange(unlockedSides);
 
-            Debug.Log($"[BentoSelection] Loaded {unlockedMains.Count} main + {unlockedSides.Count} side = {allFoodData.Count} unlocked recipes");
         }
         else
         {
             // UnlockedFoodManager가 없으면 모든 레시피 로드 (폴백)
             Debug.LogWarning("[BentoSelection] UnlockedFoodManager not found, loading all recipes");
             allFoodData = new List<FoodData>(CatalogProvider.Food?.All ?? new List<FoodData>());
-            Debug.Log($"[BentoSelection] Loaded {allFoodData.Count} food data assets (all recipes)");
         }
     }
 
@@ -118,8 +116,6 @@ public class BentoSelectionController : MonoBehaviour
                 menu.RemoveSide(item.CurrentFood);
             else if (menu.SideMenus.Count < 3)
                 menu.AddSide(item.CurrentFood);
-            else
-                Debug.Log("[BentoSelection] Max 3 sides allowed.");
         }
 
         RefreshSlotUI(bentoIndex);
@@ -140,7 +136,6 @@ public class BentoSelectionController : MonoBehaviour
         if (menu != null)
         {
             menu.Name = newName;
-            Debug.Log($"[BentoSelection] Bento {index} renamed to: {newName}");
         }
     }
 
