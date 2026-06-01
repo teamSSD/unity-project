@@ -31,9 +31,14 @@ _갱신: 2026-06-01 / 원천: `reports/review_master.md`, `decisions/000_index.m
 - **재방문**: Phase 5+
 
 ### #3 — 이벤트 누수 5+건 (CustomerManager 람다 클로저)
-- **상태**: 🔴 untouched → **2026-06-01 작업 중**
-- **위치**: CustomerManager L199/200, L146 + CustomerLifecycle L71/72
-- **재방문**: 즉시 (Critical, 마스터 진단 1주 이내 작업이었음)
+- **상태**: ✅ done (2026-06-01)
+- **해결**:
+  - CustomerLifecycle.OnAttached 람다 → OnTicketAttached 명명 메서드 + Cleanup -=
+  - CustomerLifecycle.OnOrderDelivered → Cleanup에 -= 추가
+  - CustomerLifecycle event signature 변경 (`OnCustomerServed/Left`가 this 인자 전달) → CustomerManager에서 명명 메서드 구독
+  - CustomerManager.CreateDeliveryTickets 람다 → Dictionary로 추적 + OnDestroy -=
+  - CustomerManager.OnCustomerCompleted/OnDestroy에서 모든 lifecycle 이벤트 -= 처리
+- **잔존**: 하네스가 event_leaks_files=29 보고하지만 CustomerManager 6건은 regex 오류 (`timer += Time.deltaTime`, `totalEarnings += reward` 같은 산술 연산까지 잡힘). 실제 누수 0. 하네스 정확도 개선 후보(별도).
 
 ### #4 — "Unified" 분산 패턴
 - **상태**: ✅ done

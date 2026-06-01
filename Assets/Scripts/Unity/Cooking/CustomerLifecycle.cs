@@ -17,8 +17,9 @@ public class CustomerLifecycle
     private OrderTicketModel orderTicket;
     private int waitingPositionIndex = -1;
 
-    public event Action<MenuValidator.ValidationResult, int> OnCustomerServed; // ValidationResult + reward
-    public event Action OnCustomerLeft;
+    // sender(this) 인자 포함 — 구독자가 람다 없이 명명된 메서드로 구독 가능 (이벤트 누수 방지)
+    public event Action<CustomerLifecycle, MenuValidator.ValidationResult, int> OnCustomerServed;
+    public event Action<CustomerLifecycle> OnCustomerLeft;
 
     public CustomerLifecycle(
         MenuSchema menuSchema,
@@ -67,9 +68,14 @@ public class CustomerLifecycle
         // Setup customer events
         waitingCustomer.onExit += OnCustomerTimeout;
 
-        // Setup ticket events
-        orderTicket.OnAttached += () => waitingCustomer.StopTimer();
+        // Setup ticket events (명명 메서드 — Cleanup에서 정상 해제 가능)
+        orderTicket.OnAttached += OnTicketAttached;
         orderTicket.onTake += OnOrderDelivered;
+    }
+
+    private void OnTicketAttached()
+    {
+        waitingCustomer?.StopTimer();
     }
 
     /// <summary>
@@ -132,7 +138,7 @@ public class CustomerLifecycle
             isExit: false,
             onCompleted: () => {
                 // Notify completion with validation result and reward
-                OnCustomerServed?.Invoke(validation, reward);
+                OnCustomerServed?.Invoke(this, validation, reward);
             }
         );
     }
@@ -174,19 +180,23 @@ public class CustomerLifecycle
             isExit: true,
             onCompleted: () => {
                 // Notify completion
-                OnCustomerLeft?.Invoke();
+                OnCustomerLeft?.Invoke(this);
             }
         );
     }
 
     /// <summary>
-    /// Cleanup (called when lifecycle ends)
+    /// Cleanup (called when lifecycle ends) — 모든 외부 이벤트 구독 해제.
     /// </summary>
     public void Cleanup()
     {
         if (waitingCustomer != null)
-        {
             waitingCustomer.onExit -= OnCustomerTimeout;
+
+        if (orderTicket != null)
+        {
+            orderTicket.OnAttached -= OnTicketAttached;
+            orderTicket.onTake -= OnOrderDelivered;
         }
     }
 }

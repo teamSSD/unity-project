@@ -35,6 +35,8 @@ public class CustomerManager : MonoBehaviour
     // State
     private List<MenuSchema> salesMenus;
     private List<CustomerLifecycle> activeCustomers = new List<CustomerLifecycle>();
+    // 배달 ticket 추적 — onTake 람다 구독 해제용 (OnDestroy에서 -= 가능하도록 mapping 보관)
+    private readonly Dictionary<OrderTicketModel, Action<FoodSchema, List<FoodSchema>, Vector3>> deliveryTicketHandlers = new();
     private int nextOrderNumber = 1;
     private bool isOpen = true;
 
@@ -142,8 +144,9 @@ public class CustomerManager : MonoBehaviour
             ticket.GetComponent<Receipt>().Set(order.menuSchema, isDelivery: true);
 
             // 배달 onTake: 가격 계산 + Cooked 전환
+            // 람다를 변수에 저장해 OnDestroy에서 -=로 정상 해제 (이전: 익명 람다 → 누수)
             var capturedOrder = order;
-            ticket.onTake += (main, sides, pos) =>
+            Action<FoodSchema, List<FoodSchema>, Vector3> handler = (main, sides, pos) =>
             {
                 int totalPrice = 0;
                 if (sides != null)
@@ -153,6 +156,8 @@ public class CustomerManager : MonoBehaviour
                 GameSessionRoot.Instance?.Order.MarkCookedWithPrice(
                     capturedOrder.questId, totalPrice);
             };
+            ticket.onTake += handler;
+            deliveryTicketHandlers[ticket] = handler;
         }
     }
 
@@ -195,9 +200,9 @@ public class CustomerManager : MonoBehaviour
             ticketController
         );
 
-        // Setup events
-        lifecycle.OnCustomerServed += (validation, reward) => OnCustomerServed(lifecycle, validation, reward);
-        lifecycle.OnCustomerLeft += () => OnCustomerLeft(lifecycle);
+        // Setup events (명명 메서드 — Cleanup에서 정상 해제. lifecycle은 sender 인자로 전달됨)
+        lifecycle.OnCustomerServed += OnCustomerServed;
+        lifecycle.OnCustomerLeft += OnCustomerLeft;
 
         // Start customer order
         currentOrderingCustomer = lifecycle.StartOrder();
@@ -213,7 +218,7 @@ public class CustomerManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Called when customer is served with food
+    /// Called when customer is served with food (CustomerLifecycle.OnCustomerServed 핸들러)
     /// </summary>
     private void OnCustomerServed(CustomerLifecycle lifecycle, MenuValidator.ValidationResult validation, int reward)
     {
@@ -256,10 +261,15 @@ public class CustomerManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Called when customer lifecycle completes (served or left)
+    /// Called when customer lifecycle completes (served or left).
+    /// 매니저가 lifecycle에 구독한 이벤트도 여기서 해제 (누수 방지).
     /// </summary>
     private void OnCustomerCompleted(CustomerLifecycle lifecycle)
     {
+        // Unsubscribe events first — lifecycle.Cleanup() 호출 전에 해제하여 재진입 가능성 차단
+        lifecycle.OnCustomerServed -= OnCustomerServed;
+        lifecycle.OnCustomerLeft -= OnCustomerLeft;
+
         lifecycle.Cleanup();
         activeCustomers.Remove(lifecycle);
 
@@ -337,16 +347,25 @@ public class CustomerManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Cleanup on destroy
+    /// Cleanup on destroy. 잔존 lifecycle + 배달 ticket 람다 핸들러 모두 해제.
     /// </summary>
     private void OnDestroy()
     {
-        // Cleanup all active customers
+        // Cleanup all active customers (구독한 이벤트 -= + lifecycle 정리)
         foreach (var lifecycle in activeCustomers)
         {
+            lifecycle.OnCustomerServed -= OnCustomerServed;
+            lifecycle.OnCustomerLeft -= OnCustomerLeft;
             lifecycle.Cleanup();
         }
         activeCustomers.Clear();
+
+        // 배달 ticket onTake 람다 해제 (CreateDeliveryTickets에서 등록한 것들)
+        foreach (var kv in deliveryTicketHandlers)
+        {
+            if (kv.Key != null) kv.Key.onTake -= kv.Value;
+        }
+        deliveryTicketHandlers.Clear();
 
         // Unsubscribe from events
         if (statManager != null)

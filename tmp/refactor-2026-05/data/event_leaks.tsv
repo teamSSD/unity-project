@@ -11,8 +11,7 @@
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TimeManager.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/BaseStorage.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CookingBackgroundController.cs
-1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CustomerLifecycle.cs
-5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CustomerManager.cs
+6	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CustomerManager.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/FireMiniGame.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/FoodModel.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/MiniGameAbstract.cs
