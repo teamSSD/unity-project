@@ -1,6 +1,7 @@
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/DataSaveUtil.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/IExpenseLog.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/IMoneyService.cs
+6	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/InventoryService.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/MenuValidator.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/RandomGeneral.cs
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/RandomNormal.cs
@@ -63,6 +64,7 @@
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Cooking/SearchRecipeUsecase.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Garden/TimePhaseProvider.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/BasicStats.cs
+1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/InventoryBatch.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/InventorySaveData.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/PhaseData.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Cooking/CookingToolSchema.cs
@@ -92,7 +94,7 @@
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HorizontalCameraMove.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HoverStateUtil.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/IdleSceneController.cs
-6	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/InventoryManager.cs
+2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/InventoryManager.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/LoadingManager.cs
 6	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/MallSceneController.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ManagerBootstrap.cs
@@ -161,7 +163,7 @@
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/SliceMiniGame.cs
 6	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/SliceVisualizer.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/SpeechBubble.cs
-3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/StatManager.cs
+2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/StatManager.cs
 4	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/TakingCustomer.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/UpperShelf.cs
 6	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/WaitingCustomer.cs

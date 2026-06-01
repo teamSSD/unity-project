@@ -113,6 +113,7 @@ InventoryItemEntry
 InventoryManager
 InventoryPageController
 InventorySaveData
+InventoryService
 InventorySlot
 Item
 ItemRowData

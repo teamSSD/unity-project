@@ -1,6 +1,7 @@
 68	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/DataSaveUtil.cs
 10	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/IExpenseLog.cs
 13	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/IMoneyService.cs
+208	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/InventoryService.cs
 269	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/MenuValidator.cs
 60	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/RandomGeneral.cs
 23	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/RandomNormal.cs
@@ -63,6 +64,7 @@
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Cooking/SearchRecipeUsecase.cs
 10	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Garden/TimePhaseProvider.cs
 17	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/BasicStats.cs
+10	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/InventoryBatch.cs
 26	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/InventorySaveData.cs
 19	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/PhaseData.cs
 106	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Cooking/CookingToolSchema.cs
@@ -86,13 +88,13 @@
 72	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/CatalogProvider.cs
 190	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ClickStateUtil.cs
 56	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/DragSortingBump.cs
-98	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameSessionRoot.cs
+103	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameSessionRoot.cs
 114	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/GameStart.cs
 32	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HUDManager.cs
 118	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HorizontalCameraMove.cs
 57	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HoverStateUtil.cs
 37	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/IdleSceneController.cs
-302	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/InventoryManager.cs
+38	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/InventoryManager.cs
 143	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/LoadingManager.cs
 153	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/MallSceneController.cs
 64	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/ManagerBootstrap.cs
@@ -114,7 +116,7 @@
 28	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/StatsMoneyAdapter.cs
 114	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/StatsSystem.cs
 29	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SubSceneController.cs
-12	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TestSceneInit.cs
+13	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TestSceneInit.cs
 205	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TimeManager.cs
 113	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/UIManager.cs
 182	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/UnlockedFoodManager.cs
@@ -128,7 +130,7 @@
 38	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/BentoSetModel.cs
 17	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/ButtonAnimator.cs
 33	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/ClickMiniGame.cs
-35	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CookingBackgroundController.cs
+34	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CookingBackgroundController.cs
 68	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CookingSceneManager.cs
 64	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CookingToolBehavior.cs
 25	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CookingToolDescription.cs
@@ -164,9 +166,9 @@
 43	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/StatManager.cs
 79	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/TakingCustomer.cs
 22	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/UpperShelf.cs
-97	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/WaitingCustomer.cs
+98	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/WaitingCustomer.cs
 17	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Garden/ButtonHover.cs
-186	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Garden/Farm.cs
+187	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Garden/Farm.cs
 76	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Garden/FarmTile.cs
 15	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Garden/GardenShopSlot.cs
 50	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/CameraFollow.cs
@@ -215,7 +217,7 @@
 68	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/ScreenResolutionSelector.cs
 92	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/SettingsController.cs
 69	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/StaminaGauge.cs
-109	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/TooltipController.cs
+110	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/TooltipController.cs
 23	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/UIColors.cs
 168	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/ValidationFeedbackUI.cs
 42	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/UI/WorldUIPositioner.cs

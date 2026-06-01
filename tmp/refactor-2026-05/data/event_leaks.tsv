@@ -1,15 +1,16 @@
+1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/InventoryService.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/MenuValidator.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Cooking/SliceScorer.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Garden/CropCatalogService.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Common/GameRandom.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/HorizontalCameraMove.cs
-2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/InventoryManager.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/LoadingManager.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SettlementManager.cs
-1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SoundManager.cs
+2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/SoundManager.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/StatsSystem.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Common/TimeManager.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/BaseStorage.cs
+1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CookingBackgroundController.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CustomerLifecycle.cs
 5	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/CustomerManager.cs
 3	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/FireMiniGame.cs
@@ -18,6 +19,7 @@
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/MixMiniGame.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/SauceMiniGame.cs
 2	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Cooking/TakingCustomer.cs
+1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Garden/Farm.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/CasualDialogueProvider.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/DialogueManager.cs
 1	/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Unity/Mall/PlayerMove.cs
