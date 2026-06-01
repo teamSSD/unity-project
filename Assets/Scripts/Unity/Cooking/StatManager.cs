@@ -13,18 +13,18 @@ public class StatManager : MonoBehaviour
 
     void OnEnable()
     {
-        StatsSystem.Instance.OnStaminaExhausted += OnStaminaExhausted;
-        
-        // TimeManager의 마감 이벤트 구독
-        if (TimeManager.Instance != null)
-            TimeManager.Instance.OnTimeEnd += OnTimeEnd;
+        var stats = StatsSystem.Instance;
+        if (stats != null) stats.OnStaminaExhausted += OnStaminaExhausted;
+        var time = TimeManager.Instance;
+        if (time != null) time.OnTimeEnd += OnTimeEnd;
     }
 
     void OnDisable()
     {
-        StatsSystem.Instance.OnStaminaExhausted -= OnStaminaExhausted;
-        if (TimeManager.Instance != null)
-            TimeManager.Instance.OnTimeEnd -= OnTimeEnd;
+        var stats = StatsSystem.Instance;
+        if (stats != null) stats.OnStaminaExhausted -= OnStaminaExhausted;
+        var time = TimeManager.Instance;
+        if (time != null) time.OnTimeEnd -= OnTimeEnd;
     }
 
 

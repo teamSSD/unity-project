@@ -52,9 +52,10 @@ public class WaitingCustomer : MonoBehaviour
 
     void Start()
     {
-        if (TimeManager.Instance != null)
+        var time = TimeManager.Instance;
+        if (time != null)
         {
-            managerTimerId = TimeManager.Instance.StartCustomerTimer(
+            managerTimerId = time.StartCustomerTimer(
                 onTick: (elapsed, duration) => {
                     if (guageScript != null)
                         guageScript.SetProgress(elapsed, duration);

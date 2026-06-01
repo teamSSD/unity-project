@@ -4,9 +4,10 @@ public class TestSceneInit : MonoBehaviour
 {
     void Start()
     {
-        if (ProgressSystem.Instance != null)
+        var progress = ProgressSystem.Instance;
+        if (progress != null)
         {
-            ProgressSystem.Instance.Initialize();
+            progress.Initialize();
             Debug.Log("ProgressSystem Initialized by TestSceneInit");
         }
     }

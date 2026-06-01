@@ -31,14 +31,17 @@ while IFS= read -r f; do
     fi
 done < "$RUNTIME_LIST"
 
-# --- 2. Awake/Start/OnEnable 본문에 .Instance 접근 (초기화 순서 race) ---
-# 메서드 본문을 추출해 .Instance 매칭 여부 확인.
+# --- 2. Awake/Start/OnEnable 본문에 unsafe .Instance 접근 (초기화 순서 race) ---
+# unsafe = "\.Instance\." (null-check 없는 직접 접근).
+# safe = "\.Instance?\." (null-conditional) → 카운트 제외.
+# 메서드 본문을 추출해 unsafe 패턴 매칭 시에만 emit.
 extract_init_methods_with_instance() {
     file="$1"
     awk -v fname="$file" '
         BEGIN { depth=0; in_method=0; method_name=""; method_start=0; body="" }
         function emit() {
-            if (body ~ /\.Instance/) {
+            # unsafe pattern: .Instance.X (dot 직접 접근). .Instance?.X는 제외.
+            if (body ~ /\.Instance\.[A-Za-z_]/) {
                 printf "%s\t%s:%d\n", method_name, fname, method_start
             }
         }
@@ -56,7 +59,7 @@ extract_init_methods_with_instance() {
                     if (line ~ /\{[ \t]*$/) depth=1
                     else if (line ~ /=>/) {
                         # expression-bodied
-                        if (line ~ /\.Instance/) printf "%s\t%s:%d\n", method_name, fname, method_start
+                        if (line ~ /\.Instance\.[A-Za-z_]/) printf "%s\t%s:%d\n", method_name, fname, method_start
                         in_method=0
                     }
                 }

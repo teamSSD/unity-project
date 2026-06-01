@@ -1,6 +1,7 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/DataSaveUtil.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/IExpenseLog.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/IMoneyService.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/InventoryService.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/MenuValidator.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/RandomGeneral.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Domain/Common/RandomNormal.cs
@@ -63,6 +64,7 @@
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Cooking/SearchRecipeUsecase.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/Interfaces/Garden/TimePhaseProvider.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/BasicStats.cs
+/Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/InventoryBatch.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/InventorySaveData.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Common/PhaseData.cs
 /Users/hogun/UnityProjects/My project/unity-project/Assets/Scripts/Schema/State/Cooking/CookingToolSchema.cs

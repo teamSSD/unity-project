@@ -40,16 +40,17 @@ public class TooltipController : MonoBehaviour
         hoverStateUtil = GetComponent<HoverStateUtil>();
         clickStateUtil = GetComponent<ClickStateUtil>();
 
-        if (UIManager.Instance == null)
+        var ui = UIManager.Instance;
+        if (ui == null)
         {
             Debug.LogWarning($"[TooltipController] {gameObject.name}: UIManager.Instance is null! Cannot get global tooltip.");
             return;
         }
 
         if (GetComponent<FoodModel>() != null)
-            tooltipObject = UIManager.Instance.IngredientTooltip;
+            tooltipObject = ui.IngredientTooltip;
         else if (GetComponent<CookingToolModel>() != null)
-            tooltipObject = UIManager.Instance.CookingToolTooltip;
+            tooltipObject = ui.CookingToolTooltip;
 
         if (tooltipObject == null)
             Debug.LogError($"[TooltipController] {gameObject.name}: Failed to get global tooltip!");

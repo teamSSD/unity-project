@@ -16,19 +16,19 @@ public class SmoothMoneyText : MonoBehaviour
 
     void OnEnable()
     {
-        if (StatsSystem.Instance == null)
-            return;
+        var stats = StatsSystem.Instance;
+        if (stats == null) return;
 
-        StatsSystem.Instance.OnMoneyChanged += SetTargetValue;
-        int currentMoney = StatsSystem.Instance.GetMoney();
+        stats.OnMoneyChanged += SetTargetValue;
+        int currentMoney = stats.GetMoney();
         SetTargetValue(currentMoney);
         currentDisplayValue = currentMoney;
     }
 
     void OnDisable()
     {
-        if (StatsSystem.Instance != null)
-            StatsSystem.Instance.OnMoneyChanged -= SetTargetValue;
+        var stats = StatsSystem.Instance;
+        if (stats != null) stats.OnMoneyChanged -= SetTargetValue;
     }
 
     private void SetTargetValue(int newValue)

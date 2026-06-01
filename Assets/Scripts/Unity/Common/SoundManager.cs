@@ -39,8 +39,8 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
 
     private void Start()
     {
-        if (ProgressSystem.Instance != null)
-            ProgressSystem.Instance.OnPhaseChanged += OnPhaseChanged;
+        var progress = ProgressSystem.Instance;
+        if (progress != null) progress.OnPhaseChanged += OnPhaseChanged;
         UpdateBGM();
         RegisterButtons(null);
     }

@@ -18,17 +18,17 @@ public class LinearGauge : MonoBehaviour
 
     void OnEnable()
     {
-        if (StatsSystem.Instance == null)
-            return;
+        var stats = StatsSystem.Instance;
+        if (stats == null) return;
 
-        StatsSystem.Instance.OnStaminaChanged += UpdateGauge;
-        UpdateGauge(StatsSystem.Instance.GetStamina());
+        stats.OnStaminaChanged += UpdateGauge;
+        UpdateGauge(stats.GetStamina());
     }
 
     void OnDisable()
     {
-        if (StatsSystem.Instance != null)
-            StatsSystem.Instance.OnStaminaChanged -= UpdateGauge;
+        var stats = StatsSystem.Instance;
+        if (stats != null) stats.OnStaminaChanged -= UpdateGauge;
     }
 
     private void UpdateGauge(int currentValue)

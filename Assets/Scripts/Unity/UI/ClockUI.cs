@@ -18,11 +18,11 @@ public class ClockUI : MonoBehaviour
 
     void OnEnable()
     {
-        if (StatsSystem.Instance == null)
-            return;
+        var stats = StatsSystem.Instance;
+        if (stats == null) return;
 
-        StatsSystem.Instance.OnTimeChanged += SetTargetTime;
-        SetTargetTime(StatsSystem.Instance.GetHour(), StatsSystem.Instance.GetMinute());
+        stats.OnTimeChanged += SetTargetTime;
+        SetTargetTime(stats.GetHour(), stats.GetMinute());
         currentHourAngle  = targetHourAngle;
         currentFill       = targetFill;
         currentFillAngle  = targetFillAngle;
@@ -30,8 +30,8 @@ public class ClockUI : MonoBehaviour
 
     void OnDisable()
     {
-        if (StatsSystem.Instance != null)
-            StatsSystem.Instance.OnTimeChanged -= SetTargetTime;
+        var stats = StatsSystem.Instance;
+        if (stats != null) stats.OnTimeChanged -= SetTargetTime;
     }
 
     private void SetTargetTime(int hour, int minute)

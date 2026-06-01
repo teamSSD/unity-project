@@ -28,7 +28,7 @@ public class Farm : MonoBehaviour
             ManagerBootstrap.EnsureAll();
 
         phaseProvider = ProgressSystem.Instance;
-        if (phaseProvider == null)
+        if (phaseProvider is not ProgressSystem progress)
         {
             Debug.LogError("[Farm] ProgressSystem not found");
             return;
@@ -42,9 +42,10 @@ public class Farm : MonoBehaviour
             tile.ApplySaveData(gp.tiles[farmIndex]);
 
         // 빈 타일이면 자동 심기
-        if (!IsLocked && tile.IsEmpty())
+        var cropCatalog = GameSessionRoot.Instance?.CropCatalog;
+        if (!IsLocked && tile.IsEmpty() && cropCatalog != null)
         {
-            CropData randomCrop = GameSessionRoot.Instance.CropCatalog.GetRandomCropByWeight();
+            CropData randomCrop = cropCatalog.GetRandomCropByWeight();
             if (randomCrop != null)
             {
                 cropData = randomCrop;
@@ -52,7 +53,7 @@ public class Farm : MonoBehaviour
             }
         }
 
-        ProgressSystem.Instance.OnPhaseChanged += OnPhaseChangedHandler;
+        progress.OnPhaseChanged += OnPhaseChangedHandler;
         OnTimePassed();
     }
 

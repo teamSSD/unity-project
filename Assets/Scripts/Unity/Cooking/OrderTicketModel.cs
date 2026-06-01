@@ -31,7 +31,7 @@ public class OrderTicketModel : MonoBehaviour
 
     void Start()
     {
-        SoundManager.Instance.Play2DSFX(attachSfx, 0.4f);
+        SoundManager.Instance?.Play2DSFX(attachSfx, 0.4f);
     }
 
     void OnDestroy()
