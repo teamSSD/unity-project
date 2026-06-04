@@ -14,7 +14,8 @@ trap 'rm -rf "$WORK"' EXIT
 
 while IFS= read -r f; do
     [ -z "$f" ] && continue
-    SUBS=$(grep -oE '[A-Za-z_][A-Za-z0-9_.]*[[:space:]]*\+=[[:space:]]*[A-Za-z_][A-Za-z0-9_.]*' "$f" 2>/dev/null \
+    # 좌측에 '.' 강제 (instance.Event 패턴만) — 산술 연산 (timer += Time.deltaTime, total += amount) 오탐 제거
+    SUBS=$(grep -oE '[A-Za-z_][A-Za-z0-9_]*\.[A-Za-z_][A-Za-z0-9_.]*[[:space:]]*\+=[[:space:]]*[A-Za-z_][A-Za-z0-9_.]*' "$f" 2>/dev/null \
         | awk '{ sub(/[ \t]*\+=[ \t]*/, "|"); print }' | sort -u)
     [ -z "$SUBS" ] && continue
     echo "$SUBS" | while IFS='|' read -r evt handler; do
