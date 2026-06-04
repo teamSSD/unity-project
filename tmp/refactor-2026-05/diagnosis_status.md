@@ -22,7 +22,13 @@ _갱신: 2026-06-01 / 원천: `reports/review_master.md`, `decisions/000_index.m
 - **상태**: ⚠️ partial (Sprint 3 진행 중)
 - **결과**: 매니저 26 → ... → 15. Sprint 3-1 Stats / 3-2 Progress / 3-3 Inventory / 3-4 Recipe 도메인(MenuSelection+UnlockedFood+RecipeLookup) facade 제거 (콜러 직접 POCO Service 호출).
 - **잔여**: Phase loop 도메인(TimeManager/WeatherSystem/SettlementManager) — Update 루프 의존이라 POCO 변환 비용 큼. UI 매니저(HUDManager/UIManager/etc.)는 MonoBehaviour 적합으로 유지 후보.
-- **재방문**: Sprint 3-5 (Phase loop) 또는 다른 Critical로 분기
+- **재방문**: 잔여 13개는 MonoBehaviour 적합 분류. ADR 정신 충분히 달성. 추가 정리 대신 다른 Critical로 전환.
+
+### Sprint 3-5 — 큰 파일 분해 (MenuCardController)
+- **상태**: ✅ partial (function_over61 GREEN)
+- **결과**: MenuCardController 584→~250줄. 추출: MenuCardRecipeBuilder/LayoutHelper/ItemHelper. AdjustSpacing 62줄 → 4개 메서드 분해.
+- **게이트**: function_over61 0/0 GREEN, max_file_lines 584→433, function_over41 20→17.
+- **잔여 큰 파일**: CustomerManager(433), ShopUIAdapter(403), ProjectValidator(379), DialogueManager(321) — 분해 후보.
 
 ### #2 — Composition Root가 GameStart에서 멈춤
 - **상태**: ⚠️ partial

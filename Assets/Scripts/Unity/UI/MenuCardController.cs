@@ -27,32 +27,24 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
     private static readonly Color DisableButton = new Color(218f / 255f, 175f / 255f, 144f / 255f, 1f); // #DAAF90
     private static readonly Color DisableText = new Color(98f / 255f, 70f / 255f, 52f / 255f, 1f); // #624634
 
-    private const float RecipeDesiredSpacing = 10f;
-
     private GameObject recipeLineTemplate;
-    private GameObject itemTemplate;
     private GameObject ingredientLineTemplate;
-    private List<GameObject> spawnedLines = new List<GameObject>();
-    private List<GameObject> spawnedIngredientLines = new List<GameObject>();
+    private readonly List<GameObject> spawnedLines = new();
+    private readonly List<GameObject> spawnedIngredientLines = new();
 
     protected override void OnSingletonAwake()
     {
         isMenuCardActive = false;
-
         BindReferences();
         CacheTemplates();
     }
 
     private void BindReferences()
     {
-        // Header > Image > Text (TMP)
         nameLabel = transform.Find("Header/Image/Text (TMP)")?.GetComponent<TextMeshProUGUI>();
-
-        // FoodImage > Tool (요리도구 배경, sibling 0) + Image (음식 오버레이)
         foodToolImage = transform.Find("FoodImage/Tool")?.GetComponent<Image>();
         foodImage = transform.Find("FoodImage/Image")?.GetComponent<Image>();
 
-        // RecipeAndIngredient > Header > RecipeTab / IngredientTab
         Transform riHeader = transform.Find("RecipeAndIngredient/Header");
         if (riHeader != null)
         {
@@ -62,7 +54,6 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
             ingredientTabLabel = riHeader.Find("IngredientTab/Text (TMP)")?.GetComponent<TextMeshProUGUI>();
         }
 
-        // RecipeAndIngredient > Recipe / Ingredient
         recipeContainer = transform.Find("RecipeAndIngredient/Recipe");
         ingredientContainer = transform.Find("RecipeAndIngredient/Ingredient");
     }
@@ -71,35 +62,22 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
     {
         if (recipeContainer == null || recipeContainer.childCount == 0) return;
 
-        // RecipeLine 템플릿: Recipe 컨테이너의 첫 번째 자식
         recipeLineTemplate = recipeContainer.GetChild(0).gameObject;
-
-        // Item 템플릿: RecipeLine > Input > 첫 번째 Item
-        Transform input = recipeLineTemplate.transform.Find("Input");
-        if (input != null && input.childCount > 0)
-            itemTemplate = input.GetChild(0).gameObject;
-
-        // 모든 기존 RecipeLine 비활성화
         for (int i = 0; i < recipeContainer.childCount; i++)
             recipeContainer.GetChild(i).gameObject.SetActive(false);
 
-        // IngredientLine 템플릿: Ingredient > Viewport > Content > 첫 번째 IngredientLine (자식이 있는 것 위주)
         if (ingredientContainer != null)
         {
             Transform content = ingredientContainer.Find("Viewport/Content");
             if (content != null && content.childCount > 0)
             {
-                // 빈 자식은 템플릿으로 쓰지 않도록 검사
                 for (int i = 0; i < content.childCount; i++)
                 {
                     Transform child = content.GetChild(i);
                     if (child.childCount > 0 && ingredientLineTemplate == null)
-                    {
                         ingredientLineTemplate = child.gameObject;
-                    }
                     child.gameObject.SetActive(false);
                 }
-                
                 if (ingredientLineTemplate == null) ingredientLineTemplate = content.GetChild(0).gameObject;
             }
         }
@@ -110,82 +88,46 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
         FoodData foodData = SearchDataUtil.GetFoodDataById(foodId);
         if (foodData == null) return;
 
-        // 헤더 설정
         if (nameLabel != null) nameLabel.text = foodData.ingredientName;
 
-        // 레시피 체인 구축
-        List<RecipeData> chain = BuildRecipeChain(foodId);
-
-        // 상단 요리 이미지: 최종 레시피의 도구 + 음식 표시
-        if (chain.Count > 0)
-        {
-            var lastRecipe = chain[chain.Count - 1];
-            string lastToolId = GameSessionRoot.Instance?.RecipeLookup?.GetToolIdForMinigame(lastRecipe.minigameId);
-            CookingToolData lastToolData = !string.IsNullOrEmpty(lastToolId)
-                ? SearchDataUtil.GetCookingToolDataById(lastToolId) : null;
-
-            if (foodToolImage != null)
-            {
-                if (lastToolData != null)
-                {
-                    foodToolImage.gameObject.SetActive(true);
-                    foodToolImage.sprite = lastToolData.defaultImage;
-                }
-                else
-                {
-                    foodToolImage.gameObject.SetActive(false);
-                }
-            }
-            if (foodImage != null)
-                foodImage.sprite = !string.IsNullOrEmpty(lastToolId)
-                    ? foodData.GetImageForTool(lastToolId) : foodData.GetRepresentativeBentoImage();
-        }
-        else
-        {
-            if (foodToolImage != null) foodToolImage.gameObject.SetActive(false);
-            if (foodImage != null) foodImage.sprite = foodData.GetRepresentativeBentoImage();
-        }
-
-        // 레시피 라인 표시
+        List<RecipeData> chain = MenuCardRecipeBuilder.BuildRecipeChain(foodId);
+        ApplyHeaderImage(foodData, chain);
         PopulateRecipeLines(chain);
-        // 재료 리스트 표시
         PopulateIngredients(foodId);
 
-        if (lastTabWasIngredient)
-            OpenIngredient();
-        else
-            OpenRecipe();
+        if (lastTabWasIngredient) OpenIngredient();
+        else OpenRecipe();
         isMenuCardActive = true;
     }
 
-    /// <summary>
-    /// DFS 바텀업으로 레시피 체인 구축.
-    /// 가장 기본 단계부터 최종 요리까지 순서대로 반환.
-    /// </summary>
-    private List<RecipeData> BuildRecipeChain(string foodId)
+    private void ApplyHeaderImage(FoodData foodData, List<RecipeData> chain)
     {
-        var result = new List<RecipeData>();
-        var visited = new HashSet<string>();
-        CollectRecipes(foodId, result, visited);
-        return result;
-    }
+        if (chain.Count == 0)
+        {
+            if (foodToolImage != null) foodToolImage.gameObject.SetActive(false);
+            if (foodImage != null) foodImage.sprite = foodData.GetRepresentativeBentoImage();
+            return;
+        }
 
-    private void CollectRecipes(string foodId, List<RecipeData> result, HashSet<string> visited)
-    {
-        RecipeData recipe = SearchDataUtil.GetRecipeDataByFoodId(foodId);
-        if (recipe == null) return;
-        if (!visited.Add(recipe.id)) return;
+        var lastRecipe = chain[chain.Count - 1];
+        string lastToolId = GameSessionRoot.Instance?.RecipeLookup?.GetToolIdForMinigame(lastRecipe.minigameId);
+        CookingToolData lastToolData = !string.IsNullOrEmpty(lastToolId)
+            ? SearchDataUtil.GetCookingToolDataById(lastToolId) : null;
 
-        foreach (var input in recipe.inputs)
-            CollectRecipes(input.food.id, result, visited);
-
-        result.Add(recipe);
+        if (foodToolImage != null)
+        {
+            bool hasTool = lastToolData != null;
+            foodToolImage.gameObject.SetActive(hasTool);
+            if (hasTool) foodToolImage.sprite = lastToolData.defaultImage;
+        }
+        if (foodImage != null)
+            foodImage.sprite = !string.IsNullOrEmpty(lastToolId)
+                ? foodData.GetImageForTool(lastToolId) : foodData.GetRepresentativeBentoImage();
     }
 
     private void PopulateRecipeLines(List<RecipeData> chain)
     {
         ClearRecipeLines();
-
         if (recipeLineTemplate == null) return;
 
         foreach (var recipe in chain)
@@ -199,278 +141,47 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
 
     private void PopulateRecipeLine(Transform line, RecipeData recipe)
     {
-        string toolId = null;
-        if (GameSessionRoot.Instance?.MenuSelection != null)
-            toolId = GameSessionRoot.Instance?.RecipeLookup.GetToolIdForMinigame(recipe.minigameId);
+        string toolId = GameSessionRoot.Instance?.RecipeLookup?.GetToolIdForMinigame(recipe.minigameId);
+        CookingToolData toolData = !string.IsNullOrEmpty(toolId)
+            ? SearchDataUtil.GetCookingToolDataById(toolId) : null;
 
-        CookingToolData toolData = null;
-        if (!string.IsNullOrEmpty(toolId))
-            toolData = SearchDataUtil.GetCookingToolDataById(toolId);
-
-        // === Input 섹션 ===
         Transform inputContainer = line.Find("Input");
         if (inputContainer != null)
-            PopulateInputSection(inputContainer, recipe, toolData);
+            MenuCardItemHelper.PopulateInputSection(inputContainer, recipe, toolData);
 
-        // === Minigame 섹션 ===
-        Transform minigame = line.Find("Minigame");
-        if (minigame != null)
-        {
-            // 배경 이미지 비활성화
-            Image minigameBg = minigame.GetComponent<Image>();
-            if (minigameBg != null)
-                minigameBg.enabled = false;
+        DecorateMinigameSection(line.Find("Minigame"));
 
-            // 조리법 라벨은 도구 아이콘으로 대체하고, 구분자만 남긴다.
-            TextMeshProUGUI label = minigame.Find("Text (TMP)")?.GetComponent<TextMeshProUGUI>();
-            if (label != null) label.gameObject.SetActive(false);
-
-            Transform arrow = minigame.Find("Arrow");
-            if (arrow != null)
-            {
-                arrow.gameObject.SetActive(true);
-                TextMeshProUGUI arrowText = arrow.GetComponent<TextMeshProUGUI>();
-                if (arrowText != null)
-                {
-                    arrowText.text = ">";
-                    arrowText.fontSize = 28;
-                    arrowText.fontStyle = FontStyles.Bold;
-                    arrowText.alignment = TextAlignmentOptions.Center;
-                }
-            }
-        }
-
-        // === Result 섹션 ===
         Transform resultContainer = line.Find("Result");
         if (resultContainer != null && resultContainer.childCount > 0)
-        {
-            Transform resultItem = resultContainer.GetChild(0);
-            PopulateResultItem(resultItem, recipe.outputFood, toolId, toolData);
-        }
+            MenuCardItemHelper.PopulateResultItem(resultContainer.GetChild(0), recipe.outputFood, toolId, toolData);
     }
 
-    private void PopulateInputSection(Transform inputContainer, RecipeData recipe, CookingToolData toolData)
+    private static void DecorateMinigameSection(Transform minigame)
     {
-        // 기존 아이템 수와 필요한 수 비교
-        int existingCount = inputContainer.childCount;
-        int ingredientCount = recipe.inputs.Count;
-        int neededCount = ingredientCount + (toolData != null ? 1 : 0);
+        if (minigame == null) return;
 
-        // 부족하면 첫 번째 자식을 복제
-        if (existingCount > 0)
-        {
-            GameObject template = inputContainer.GetChild(0).gameObject;
-            for (int i = existingCount; i < neededCount; i++)
-            {
-                GameObject newItem = Instantiate(template, inputContainer);
-                newItem.SetActive(true);
-            }
-        }
+        Image minigameBg = minigame.GetComponent<Image>();
+        if (minigameBg != null) minigameBg.enabled = false;
 
-        // 초과분 비활성화
-        for (int i = neededCount; i < inputContainer.childCount; i++)
-            inputContainer.GetChild(i).gameObject.SetActive(false);
+        TextMeshProUGUI label = minigame.Find("Text (TMP)")?.GetComponent<TextMeshProUGUI>();
+        if (label != null) label.gameObject.SetActive(false);
 
-        // 각 입력 재료 설정
-        for (int i = 0; i < ingredientCount; i++)
-        {
-            Transform item = inputContainer.GetChild(i);
-            item.gameObject.SetActive(true);
-            PopulateInputItem(item, recipe.inputs[i].food);
-        }
+        Transform arrow = minigame.Find("Arrow");
+        if (arrow == null) return;
 
-        if (toolData != null)
-        {
-            Transform toolItem = inputContainer.GetChild(ingredientCount);
-            toolItem.gameObject.SetActive(true);
-            PopulateToolItem(toolItem, toolData);
-        }
+        arrow.gameObject.SetActive(true);
+        TextMeshProUGUI arrowText = arrow.GetComponent<TextMeshProUGUI>();
+        if (arrowText == null) return;
 
-        // 동적 간격 조절 (할당된 공간에 맞춰서 줄이기)
-        if (inputContainer is RectTransform rectTrans)
-        {
-            AdjustSpacing(rectTrans);
-        }
-    }
-
-    private void AdjustSpacing(RectTransform container)
-    {
-        var layoutGroup = container.GetComponent<HorizontalLayoutGroup>();
-        if (layoutGroup == null) return;
-
-        // 부모(RecipeLine) 레벨에서 레이아웃 강제 갱신 (침범 방지)
-        RectTransform parentRT = container.parent as RectTransform;
-        if (parentRT != null)
-        {
-            LayoutRebuilder.ForceRebuildLayoutImmediate(parentRT);
-        }
-        else
-        {
-            LayoutRebuilder.ForceRebuildLayoutImmediate(container);
-        }
-
-        float availableWidth = container.rect.width;
-        if (availableWidth <= 0)
-            availableWidth = EstimateInputWidthFromRecipeLine(container, parentRT);
-
-        int activeCount = 0;
-        float itemWidth = 0;
-
-        foreach (Transform child in container)
-        {
-            if (child.gameObject.activeSelf)
-            {
-                activeCount++;
-                if (itemWidth == 0)
-                {
-                    var rt = child.GetComponent<RectTransform>();
-                    itemWidth = (rt != null && rt.rect.width > 0) ? rt.rect.width : 70f;
-                }
-            }
-        }
-
-        // 아이템 가로가 유효하지 않거나 1개 이하면 간격 조절 불필요
-        if (activeCount <= 1 || itemWidth <= 0)
-        {
-            layoutGroup.spacing = 0;
-            return;
-        }
-
-        float totalChildWidth = activeCount * itemWidth;
-
-        // 기본은 겹치지 않고, 부족할 때만 Input 영역 안에서 겹친다.
-        if (totalChildWidth + RecipeDesiredSpacing * (activeCount - 1) <= availableWidth)
-        {
-            layoutGroup.spacing = RecipeDesiredSpacing;
-        }
-        else if (totalChildWidth > availableWidth)
-        {
-            // (가용 너비 - 아이템 총합) / (간격 개수)
-            float neededSpacing = (availableWidth - totalChildWidth) / (activeCount - 1);
-            // 0보다 커지지 않도록 (벌어지지 않도록) 제한
-            layoutGroup.spacing = Mathf.Min(0, neededSpacing);
-        }
-        else
-        {
-            layoutGroup.spacing = 0;
-        }
-    }
-
-    private float EstimateInputWidthFromRecipeLine(RectTransform inputContainer, RectTransform recipeLine)
-    {
-        const float fallbackInputWidth = 520f;
-        if (recipeLine == null || recipeLine.rect.width <= 0)
-            return fallbackInputWidth;
-
-        float reservedWidth = 0f;
-        int activeSiblingCount = 0;
-        var lineLayout = recipeLine.GetComponent<HorizontalLayoutGroup>();
-
-        foreach (Transform sibling in recipeLine)
-        {
-            if (!sibling.gameObject.activeSelf)
-                continue;
-
-            activeSiblingCount++;
-            if (sibling == inputContainer.transform)
-                continue;
-
-            float width = 0f;
-            var layout = sibling.GetComponent<LayoutElement>();
-            if (layout != null && layout.preferredWidth > 0)
-                width = layout.preferredWidth;
-            else if (sibling is RectTransform siblingRect && siblingRect.rect.width > 0)
-                width = siblingRect.rect.width;
-
-            reservedWidth += width;
-        }
-
-        if (lineLayout != null && activeSiblingCount > 1)
-            reservedWidth += lineLayout.spacing * (activeSiblingCount - 1);
-
-        return Mathf.Max(120f, recipeLine.rect.width - reservedWidth);
-    }
-
-    private void PopulateInputItem(Transform item, FoodData food)
-    {
-        Image toolImage = item.Find("Tool")?.GetComponent<Image>();
-        Image ingredientImage = item.Find("Ingredient")?.GetComponent<Image>();
-
-        if (ingredientImage == null) return;
-
-        if (food.type == FoodType.INGREDIENT)
-        {
-            // 원재료: 도구 숨기고 원본 이미지만 표시
-            if (toolImage != null)
-                toolImage.gameObject.SetActive(false);
-            ingredientImage.sprite = food.image;
-        }
-        else
-        {
-            // 중간재료: 해당 재료를 만든 도구 찾아서 표시
-            RecipeData sourceRecipe = SearchDataUtil.GetRecipeDataByFoodId(food.id);
-            string sourceToolId = null;
-            if (sourceRecipe != null && GameSessionRoot.Instance?.MenuSelection != null)
-                sourceToolId = GameSessionRoot.Instance?.RecipeLookup.GetToolIdForMinigame(sourceRecipe.minigameId);
-
-            if (!string.IsNullOrEmpty(sourceToolId))
-            {
-                CookingToolData sourceToolData = SearchDataUtil.GetCookingToolDataById(sourceToolId);
-                if (toolImage != null)
-                {
-                    toolImage.gameObject.SetActive(true);
-                    toolImage.sprite = sourceToolData?.defaultImage;
-                }
-                ingredientImage.sprite = food.GetImageForTool(sourceToolId);
-            }
-            else
-            {
-                if (toolImage != null)
-                    toolImage.gameObject.SetActive(false);
-                ingredientImage.sprite = food.image;
-            }
-        }
-    }
-
-    private void PopulateToolItem(Transform item, CookingToolData toolData)
-    {
-        Image toolImage = item.Find("Tool")?.GetComponent<Image>();
-        Image ingredientImage = item.Find("Ingredient")?.GetComponent<Image>();
-
-        if (toolImage != null)
-        {
-            toolImage.gameObject.SetActive(false);
-        }
-
-        if (ingredientImage != null)
-        {
-            ingredientImage.gameObject.SetActive(true);
-            ingredientImage.sprite = toolData.defaultImage;
-        }
-    }
-
-    private void PopulateResultItem(Transform item, FoodData food, string toolId, CookingToolData toolData)
-    {
-        Image toolImage = item.Find("Tool")?.GetComponent<Image>();
-        Image ingredientImage = item.Find("Ingredient")?.GetComponent<Image>();
-
-        if (ingredientImage == null) return;
-
-        if (toolImage != null)
-        {
-            toolImage.gameObject.SetActive(true);
-            toolImage.sprite = toolData?.defaultImage;
-        }
-
-        ingredientImage.sprite = !string.IsNullOrEmpty(toolId)
-            ? food.GetImageForTool(toolId)
-            : food.image;
+        arrowText.text = ">";
+        arrowText.fontSize = 28;
+        arrowText.fontStyle = FontStyles.Bold;
+        arrowText.alignment = TextAlignmentOptions.Center;
     }
 
     public void OpenRecipe()
     {
         lastTabWasIngredient = false;
-
         if (recipeContainer != null) recipeContainer.gameObject.SetActive(true);
         if (ingredientContainer != null) ingredientContainer.gameObject.SetActive(false);
 
@@ -483,7 +194,6 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
     public void OpenIngredient()
     {
         lastTabWasIngredient = true;
-
         if (recipeContainer != null) recipeContainer.gameObject.SetActive(false);
         if (ingredientContainer != null) ingredientContainer.gameObject.SetActive(true);
 
@@ -508,33 +218,26 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
     private void ClearRecipeLines()
     {
         foreach (var line in spawnedLines)
-        {
-            if (line != null)
-                Destroy(line);
-        }
+            if (line != null) Destroy(line);
         spawnedLines.Clear();
     }
 
     private void ClearIngredientLines()
     {
         foreach (var line in spawnedIngredientLines)
-        {
-            if (line != null)
-                Destroy(line);
-        }
+            if (line != null) Destroy(line);
         spawnedIngredientLines.Clear();
     }
 
     private void PopulateIngredients(string foodId)
     {
         ClearIngredientLines();
-
         if (ingredientLineTemplate == null || ingredientContainer == null) return;
 
         Transform content = ingredientContainer.Find("Viewport/Content");
         if (content == null) return;
 
-        List<FoodData> ingredients = GetUniqueIngredients(foodId);
+        List<FoodData> ingredients = MenuCardRecipeBuilder.GetUniqueIngredients(foodId);
 
         foreach (var ingredient in ingredients)
         {
@@ -548,37 +251,5 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
             TextMeshProUGUI nameTMP = cellGO.transform.Find("Name")?.GetComponent<TextMeshProUGUI>();
             if (nameTMP != null) nameTMP.text = ingredient.ingredientName;
         }
-    }
-
-    private List<FoodData> GetUniqueIngredients(string foodId)
-    {
-        var ingredients = new List<FoodData>();
-        var visited = new HashSet<string>();
-        var queue = new Queue<string>();
-        queue.Enqueue(foodId);
-
-        while (queue.Count > 0)
-        {
-            string currentId = queue.Dequeue();
-            if (!visited.Add(currentId)) continue;
-
-            FoodData data = SearchDataUtil.GetFoodDataById(currentId);
-            if (data == null) continue;
-
-            if (data.type == FoodType.INGREDIENT)
-            {
-                ingredients.Add(data);
-            }
-            else
-            {
-                RecipeData recipe = SearchDataUtil.GetRecipeDataByFoodId(currentId);
-                if (recipe != null)
-                {
-                    foreach (var input in recipe.inputs)
-                        queue.Enqueue(input.food.id);
-                }
-            }
-        }
-        return ingredients;
     }
 }
