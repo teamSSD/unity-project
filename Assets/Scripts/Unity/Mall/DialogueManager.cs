@@ -31,9 +31,17 @@ public partial class DialogueManager : MonoBehaviour
     [Header("SFX")]
     [SerializeField] private AudioClip npcBlipSfx;
 
+    [Header("Input Timing")]
+    [SerializeField] private float skipCooldown = 0.15f;        // Skip 직후 다음 입력 무시
+    [SerializeField] private float holdThreshold = 0.3f;        // Space 꾹 누름 인식 시간
+    [SerializeField] private float autoAdvanceInterval = 0.15f; // 꾹 누름 시 auto-advance 간격
+
     private bool _isTyping;
     private CancellationTokenSource _typingCts;
     private string _currentLineText;
+    private float _skipCooldownUntil;
+    private float _spaceHoldTime;
+    private float _nextAutoAdvanceTime;
 
     // 분기 응답 재생 상태
     private List<DialogueLine> branchResponses;
@@ -79,8 +87,10 @@ public partial class DialogueManager : MonoBehaviour
 
     private void OnPanelClicked()
     {
-        if (!dialoguePanel.activeSelf || waitingForChoice) return;
-        if (_isTyping) { SkipTyping(); return; }
+        if (!dialoguePanel.activeSelf) return;
+        if (_isTyping) { SkipTyping(); return; }  // 선택지 대기 중이라도 typing 완성은 허용
+        if (waitingForChoice) return;
+        if (Time.unscaledTime < _skipCooldownUntil) return;  // Skip 직후 더블탭 방어
         AdvanceDialogue();
     }
 
@@ -108,13 +118,46 @@ public partial class DialogueManager : MonoBehaviour
     {
         if (justStarted) { justStarted = false; return; }
 
-        if (!dialoguePanel.activeSelf || waitingForChoice)
+        if (!dialoguePanel.activeSelf)
+        {
+            _spaceHoldTime = 0f;
             return;
+        }
 
+        // 단발 누름 (1회 진행 또는 skip) — typing 중이면 선택지 대기 중이라도 skip 허용
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (_isTyping) SkipTyping();
-            else AdvanceDialogue();
+            if (_isTyping)
+            {
+                SkipTyping();
+            }
+            else if (!waitingForChoice && Time.unscaledTime >= _skipCooldownUntil)  // Skip 직후 더블탭 방어
+            {
+                AdvanceDialogue();
+            }
+            _nextAutoAdvanceTime = Time.unscaledTime + holdThreshold;
+        }
+
+        // 꾹 누름 — 임계값 지나면 auto-advance 반복
+        if (Input.GetKey(KeyCode.Space))
+        {
+            _spaceHoldTime += Time.unscaledDeltaTime;
+            if (_spaceHoldTime >= holdThreshold && Time.unscaledTime >= _nextAutoAdvanceTime)
+            {
+                if (_isTyping)
+                {
+                    SkipTyping();
+                }
+                else if (!waitingForChoice && Time.unscaledTime >= _skipCooldownUntil)
+                {
+                    AdvanceDialogue();
+                }
+                _nextAutoAdvanceTime = Time.unscaledTime + autoAdvanceInterval;
+            }
+        }
+        else
+        {
+            _spaceHoldTime = 0f;
         }
     }
 
@@ -211,6 +254,7 @@ public partial class DialogueManager : MonoBehaviour
         _typingCts?.Cancel();
         dialogueText.text = _currentLineText ?? "";
         _isTyping = false;
+        _skipCooldownUntil = Time.unscaledTime + skipCooldown;  // 직후 더블탭 → AdvanceDialogue 방어
     }
 
     void ShowEntry(DialogueEntry entry)
