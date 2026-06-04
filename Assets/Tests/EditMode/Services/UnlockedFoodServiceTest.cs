@@ -41,14 +41,14 @@ public class UnlockedFoodServiceTest
     }
 
     [Test]
-    public void UnlockDefaultRecipes_AddsTwoMainsTwoSides()
+    public void UnlockDefaultRecipes_AddsTwoMainsOneSide()
     {
         var svc = BuildSvc();
         svc.UnlockDefaultRecipes();
         Assert.IsTrue(svc.IsUnlocked("I044"));
         Assert.IsTrue(svc.IsUnlocked("I060"));
         Assert.IsTrue(svc.IsUnlocked("I046"));
-        Assert.IsTrue(svc.IsUnlocked("I062"));
+        Assert.IsFalse(svc.IsUnlocked("I062")); // 환기구 연어구이는 시작 unlock에서 제외 (시작 재료 인벤토리 cap fit)
     }
 
     [Test]
@@ -111,7 +111,7 @@ public class UnlockedFoodServiceTest
         Assert.IsTrue(svc.IsUnlocked("I044"));
         Assert.IsTrue(svc.IsUnlocked("I060"));
         Assert.IsTrue(svc.IsUnlocked("I046"));
-        Assert.IsTrue(svc.IsUnlocked("I062"));
+        Assert.IsFalse(svc.IsUnlocked("I062")); // 시작 unlock에서 제외
     }
 
     [Test]

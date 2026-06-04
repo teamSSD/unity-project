@@ -44,7 +44,7 @@ namespace Game.Domain.Cooking
         public void UnlockDefaultRecipes()
         {
             string[] defaultMains = { "I044", "I060" };
-            string[] defaultSides = { "I046", "I062" };
+            string[] defaultSides = { "I046" };
             foreach (var id in defaultMains) UnlockRecipe(id);
             foreach (var id in defaultSides) UnlockRecipe(id);
         }

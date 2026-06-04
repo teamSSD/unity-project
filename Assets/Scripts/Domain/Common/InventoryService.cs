@@ -14,12 +14,13 @@ namespace Game.Domain.Common
     public class InventoryService : LoadInventoryUsecase
     {
         // 시작 메뉴 원재료
+        // 시작 재료는 인벤토리 lv 0 capacity (Refrigerator 7 / UpperShelf 3 / LowerShelf 4) 안에 맞춤.
+        // 시작 unlock 3개 메뉴 (I044 기계장 고기정식 / I060 옥상 오믈렛 / I046 루미 젤리) input만 포함.
         private static readonly Dictionary<string, int> StartingIngredients = new()
         {
             { "I007", 3 }, { "I008", 3 }, { "I009", 3 }, { "I010", 3 },
-            { "I017", 3 }, { "I019", 3 }, { "I020", 3 }, { "I022", 3 },
-            { "I025", 3 }, { "I026", 3 }, { "I027", 3 }, { "I031", 3 },
-            { "I068", 3 },
+            { "I017", 3 }, { "I019", 3 }, { "I020", 3 },
+            { "I026", 3 }, { "I027", 3 },
         };
 
         private readonly Dictionary<FoodData, List<InventoryBatch>> _inventory = new();
