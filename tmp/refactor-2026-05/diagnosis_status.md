@@ -1,6 +1,6 @@
 # Master Diagnosis — Status Tracking (Canonical)
 
-_갱신: 2026-06-04 (Sprint 3-12 종료 시점) / 원천: `reports/review_master.md`, `decisions/000_index.md`_
+_갱신: 2026-06-04 (Sprint 3-14 종료 시점 — phase 종료) / 원천: `reports/review_master.md`, `decisions/000_index.md`_
 
 > **이 문서가 유일한 진단 상태 원천**. `gate.sh`는 측정 가능한 일부를 자동화한 *파생물*.
 > 진단 항목별 상태가 `done/partial/deferred/wontfix` 중 하나로 명시되어야 함.
@@ -25,10 +25,14 @@ _갱신: 2026-06-04 (Sprint 3-12 종료 시점) / 원천: `reports/review_master
 - **wontfix 정당화**: 잔여 13개는 모두 Unity 라이프사이클 (Update/Awake/Inspector/Audio) 본질적 의존. ADR-001 "Stateful 매니저 0" 정신은 POCO Service 분리로 달성.
 
 ### #2 — Composition Root가 GameStart에서 멈춤
-- **상태**: ⚠️ partial
-- **결과**: Refrigerator.Awake race 해결. WireServices 도메인별 분해 (Catalog/Inventory/Mall/Cooking).
-- **잔여**: 씬별 Composition Root 확장 (CookingSceneController가 자식에 capacity 주입 등). 매직 스트링/넘버 그대로.
-- **재방문**: Phase 5+ (큰 작업, 신기능 시 자연 분해 기회)
+- **상태**: ✅ done (Sprint 3-13/3-14)
+- **결과**:
+  - WireServices 도메인별 분해 (Catalog/Inventory/Mall/Cooking)
+  - Storage 3개 (Refrigerator/UpperShelf/LowerShelf) Awake 직접 fetch 제거 → BaseStorage.Inject + CookingSceneManager.InjectStorageCapacity
+  - 매직 스트링 6건 → TypeId/DefaultCapacity 상수 명명
+  - BentoSelectionController.Inject(IUnlockedFoodProvider, MenuSelectionService) — MallSceneController가 명시 주입
+  - 부수효과: 잠재 버그 1건 발견 + fix (BentoSelection stale unlock 데이터 — Show()에 LoadAllFoodData 재호출)
+- **잔여**: CookingSceneManager는 이미 모범적 DI 패턴. 다른 씬은 컨트롤러 자체가 thin이라 추가 작업 비용 > 가치.
 
 ### #3 — 이벤트 누수 5+건 (CustomerManager 람다 클로저)
 - **상태**: ✅ done (2026-06-01 fix + 2026-06-04 regex 정확도)
@@ -138,13 +142,13 @@ WireServices 44 → 18라인. WireCatalogAndUpgrades / WireInventoryAndPurchase 
 
 ---
 
-## 진짜 남은 일
+## 진짜 남은 일 (다음 phase로 이월)
 
-1. **#2 씬별 Composition Root 확장**: ⚠️ partial. CookingSceneController/MallSceneController 등 씬 진입점에서 자식 컴포넌트에 의존 주입. 큰 작업이라 신기능 phase로 자연 분해 권장.
-2. **test_coverage Goodhart 회피**: 단순 grep 휴리스틱 → Unity Code Coverage package 도입으로 정확 측정 후 재정의.
-3. **TimeManager Update 루프 POCO 검토**: 어댑터 wrapper 패턴 가능하나 ROI < 비용.
+1. **test_coverage Goodhart 회피**: 단순 grep 휴리스틱 → Unity Code Coverage package 도입으로 정확 측정 후 게이트 target 재정의. 단순 grep 기반 19% 게이트 자체는 신뢰도 낮음.
+2. **TimeManager Update 루프 POCO 검토**: 어댑터 wrapper 패턴 가능하나 ROI < 비용. wontfix 분류 적합.
+3. **신기능 자연 분해 대기**: 잔여 UI 매니저 9개는 신기능 시 자연 분해될 수 있음 (책임이 줄거나 늘 때).
 
-→ 이 phase는 **2026-05 대규모 리펙터링 종료점**으로 적합.
+→ **2026-05 대규모 리펙터링 phase 확정 종료**. 마스터 진단 Top 5 + Cross-cutting A-H 모두 ✅ done (#1만 wontfix 정당화). 정량 13/15 done.
 
 ---
 
