@@ -6,7 +6,9 @@ using UnityEngine;
 /// </summary>
 public class UpperShelf : BaseStorage
 {
-    private void Awake() => capacity = GameSessionRoot.Instance?.StorageUpgrade?.GetCurrentData("upperShelf")?.value ?? 3;
+    public const string TypeId = "upperShelf";
+    public const int DefaultCapacity = 3;
+    public override string UpgradeTypeId => TypeId;
 
     [SerializeField] private float xOffset = 0f;
     [SerializeField] private float yPosition = 0f;

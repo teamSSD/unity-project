@@ -16,6 +16,15 @@ public abstract class BaseStorage : MonoBehaviour
     public int Capacity => capacity;
     public bool IsFull => foodModels.Count >= capacity;
 
+    /// <summary>StorageUpgrade 타입 식별자 — 씬 컨트롤러가 capacity 주입 시 사용.</summary>
+    public abstract string UpgradeTypeId { get; }
+
+    /// <summary>Composition Root에서 명시 주입 — Awake .Instance 직접 호출 제거.</summary>
+    public void Inject(int newCapacity)
+    {
+        capacity = newCapacity;
+    }
+
     /// <summary>
     /// Add a single ingredient to storage. Returns false if full.
     /// </summary>

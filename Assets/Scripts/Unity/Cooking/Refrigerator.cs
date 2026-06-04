@@ -6,7 +6,9 @@ using UnityEngine;
 /// </summary>
 public class Refrigerator : BaseStorage
 {
-    private void Awake() => capacity = GameSessionRoot.Instance?.StorageUpgrade?.GetCurrentData("refrigerator")?.value ?? 7;
+    public const string TypeId = "refrigerator";
+    public const int DefaultCapacity = 7;
+    public override string UpgradeTypeId => TypeId;
 
     [SerializeField] private float xOffset = 0f;
     [SerializeField] private float yOffset = 0f;

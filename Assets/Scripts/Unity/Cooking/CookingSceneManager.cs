@@ -33,9 +33,21 @@ public class CookingSceneManager : MonoBehaviour
         upperShelf = upperShelfGameObject.GetComponent<UpperShelf>();
         lowerShelf = lowerShelfGameObject.GetComponent<LowerShelf>();
 
+        // Composition Root: 씬 컨트롤러가 자식에 capacity 명시 주입
+        InjectStorageCapacity(refrigerator, Refrigerator.DefaultCapacity);
+        InjectStorageCapacity(upperShelf,   UpperShelf.DefaultCapacity);
+        InjectStorageCapacity(lowerShelf,   LowerShelf.DefaultCapacity);
+
         FillStorage(refrigerator, IngredientDisplayCategory.Refrigerator, refrigeratorGameObject);
         FillStorage(upperShelf, IngredientDisplayCategory.UpperShelf, upperShelfGameObject);
         FillStorage(lowerShelf, IngredientDisplayCategory.LowerShelf, lowerShelfGameObject);
+    }
+
+    private static void InjectStorageCapacity(BaseStorage storage, int fallback)
+    {
+        var upgradeSvc = GameSessionRoot.Instance?.StorageUpgrade;
+        int capacity = upgradeSvc?.GetCurrentData(storage.UpgradeTypeId)?.value ?? fallback;
+        storage.Inject(capacity);
     }
 
     private void FillStorage(BaseStorage storage, IngredientDisplayCategory category, GameObject parent)
