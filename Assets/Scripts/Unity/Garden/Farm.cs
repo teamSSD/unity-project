@@ -88,7 +88,7 @@ public class Farm : MonoBehaviour
                 if (tile.Harvest(out string id, out int crops, harvestCount))
                 {
                     Debug.Log($"[Farm] Harvested! [{id}] x{crops}");
-                    InventoryManager.Instance?.AddHarvestedCrop(id, crops);
+                    GameSessionRoot.Instance?.Inventory?.AddHarvestedCrop(id, crops);
 
                     // 수확 후 자동 심기
                     CropData nextCrop = GameSessionRoot.Instance.CropCatalog.GetRandomCropByWeight();

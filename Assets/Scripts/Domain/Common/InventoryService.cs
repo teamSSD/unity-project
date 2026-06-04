@@ -6,12 +6,12 @@ using UnityEngine;
 namespace Game.Domain.Common
 {
     /// <summary>
-    /// 인벤토리 로직 (POCO Service). InventoryManager에서 추출.
+    /// 인벤토리 로직 (POCO Service).
     /// 런타임 상태: Dictionary&lt;FoodData, List&lt;InventoryBatch&gt;&gt;
     /// 디스크 형식: InventorySaveData (foodId 기반 string ID, 카탈로그 lookup으로 복원).
     /// 의존: 카탈로그(FoodData 리스트), StorageUpgradeService(CanAcceptType 한정).
     /// </summary>
-    public class InventoryService
+    public class InventoryService : LoadInventoryUsecase
     {
         // 시작 메뉴 원재료
         private static readonly Dictionary<string, int> StartingIngredients = new()

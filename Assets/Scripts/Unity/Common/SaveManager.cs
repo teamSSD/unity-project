@@ -110,7 +110,7 @@ public static class SaveManager
         // 글로벌 facade 매니저
         if (GameSessionRoot.Instance?.Progress != null) save.phase = GameSessionRoot.Instance?.Progress.PhaseData;
         save.stats = GameSessionRoot.Instance?.Stats.GetSaveData();
-        if (InventoryManager.Instance != null) save.inventory = InventoryManager.Instance.GetSaveData();
+        if (GameSessionRoot.Instance?.Inventory != null) save.inventory = GameSessionRoot.Instance?.Inventory.GetSaveData();
 
         // 도메인 Adapter
         GardenSaveAdapter.Capture(save);
@@ -137,7 +137,7 @@ public static class SaveManager
         var session = GameSessionRoot.Instance;
         session?.Progress?.ApplySaveData(save.phase);
         session?.Stats?.ApplySaveData(save.stats);
-        if (InventoryManager.Instance != null) InventoryManager.Instance.ApplySaveData(save.inventory);
+        if (GameSessionRoot.Instance?.Inventory != null) GameSessionRoot.Instance?.Inventory.ApplySaveData(save.inventory);
 
         // 도메인 Adapter
         GardenSaveAdapter.Apply(save);

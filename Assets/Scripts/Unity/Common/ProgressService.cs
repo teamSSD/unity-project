@@ -82,7 +82,7 @@ public class ProgressService : TimePhaseProvider
 
         stats?.SetStamina(100);
         GameRandom.InitDay(pd.Day);
-        InventoryManager.Instance?.AdvanceDay();
+        GameSessionRoot.Instance?.Inventory?.AdvanceDay();
         WeatherSystem.Instance?.UpdateWeather(pd.Day);
         SettlementManager.Instance?.Reset();
         SaveManager.SaveAll();

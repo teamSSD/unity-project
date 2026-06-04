@@ -88,7 +88,6 @@ public class GameStart : MonoBehaviour
         GameSessionRoot.Instance?.Stats.Reset();
         GameSessionRoot.Instance?.Progress.Initialize();
         UnlockedFoodManager.Instance?.Initialize();
-        InventoryManager.Instance?.Initialize();
         RecipeDataManager.Instance?.Initialize();
         RecipeLookupService.Instance?.Initialize();
     }
@@ -104,7 +103,7 @@ public class GameStart : MonoBehaviour
             session.Stats.SetStamina(100);
             session.Progress.PhaseData.Day = 0;
         }
-        InventoryManager.Instance?.ResetToDefault();
+        GameSessionRoot.Instance?.Inventory?.ResetToDefault();
         UnlockedFoodManager.Instance?.UnlockDefaultRecipes();
         DeliveryNpcDialogueInteraction.ResetAll();
         if (GameSessionRoot.Instance != null)

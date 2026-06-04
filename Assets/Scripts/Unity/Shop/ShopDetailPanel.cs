@@ -5,7 +5,7 @@ using UnityEngine.UI;
 /// <summary>
 /// ShopBook 우측 상세 + 액션 패널.
 /// 재료/업그레이드 두 종류 액션을 자식 토글로 전환.
-/// 구매/업그레이드 로직은 여기서 직접 매니저(StatsSystem, InventoryManager 등)에 위임.
+/// 구매/업그레이드 로직은 GameSessionRoot의 POCO Service에 위임.
 /// </summary>
 public class ShopDetailPanel : MonoBehaviour
 {

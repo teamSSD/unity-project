@@ -21,7 +21,7 @@ public class CookingSceneManager : MonoBehaviour
     {
         playMinigameUsecase = gameObject.GetComponent<MiniGameManager>();
         searchRecipeUsecase = RecipeLookupService.Instance;
-        loadInventoryUsecase = InventoryManager.Instance;
+        loadInventoryUsecase = GameSessionRoot.Instance?.Inventory;
 
         if (loadInventoryUsecase == null) return;
 

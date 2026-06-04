@@ -91,8 +91,8 @@ public class InventoryPageController : MonoBehaviour
         if (container == null) return;
 
         int slotCount = GetSlotCount(upgradeType);
-        var items = InventoryManager.Instance != null
-            ? InventoryManager.Instance.LoadIngredientsByCategory(category)
+        var items = GameSessionRoot.Instance?.Inventory != null
+            ? GameSessionRoot.Instance?.Inventory.LoadIngredientsByCategory(category)
             : new List<(FoodData, IngredientData)>();
 
         // 기존 슬롯 재활용 또는 생성
@@ -104,7 +104,7 @@ public class InventoryPageController : MonoBehaviour
             if (i < items.Count)
             {
                 var (food, _) = items[i];
-                int total = InventoryManager.Instance.CheckStockAmount(food);
+                int total = GameSessionRoot.Instance?.Inventory.CheckStockAmount(food) ?? 0;
                 slot.SetData(food, total);
                 slot.OnClicked = OnSlotClicked;
             }
@@ -160,7 +160,7 @@ public class InventoryPageController : MonoBehaviour
         }
         if (detailName != null)  detailName.text = food.ingredientName;
 
-        int total = InventoryManager.Instance?.CheckStockAmount(food) ?? 0;
+        int total = GameSessionRoot.Instance?.Inventory?.CheckStockAmount(food) ?? 0;
         if (detailTotalQty != null) detailTotalQty.text = $"총 {total}개";
 
         PopulateBatchList(food);
@@ -174,7 +174,7 @@ public class InventoryPageController : MonoBehaviour
         for (int i = batchListContainer.childCount - 1; i >= 0; i--)
             Destroy(batchListContainer.GetChild(i).gameObject);
 
-        var batches = InventoryManager.Instance?.GetBatches(food);
+        var batches = GameSessionRoot.Instance?.Inventory?.GetBatches(food);
         if (batches == null) return;
 
         // 임박한 순(daysRemaining 오름차순) 정렬
