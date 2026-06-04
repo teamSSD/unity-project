@@ -200,24 +200,19 @@ public static class MenuValidator
     }
 
     /// <summary>
-    /// Calculate money reward based on actual food prices and order matching
-    /// 메뉴당 배율: 주문 포함 100%, 미포함 70%
-    /// 기본 배율: 100% + (일치 사이드 개수 × 10%)
-    /// 추가 배율: 모두일치 130%, 메인일치 100%, 메인불일치 70%
+    /// 영업 보상 (기획 공식: Aftertaste_Book.md):
+    ///   보상 = 총 가격 × 메인 배율 × 사이드 배율
+    ///   메인 배율: 일치 1.0 / 불일치 0.7
+    ///   사이드 배율: 1.0 + (일치 사이드 × 0.05)
+    /// 총 가격 = 제공된 메인 + 사이드 가격 단순 합 (개별 페널티 없음).
     /// </summary>
     public static int CalculateReward(MenuSchema order, FoodSchema providedMain, List<FoodSchema> providedSides)
     {
         if (order == null || providedMain == null) return 0;
 
-        // 1. 각 음식별 가격 계산
-        float totalPrice = 0f;
+        // 총 가격 = 메인 + 사이드 합 (개별 가격에 페널티 적용 X)
+        float totalPrice = providedMain.Price;
 
-        // 메인 메뉴 가격
-        bool mainMatches = order.mainMenu.id == providedMain.foodData.id;
-        float mainPrice = providedMain.Price * (mainMatches ? 1.0f : 0.7f);
-        totalPrice += mainPrice;
-
-        // 사이드 메뉴 가격 및 일치 개수 계산
         int matchingSidesCount = 0;
         var expectedSideIds = new HashSet<string>(order.sideMenus.Select(s => s.id));
 
@@ -226,23 +221,15 @@ public static class MenuValidator
             foreach (var side in providedSides)
             {
                 if (side == null || side.foodData == null) continue;
-
-                bool sideMatches = expectedSideIds.Contains(side.foodData.id);
-                if (sideMatches) matchingSidesCount++;
-
-                float sidePrice = side.Price * (sideMatches ? 1.0f : 0.7f);
-                totalPrice += sidePrice;
+                if (expectedSideIds.Contains(side.foodData.id)) matchingSidesCount++;
+                totalPrice += side.Price;
             }
         }
 
-        // 2. 사이드 일치 보너스 (일치 사이드당 +5%)
-        float baseMultiplier = 1.0f + (matchingSidesCount * 0.05f);
-        totalPrice *= baseMultiplier;
+        bool mainMatches = order.mainMenu.id == providedMain.foodData.id;
+        float mainMultiplier = mainMatches ? 1.0f : 0.7f;
+        float sideMultiplier = 1.0f + (matchingSidesCount * 0.05f);
 
-        // 3. 메인 일치 여부 배율 (메인 불일치 시 ×0.7, 일치 시 그대로)
-        float finalMultiplier = mainMatches ? 1.0f : 0.7f;
-        totalPrice *= finalMultiplier;
-
-        return Mathf.RoundToInt(totalPrice);
+        return Mathf.RoundToInt(totalPrice * mainMultiplier * sideMultiplier);
     }
 }
