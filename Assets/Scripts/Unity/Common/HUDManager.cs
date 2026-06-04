@@ -22,7 +22,7 @@ public class HUDManager : SingletonMonoBehaviour<HUDManager>
     }
 
     /// <summary>
-    /// StatsSystem 초기화 이후 호출. HUD 활성화.
+    /// StatsService 초기화 이후 호출. HUD 활성화.
     /// </summary>
     public void Initialize()
     {

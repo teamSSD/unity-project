@@ -12,7 +12,7 @@ using UnityEngine;
 /// Managers 씬에 단 1개 배치 (기존 Singleton 매니저들이 점진 흡수됨).
 ///
 /// DefaultExecutionOrder(-999): CatalogProvider(-1000) 다음으로 Awake — 같은 씬의
-/// 다른 SingletonMonoBehaviour(StatsSystem 등) facade가 Awake 시 GameSessionRoot.State
+/// 다른 SingletonMonoBehaviour(SoundManager 등) facade가 Awake 시 GameSessionRoot.State
 /// 안전 접근 보장.
 ///
 /// Phase 3-C 진행에 따라 Service 필드/wiring이 추가됨.
@@ -36,6 +36,8 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     public MenuSelectionService MenuSelection { get; private set; }
     public UnlockedFoodService UnlockedFood { get; private set; }
     public RecipeLookupService RecipeLookup { get; private set; }
+    public WeatherService Weather { get; private set; }
+    public SettlementService Settlement { get; private set; }
 
     protected override void OnSingletonAwake()
     {
@@ -49,13 +51,25 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
         Stats = new StatsService(() => State?.stats);
         Progress = new ProgressService(() => State?.phase);
 
+        var money = new StatsMoneyAdapter();
+        var expense = new SettlementExpenseAdapter();
+        var foodCatalog = CatalogProvider.Food?.All;
+
+        WireCatalogAndUpgrades(money, expense);
+        WireInventoryAndPurchase(money, expense, foodCatalog);
+        WireMallDomain(money);
+        WireCookingDomain(foodCatalog);
+
+        Weather = new WeatherService();
+        Settlement = new SettlementService();
+    }
+
+    private void WireCatalogAndUpgrades(IMoneyService money, IExpenseLog expense)
+    {
         var cropRows = CsvModelConverter.Parse<CropData>(CatalogProvider.Csvs?.cropData);
         foreach (var row in cropRows)
             row.sprite = CatalogProvider.CropSprites?.Get(row.imagePath);
         CropCatalog = new CropCatalogService(cropRows);
-
-        var money = new StatsMoneyAdapter();
-        var expense = new SettlementExpenseAdapter();
 
         var farmRows = CsvModelConverter.Parse<FarmUpgradeData>(CatalogProvider.Csvs?.farmUpgrade);
         FarmUpgrade = new FarmUpgradeService(State.garden.persistent, farmRows, money, expense);
@@ -65,18 +79,23 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
 
         var toolRows = CsvModelConverter.Parse<ToolUpgradeData>(CatalogProvider.Csvs?.toolUpgrade);
         ToolUpgrade = new ToolUpgradeService(State.shop.persistent, toolRows, money, expense);
+    }
 
-        // Inventory를 Purchase보다 먼저 wiring (Purchase가 의존)
-        var foodCatalog = CatalogProvider.Food?.All;
+    private void WireInventoryAndPurchase(IMoneyService money, IExpenseLog expense, System.Collections.Generic.IEnumerable<FoodData> foodCatalog)
+    {
         Inventory = new InventoryService(foodCatalog, StorageUpgrade);
-
         Purchase = new PurchaseService(CatalogProvider.FoodShopConfig, Inventory, money, expense);
+    }
 
+    private void WireMallDomain(IMoneyService money)
+    {
         DeliveryQuest = new DeliveryQuestService(State.mall.persistent);
         Order = new OrderService(money);
         QuestMenus = new QuestMenuCatalog(ParseQuestMenus());
+    }
 
-        // Cooking 도메인 (RecipeData/Unlocked/RecipeLookup facade 후속)
+    private void WireCookingDomain(System.Collections.Generic.IEnumerable<FoodData> foodCatalog)
+    {
         MenuSelection = new MenuSelectionService(foodCatalog);
         UnlockedFood = new UnlockedFoodService(foodCatalog);
         RecipeLookup = new RecipeLookupService(CatalogProvider.Recipe?.All);

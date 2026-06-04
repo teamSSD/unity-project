@@ -224,8 +224,8 @@ public class CustomerManager : MonoBehaviour
     private void LogSessionSummary()
     {
         var progress = GameSessionRoot.Instance?.Progress;
-        if (sessionStats.TotalEarnings > 0 && SettlementManager.Instance != null && progress != null)
-            SettlementManager.Instance.AddIncome(PhaseToLabel(progress.PhaseData.Phase), sessionStats.TotalEarnings);
+        if (sessionStats.TotalEarnings > 0 && GameSessionRoot.Instance?.Settlement != null && progress != null)
+            GameSessionRoot.Instance?.Settlement.AddIncome(PhaseToLabel(progress.PhaseData.Phase), sessionStats.TotalEarnings);
     }
 
     private static string PhaseToLabel(PhaseType p) => p switch

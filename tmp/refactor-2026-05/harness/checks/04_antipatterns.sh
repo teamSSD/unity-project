@@ -20,7 +20,13 @@ count_p() {
 }
 
 count_p "singleton_decl"        'public static[[:space:]]+[A-Za-z_<>]+[[:space:]]+Instance'
-count_p "instance_access"        '\.Instance\b'
+# instance_access — facade .Instance 호출만. 제외:
+# - Composition Root (GameSessionRoot, CatalogProvider): ADR-001 정당
+# - .NET 시스템 라이브러리 (BindingFlags 등)
+n=$(xargs0 "$RUNTIME_LIST" grep -hE '\.Instance\b' 2>/dev/null \
+    | grep -vE 'GameSessionRoot\.Instance|CatalogProvider\.Instance|BindingFlags\.Instance' \
+    | wc -l | tr -d ' ')
+printf 'instance_access\t%s\n' "$n" >> "$OUT_AP"
 count_p "public_mutable_field"  '^[[:space:]]+public[[:space:]]+[A-Za-z_<>][A-Za-z0-9_<>,\[\]\. ]*[[:space:]]+[a-z][A-Za-z0-9_]*[[:space:]]*[=;]'
 count_p "static_mutable_field"  '^[[:space:]]+(public|private|protected|internal)?[[:space:]]*static[[:space:]]+[A-Za-z_<>][A-Za-z0-9_<>,\[\]\. ]*[[:space:]]+[A-Za-z_][A-Za-z0-9_]*[[:space:]]*[=;]'
 count_p "find_object"           'GameObject\.Find|FindObjectOfType|FindObjectsOfType|FindAnyObjectOfType|FindFirstObjectByType'

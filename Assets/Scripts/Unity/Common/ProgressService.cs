@@ -1,4 +1,5 @@
 using System;
+using Game.Domain.Mall;
 using UnityEngine;
 
 /// <summary>
@@ -34,7 +35,7 @@ public class ProgressService : TimePhaseProvider
         if (session == null) return;
         session.State.phase = new PhaseData();
         _cumulativePhaseIndex = 0;
-        WeatherSystem.Instance?.UpdateWeather(0);
+        GameSessionRoot.Instance?.Weather?.UpdateWeather(0);
     }
 
     /// <summary>
@@ -46,7 +47,7 @@ public class ProgressService : TimePhaseProvider
         if (session == null || data == null) return;
         session.State.phase = data;
         _cumulativePhaseIndex = data.Day * TotalPhaseCount + (int)data.Phase;
-        WeatherSystem.Instance?.UpdateWeather(data.Day);
+        GameSessionRoot.Instance?.Weather?.UpdateWeather(data.Day);
         OnPhaseChanged?.Invoke(data.Phase);
     }
 
@@ -72,7 +73,7 @@ public class ProgressService : TimePhaseProvider
         var pd = PhaseData;
         if (pd == null) return;
         var stats = GameSessionRoot.Instance?.Stats;
-        stats?.SubMoney(SettlementManager.ManagementFee);
+        stats?.SubMoney(SettlementService.ManagementFee);
 
         pd.Day++;
         pd.Phase = PhaseType.Preparation;
@@ -83,8 +84,8 @@ public class ProgressService : TimePhaseProvider
         stats?.SetStamina(100);
         GameRandom.InitDay(pd.Day);
         GameSessionRoot.Instance?.Inventory?.AdvanceDay();
-        WeatherSystem.Instance?.UpdateWeather(pd.Day);
-        SettlementManager.Instance?.Reset();
+        GameSessionRoot.Instance?.Weather?.UpdateWeather(pd.Day);
+        GameSessionRoot.Instance?.Settlement?.Reset(stats?.GetMoney() ?? 0);
         SaveManager.SaveAll();
     }
 

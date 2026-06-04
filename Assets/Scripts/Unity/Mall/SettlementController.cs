@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using Game.Domain.Mall;
 using TMPro;
 using UnityEngine;
 
@@ -53,7 +54,7 @@ public class SettlementController : MonoBehaviour
 
     private void BuildUI()
     {
-        var sm = SettlementManager.Instance;
+        var sm = GameSessionRoot.Instance?.Settlement;
         var ps = GameSessionRoot.Instance?.Progress;
         var ss = GameSessionRoot.Instance?.Stats;
 
@@ -68,15 +69,15 @@ public class SettlementController : MonoBehaviour
 
         foreach (var (label, amount) in sm.GetExpenseEntries())
             SpawnLine(expenseContainer, label, amount, true);
-        SpawnLine(expenseContainer, "관리비", SettlementManager.ManagementFee, true);
+        SpawnLine(expenseContainer, "관리비", SettlementService.ManagementFee, true);
 
-        int totalExpense = sm.TotalExpense() + SettlementManager.ManagementFee;
+        int totalExpense = sm.TotalExpense() + SettlementService.ManagementFee;
         expenseTotalText.text = $"-{totalExpense:N0}G";
 
         if (ss != null)
         {
             // ManagementFee는 PassDay에서 차감되므로 미리 반영
-            int finalMoney = ss.GetMoney() - SettlementManager.ManagementFee;
+            int finalMoney = ss.GetMoney() - SettlementService.ManagementFee;
             int netChange  = totalIncome - totalExpense;
             string sign    = netChange >= 0 ? "+" : "";
             balanceText.text = $"{finalMoney:N0}G  ({sign}{netChange:N0})";

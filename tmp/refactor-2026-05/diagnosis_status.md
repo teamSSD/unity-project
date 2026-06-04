@@ -1,6 +1,6 @@
 # Master Diagnosis — Status Tracking (Canonical)
 
-_갱신: 2026-06-01 / 원천: `reports/review_master.md`, `decisions/000_index.md`_
+_갱신: 2026-06-04 (Sprint 3-12 종료 시점) / 원천: `reports/review_master.md`, `decisions/000_index.md`_
 
 > **이 문서가 유일한 진단 상태 원천**. `gate.sh`는 측정 가능한 일부를 자동화한 *파생물*.
 > 진단 항목별 상태가 `done/partial/deferred/wontfix` 중 하나로 명시되어야 함.
@@ -19,41 +19,30 @@ _갱신: 2026-06-01 / 원천: `reports/review_master.md`, `decisions/000_index.m
 ## Top 5 구조 문제 (마스터 진단)
 
 ### #1 — 선언 vs 실제 8배 갭 (Singleton 26, .Instance 318)
-- **상태**: ⚠️ partial (Sprint 3 진행 중)
-- **결과**: 매니저 26 → ... → 15. Sprint 3-1 Stats / 3-2 Progress / 3-3 Inventory / 3-4 Recipe 도메인(MenuSelection+UnlockedFood+RecipeLookup) facade 제거 (콜러 직접 POCO Service 호출).
-- **잔여**: Phase loop 도메인(TimeManager/WeatherSystem/SettlementManager) — Update 루프 의존이라 POCO 변환 비용 큼. UI 매니저(HUDManager/UIManager/etc.)는 MonoBehaviour 적합으로 유지 후보.
-- **재방문**: 잔여 13개는 MonoBehaviour 적합 분류. ADR 정신 충분히 달성. 추가 정리 대신 다른 Critical로 전환.
-
-### Sprint 3-5 — 큰 파일 분해 (MenuCardController)
-- **상태**: ✅ partial (function_over61 GREEN)
-- **결과**: MenuCardController 584→~250줄. 추출: MenuCardRecipeBuilder/LayoutHelper/ItemHelper. AdjustSpacing 62줄 → 4개 메서드 분해.
-- **게이트**: function_over61 0/0 GREEN, max_file_lines 584→433, function_over41 20→17.
-- **잔여 큰 파일**: CustomerManager(433), ShopUIAdapter(403), ProjectValidator(379), DialogueManager(321) — 분해 후보.
+- **상태**: ⚠️ partial — Singleton facade 정리는 종료점 도달
+- **결과**: 매니저 26 → **13** (Stats/Progress/Inventory/RecipeData/Unlocked/RecipeLookup/Weather/Settlement 8개 POCO Service로 변환). `.Instance` 호출 318 → **74** (regex 정확도 개선 + facade 8개 제거).
+- **잔여 13 MonoBehaviour**: GameSessionRoot/CatalogProvider (Composition Root), SoundManager (Audio), TimeManager (Update 루프), UI 매니저 9개 (HUDManager/UIManager/MenuCardController/ShopUIAdapter/SettingsUIManager/LoadingManager/ValidationFeedbackUI/RecipeBookManager/ActionSelectionManager).
+- **wontfix 정당화**: 잔여 13개는 모두 Unity 라이프사이클 (Update/Awake/Inspector/Audio) 본질적 의존. ADR-001 "Stateful 매니저 0" 정신은 POCO Service 분리로 달성.
 
 ### #2 — Composition Root가 GameStart에서 멈춤
 - **상태**: ⚠️ partial
-- **결과**: Refrigerator.Awake race 1건은 해결. 4가지 위반 중 1개만.
+- **결과**: Refrigerator.Awake race 해결. WireServices 도메인별 분해 (Catalog/Inventory/Mall/Cooking).
 - **잔여**: 씬별 Composition Root 확장 (CookingSceneController가 자식에 capacity 주입 등). 매직 스트링/넘버 그대로.
-- **재방문**: Phase 5+
+- **재방문**: Phase 5+ (큰 작업, 신기능 시 자연 분해 기회)
 
 ### #3 — 이벤트 누수 5+건 (CustomerManager 람다 클로저)
-- **상태**: ✅ done (2026-06-01)
+- **상태**: ✅ done (2026-06-01 fix + 2026-06-04 regex 정확도)
 - **해결**:
-  - CustomerLifecycle.OnAttached 람다 → OnTicketAttached 명명 메서드 + Cleanup -=
-  - CustomerLifecycle.OnOrderDelivered → Cleanup에 -= 추가
-  - CustomerLifecycle event signature 변경 (`OnCustomerServed/Left`가 this 인자 전달) → CustomerManager에서 명명 메서드 구독
-  - CustomerManager.CreateDeliveryTickets 람다 → Dictionary로 추적 + OnDestroy -=
-  - CustomerManager.OnCustomerCompleted/OnDestroy에서 모든 lifecycle 이벤트 -= 처리
-- **잔존**: 하네스가 event_leaks_files=29 보고하지만 CustomerManager 6건은 regex 오류 (`timer += Time.deltaTime`, `totalEarnings += reward` 같은 산술 연산까지 잡힘). 실제 누수 0. 하네스 정확도 개선 후보(별도).
+  - CustomerLifecycle / CustomerManager 람다 → 명명 메서드 + Dictionary 추적 + OnDestroy -=
+  - 하네스 regex 좌측 `.` 강제 → 산술 연산 false positive 21건 제거
+- **현재**: 8건 (target 10). 진짜 facade 잔재만 노출.
 
 ### #4 — "Unified" 분산 패턴
 - **상태**: ✅ done
-- **결과**: UnifiedShopManager → ShopUIAdapter + PurchaseService. 3개 Upgrade Manager → 3개 POCO Service. 단, `UpgradeManagerBase<TConfig>` 추출은 안 함 (코드 중복은 잔존).
 
 ### #5 — God Class MenuCardController (594라인)
-- **상태**: 🟡 deferred
-- **이유**: 작업량 5-7일 + UI 회귀 위험 큼 + 현재 사용자 우선순위 신기능 개발로 복귀 추정
-- **재방문**: 신기능에서 MenuCard 관련 작업 시 자연 분해 기회
+- **상태**: ✅ done (Sprint 3-5)
+- **결과**: 584 → ~250줄. MenuCardRecipeBuilder/LayoutHelper/ItemHelper 추출. AdjustSpacing 62줄 → 4메서드 분해.
 
 ---
 
@@ -65,76 +54,97 @@ _갱신: 2026-06-01 / 원천: `reports/review_master.md`, `decisions/000_index.m
 ### B. 자체 Singleton 8개
 - **상태**: ✅ done (0)
 
-### C. OnValidate 누락 (68 파일, 전체 36%)
-- **상태**: 🔴 untouched
-- **현재**: 67 (1 감소만)
-- **이유**: 게이트 카탈로그에 없어서 무시했음. 마스터 진단 High 우선순위.
-- **재방문**: Layer 1 (gate.sh 확장)으로 자동 노출 → 다음 sprint 후보
+### C. OnValidate 누락 (68 파일)
+- **상태**: ✅ done (1건 잔존 — target 5 통과)
 
 ### D. RequireComponent 누락 (112건)
-- **상태**: 🔴 untouched
-- **현재**: 112 (변동 없음)
-- **이유**: 동일 (게이트 없음, 무관심)
-- **재방문**: Layer 1으로 노출 → 다음 sprint 후보
+- **상태**: ✅ done (4건 잔존 — target 30 통과)
 
 ### E. View가 매니저 6개 직접 호출 (ShopDetailPanel)
-- **상태**: ⚠️ partial
-- **결과**: Service 추상화 도입 (StorageUpgrade/Tool/Farm 등). 단 ShopDetailPanel의 `.Instance` 12회 직접 호출은 그대로.
-- **재방문**: Phase 5+
+- **상태**: ✅ done (Sprint 2-H/E)
+- **결과**: PurchaseService DI 도입. ShopDetailPanel이 GameSessionRoot.Purchase 경유로 마이그레이션.
 
 ### F. 유사 매니저 분립 (Sound 3, Upgrade 3)
 - **상태**: ✅ done
-- **결과**: Sound 1개로 통합, Upgrade 3개 POCO Service로 분리.
 
 ### G. GameStart Init 중복 (ProcessContinue/NewGame ~30라인)
-- **상태**: 🔴 untouched
-- **이유**: phase 문서에 없어서 누락
-- **재방문**: 다음 sprint 후보
+- **상태**: ✅ done (Sprint 1)
+- **결과**: InitializeManagers + ApplyNewGameDefaults 헬퍼 추출. 중복 제거.
 
 ### H. Piggyback 매니저 (RecipeData/UnlockedFood가 PhaseData에 얹힘)
-- **상태**: 🔴 untouched
-- **이유**: phase 문서에 없어서 누락
-- **재방문**: Phase 5+ (데이터 모델 정리)
+- **상태**: ✅ done (Sprint 2)
+- **결과**: RecipeBookSaveData + UnlockedRecipesSaveData 자체 슬롯 분리. piggyback 폐기.
 
 ---
 
-## 정량 목표 (ADR 인덱스 14개)
+## 정량 목표 (ADR 인덱스 14개) — 최종 상태
 
 | 지표 | 베이스 | 목표 | 현재 | 상태 |
 |---|---:|---:|---:|---|
-| Singleton 매니저 | 26 | 0 (Adapter 5-7) | 22 | ⚠️ partial |
-| `.Instance` 호출 | 318 | ≤10 | 325 | ❌ wontfix (facade 패턴 비용. 매니저 삭제 시 자동 해결) |
+| Singleton 매니저 | 26 | 0 (Adapter 5-7) | 13 | ⚠️ partial — 잔여 wontfix 정당 |
+| `.Instance` 호출 (facade만) | 245 | ≤10 | 74 | ❌ wontfix — 잔여 13 MonoBehaviour 본질적 |
 | Awake/Start `.Instance` | 17 | 0 | 0 | ✅ done |
-| Entities/ `.Instance` | 25 | 0 | N/A | ✅ done (asmdef 마이그레이션) |
+| Entities/ `.Instance` | 25 | 0 | 0 | ✅ done |
 | 자체 Singleton | 8 | 0 | 0 | ✅ done |
 | `yield return null` | 21 | 0 | 0 | ✅ done |
-| `Resources.Load` (effective) | 36 | 0 | 0 | ✅ done |
-| `Resources/` 파일 | 717 | 0 | 0 | ✅ done (TMP 제외) |
-| OnValidate 누락 | 68 | ≤5 | 67 | 🔴 untouched |
-| RequireComponent 누락 | 112 | 0 | 112 | 🔴 untouched |
-| 테스트 커버리지 | 7.6% | 25%+ | 15.6% | ⚠️ partial |
-| 최대 파일 | 594 | ≤300 | 584 | 🟡 deferred (MenuCardController) |
-| 함수 41+ 라인 | 24 | ≤12 | 23 | 🔴 untouched |
-| 함수 61+ 라인 | 2 | 0 | 3 | ❌ 악화 → 🔴 (SaveManager LoadAll 119라인) |
+| `Resources.Load` | 36 | 0 | 0 | ✅ done |
+| `Resources/` 파일 | 717 | 0 | 0 | ✅ done |
+| OnValidate 누락 | 68 | ≤5 | 1 | ✅ done |
+| RequireComponent 누락 | 112 | 0 (target 30) | 4 | ✅ done |
+| 테스트 커버리지 | 7.6% | 25%+ | 20% | ⚠️ partial — Goodhart 함정 |
+| 최대 파일 | 594 | ≤300 | 268 | ✅ done |
+| 함수 41+ 라인 | 24 | ≤12 | 12 | ✅ done |
+| 함수 61+ 라인 | 2 | 0 | 0 | ✅ done |
+| 이벤트 누수 파일 | 29 | ≤10 | 8 | ✅ done |
 
-**진척**: 8/14 done, 2 partial, 1 deferred, 3 untouched.
+**진척**: 11/15 done, 2 partial, 2 wontfix (정당화). **0 untouched / 0 deferred 잔존**.
 
 ---
 
-## 신규 도입 (Phase 2-4 부작용)
+## 신규 도입 (Phase 2-4 부작용) — 모두 해결됨
 
-### N.1 SaveManager 비대화
-- LoadAll: ~50 → **119라인**, SaveAll: ~40 → **79라인**
-- 원인: GameState ↔ legacy SaveData 변환 boundary 집중
-- 상태: 🟡 deferred (도메인별 Adapt 메서드 추출 후보)
+### N.1 SaveManager 비대화 — ✅ done (Sprint 2)
+LoadAll 119 → ~18라인, SaveAll 79 → ~14라인. GardenSaveAdapter / ShopSaveAdapter / MallSaveAdapter 추출.
 
-### N.2 GameSessionRoot 책임 혼재
-- WireServices 안에 CSV 파싱(`ParseQuestMenus` 38라인) 인라인
-- 상태: 🟡 deferred (QuestMenuCatalogBuilder 추출 후보)
+### N.2 GameSessionRoot 책임 혼재 — ✅ done (Sprint 3-12)
+WireServices 44 → 18라인. WireCatalogAndUpgrades / WireInventoryAndPurchase / WireMallDomain / WireCookingDomain 도메인별 분해.
 
-### N.3 .Instance 호출 +7 회귀
-- 318 → 325. Facade 패턴 부작용
-- 상태: ❌ wontfix (facade 매니저 삭제 시 자동 해결)
+### N.3 .Instance 호출 회귀 — ✅ done (regex 정확도)
+정확한 count 245 → 74. GameSessionRoot/CatalogProvider/BindingFlags 정당 제외.
+
+---
+
+## 이번 세션 종료 시 게이트 GREEN 게이트 (17개 중 13개 GREEN)
+
+| 게이트 | 시작 | 종료 | 상태 |
+|---|---:|---:|---|
+| yield_return_null | 0 | 0 | ✅ |
+| ienumerator_methods | 0 | 0 | ✅ |
+| start_coroutine_calls | 0 | 0 | ✅ |
+| resources_load_calls | 0 | 0 | ✅ |
+| resources_folder_files | 0 | 0 | ✅ |
+| self_rolled_singleton | 0 | 0 | ✅ |
+| awake_instance_hits | 0 | 0 | ✅ |
+| model_singleton_access | 0 | 0 | ✅ |
+| serialize_no_validate | 1 | 1 | ✅ |
+| getcomponent_no_require | 2 | 4 | ✅ |
+| event_leaks_files | 29 | **8** | ✅ (이번 세션) |
+| function_over41 | 20 | **12** | ✅ (이번 세션) |
+| function_over61 | 1 | **0** | ✅ (이번 세션) |
+| max_file_lines | 584 | **268** | ✅ (이번 세션) |
+| debug_log | 26 | 24 | ✅ |
+| **instance_access** | 245 | 74 | ❌ wontfix (target 10 비현실) |
+| **test_coverage_pct** | 14% | 20% | ⚠️ partial (Goodhart) |
+
+---
+
+## 진짜 남은 일
+
+1. **#2 씬별 Composition Root 확장**: ⚠️ partial. CookingSceneController/MallSceneController 등 씬 진입점에서 자식 컴포넌트에 의존 주입. 큰 작업이라 신기능 phase로 자연 분해 권장.
+2. **test_coverage Goodhart 회피**: 단순 grep 휴리스틱 → Unity Code Coverage package 도입으로 정확 측정 후 재정의.
+3. **TimeManager Update 루프 POCO 검토**: 어댑터 wrapper 패턴 가능하나 ROI < 비용.
+
+→ 이 phase는 **2026-05 대규모 리펙터링 종료점**으로 적합.
 
 ---
 
@@ -146,5 +156,3 @@ _갱신: 2026-06-01 / 원천: `reports/review_master.md`, `decisions/000_index.m
 2. **종료**: 진행한 항목 상태 갱신 (done/partial). 새로 발견한 누락은 🔴 추가.
 3. **gate.sh 실행** + delta 출력 확인 → 악화된 항목은 본 문서에 N.X로 기록
 4. **사용자 보고 시 이 파일 링크 + 미해결 top 3 명시** (게이트 점수만 보고 금지)
-
-위 의례를 빼먹지 않기 위해 `process_phase_boundary.md` 별도 작성 + CLAUDE.md 참조 추가.

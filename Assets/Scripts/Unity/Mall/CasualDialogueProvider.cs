@@ -55,7 +55,7 @@ public static class CasualDialogueProvider
         if (npcLines == null) Load();
         if (!npcLines.TryGetValue(npcId, out var lines)) return null;
 
-        bool badWeather = WeatherSystem.Instance != null && WeatherSystem.Instance.IsBadWeather;
+        bool badWeather = GameSessionRoot.Instance?.Weather?.IsBadWeather ?? false;
 
         // 날씨 조건 필터: Any는 항상 포함, Good/Bad는 날씨에 따라
         var candidates = lines.Where(l =>

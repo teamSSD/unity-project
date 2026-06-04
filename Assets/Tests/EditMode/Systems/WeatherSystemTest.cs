@@ -1,21 +1,14 @@
+using Game.Domain.Common;
 using NUnit.Framework;
-using UnityEngine;
 
 public class WeatherSystemTest
 {
-    private WeatherSystem weather;
+    private WeatherService weather;
 
     [SetUp]
     public void Setup()
     {
-        var go = new GameObject("WeatherSystem");
-        weather = go.AddComponent<WeatherSystem>();
-    }
-
-    [TearDown]
-    public void Teardown()
-    {
-        Object.DestroyImmediate(weather.gameObject);
+        weather = new WeatherService();
     }
 
     [Test]
@@ -33,7 +26,6 @@ public class WeatherSystemTest
     [Test]
     public void UpdateWeather_DifferentDays_CanDiffer()
     {
-        // 100일 돌려서 Good과 Bad가 모두 나오는지 확인
         bool sawGood = false;
         bool sawBad = false;
 
@@ -42,7 +34,6 @@ public class WeatherSystemTest
             weather.UpdateWeather(day);
             if (weather.IsBadWeather) sawBad = true;
             else sawGood = true;
-
             if (sawGood && sawBad) break;
         }
 
