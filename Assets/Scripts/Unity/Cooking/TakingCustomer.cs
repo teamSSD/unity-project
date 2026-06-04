@@ -19,28 +19,20 @@ public class TakingCustomer : MonoBehaviour
 
     public void take(MenuSchema menuSchema, FoodSchema mainMenu, List<FoodSchema> sideMenus)
     {
-       ApplySpriteSettings();
-       
-       int totalPrice = 0;
-       totalPrice += mainMenu.Price;
-       sideMenus.ForEach(menu => totalPrice += menu.Price);
+        ApplySpriteSettings();
 
-       int matchCount = 0;
-       if (menuSchema.mainMenu.id == mainMenu.foodData.id) matchCount++;
-       List<string> ids = sideMenus.Select(menu => menu.foodData.id).ToList();
-       menuSchema.sideMenus.ForEach(menu =>
-       {
-           if (ids.Contains(menu.id)) matchCount++;
-       });
-
-       if (matchCount == menuSchema.sideMenus.Count + 1)
+        // 보상 지급은 CustomerLifecycle.OnOrderDelivered가 담당 (기획 공식 적용).
+        // 여기는 만족도에 따른 시각적 메시지만 처리.
+        int matchCount = 0;
+        if (menuSchema.mainMenu.id == mainMenu.foodData.id) matchCount++;
+        List<string> ids = sideMenus.Select(menu => menu.foodData.id).ToList();
+        menuSchema.sideMenus.ForEach(menu =>
         {
-            GameSessionRoot.Instance?.Stats.AddMoney(totalPrice);
-            say(customerData.satisfiedMessage);
-            return;
-        }
-        GameSessionRoot.Instance?.Stats.AddMoney((int) (totalPrice * 0.7f));
-        say(customerData.unsatisfiedMessage);
+            if (ids.Contains(menu.id)) matchCount++;
+        });
+
+        bool perfect = matchCount == menuSchema.sideMenus.Count + 1;
+        say(perfect ? customerData.satisfiedMessage : customerData.unsatisfiedMessage);
     }
 
     private void ApplySpriteSettings()

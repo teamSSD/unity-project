@@ -97,8 +97,14 @@ public class OrderTicketModel : MonoBehaviour
         await UniTask.Delay(TimeSpan.FromSeconds(time), cancellationToken: this.GetCancellationTokenOnDestroy());
         if (bento == null) return;
 
-        FoodSchema main = bento.getFoodList()[0];
-        List<FoodSchema> sides = bento.getFoodList();
+        var foodList = bento.getFoodList();
+        if (foodList.Count == 0) { Destroy(bento.gameObject); return; }
+
+        FoodSchema main = foodList[0];
+        // 메인을 제외한 사이드만 분리 (이전: 전체 리스트 → 메인이 사이드로도 카운트되는 버그)
+        List<FoodSchema> sides = foodList.Count > 1
+            ? foodList.GetRange(1, foodList.Count - 1)
+            : new List<FoodSchema>();
         Vector3 spawnPosition = bento.GetBentoPosition();
         Destroy(bento.gameObject);
         onTake.Invoke(main, sides, spawnPosition);
