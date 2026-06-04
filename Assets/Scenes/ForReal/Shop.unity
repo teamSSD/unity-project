@@ -349,7 +349,7 @@ Camera:
     x: 0
     y: 0
     width: 1
-    height: 1
+    height: 0.927
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -402,8 +402,6 @@ MonoBehaviour:
   smoothTime: 0.15
   maxSpeed: 12
   boundsSource: {fileID: 1941665793}
-  xBoundsManual: {x: -2, y: 2}
-  yBoundsManual: {x: -1, y: 1}
 --- !u!1 &319346742
 GameObject:
   m_ObjectHideFlags: 0

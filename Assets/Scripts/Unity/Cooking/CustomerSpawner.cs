@@ -25,11 +25,11 @@ public class CustomerSpawner : MonoBehaviour
         worldCanvas = canvas;
     }
 
-    // Waiting position management
+    // Waiting position management — X 범위 -8 ~ -1 (5명 균등, offset 1.75)
     private List<int> availableWaitingPositions = new List<int> { 0, 1, 2, 3, 4 };
-    private Vector3 waitingBasePosition = new Vector3(-11.37f, 0.5f, 0);
-    private Vector3 waitingPositionOffset = new Vector3(2, 0, 0);
-    private Vector3 waitingPositionVariance = new Vector3(0.8f, 0.5f, 0);
+    private Vector3 waitingBasePosition = new Vector3(-8f, 0.5f, 0);
+    private Vector3 waitingPositionOffset = new Vector3(1.75f, 0, 0);
+    private Vector3 waitingPositionVariance = new Vector3(0.3f, 0.5f, 0);
 
     // Taking customer positions
     private Vector3 exitPosition = new Vector3(-11.63f, -0.85f, 0);

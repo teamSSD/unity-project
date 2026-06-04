@@ -1382,7 +1382,7 @@ Camera:
     x: 0
     y: 0
     width: 1
-    height: 1
+    height: 0.927
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1435,8 +1435,6 @@ MonoBehaviour:
   smoothTime: 0.15
   maxSpeed: 12
   boundsSource: {fileID: 963256445}
-  xBoundsManual: {x: -33, y: 33}
-  yBoundsManual: {x: -10, y: 8}
 --- !u!1001 &6807735883559374582
 PrefabInstance:
   m_ObjectHideFlags: 0
