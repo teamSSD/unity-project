@@ -9,7 +9,7 @@ public class RecipeBookMenuProvider : ISelectMenu
 {
     public List<MenuSchema> GetTodaysMenu()
     {
-        if (RecipeDataManager.Instance == null || RecipeDataManager.Instance.GetAllMenusAsSchema().Count == 0)
+        if (GameSessionRoot.Instance?.MenuSelection == null || GameSessionRoot.Instance?.MenuSelection.GetAllMenusAsSchema().Count == 0)
         {
             Debug.LogWarning("[RecipeBookMenuProvider] RecipeDataManager not found or empty! Using fallback: first FoodData from catalog.");
             var allFood = CatalogProvider.Food?.All;
@@ -21,7 +21,7 @@ public class RecipeBookMenuProvider : ISelectMenu
             return new List<MenuSchema>();
         }
 
-        var menuList = RecipeDataManager.Instance.GetAllMenusAsSchema();
+        var menuList = GameSessionRoot.Instance?.MenuSelection.GetAllMenusAsSchema();
         foreach (var menu in menuList)
         {
             Debug.Log($"  - {menu}");

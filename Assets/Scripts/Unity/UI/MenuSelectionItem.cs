@@ -40,7 +40,7 @@ public class MenuSelectionItem : MonoBehaviour
         RecipeData recipe = SearchDataUtil.GetRecipeDataByFoodId(foodData.id);
         string toolId = null;
         if (recipe != null)
-            toolId = RecipeDataManager.Instance.GetToolIdForMinigame(recipe.minigameId);
+            toolId = GameSessionRoot.Instance?.RecipeLookup.GetToolIdForMinigame(recipe.minigameId);
 
         if (foodImage != null)
         {

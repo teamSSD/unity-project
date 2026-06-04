@@ -191,10 +191,10 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         ShowOnlyPage(mainMenu);
         UpdateBookmarkSelection(Page.Menu);
         CloseMenuCard();
-        if (UnlockedFoodManager.Instance != null)
+        if (GameSessionRoot.Instance?.UnlockedFood != null)
         {
-            PopulateContainer(mainRecipeL, UnlockedFoodManager.Instance.GetAllMainFoods());
-            PopulateContainer(mainRecipeR, UnlockedFoodManager.Instance.GetAllSideFoods());
+            PopulateContainer(mainRecipeL, GameSessionRoot.Instance?.UnlockedFood.GetAllMainFoods());
+            PopulateContainer(mainRecipeR, GameSessionRoot.Instance?.UnlockedFood.GetAllSideFoods());
         }
     }
 
@@ -220,7 +220,7 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     {
         EnsureMenuSlotTemplate(container);
         ClearChildren(container);
-        var unlockedMgr = UnlockedFoodManager.Instance;
+        var unlockedMgr = GameSessionRoot.Instance?.UnlockedFood;
         var sorted = unlockedMgr != null
             ? foods.OrderByDescending(f => unlockedMgr.IsUnlocked(f.id))
             : (IEnumerable<FoodData>)foods;

@@ -26,9 +26,6 @@ public static class ManagerBootstrap
     /// </summary>
     public static void EnsureAll()
     {
-        Ensure<UnlockedFoodManager>();
-        Ensure<RecipeDataManager>();
-        Ensure<RecipeLookupService>();
         Ensure<ActionSelectionManager>();
         Ensure<LoadingManager>();
         Ensure<HUDManager>();

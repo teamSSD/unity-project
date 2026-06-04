@@ -1,4 +1,5 @@
 using Game.Domain.Common;
+using Game.Domain.Cooking;
 using Game.Domain.Garden;
 using Game.Domain.Mall;
 using Game.Domain.Shop;
@@ -32,6 +33,9 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     public OrderService Order { get; private set; }
     public QuestMenuCatalog QuestMenus { get; private set; }
     public InventoryService Inventory { get; private set; }
+    public MenuSelectionService MenuSelection { get; private set; }
+    public UnlockedFoodService UnlockedFood { get; private set; }
+    public RecipeLookupService RecipeLookup { get; private set; }
 
     protected override void OnSingletonAwake()
     {
@@ -71,6 +75,11 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
         DeliveryQuest = new DeliveryQuestService(State.mall.persistent);
         Order = new OrderService(money);
         QuestMenus = new QuestMenuCatalog(ParseQuestMenus());
+
+        // Cooking 도메인 (RecipeData/Unlocked/RecipeLookup facade 후속)
+        MenuSelection = new MenuSelectionService(foodCatalog);
+        UnlockedFood = new UnlockedFoodService(foodCatalog);
+        RecipeLookup = new RecipeLookupService(CatalogProvider.Recipe?.All);
     }
 
     private static System.Collections.Generic.IEnumerable<(string groupId, MenuSchema menu)> ParseQuestMenus()

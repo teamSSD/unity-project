@@ -31,9 +31,9 @@ public class BentoSelectionController : MonoBehaviour
     private void LoadAllFoodData()
     {
         // UnlockedFoodManager가 있으면 해금된 레시피만 로드
-        if (UnlockedFoodManager.Instance != null)
+        if (GameSessionRoot.Instance?.UnlockedFood != null)
         {
-            unlockedProvider = UnlockedFoodManager.Instance;
+            unlockedProvider = GameSessionRoot.Instance?.UnlockedFood;
             var unlockedMains = unlockedProvider.GetUnlockedMainFoods();
             var unlockedSides = unlockedProvider.GetUnlockedSideFoods();
 
@@ -100,7 +100,7 @@ public class BentoSelectionController : MonoBehaviour
 
     private void HandleItemSelection(int bentoIndex, MenuSelectionItem item, bool isMain)
     {
-        var menu = RecipeDataManager.Instance.GetMenu(bentoIndex);
+        var menu = GameSessionRoot.Instance?.MenuSelection.GetMenu(bentoIndex);
         if (menu == null || item.CurrentFood == null) return;
 
         if (isMain)
@@ -124,7 +124,7 @@ public class BentoSelectionController : MonoBehaviour
     private void RefreshSlotUI(int bentoIndex)
     {
         var slot = bentoSlots[bentoIndex];
-        var menu = RecipeDataManager.Instance.GetMenu(bentoIndex);
+        var menu = GameSessionRoot.Instance?.MenuSelection.GetMenu(bentoIndex);
         if (slot == null || menu == null) return;
 
         slot.Refresh(menu, menu.MainMenu, menu.SideMenus);
@@ -132,7 +132,7 @@ public class BentoSelectionController : MonoBehaviour
 
     private void OnBentoNameChanged(int index, string newName)
     {
-        var menu = RecipeDataManager.Instance.GetMenu(index);
+        var menu = GameSessionRoot.Instance?.MenuSelection.GetMenu(index);
         if (menu != null)
         {
             menu.Name = newName;
@@ -141,7 +141,7 @@ public class BentoSelectionController : MonoBehaviour
 
     public void ConfirmAll()
     {
-        if (!RecipeDataManager.Instance.HasAnySelection())
+        if (!(GameSessionRoot.Instance?.MenuSelection.HasAnySelection() ?? false))
         {
             Debug.LogWarning("[BentoSelection] No menus selected!");
             return;

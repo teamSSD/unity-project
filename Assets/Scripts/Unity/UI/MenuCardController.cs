@@ -120,7 +120,7 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
         if (chain.Count > 0)
         {
             var lastRecipe = chain[chain.Count - 1];
-            string lastToolId = RecipeDataManager.Instance?.GetToolIdForMinigame(lastRecipe.minigameId);
+            string lastToolId = GameSessionRoot.Instance?.RecipeLookup?.GetToolIdForMinigame(lastRecipe.minigameId);
             CookingToolData lastToolData = !string.IsNullOrEmpty(lastToolId)
                 ? SearchDataUtil.GetCookingToolDataById(lastToolId) : null;
 
@@ -200,8 +200,8 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
     private void PopulateRecipeLine(Transform line, RecipeData recipe)
     {
         string toolId = null;
-        if (RecipeDataManager.Instance != null)
-            toolId = RecipeDataManager.Instance.GetToolIdForMinigame(recipe.minigameId);
+        if (GameSessionRoot.Instance?.MenuSelection != null)
+            toolId = GameSessionRoot.Instance?.RecipeLookup.GetToolIdForMinigame(recipe.minigameId);
 
         CookingToolData toolData = null;
         if (!string.IsNullOrEmpty(toolId))
@@ -410,8 +410,8 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
             // 중간재료: 해당 재료를 만든 도구 찾아서 표시
             RecipeData sourceRecipe = SearchDataUtil.GetRecipeDataByFoodId(food.id);
             string sourceToolId = null;
-            if (sourceRecipe != null && RecipeDataManager.Instance != null)
-                sourceToolId = RecipeDataManager.Instance.GetToolIdForMinigame(sourceRecipe.minigameId);
+            if (sourceRecipe != null && GameSessionRoot.Instance?.MenuSelection != null)
+                sourceToolId = GameSessionRoot.Instance?.RecipeLookup.GetToolIdForMinigame(sourceRecipe.minigameId);
 
             if (!string.IsNullOrEmpty(sourceToolId))
             {

@@ -286,12 +286,12 @@ public class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInteraction
     /// </summary>
     public static void UnlockMenuRecipes(MenuSchema menu)
     {
-        if (UnlockedFoodManager.Instance == null || menu == null) return;
+        if (GameSessionRoot.Instance?.UnlockedFood == null || menu == null) return;
         foreach (var main in menu.mainMenus)
-            if (main != null) UnlockedFoodManager.Instance.UnlockRecipe(main.id);
+            if (main != null) GameSessionRoot.Instance?.UnlockedFood.UnlockRecipe(main.id);
         if (menu.sideMenus != null)
             foreach (var side in menu.sideMenus)
-                if (side != null) UnlockedFoodManager.Instance.UnlockRecipe(side.id);
+                if (side != null) GameSessionRoot.Instance?.UnlockedFood.UnlockRecipe(side.id);
         // PrepareForSave 제거 (H 해결) — 다음 SaveAll에서 GetSaveData()가 직접 dump
     }
 

@@ -32,9 +32,9 @@ public class MenuSlot : MonoBehaviour
         NameLabel.text = foodData.ingredientName;
 
         RecipeData recipe = SearchDataUtil.GetRecipeDataByFoodId(Id);
-        if (recipe != null && RecipeDataManager.Instance != null)
+        if (recipe != null && GameSessionRoot.Instance?.MenuSelection != null)
         {
-            string toolId = RecipeDataManager.Instance.GetToolIdForMinigame(recipe.minigameId);
+            string toolId = GameSessionRoot.Instance?.RecipeLookup.GetToolIdForMinigame(recipe.minigameId);
             if (!string.IsNullOrEmpty(toolId))
             {
                 // 도구 배경

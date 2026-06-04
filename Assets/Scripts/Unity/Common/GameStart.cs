@@ -87,9 +87,6 @@ public class GameStart : MonoBehaviour
     {
         GameSessionRoot.Instance?.Stats.Reset();
         GameSessionRoot.Instance?.Progress.Initialize();
-        UnlockedFoodManager.Instance?.Initialize();
-        RecipeDataManager.Instance?.Initialize();
-        RecipeLookupService.Instance?.Initialize();
     }
 
     /// <summary>New Game 전용 초기값 설정.</summary>
@@ -104,7 +101,7 @@ public class GameStart : MonoBehaviour
             session.Progress.PhaseData.Day = 0;
         }
         GameSessionRoot.Instance?.Inventory?.ResetToDefault();
-        UnlockedFoodManager.Instance?.UnlockDefaultRecipes();
+        GameSessionRoot.Instance?.UnlockedFood?.UnlockDefaultRecipes();
         DeliveryNpcDialogueInteraction.ResetAll();
         if (GameSessionRoot.Instance != null)
             System.Array.Clear(GameSessionRoot.Instance.State.garden.persistent.tiles, 0,

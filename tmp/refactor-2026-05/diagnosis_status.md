@@ -20,9 +20,9 @@ _갱신: 2026-06-01 / 원천: `reports/review_master.md`, `decisions/000_index.m
 
 ### #1 — 선언 vs 실제 8배 갭 (Singleton 26, .Instance 318)
 - **상태**: ⚠️ partial (Sprint 3 진행 중)
-- **결과**: 매니저 26 → 22 → 21 → 20 → 19 → 18. Sprint 3-1 Stats / 3-2 Progress / 3-3 Inventory facade 제거 (콜러 직접 POCO Service 호출).
-- **잔여**: facade 매니저 ~11개 (RecipeData, Unlocked, Settlement, etc.). 콜러 직접 호출로 마이그레이션 필요.
-- **재방문**: Sprint 3-4 (잔여 small)
+- **결과**: 매니저 26 → ... → 15. Sprint 3-1 Stats / 3-2 Progress / 3-3 Inventory / 3-4 Recipe 도메인(MenuSelection+UnlockedFood+RecipeLookup) facade 제거 (콜러 직접 POCO Service 호출).
+- **잔여**: Phase loop 도메인(TimeManager/WeatherSystem/SettlementManager) — Update 루프 의존이라 POCO 변환 비용 큼. UI 매니저(HUDManager/UIManager/etc.)는 MonoBehaviour 적합으로 유지 후보.
+- **재방문**: Sprint 3-5 (Phase loop) 또는 다른 Critical로 분기
 
 ### #2 — Composition Root가 GameStart에서 멈춤
 - **상태**: ⚠️ partial

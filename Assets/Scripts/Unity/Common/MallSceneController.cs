@@ -47,11 +47,9 @@ public class MallSceneController : MonoBehaviour
             SceneLoader.ClearMallReturnPosition();
         }
 
-        ManagerBootstrap.Ensure<UnlockedFoodManager>();
-
         // Preparation 페이즈 진입 시 메뉴 초기화
         if (GameSessionRoot.Instance?.Progress?.PhaseData.Phase == PhaseType.Preparation)
-            RecipeDataManager.Instance?.ClearAllMenus();
+            GameSessionRoot.Instance?.MenuSelection?.ClearAllMenus();
 
         if (bentoSelectionPrefab != null)
         {
