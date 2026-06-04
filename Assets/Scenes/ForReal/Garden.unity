@@ -888,9 +888,10 @@ GameObject:
   m_Component:
   - component: {fileID: 963256446}
   - component: {fileID: 963256445}
+  - component: {fileID: 963256447}
   m_Layer: 0
   m_Name: background
-  m_TagString: Untagged
+  m_TagString: Background
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -969,6 +970,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &963256447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963256444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52eabe69d842d4037ae266349020e326, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Unity::DynamicBoundaryWalls
+  wallThickness: 0.5
 --- !u!1 &1081592761
 GameObject:
   m_ObjectHideFlags: 0
@@ -1420,7 +1434,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0, z: 0}
   smoothTime: 0.15
   maxSpeed: 12
-  boundsSource: {fileID: 0}
+  boundsSource: {fileID: 963256445}
   xBoundsManual: {x: -33, y: 33}
   yBoundsManual: {x: -10, y: 8}
 --- !u!1001 &6807735883559374582
