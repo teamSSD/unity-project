@@ -22,7 +22,7 @@ public class SubSceneController : MonoBehaviour
     {
         Debug.Log($"[SubSceneController] Returning to {returnSceneName}");
 
-        var ps = ProgressSystem.Instance;
+        var ps = GameSessionRoot.Instance?.Progress;
         if (ps == null || !ps.PassPhase())
             SceneLoader.LoadScene(returnSceneName);
     }

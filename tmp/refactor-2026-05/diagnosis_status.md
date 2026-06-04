@@ -19,10 +19,10 @@ _갱신: 2026-06-01 / 원천: `reports/review_master.md`, `decisions/000_index.m
 ## Top 5 구조 문제 (마스터 진단)
 
 ### #1 — 선언 vs 실제 8배 갭 (Singleton 26, .Instance 318)
-- **상태**: ⚠️ partial
-- **결과**: 매니저 26 → 22 (Crop/FarmUpgrade/Storage/Tool/Order 5개 삭제). `.Instance` 호출 318 → 325 **악화** (facade 패턴 부작용).
-- **잔여**: facade 매니저 14개 삭제 + 콜러 ~250건 직접 호출로 마이그레이션 필요. ADR-001 "Stateful 매니저 0" 정신은 미달.
-- **재방문**: Phase 5 (또는 신기능 phase에 자연 흡수)
+- **상태**: ⚠️ partial (Sprint 3 진행 중)
+- **결과**: 매니저 26 → 22 → 21 → 20. Sprint 3-1 StatsSystem facade 제거 (53 콜러 마이그레이션), Sprint 3-2 ProgressSystem facade 제거. POCO Service 직접 사용.
+- **잔여**: facade 매니저 ~12개 (Inventory, RecipeData, Unlocked, Settlement, etc.). 콜러 직접 호출로 마이그레이션 필요.
+- **재방문**: Sprint 3-3 (Inventory) → 3-4 (잔여 small)
 
 ### #2 — Composition Root가 GameStart에서 멈춤
 - **상태**: ⚠️ partial

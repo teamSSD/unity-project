@@ -46,7 +46,7 @@ public class SettlementController : MonoBehaviour
     {
         if (saveStatusText != null) saveStatusText.text = "저장 중...";
         await UniTask.Yield(cancellationToken: this.GetCancellationTokenOnDestroy());
-        ProgressSystem.Instance.PassDay();
+        GameSessionRoot.Instance?.Progress.PassDay();
         if (saveStatusText != null) saveStatusText.text = "아무 키나 눌러서 계속";
         waitingForInput = true;
     }
@@ -54,11 +54,11 @@ public class SettlementController : MonoBehaviour
     private void BuildUI()
     {
         var sm = SettlementManager.Instance;
-        var ps = ProgressSystem.Instance;
+        var ps = GameSessionRoot.Instance?.Progress;
         var ss = GameSessionRoot.Instance?.Stats;
 
         if (ps != null)
-            dayText.text = $"{ps.phaseData.Day}일차 정산";
+            dayText.text = $"{ps.PhaseData.Day}일차 정산";
 
         foreach (var (label, amount) in sm.GetIncomeEntries())
             SpawnLine(incomeContainer, label, amount, false);

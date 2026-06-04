@@ -4,7 +4,7 @@ public class TestSceneInit : MonoBehaviour
 {
     void Start()
     {
-        var progress = ProgressSystem.Instance;
+        var progress = GameSessionRoot.Instance?.Progress;
         if (progress != null)
         {
             progress.Initialize();

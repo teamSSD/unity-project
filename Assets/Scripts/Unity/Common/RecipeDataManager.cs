@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// 메뉴 선택 데이터 관리 (Singleton)
 /// - 아침/점심/저녁 도시락 선택 데이터 저장
-/// - Save/Load (ProgressSystem.PhaseData에 피기백)
+/// - Save/Load (gamedata.json recipeBook 슬롯)
 /// - 레시피 검색은 RecipeLookupService로 분리
 /// </summary>
 public class RecipeDataManager : SingletonMonoBehaviour<RecipeDataManager>
@@ -144,8 +144,8 @@ public class RecipeDataManager : SingletonMonoBehaviour<RecipeDataManager>
     /// </summary>
     public void LoadMenusFromProgressLegacy()
     {
-        if (ProgressSystem.Instance?.phaseData?.SelectedMenus == null) return;
-        ApplyMenuList(ProgressSystem.Instance.phaseData.SelectedMenus);
+        if (GameSessionRoot.Instance?.Progress?.PhaseData?.SelectedMenus == null) return;
+        ApplyMenuList(GameSessionRoot.Instance?.Progress.PhaseData.SelectedMenus);
     }
 
     private void ApplyMenuList(List<string> savedMenus)

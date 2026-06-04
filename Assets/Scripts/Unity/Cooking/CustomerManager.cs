@@ -100,7 +100,7 @@ public class CustomerManager : MonoBehaviour
 
     private void ApplyPhaseSettings()
     {
-        var phase = ProgressSystem.Instance?.phaseData?.Phase ?? PhaseType.Morning;
+        var phase = GameSessionRoot.Instance?.Progress?.PhaseData?.Phase ?? PhaseType.Morning;
         switch (phase)
         {
             case PhaseType.Morning:
@@ -413,8 +413,9 @@ public class CustomerManager : MonoBehaviour
         float perfectRate = totalOrders > 0 ? (float)perfectOrders / totalOrders * 100f : 0f;
 
 
-        if (totalEarnings > 0 && SettlementManager.Instance != null && ProgressSystem.Instance != null)
-            SettlementManager.Instance.AddIncome(PhaseToLabel(ProgressSystem.Instance.phaseData.Phase), totalEarnings);
+        var progress = GameSessionRoot.Instance?.Progress;
+        if (totalEarnings > 0 && SettlementManager.Instance != null && progress != null)
+            SettlementManager.Instance.AddIncome(PhaseToLabel(progress.PhaseData.Phase), totalEarnings);
     }
 
     private static string PhaseToLabel(PhaseType p) => p switch

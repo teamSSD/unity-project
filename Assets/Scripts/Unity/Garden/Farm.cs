@@ -24,15 +24,16 @@ public class Farm : MonoBehaviour
 
     private void Start()
     {
-        if (ProgressSystem.Instance == null)
+        if (GameSessionRoot.Instance?.Progress == null)
             ManagerBootstrap.EnsureAll();
 
-        phaseProvider = ProgressSystem.Instance;
-        if (phaseProvider is not ProgressSystem progress)
+        var progress = GameSessionRoot.Instance?.Progress;
+        if (progress == null)
         {
-            Debug.LogError("[Farm] ProgressSystem not found");
+            Debug.LogError("[Farm] ProgressService not found");
             return;
         }
+        phaseProvider = progress;
 
         tile = new FarmTile(phaseProvider);
 
@@ -67,8 +68,8 @@ public class Farm : MonoBehaviour
                 gp.tiles[farmIndex] = tile.GetSaveData();
         }
 
-        if (ProgressSystem.Instance != null)
-            ProgressSystem.Instance.OnPhaseChanged -= OnPhaseChangedHandler;
+        var progress = GameSessionRoot.Instance?.Progress;
+        if (progress != null) progress.OnPhaseChanged -= OnPhaseChangedHandler;
     }
 
     private void OnPhaseChangedHandler(PhaseType _) => OnTimePassed();

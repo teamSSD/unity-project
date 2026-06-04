@@ -33,13 +33,13 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         base.OnDestroy();
         SceneManager.activeSceneChanged -= OnActiveSceneChanged;
         SceneManager.sceneLoaded -= OnSceneLoaded;
-        if (ProgressSystem.Instance != null)
-            ProgressSystem.Instance.OnPhaseChanged -= OnPhaseChanged;
+        var progress = GameSessionRoot.Instance?.Progress;
+        if (progress != null) progress.OnPhaseChanged -= OnPhaseChanged;
     }
 
     private void Start()
     {
-        var progress = ProgressSystem.Instance;
+        var progress = GameSessionRoot.Instance?.Progress;
         if (progress != null) progress.OnPhaseChanged += OnPhaseChanged;
         UpdateBGM();
         RegisterButtons(null);
@@ -58,10 +58,11 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
 
     private void OnActiveSceneChanged(Scene prev, Scene next)
     {
-        if (ProgressSystem.Instance != null)
+        var progress = GameSessionRoot.Instance?.Progress;
+        if (progress != null)
         {
-            ProgressSystem.Instance.OnPhaseChanged -= OnPhaseChanged;
-            ProgressSystem.Instance.OnPhaseChanged += OnPhaseChanged;
+            progress.OnPhaseChanged -= OnPhaseChanged;
+            progress.OnPhaseChanged += OnPhaseChanged;
         }
         UpdateBGM();
     }
@@ -86,7 +87,7 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     {
         string scene = SceneManager.GetActiveScene().name;
         if (scene == "Boot" || scene == "GameStart") return null;
-        if (ProgressSystem.Instance?.phaseData?.Phase == PhaseType.Night) return CatalogProvider.BgmNight;
+        if (GameSessionRoot.Instance?.Progress?.PhaseData?.Phase == PhaseType.Night) return CatalogProvider.BgmNight;
         return scene == "Cooking" ? CatalogProvider.BgmCooking : CatalogProvider.BgmMall;
     }
 

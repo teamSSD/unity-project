@@ -8,15 +8,15 @@ public class CookingBackgroundController : MonoBehaviour
 
     void Start()
     {
-        var progress = ProgressSystem.Instance;
-        ApplyPhase(progress?.phaseData?.Phase ?? PhaseType.Morning);
+        var progress = GameSessionRoot.Instance?.Progress;
+        ApplyPhase(progress?.PhaseData?.Phase ?? PhaseType.Morning);
         if (progress != null) progress.OnPhaseChanged += ApplyPhase;
     }
 
     void OnDestroy()
     {
-        if (ProgressSystem.Instance != null)
-            ProgressSystem.Instance.OnPhaseChanged -= ApplyPhase;
+        var progress = GameSessionRoot.Instance?.Progress;
+        if (progress != null) progress.OnPhaseChanged -= ApplyPhase;
     }
 
     private void ApplyPhase(PhaseType phase)

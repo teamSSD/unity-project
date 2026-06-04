@@ -62,7 +62,7 @@ public class UnlockedFoodManager : SingletonMonoBehaviour<UnlockedFoodManager>, 
     /// </summary>
     public void LoadUnlocksFromProgressLegacy()
     {
-        var unlockedList = ProgressSystem.Instance?.phaseData?.UnlockedRecipes;
+        var unlockedList = GameSessionRoot.Instance?.Progress?.PhaseData?.UnlockedRecipes;
         if (unlockedList != null && unlockedList.Count > 0)
             unlockedRecipeIds = new HashSet<string>(unlockedList);
         else

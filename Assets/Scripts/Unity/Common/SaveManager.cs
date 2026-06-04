@@ -108,7 +108,7 @@ public static class SaveManager
         var save = new GameSaveData();
 
         // 글로벌 facade 매니저
-        if (ProgressSystem.Instance != null) save.phase = ProgressSystem.Instance.phaseData;
+        if (GameSessionRoot.Instance?.Progress != null) save.phase = GameSessionRoot.Instance?.Progress.PhaseData;
         save.stats = GameSessionRoot.Instance?.Stats.GetSaveData();
         if (InventoryManager.Instance != null) save.inventory = InventoryManager.Instance.GetSaveData();
 
@@ -133,9 +133,10 @@ public static class SaveManager
         MigrateLegacyIfNeeded();
         var save = DataSaveUtil.LoadData(new GameSaveData(), SavePath);
 
-        // 글로벌 facade 매니저
-        if (ProgressSystem.Instance != null) ProgressSystem.Instance.ApplySaveData(save.phase);
-        GameSessionRoot.Instance?.Stats.ApplySaveData(save.stats);
+        // 글로벌 서비스 (GameSessionRoot 경유)
+        var session = GameSessionRoot.Instance;
+        session?.Progress?.ApplySaveData(save.phase);
+        session?.Stats?.ApplySaveData(save.stats);
         if (InventoryManager.Instance != null) InventoryManager.Instance.ApplySaveData(save.inventory);
 
         // 도메인 Adapter

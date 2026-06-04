@@ -22,6 +22,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     public GameState State { get; private set; }
 
     public StatsService Stats { get; private set; }
+    public ProgressService Progress { get; private set; }
     public CropCatalogService CropCatalog { get; private set; }
     public FarmUpgradeService FarmUpgrade { get; private set; }
     public StorageUpgradeService StorageUpgrade { get; private set; }
@@ -40,8 +41,9 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
 
     private void WireServices()
     {
-        // 글로벌 통계 — GameState.stats 라이브 참조 closure
+        // 글로벌 통계 — GameState.stats/phase 라이브 참조 closure
         Stats = new StatsService(() => State?.stats);
+        Progress = new ProgressService(() => State?.phase);
 
         var cropRows = CsvModelConverter.Parse<CropData>(CatalogProvider.Csvs?.cropData);
         foreach (var row in cropRows)

@@ -46,10 +46,11 @@ public class ClockUI : MonoBehaviour
             start = TimeManager.Instance.StartTimeMinutes;
             end   = TimeManager.Instance.EndTimeMinutes;
         }
-        else if (ProgressSystem.Instance != null)
+        else if (GameSessionRoot.Instance?.Progress != null)
         {
-            start = ProgressSystem.Instance.PhaseStartMinutes;
-            end   = ProgressSystem.Instance.PhaseEndMinutes;
+            var progress = GameSessionRoot.Instance.Progress;
+            start = progress.PhaseStartMinutes;
+            end   = progress.PhaseEndMinutes;
         }
         else return;
 

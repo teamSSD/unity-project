@@ -50,7 +50,7 @@ public class MallSceneController : MonoBehaviour
         ManagerBootstrap.Ensure<UnlockedFoodManager>();
 
         // Preparation 페이즈 진입 시 메뉴 초기화
-        if (ProgressSystem.Instance?.phaseData.Phase == PhaseType.Preparation)
+        if (GameSessionRoot.Instance?.Progress?.PhaseData.Phase == PhaseType.Preparation)
             RecipeDataManager.Instance?.ClearAllMenus();
 
         if (bentoSelectionPrefab != null)
@@ -74,7 +74,7 @@ public class MallSceneController : MonoBehaviour
 
     private void OnGoHome()
     {
-        var phase = ProgressSystem.Instance?.phaseData.Phase ?? PhaseType.Preparation;
+        var phase = GameSessionRoot.Instance?.Progress?.PhaseData.Phase ?? PhaseType.Preparation;
 
         if (phase == PhaseType.Preparation)
         {
@@ -96,7 +96,7 @@ public class MallSceneController : MonoBehaviour
 
         bentoSelectionController.Show(() =>
         {
-            var ps = ProgressSystem.Instance;
+            var ps = GameSessionRoot.Instance?.Progress;
             if (ps == null || !ps.PassPhase())
                 SceneLoader.LoadScene(SceneNames.Idle);
         });
@@ -135,7 +135,7 @@ public class MallSceneController : MonoBehaviour
 
         if (tag == "confirm")
         {
-            var ps = ProgressSystem.Instance;
+            var ps = GameSessionRoot.Instance?.Progress;
             if (ps == null || !ps.PassPhase())
                 SceneLoader.LoadScene(SceneNames.Idle);
         }

@@ -86,7 +86,7 @@ public class GameStart : MonoBehaviour
     private static void InitializeManagers()
     {
         GameSessionRoot.Instance?.Stats.Reset();
-        ProgressSystem.Instance.Initialize();
+        GameSessionRoot.Instance?.Progress.Initialize();
         UnlockedFoodManager.Instance?.Initialize();
         InventoryManager.Instance?.Initialize();
         RecipeDataManager.Instance?.Initialize();
@@ -96,10 +96,14 @@ public class GameStart : MonoBehaviour
     /// <summary>New Game 전용 초기값 설정.</summary>
     private static void ApplyNewGameDefaults()
     {
-        GameSessionRoot.Instance?.Stats.SetTime(5, 0);
-        GameSessionRoot.Instance?.Stats.SetMoney(8000);
-        GameSessionRoot.Instance?.Stats.SetStamina(100);
-        ProgressSystem.Instance.phaseData.Day = 0;
+        var session = GameSessionRoot.Instance;
+        if (session != null)
+        {
+            session.Stats.SetTime(5, 0);
+            session.Stats.SetMoney(8000);
+            session.Stats.SetStamina(100);
+            session.Progress.PhaseData.Day = 0;
+        }
         InventoryManager.Instance?.ResetToDefault();
         UnlockedFoodManager.Instance?.UnlockDefaultRecipes();
         DeliveryNpcDialogueInteraction.ResetAll();

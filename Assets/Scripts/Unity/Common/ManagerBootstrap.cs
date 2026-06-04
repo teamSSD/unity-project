@@ -26,7 +26,6 @@ public static class ManagerBootstrap
     /// </summary>
     public static void EnsureAll()
     {
-        Ensure<ProgressSystem>();
         Ensure<UnlockedFoodManager>();
         Ensure<InventoryManager>();
         Ensure<RecipeDataManager>();

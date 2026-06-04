@@ -31,7 +31,7 @@ public class StatManager : MonoBehaviour
 
     private void OnStaminaExhausted()
     {
-        ProgressSystem.Instance?.Die();
+        GameSessionRoot.Instance?.Progress?.Die();
     }
 
     private void OnTimeEnd()
