@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine;
 
-public class DialogueManager : MonoBehaviour
+public partial class DialogueManager : MonoBehaviour
 {
     [Header("Choices")]
     public Button choiceButtonPrefab;
@@ -221,73 +221,6 @@ public class DialogueManager : MonoBehaviour
         {
             ShowChoices(entry.choices);
             waitingForChoice = true;
-        }
-    }
-
-    void ShowChoices(List<DialogueChoice> choices)
-    {
-        ClearChoices();
-
-        foreach (var choice in choices)
-        {
-            Button btn = Instantiate(choiceButtonPrefab, choicesParent);
-            var labelText = btn.GetComponentInChildren<TMP_Text>();
-            labelText.text = choice.label;
-
-            // 삼각형 마커 (별도 TMP 요소)
-            var markerObj = new GameObject("Marker", typeof(RectTransform));
-            markerObj.transform.SetParent(btn.transform, false);
-            markerObj.transform.SetAsFirstSibling();
-            var marker = markerObj.AddComponent<TextMeshProUGUI>();
-            marker.text = "\u25B6";
-            marker.fontSize = labelText.fontSize;
-            marker.font = labelText.font;
-            marker.color = Color.white;
-            marker.alignment = TextAlignmentOptions.MidlineLeft;
-            var markerLE = markerObj.AddComponent<LayoutElement>();
-            markerLE.preferredWidth = 30;
-
-            // 레이블 유동 너비
-            labelText.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
-
-            // 가로 레이아웃
-            var hlg = btn.gameObject.AddComponent<HorizontalLayoutGroup>();
-            hlg.childAlignment = TextAnchor.MiddleLeft;
-            hlg.childForceExpandWidth = false;
-            hlg.childForceExpandHeight = true;
-            hlg.spacing = 5;
-            hlg.padding = new RectOffset(10, 10, 0, 0);
-
-            var captured = choice;
-            btn.onClick.AddListener(() => OnChoiceSelected(captured));
-        }
-    }
-
-    void OnChoiceSelected(DialogueChoice choice)
-    {
-        ClearChoices();
-        waitingForChoice = false;
-
-        if (!string.IsNullOrEmpty(choice.resultTag))
-            lastResultTag = choice.resultTag;
-
-        if (choice.responses != null && choice.responses.Count > 0)
-        {
-            branchResponses = choice.responses;
-            branchIndex = 0;
-            ShowLine(branchResponses[0]);
-        }
-        else
-        {
-            AdvanceDialogue();
-        }
-    }
-
-    void ClearChoices()
-    {
-        foreach (Transform t in choicesParent)
-        {
-            Destroy(t.gameObject);
         }
     }
 
