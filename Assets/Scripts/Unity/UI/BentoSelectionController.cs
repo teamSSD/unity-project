@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Game.Domain.Cooking;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,31 +22,28 @@ public class BentoSelectionController : MonoBehaviour
     private System.Action onConfirmCallback;
     private List<FoodData> allFoodData = new List<FoodData>();
     private IUnlockedFoodProvider unlockedProvider;
+    private MenuSelectionService menuAccess;
 
-    private void Start()
+    /// <summary>Composition Root에서 의존 명시 주입 — Start에서의 singleton 직접 조회 제거.</summary>
+    public void Inject(IUnlockedFoodProvider unlocked, MenuSelectionService menu)
     {
+        unlockedProvider = unlocked;
+        menuAccess = menu;
         LoadAllFoodData();
         InitializeController();
     }
 
     private void LoadAllFoodData()
     {
-        // UnlockedFoodManager가 있으면 해금된 레시피만 로드
-        if (GameSessionRoot.Instance?.UnlockedFood != null)
+        if (unlockedProvider != null)
         {
-            unlockedProvider = GameSessionRoot.Instance?.UnlockedFood;
-            var unlockedMains = unlockedProvider.GetUnlockedMainFoods();
-            var unlockedSides = unlockedProvider.GetUnlockedSideFoods();
-
             allFoodData = new List<FoodData>();
-            allFoodData.AddRange(unlockedMains);
-            allFoodData.AddRange(unlockedSides);
-
+            allFoodData.AddRange(unlockedProvider.GetUnlockedMainFoods());
+            allFoodData.AddRange(unlockedProvider.GetUnlockedSideFoods());
         }
         else
         {
-            // UnlockedFoodManager가 없으면 모든 레시피 로드 (폴백)
-            Debug.LogWarning("[BentoSelection] UnlockedFoodManager not found, loading all recipes");
+            Debug.LogWarning("[BentoSelection] No unlocked food provider injected, loading all recipes");
             allFoodData = new List<FoodData>(CatalogProvider.Food?.All ?? new List<FoodData>());
         }
     }
@@ -100,7 +98,7 @@ public class BentoSelectionController : MonoBehaviour
 
     private void HandleItemSelection(int bentoIndex, MenuSelectionItem item, bool isMain)
     {
-        var menu = GameSessionRoot.Instance?.MenuSelection.GetMenu(bentoIndex);
+        var menu = menuAccess?.GetMenu(bentoIndex);
         if (menu == null || item.CurrentFood == null) return;
 
         if (isMain)
@@ -124,7 +122,7 @@ public class BentoSelectionController : MonoBehaviour
     private void RefreshSlotUI(int bentoIndex)
     {
         var slot = bentoSlots[bentoIndex];
-        var menu = GameSessionRoot.Instance?.MenuSelection.GetMenu(bentoIndex);
+        var menu = menuAccess?.GetMenu(bentoIndex);
         if (slot == null || menu == null) return;
 
         slot.Refresh(menu, menu.MainMenu, menu.SideMenus);
@@ -132,7 +130,7 @@ public class BentoSelectionController : MonoBehaviour
 
     private void OnBentoNameChanged(int index, string newName)
     {
-        var menu = GameSessionRoot.Instance?.MenuSelection.GetMenu(index);
+        var menu = menuAccess?.GetMenu(index);
         if (menu != null)
         {
             menu.Name = newName;
@@ -141,7 +139,7 @@ public class BentoSelectionController : MonoBehaviour
 
     public void ConfirmAll()
     {
-        if (!(GameSessionRoot.Instance?.MenuSelection.HasAnySelection() ?? false))
+        if (!(menuAccess?.HasAnySelection() ?? false))
         {
             Debug.LogWarning("[BentoSelection] No menus selected!");
             return;
@@ -159,6 +157,8 @@ public class BentoSelectionController : MonoBehaviour
         gameObject.SetActive(true);
         SoundManager.Instance?.PlayUIBook();
         SoundManager.Instance?.RegisterButtons(transform);
+        // 신규 unlock(퀘스트 수락 후 추가된 메뉴) 반영을 위해 매번 갱신
+        LoadAllFoodData();
         InitializeController();
     }
 

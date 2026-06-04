@@ -47,16 +47,22 @@ public class MallSceneController : MonoBehaviour
             SceneLoader.ClearMallReturnPosition();
         }
 
+        var session = GameSessionRoot.Instance;
+
         // Preparation 페이즈 진입 시 메뉴 초기화
-        if (GameSessionRoot.Instance?.Progress?.PhaseData.Phase == PhaseType.Preparation)
-            GameSessionRoot.Instance?.MenuSelection?.ClearAllMenus();
+        if (session?.Progress?.PhaseData.Phase == PhaseType.Preparation)
+            session?.MenuSelection?.ClearAllMenus();
 
         if (bentoSelectionPrefab != null)
         {
             bentoSelectionInstance = Instantiate(bentoSelectionPrefab);
             bentoSelectionController = bentoSelectionInstance.GetComponent<BentoSelectionController>();
             if (bentoSelectionController != null)
+            {
+                // Composition Root: 자식 컨트롤러에 의존 명시 주입
+                bentoSelectionController.Inject(session?.UnlockedFood, session?.MenuSelection);
                 bentoSelectionController.Close();
+            }
         }
         else
         {
