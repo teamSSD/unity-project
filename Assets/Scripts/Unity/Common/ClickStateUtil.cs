@@ -74,16 +74,9 @@ public class ClickStateUtil : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (TryBeginOverMe(cam))
-            {
-                isDown    = true;
-                dragging  = false;
-                downPosPx = Input.mousePosition;
-                downTime  = Time.unscaledTime;
-            }
+            TryRegisterMouseDown(cam);
             return ClickState.None;
         }
-
         if (!isDown) return ClickState.None;
 
         float heldSec = Time.unscaledTime - downTime;
@@ -94,30 +87,31 @@ public class ClickStateUtil : MonoBehaviour
             dragging = true;
             return ClickState.DragStart;
         }
-
         if (dragging && Input.GetMouseButton(0))
-        {
             return ClickState.Dragging;
-        }
 
         if (Input.GetMouseButtonUp(0))
-        {
-            isDown = false;
-
-            if (!dragging && heldSec <= clickMaxDuration && movedPx <= clickMaxMovePx)
-            {
-                return ClickState.Clicked;
-            }
-
-            if (!dragging)
-            {
-                dragging = true;
-            }
-            dragging = false;
-            return ClickState.DragEnd;
-        }
+            return ResolveMouseUp(heldSec, movedPx);
 
         return ClickState.None;
+    }
+
+    private void TryRegisterMouseDown(Camera cam)
+    {
+        if (!TryBeginOverMe(cam)) return;
+        isDown    = true;
+        dragging  = false;
+        downPosPx = Input.mousePosition;
+        downTime  = Time.unscaledTime;
+    }
+
+    private ClickState ResolveMouseUp(float heldSec, float movedPx)
+    {
+        isDown = false;
+        if (!dragging && heldSec <= clickMaxDuration && movedPx <= clickMaxMovePx)
+            return ClickState.Clicked;
+        dragging = false;
+        return ClickState.DragEnd;
     }
 
     private void InvokeFor(ClickState state)

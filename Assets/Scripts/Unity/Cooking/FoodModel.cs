@@ -88,15 +88,19 @@ public class FoodModel : MonoBehaviour
 
     /// <summary>
     /// Compute convex hull using Gift Wrapping (Jarvis March) algorithm
-    /// Returns only the outermost vertices, eliminating inward pointy parts
     /// </summary>
     private Vector2[] ComputeConvexHull(Vector2[] points)
     {
         if (points.Length < 3) return points;
 
-        List<Vector2> hull = new List<Vector2>();
+        int leftmost = FindLeftmostPointIndex(points);
+        var hull = GiftWrapHull(points, leftmost);
 
-        // Find leftmost point (starting point)
+        return hull.Count >= 3 ? hull.ToArray() : points;
+    }
+
+    private static int FindLeftmostPointIndex(Vector2[] points)
+    {
         int leftmost = 0;
         for (int i = 1; i < points.Length; i++)
         {
@@ -106,39 +110,29 @@ public class FoodModel : MonoBehaviour
                 leftmost = i;
             }
         }
+        return leftmost;
+    }
 
-        int current = leftmost;
+    private List<Vector2> GiftWrapHull(Vector2[] points, int start)
+    {
+        var hull = new List<Vector2>();
+        int current = start;
         int next;
 
-        // Gift wrapping algorithm
         do
         {
             hull.Add(points[current]);
             next = 0;
-
-            // Find the most counter-clockwise point from current
             for (int i = 0; i < points.Length; i++)
             {
                 if (i == current) continue;
-
-                // If next is current, or i is more counter-clockwise than next
                 if (next == current || IsCounterClockwise(points[current], points[i], points[next]))
-                {
                     next = i;
-                }
             }
-
             current = next;
+        } while (current != start);
 
-        } while (current != leftmost); // Loop until we return to start
-
-        // Ensure we have at least a triangle
-        if (hull.Count < 3)
-        {
-            return points;
-        }
-
-        return hull.ToArray();
+        return hull;
     }
 
     /// <summary>

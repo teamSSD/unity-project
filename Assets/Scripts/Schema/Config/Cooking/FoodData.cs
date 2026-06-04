@@ -38,40 +38,11 @@ public class FoodData : ScriptableObject, CsvParsable
         if (args.Length != 6) throw new CsvParsingException("length of args isn't match.");
         try
         {
-            id = args[0].Trim();
-            ingredientName = args[1].Trim();
-            description = args[2].Trim();
-            string spritePath = ResourcePaths.Art.Food + args[3].Trim();
-            image = Resources.Load<Sprite>(spritePath);
-            string ingredientPath = ResourcePaths.SO.IngredientDataById + id;
-            ingredient = Resources.Load<IngredientData>(ingredientPath);
-            availableTools = new List<string>(args[4].Split('/'));
-            type = (FoodType)Enum.Parse(typeof(FoodType), args[5].Trim());
-
+            ParseBasicFields(args);
             string baseName = args[3].Trim().Replace("_raw", "");
-
-            if (type == FoodType.INGREDIENT)
-            {
-                foreach (string toolId in availableTools)
-                {
-                    if (toolIdToIndex.TryGetValue(toolId.Trim(), out int idx))
-                        toolVariants[idx] = Resources.Load<Sprite>(ResourcePaths.Art.Food + baseName + toolSuffixes[idx]);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < 5; i++)
-                    toolVariants[i] = Resources.Load<Sprite>(ResourcePaths.Art.Food + baseName + toolSuffixes[i]);
-            }
-
-            if (type == FoodType.INGREDIENT && availableTools.Contains("T004"))
-                pieceSprite = Resources.Load<Sprite>(ResourcePaths.Art.Food + baseName + "_piece");
-
-            if (type == FoodType.MAIN || type == FoodType.SIDE)
-            {
-                for (int i = 0; i < 4; i++)
-                    bentoVariants[i] = Resources.Load<Sprite>(ResourcePaths.Art.Food + baseName + bentoSuffixes[i]);
-            }
+            LoadToolVariants(baseName);
+            LoadPieceSprite(baseName);
+            LoadBentoVariants(baseName);
         }
         catch (Exception e)
         {
@@ -79,6 +50,47 @@ public class FoodData : ScriptableObject, CsvParsable
         }
 #endif
     }
+
+#if UNITY_EDITOR
+    private void ParseBasicFields(string[] args)
+    {
+        id = args[0].Trim();
+        ingredientName = args[1].Trim();
+        description = args[2].Trim();
+        image = Resources.Load<Sprite>(ResourcePaths.Art.Food + args[3].Trim());
+        ingredient = Resources.Load<IngredientData>(ResourcePaths.SO.IngredientDataById + id);
+        availableTools = new List<string>(args[4].Split('/'));
+        type = (FoodType)Enum.Parse(typeof(FoodType), args[5].Trim());
+    }
+
+    private void LoadToolVariants(string baseName)
+    {
+        if (type == FoodType.INGREDIENT)
+        {
+            foreach (string toolId in availableTools)
+                if (toolIdToIndex.TryGetValue(toolId.Trim(), out int idx))
+                    toolVariants[idx] = Resources.Load<Sprite>(ResourcePaths.Art.Food + baseName + toolSuffixes[idx]);
+        }
+        else
+        {
+            for (int i = 0; i < 5; i++)
+                toolVariants[i] = Resources.Load<Sprite>(ResourcePaths.Art.Food + baseName + toolSuffixes[i]);
+        }
+    }
+
+    private void LoadPieceSprite(string baseName)
+    {
+        if (type == FoodType.INGREDIENT && availableTools.Contains("T004"))
+            pieceSprite = Resources.Load<Sprite>(ResourcePaths.Art.Food + baseName + "_piece");
+    }
+
+    private void LoadBentoVariants(string baseName)
+    {
+        if (type != FoodType.MAIN && type != FoodType.SIDE) return;
+        for (int i = 0; i < 4; i++)
+            bentoVariants[i] = Resources.Load<Sprite>(ResourcePaths.Art.Food + baseName + bentoSuffixes[i]);
+    }
+#endif
 
     public Sprite GetRepresentativeBentoImage()
     {

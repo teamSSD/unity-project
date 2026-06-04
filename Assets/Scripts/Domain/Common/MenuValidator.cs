@@ -161,50 +161,29 @@ public static class MenuValidator
     /// </summary>
     private static string GenerateFeedback(bool mainCorrect, int correctSides, int expectedSides, int providedSides)
     {
-        if (!mainCorrect)
-        {
-            return "메인 메뉴가 틀렸습니다!";
-        }
+        if (!mainCorrect) return "메인 메뉴가 틀렸습니다!";
+        if (expectedSides == 0) return FeedbackForNoExpectedSides(providedSides);
+        return FeedbackForSideMatching(correctSides, expectedSides, providedSides);
+    }
 
-        if (expectedSides == 0)
-        {
-            if (providedSides == 0)
-            {
-                return "완벽합니다!";
-            }
-            else
-            {
-                return $"사이드가 {providedSides}개 더 들어있습니다.";
-            }
-        }
+    private static string FeedbackForNoExpectedSides(int providedSides)
+    {
+        return providedSides == 0
+            ? "완벽합니다!"
+            : $"사이드가 {providedSides}개 더 들어있습니다.";
+    }
 
-        if (correctSides == expectedSides && providedSides == expectedSides)
-        {
-            return "완벽합니다!";
-        }
-        else if (correctSides == expectedSides)
-        {
-            int extra = providedSides - expectedSides;
-            return $"정확하지만 {extra}개가 더 들어있습니다.";
-        }
-        else if (correctSides > 0)
-        {
-            int missing = expectedSides - correctSides;
-            int extra = Mathf.Max(0, providedSides - correctSides);
+    private static string FeedbackForSideMatching(int correctSides, int expectedSides, int providedSides)
+    {
+        if (correctSides == expectedSides && providedSides == expectedSides) return "완벽합니다!";
+        if (correctSides == expectedSides) return $"정확하지만 {providedSides - expectedSides}개가 더 들어있습니다.";
+        if (correctSides == 0) return "사이드 메뉴가 모두 틀렸습니다!";
 
-            if (extra > 0)
-            {
-                return $"사이드 {missing}개 부족, {extra}개 잘못됨";
-            }
-            else
-            {
-                return $"사이드 {missing}개 부족";
-            }
-        }
-        else
-        {
-            return "사이드 메뉴가 모두 틀렸습니다!";
-        }
+        int missing = expectedSides - correctSides;
+        int extra = Mathf.Max(0, providedSides - correctSides);
+        return extra > 0
+            ? $"사이드 {missing}개 부족, {extra}개 잘못됨"
+            : $"사이드 {missing}개 부족";
     }
 
     /// <summary>
