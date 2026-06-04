@@ -20,9 +20,9 @@ I019,검은 된장,깊은 흑갈색 덩어리 형태의 장. 표면은 약간 �
 I020,조명 시럽,투명한 황금빛 액체로 내부에서 잔불처럼 빛이 미세하게 흔들린다.,item_luminousSyrup_raw,T003,INGREDIENT
 I021,황동소금,미세한 금빛 결정. 반짝이는 입자가 금속성 빛을 내며 혀끝에 닿으면 즉시 녹는다.,item_brassSalt_raw,T001/T005,INGREDIENT
 I022,연기잎 버터,회갈색 버터 속에 검은 잎 조각이 섞여 있다. 살짝 녹이면 연기 같은 향이 피어오른다.,item_smokeLeafButter_raw,T003/T005,INGREDIENT
-I023,건조멸치,은빛이 바랜 작은 생선. 마른 비늘이 바삭하게 부서지고 꼬리가 구부러져 있다.,item_driedAnchovy_raw,T001/T003,INGREDIENT
-I024,검은깨,작은 흑색 씨앗. 매끈하고 단단하며 손가락 사이에서 번쩍 빛난다.,item_blackSesame_raw,T001/T003,INGREDIENT
-I025,청양잎,진한 초록빛의 가느다란 잎사귀. 표면에는 미세한 돌기가 있어 손끝에 걸리는 느낌을 주며 씹으면 매운 열기가 서서히 퍼져 오른다.,item_cheongyangLeaf_raw,T001/T003,INGREDIENT
+I023,건조멸치,은빛이 바랜 작은 생선. 마른 비늘이 바삭하게 부서지고 꼬리가 구부러져 있다.,item_driedAnchovy_raw,T003,INGREDIENT
+I024,검은깨,작은 흑색 씨앗. 매끈하고 단단하며 손가락 사이에서 번쩍 빛난다.,item_blackSesame_raw,T003,INGREDIENT
+I025,청양잎,진한 초록빛의 가느다란 잎사귀. 표면에는 미세한 돌기가 있어 손끝에 걸리는 느낌을 주며 씹으면 매운 열기가 서서히 퍼져 오른다.,item_cheongyangLeaf_raw,T003,INGREDIENT
 I026,루미잎,반투명한 청록색 잎. 표면에 미세한 빛 입자가 흐르고 손끝에서 은은한 열이 난다.,item_lumiLeaf_raw,T001/T003,INGREDIENT
 I027,빛 토마토,붉은 과육 안쪽에서 은은한 광채가 새어 나오는 과실. 껍질은 매끄럽고 팽팽하며 절단면에서는 반짝이는 씨앗 방울이 흐른다.,item_lightTomato_raw,T001/T003,INGREDIENT
 I028,바람콩,푸른빛 껍질이 얇게 떠 있으며 손에 쥐면 공기 주머니처럼 가볍다.,item_windBean_raw,T001,INGREDIENT
