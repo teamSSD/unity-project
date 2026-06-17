@@ -28,11 +28,8 @@ public partial class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInterac
         this.characterName = characterName;
         this.portrait = portrait;
         dialogueConfig = CatalogProvider.DialogueConfig?.GetByGroupId(groupId);
-        // 첫 진입은 Normal(이미 알던 사이) 기본값으로 시작. 이전 SetStage 없으면 Service가 FirstMeet 반환하므로
-        // 명시적으로 Normal 셋팅하여 기존 동작 유지.
-        var svc = GameSessionRoot.Instance?.DeliveryQuest;
-        if (svc != null && !MallPersistentHasGroup(groupId))
-            svc.SetStage(groupId, DeliveryQuestStage.Normal);
+        // 첫 진입은 FirstMeet에서 시작 — DeliveryQuestService가 미등록 groupId에 FirstMeet 반환하므로 별도 셋팅 불필요.
+        // (이전엔 Normal로 시작했으나 Normal은 Completed 이후의 일상 대화 사이클로 분리됨)
     }
 
     private static bool MallPersistentHasGroup(string groupId)
@@ -101,7 +98,8 @@ public partial class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInterac
         if (dialogueManager == null)
             return;
 
-        var dialogue = CasualDialogueProvider.GetRandomDialogue(npcId);
+        // Quest 잠긴 NPC도 새 NpcNormalCatalog 사이클을 우선 사용. 카탈로그에 없으면 CSV 폴백.
+        var dialogue = GetNormalSection() ?? CasualDialogueProvider.GetRandomDialogue(npcId);
         if (dialogue == null)
             return;
 
@@ -130,6 +128,9 @@ public partial class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInterac
     void OnCasualDialogueEnded(string resultTag)
     {
         dialogueManager.OnDialogueEnded -= OnCasualDialogueEnded;
+
+        // Catalog 기반 Normal section을 보여줬다면 사이클 진행 (catalog 없으면 no-op)
+        AdvanceNormalCycle();
 
         if (this != null && gameObject.activeInHierarchy)
             ResetTalkingNextFrameAsync().Forget();

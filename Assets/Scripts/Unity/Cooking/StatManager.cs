@@ -1,41 +1,27 @@
-using System;
 using UnityEngine;
 
 /// <summary>
-/// Cooking 씬의 통계 및 결과(종료) 이벤트 관리.
-/// 시간 진행은 이제 TimeManager가 주도합니다.
+/// Cooking 씬 스태미너 소진 → 즉시 사망 처리만 담당.
+/// (이전엔 TimeManager → CustomerManager 시간 종료 중계도 했지만,
+///  구독 race를 만들어서 CustomerManager가 TimeManager에 직접 구독하도록 옮김.)
 /// </summary>
 [RequireComponent(typeof(CustomerManager))]
-[RequireComponent(typeof(TimeManager))]
 public class StatManager : MonoBehaviour
 {
-    public event Action onTimeEnd = () => {};
-
     void OnEnable()
     {
         var stats = GameSessionRoot.Instance?.Stats;
         if (stats != null) stats.OnStaminaExhausted += OnStaminaExhausted;
-        var time = TimeManager.Instance;
-        if (time != null) time.OnTimeEnd += OnTimeEnd;
     }
 
     void OnDisable()
     {
         var stats = GameSessionRoot.Instance?.Stats;
         if (stats != null) stats.OnStaminaExhausted -= OnStaminaExhausted;
-        var time = TimeManager.Instance;
-        if (time != null) time.OnTimeEnd -= OnTimeEnd;
     }
-
-
 
     private void OnStaminaExhausted()
     {
         GameSessionRoot.Instance?.Progress?.Die();
-    }
-
-    private void OnTimeEnd()
-    {
-        onTimeEnd.Invoke();
     }
 }

@@ -119,6 +119,50 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &840430376
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 840430378}
+  - component: {fileID: 840430377}
+  m_Layer: 0
+  m_Name: ConfirmModal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &840430377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840430376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dc62030474f246888ce9fad97f66fb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Unity::ConfirmModal
+--- !u!4 &840430378
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840430376}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1092357122
 GameObject:
   m_ObjectHideFlags: 0
@@ -198,6 +242,7 @@ MonoBehaviour:
   cookingTool: {fileID: 11400000, guid: 829786f7afb6d4929ad79d4b0833a00e, type: 2}
   deliveryNpc: {fileID: 11400000, guid: 0b141f62c47854920898ffc02b24e439, type: 2}
   dialogueConfig: {fileID: 11400000, guid: bfe53bbfce58d4528b27e670e752b80d, type: 2}
+  npcNormalDialogue: {fileID: 11400000, guid: ba7d858c781bc4af3b675a134332c0d0, type: 2}
   prefabs: {fileID: 11400000, guid: 75fe56331608647b1863586a22b343a1, type: 2}
   foodShopConfig: {fileID: 11400000, guid: eae71541312c54a23bbe22f712fe8da6, type: 2}
   csvs: {fileID: 11400000, guid: 548d4a3881d1b44e29900254994050e1, type: 2}
@@ -275,3 +320,4 @@ SceneRoots:
   - {fileID: 1678895036}
   - {fileID: 1503211006}
   - {fileID: 1092357124}
+  - {fileID: 840430378}

@@ -13,7 +13,6 @@ namespace Game.Schema.Catalog
         [Header("UI Prefabs")]
         public GameObject recipeBook;
         public GameObject settings;
-        public GameObject ingredientDescription;
         public GameObject cookingToolDescription;
         public GameObject statUI;
 

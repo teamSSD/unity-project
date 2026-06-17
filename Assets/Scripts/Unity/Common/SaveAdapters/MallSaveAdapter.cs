@@ -39,6 +39,13 @@ public static class MallSaveAdapter
             groupIds = new List<string>(mp.questGroupIds),
             stages   = new List<int>(mp.questStages)
         };
+
+        // NPC 일반 대사 사이클
+        save.npcNormalCycle = new NpcNormalCycleSaveData
+        {
+            npcIds  = new List<string>(mp.normalCycleNpcIds),
+            indices = new List<int>(mp.normalCycleIndices)
+        };
     }
 
     public static void Apply(GameSaveData save)
@@ -83,6 +90,14 @@ public static class MallSaveAdapter
             var mp = GameSessionRoot.Instance.State.mall.persistent;
             mp.questGroupIds = new List<string>(save.deliveryQuest.groupIds);
             mp.questStages   = new List<int>(save.deliveryQuest.stages);
+        }
+
+        // NPC 일반 대사 사이클 복원
+        if (save.npcNormalCycle != null)
+        {
+            var mp = GameSessionRoot.Instance.State.mall.persistent;
+            mp.normalCycleNpcIds  = new List<string>(save.npcNormalCycle.npcIds);
+            mp.normalCycleIndices = new List<int>(save.npcNormalCycle.indices);
         }
     }
 }

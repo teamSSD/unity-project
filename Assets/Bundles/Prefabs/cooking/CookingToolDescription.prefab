@@ -108,7 +108,7 @@ GameObject:
   - component: {fileID: 5755417363901977464}
   - component: {fileID: 7871159232692834761}
   m_Layer: 5
-  m_Name: "\uC774\uB984"
+  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -245,7 +245,7 @@ GameObject:
   - component: {fileID: 5825027377264289742}
   - component: {fileID: 5555600242103968443}
   m_Layer: 5
-  m_Name: "\uB0B4\uC6A9\uBB3C"
+  m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -466,8 +466,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b50ad4dedd480494287e4568d4031f3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nameText: {fileID: 7871159232692834761}
-  contentText: {fileID: 5555600242103968443}
+  titleText: {fileID: 7871159232692834761}
+  bodyText: {fileID: 5555600242103968443}
 --- !u!210 &5345656493344422982
 SortingGroup:
   m_ObjectHideFlags: 0

@@ -2,6 +2,7 @@
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(Animator))]
 public class PlayerMove : MonoBehaviour
 {
     public float moveSpeed = 5f;
@@ -10,15 +11,19 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private AudioClip walkSfx;
     [SerializeField] private float stepInterval = 0.22f;
 
+    private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
+
     Rigidbody2D rb;
     SpriteRenderer sr;
+    Animator animator;
     float moveInput;
     private float _stepTimer;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        sr = GetComponent<SpriteRenderer>(); 
+        sr = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -30,6 +35,8 @@ public class PlayerMove : MonoBehaviour
             sr.flipX = true;
         else if (moveInput > 0)
             sr.flipX = false;
+
+        animator.SetBool(IsMovingHash, moveInput != 0);
 
         if (moveInput != 0)
         {
@@ -57,6 +64,7 @@ public class PlayerMove : MonoBehaviour
         moveInput = 0;
         if (rb != null)
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+        if (animator != null) animator.SetBool(IsMovingHash, false);
     }
 
 #if UNITY_EDITOR

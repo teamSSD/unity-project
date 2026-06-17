@@ -1,27 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// 호버 툴팁 패널 (재료/요리도구 공용). title + body 두 줄.
+/// 호출자가 prefix까지 만들어서 통째로 넘긴다.
+/// </summary>
 public class CookingToolDescription : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI nameText;
-    [SerializeField] private TextMeshProUGUI contentText;
+    [SerializeField] private TextMeshProUGUI titleText;
+    [SerializeField] private TextMeshProUGUI bodyText;
 
-    public void setName(string name)
+    public void SetTexts(string title, string body)
     {
-        nameText.text = "요리 도구 : " + name;
-    }
-
-    public void setIngredients(List<string> contents)
-    {
-        contentText.text = "내용물 : " + String.Join(", ", contents);
-    }
-
-    public void setResult(string content)
-    {
-        contentText.text = "내용물 : " + content + "(요리됨)";
+        if (titleText != null) titleText.text = title;
+        if (bodyText != null) bodyText.text = body;
     }
 
 #if UNITY_EDITOR

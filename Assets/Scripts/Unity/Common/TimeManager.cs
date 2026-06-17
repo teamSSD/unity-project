@@ -17,6 +17,10 @@ public class TimeManager : SingletonMonoBehaviour<TimeManager>
     [Header("Balancing - Local Timers")]
     [Tooltip("손님이 기다리는 기본 인내심 시간(초)")]
     [SerializeField] private float defaultCustomerWaitTime = 90f;
+    [Tooltip("영업 종료 후 대기 손님 인내심 가속 배율 (퇴장 압박)")]
+    [SerializeField] private float closedLocalTimerScale = 2f;
+
+    private float localTimerScale = 1f;
 
     public event Action OnTimePaused;
     public event Action OnTimeResumed;
@@ -109,7 +113,8 @@ public class TimeManager : SingletonMonoBehaviour<TimeManager>
         {
             PauseTime();
             breakTargetTime = -1; // 한 번 울리면 비활성화
-            
+            localTimerScale = closedLocalTimerScale; // 영업 종료 → 잔여 대기 손님 인내심 가속
+
             Debug.Log("[TimeManager] Time ended");
             OnTimeEnd?.Invoke();
             breakAction?.Invoke();
@@ -169,22 +174,24 @@ public class TimeManager : SingletonMonoBehaviour<TimeManager>
 
     private void Update()
     {
-        if (IsPaused) return;
-
-        // 1. Global Game Time Update
-        gameTimer += Time.deltaTime;
-        float secondsPerGameMinute = 60f / gameTimeScale;
-
-        while (gameTimer >= secondsPerGameMinute)
+        // 1. Global Game Time Update — IsPaused일 때 정지 (영업 종료 / 일시정지)
+        if (!IsPaused)
         {
-            var stats = GameSessionRoot.Instance?.Stats;
-            if (stats == null) break;
-            stats.AddTime(0, 1);
-            gameTimer -= secondsPerGameMinute;
-            CheckBreakPoint(stats.GetHour() * 60 + stats.GetMinute());
+            gameTimer += Time.deltaTime;
+            float secondsPerGameMinute = 60f / gameTimeScale;
+
+            while (gameTimer >= secondsPerGameMinute)
+            {
+                var stats = GameSessionRoot.Instance?.Stats;
+                if (stats == null) break;
+                stats.AddTime(0, 1);
+                gameTimer -= secondsPerGameMinute;
+                CheckBreakPoint(stats.GetHour() * 60 + stats.GetMinute());
+            }
         }
 
-        // 2. Local Timers Update
+        // 2. Local Timers Update — 글로벌 일시정지와 무관하게 계속 진행
+        //    (영업 종료 후에도 대기 손님 인내심은 흘러야 timeout → 퇴장 가능)
         for (int i = activeTimers.Count - 1; i >= 0; i--)
         {
             var t = activeTimers[i];
@@ -194,7 +201,7 @@ public class TimeManager : SingletonMonoBehaviour<TimeManager>
                 continue;
             }
 
-            t.elapsed += Time.deltaTime;
+            t.elapsed += Time.deltaTime * localTimerScale;
             t.onTick?.Invoke(t.elapsed, t.duration);
 
             if (t.elapsed >= t.duration)

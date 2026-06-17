@@ -19,7 +19,7 @@ public class FoodModel : MonoBehaviour
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
     private TooltipController tooltipController;
-    private IngredientDescription ingredientDescriptionScript;
+    private CookingToolDescription tooltipScript;
     private LoadInventoryUsecase loadInventoryUsecase;
 
     private bool injected = false;
@@ -39,7 +39,7 @@ public class FoodModel : MonoBehaviour
     {
         if (tooltipController != null && tooltipController.GetTooltipObject() != null)
         {
-            ingredientDescriptionScript = tooltipController.GetTooltipObject().GetComponent<IngredientDescription>();
+            tooltipScript = tooltipController.GetTooltipObject().GetComponent<CookingToolDescription>();
             tooltipController.RegisterContentUpdater(UpdateTooltipContent);
         }
     }
@@ -175,16 +175,12 @@ public class FoodModel : MonoBehaviour
     /// </summary>
     private void UpdateTooltipContent()
     {
-        if (ingredientDescriptionScript != null && SchemaInstance != null)
-        {
-            ingredientDescriptionScript.SetTexts(
-                SchemaInstance.foodData.ingredientName,
-                loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData).ToString(),
-                SchemaInstance.foodData.description
-            );
+        if (tooltipScript == null || SchemaInstance == null) return;
 
-            tooltipController.RequestPositionNear(GetComponent<SpriteRenderer>().bounds, forceRight: true);
-        }
+        string name = SchemaInstance.foodData.ingredientName;
+        int count = loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData);
+        tooltipScript.SetTexts("이름 : " + name, "수량 : " + count);
+        tooltipController.RequestPositionNear(GetComponent<SpriteRenderer>().bounds, forceRight: true);
     }
 
     public void AddToCookingTool()

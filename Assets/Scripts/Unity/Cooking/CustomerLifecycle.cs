@@ -186,6 +186,12 @@ public class CustomerLifecycle
     }
 
     /// <summary>
+    /// 주문 전(Ordering→Waiting 전환 미완료) + ticket 없음 = 외부 영향 없이 안전하게 제거 가능.
+    /// 영업 종료 시 stuck lifecycle 청소용.
+    /// </summary>
+    public bool IsStuckPreOrder() => waitingCustomer == null && orderTicket == null;
+
+    /// <summary>
     /// Cleanup (called when lifecycle ends) — 모든 외부 이벤트 구독 해제.
     /// </summary>
     public void Cleanup()

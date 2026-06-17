@@ -398,7 +398,7 @@ Transform:
   m_GameObject: {fileID: 6518053939684660665}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.8, y: -1, z: 0}
+  m_LocalPosition: {x: -4.32, y: 0.8599999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -423,6 +423,7 @@ MonoBehaviour:
   scoringPrefab: {fileID: 5058520501755347154, guid: 3d32c5ae1d8e545918e845b30fbdcacc, type: 3}
   miniGameBgSource: {fileID: 4917050209121447711, guid: 021eb9aa84fdafa4f88bf57435a6cc97, type: 3}
   visualizer: {fileID: 4930570710280465841}
+  interactionSfx: {fileID: 8300000, guid: 36d8d94c1731649d687d8e6abcc54fb9, type: 3}
   cuttingBoard: {fileID: 7822395060721047497}
   activeKnife: {fileID: 4913471209991350611}
   slicePrefab: {fileID: 6356767571523826658, guid: 5785e3ec9168647f8ae7744aec32a102, type: 3}
@@ -439,7 +440,6 @@ MonoBehaviour:
   sliceCenterY: 1.06
   useFixedSliceCenter: 1
   maskSprite: {fileID: 21300000, guid: fab2c4d676c234e95beea12992219a6d, type: 3}
-  interactionSfx: {fileID: 8300000, guid: 36d8d94c1731649d687d8e6abcc54fb9, type: 3}
 --- !u!1 &6840812378509623670
 GameObject:
   m_ObjectHideFlags: 0

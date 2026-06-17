@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::DeliveryNpcData
   id: npc_lede
   characterName: "\uB808\uB370"
-  sprite: {fileID: 21300000, guid: a7b136570851841bcaebfa5f1f822852, type: 3}
+  sprite: {fileID: -5244221666782989574, guid: 093e4827fa92a4cadb8dd71326fcff50, type: 3}
   position: {x: 27, y: -5.9}
   state: 0
   groupId: lede_solo

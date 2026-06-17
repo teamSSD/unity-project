@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Config
   m_EditorClassIdentifier: Game.Runtime::DeliveryDialogueConfig
   firstMeet: {fileID: 11400000, guid: ea46519d235754a40910b1b2ba5b21f3, type: 2}
-  normal: {fileID: 11400000, guid: 2fdfbb0a62778435c86ae3446ac07df3, type: 2}
+  normal: {fileID: 0}
   questStart: {fileID: 11400000, guid: 8cb2d05e1968d4f5e8b5ad5ecf7b9a8e, type: 2}
   ordering: {fileID: 11400000, guid: fe470fb3609544229a2141465aab1eaf, type: 2}
   orderEnd: {fileID: 11400000, guid: 21b0d08cb11bd4d158b9ad2d2f7d775d, type: 2}

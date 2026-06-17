@@ -55,7 +55,6 @@ public class CookingToolModel : MonoBehaviour
         if (tooltipController != null && tooltipController.GetTooltipObject() != null)
         {
             cookingToolDescriptionScript = tooltipController.GetTooltipObject().GetComponent<CookingToolDescription>();
-            cookingToolDescriptionScript.setName(SchemaInstance.cookingToolData.cookerName);
             tooltipController.RegisterContentUpdater(UpdateTooltipContent);
         }
     }
@@ -72,21 +71,19 @@ public class CookingToolModel : MonoBehaviour
     {
         if (cookingToolDescriptionScript == null || SchemaInstance == null) return;
 
+        string title = "요리 도구 : " + SchemaInstance.cookingToolData.cookerName;
+        string body;
         if (SchemaInstance.GetResult() == null)
         {
-            // Show ingredients
-            var ingredientNames = SchemaInstance.Ingredients
-                .Select(i => i.foodData.ingredientName)
-                .ToList();
-
-            cookingToolDescriptionScript.setIngredients(ingredientNames);
-            tooltipController.RequestPositionNear(GetComponent<SpriteRenderer>().bounds);
+            var names = SchemaInstance.Ingredients.Select(i => i.foodData.ingredientName);
+            body = "내용물 : " + string.Join(", ", names);
         }
         else
         {
-            cookingToolDescriptionScript.setResult(SchemaInstance.GetResult().foodData.ingredientName);
-            tooltipController.RequestPositionNear(GetComponent<SpriteRenderer>().bounds);
+            body = "내용물 : " + SchemaInstance.GetResult().foodData.ingredientName + "(요리됨)";
         }
+        cookingToolDescriptionScript.SetTexts(title, body);
+        tooltipController.RequestPositionNear(GetComponent<SpriteRenderer>().bounds, forceRight: true);
     }
 
     void OnDestroy()

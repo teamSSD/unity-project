@@ -22,6 +22,7 @@ public class CatalogProvider : SingletonMonoBehaviour<CatalogProvider>
     [Header("Mall / Delivery")]
     [SerializeField] private DeliveryNpcCatalogSO deliveryNpc;
     [SerializeField] private DialogueConfigCatalogSO dialogueConfig;
+    [SerializeField] private NpcNormalDialogueCatalogSO npcNormalDialogue;
 
     // Garden CropData는 ScriptableObject가 아닌 CSV POCO이므로 catalog 별도 처리 (Phase 3 이후)
 
@@ -48,6 +49,7 @@ public class CatalogProvider : SingletonMonoBehaviour<CatalogProvider>
     public static CookingToolCatalogSO CookingTool       => Instance != null ? Instance.cookingTool         : null;
     public static DeliveryNpcCatalogSO DeliveryNpc       => Instance != null ? Instance.deliveryNpc         : null;
     public static DialogueConfigCatalogSO DialogueConfig => Instance != null ? Instance.dialogueConfig      : null;
+    public static NpcNormalDialogueCatalogSO NpcNormalDialogue => Instance != null ? Instance.npcNormalDialogue : null;
     public static PrefabCatalogSO Prefabs                => Instance != null ? Instance.prefabs             : null;
     public static ShopConfigSO FoodShopConfig            => Instance != null ? Instance.foodShopConfig      : null;
     public static CsvCatalogSO Csvs                      => Instance != null ? Instance.csvs                : null;

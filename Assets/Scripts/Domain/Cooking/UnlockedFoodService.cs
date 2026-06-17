@@ -43,8 +43,10 @@ namespace Game.Domain.Cooking
 
         public void UnlockDefaultRecipes()
         {
+            // I062 환기구 연어구이는 quest 경로에 없어 default 유지 필수.
+            // 시작 재료는 환기구 raw 빠짐 (UpperShelf cap fit) — 게임 중 shop 구매로 조리 가능.
             string[] defaultMains = { "I044", "I060" };
-            string[] defaultSides = { "I046" };
+            string[] defaultSides = { "I046", "I062" };
             foreach (var id in defaultMains) UnlockRecipe(id);
             foreach (var id in defaultSides) UnlockRecipe(id);
         }

@@ -18,7 +18,8 @@ GameObject:
   - component: {fileID: -4821110391656568136}
   - component: {fileID: -2251638618292681068}
   - component: {fileID: 5874270422761378925}
-  - component: {fileID: -7676850369306672212}
+  - component: {fileID: 7216061601074270333}
+  - component: {fileID: 4012826343041397133}
   m_Layer: 6
   m_Name: Receipt
   m_TagString: Untagged
@@ -265,7 +266,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   defaultPosition: {x: 0, y: 0, z: 0}
---- !u!114 &-7676850369306672212
+--- !u!210 &7216061601074270333
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7370412938016546202}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
+  m_Sort3DAs2D: 0
+--- !u!114 &4012826343041397133
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -274,11 +288,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 7370412938016546202}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe6d87a0b6fa14fe5b81550f05dad488, type: 3}
+  m_Script: {fileID: 11500000, guid: 76d6e5d92c0974732b3c5f33c265018e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  linePrefab: {fileID: 0}
-  orderNumber: {fileID: 0}
+  m_EditorClassIdentifier: Game.Unity::DragSortingBump
+  dragSortingLayer: UI
+  dragSortingOrder: 999
 --- !u!1 &7662601099363739462
 GameObject:
   m_ObjectHideFlags: 0
@@ -341,7 +355,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 4627175082782406568, guid: 0aee1aaadb3ec4e43954a19127e8fd42, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -388,7 +402,7 @@ MonoBehaviour:
   m_text: "\uC8FC\uBB38\uBC88\uD638 : 1"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0aee1aaadb3ec4e43954a19127e8fd42, type: 2}
-  m_sharedMaterial: {fileID: 0}
+  m_sharedMaterial: {fileID: 4627175082782406568, guid: 0aee1aaadb3ec4e43954a19127e8fd42, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -435,7 +449,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1

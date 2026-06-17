@@ -14,7 +14,6 @@ using UnityEngine;
 public class CustomerManager : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private GameObject statManager;
     [SerializeField] private AudioClip doorSfx;
     [SerializeField] private List<CustomerData> customerDataList;
 
@@ -64,13 +63,15 @@ public class CustomerManager : MonoBehaviour
             isOpen = false;
             return;
         }
-
-        if (statManager != null)
-            statManager.GetComponent<StatManager>().onTimeEnd += OnTimeEnd;
     }
 
     void Start()
     {
+        // TimeManager 구독은 Start에서 — 모든 Awake 완료 후라 Instance 보장.
+        // (이전엔 StatManager.OnEnable에서 중계했는데, 구독 race 가능성으로 직접 구독.)
+        var time = TimeManager.Instance;
+        if (time != null) time.OnTimeEnd += OnTimeEnd;
+
         ApplyPhaseSettings();
         deliveryCoord.CreateAll();
         nextSpawnTime = GameRandom.Normal(GameRandom.Variable, 5f, 3f); // 첫 손님은 빠르게
@@ -181,12 +182,30 @@ public class CustomerManager : MonoBehaviour
 
     private void OnTimeEnd()
     {
+        Debug.Log("[CustomerManager] OnTimeEnd — closing shop");
         isOpen = false;
+
+        // Ordering 손님: 즉시 destroy (걸어나가지 않음). lifecycle도 같이 정리.
         if (currentOrderingCustomer != null)
         {
             Destroy(currentOrderingCustomer);
             currentOrderingCustomer = null;
         }
+
+        // 주문 전 / waiting customer 미생성 상태로 멈춘 lifecycle은 제거 — ticket도 없으니 안전.
+        // (활성 ticket 가진 waiting 손님은 인내심 게이지(2배 가속) → 자연 timeout 흐름 유지.)
+        for (int i = activeCustomers.Count - 1; i >= 0; i--)
+        {
+            var lc = activeCustomers[i];
+            if (lc.IsStuckPreOrder())
+            {
+                lc.OnCustomerServed -= OnCustomerServed;
+                lc.OnCustomerLeft -= OnCustomerLeft;
+                lc.Cleanup();
+                activeCustomers.RemoveAt(i);
+            }
+        }
+
         CheckGameEnd();
     }
 
@@ -209,11 +228,8 @@ public class CustomerManager : MonoBehaviour
         }
         activeCustomers.Clear();
 
-        if (statManager != null)
-        {
-            var statMgr = statManager.GetComponent<StatManager>();
-            if (statMgr != null) statMgr.onTimeEnd -= OnTimeEnd;
-        }
+        var time = TimeManager.Instance;
+        if (time != null) time.OnTimeEnd -= OnTimeEnd;
     }
 
     public int GetActiveCustomerCount() => activeCustomers.Count;

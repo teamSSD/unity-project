@@ -36,6 +36,9 @@ public class InventoryPageController : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float barExpiredRatio = 0.3f;
     [SerializeField, Range(0f, 1f)] private float barWarningRatio = 0.6f;
 
+    [Header("Discard")]
+    [SerializeField] private AudioClip discardSfx;
+
     private InventorySlot selectedSlot;
 
     private static readonly (IngredientDisplayCategory category, Transform container, string upgradeType)[] CategoryMap
@@ -188,7 +191,33 @@ public class InventoryPageController : MonoBehaviour
             var row = Instantiate(batchRowPrefab, batchListContainer);
             row.SetActive(true);
             SetupBatchRow(row, batch.quantity, batch.daysRemaining, maxDays);
+            WireDiscardButton(row, food, batch);
         }
+    }
+
+    private void WireDiscardButton(GameObject row, FoodData food, InventoryBatch batch)
+    {
+        var btn = row.transform.Find("DiscardButton")?.GetComponent<Button>();
+        if (btn == null) return;
+        btn.onClick.RemoveAllListeners();
+        btn.onClick.AddListener(() =>
+        {
+            ConfirmModal.Show(
+                title: "버리시겠습니까?",
+                message: $"{food.ingredientName} {batch.quantity}개를 버립니다.",
+                onConfirm: () =>
+                {
+                    var inv = GameSessionRoot.Instance?.Inventory;
+                    if (inv == null) return;
+                    if (!inv.DiscardBatch(food, batch)) return;
+                    if (discardSfx != null) SoundManager.Instance?.Play2DSFX(discardSfx, 0.6f);
+                    ShowDetail(food);  // 선택 식재료의 배치 목록 갱신
+                    Refresh();         // 좌측 카테고리 슬롯도 갱신 (총량 변동)
+                },
+                yesText: "버리기",
+                noText: "취소"
+            );
+        });
     }
 
     private void SetupBatchRow(GameObject row, int qty, int daysRemaining, int maxDays)
@@ -199,12 +228,16 @@ public class InventoryPageController : MonoBehaviour
 
         float ratio = maxDays > 0 ? Mathf.Clamp01((float)daysRemaining / maxDays) : 0f;
 
-        // 진행 바 (Bar는 BarBg의 자식)
-        var bar = row.transform.Find("BarBg/Bar")?.GetComponent<Image>();
-        if (bar != null)
+        // 진행 바: anchor.x로 폭 조절 → sprite 없이 순수 색 사각형
+        var barRect = row.transform.Find("BarBg/Bar") as RectTransform;
+        if (barRect != null)
         {
-            bar.fillAmount = ratio;
-            bar.color = GetBarColor(ratio);
+            barRect.anchorMin = new Vector2(0f, 0f);
+            barRect.anchorMax = new Vector2(ratio, 1f);
+            barRect.sizeDelta = Vector2.zero;
+            barRect.anchoredPosition = Vector2.zero;
+            var img = barRect.GetComponent<Image>();
+            if (img != null) img.color = GetBarColor(ratio);
         }
 
         // 남은 일수 레이블: 만료일 때만 빨강 강조, 그 외엔 본문 텍스트 색 유지

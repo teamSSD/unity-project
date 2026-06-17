@@ -11,6 +11,9 @@ public class MixMiniGame : MiniGameAbstract
     public GameObject mixingRod;
     public float width = 1f;
     public float height = 0.5f;
+    [Header("회전 (고정 각도)")]
+    [Tooltip("sprite의 고정 회전 (degrees, CCW). 손잡이를 우상단으로 기울이려면 -30~-45 정도.")]
+    public float fixedRotationDegrees = -30f;
     public int pressRequiringCount = 20;
     public float idleClearTime = 2f;
 
@@ -24,6 +27,7 @@ public class MixMiniGame : MiniGameAbstract
         RodMovement.mixingRod = mixingRod;
         RodMovement.width = width;
         RodMovement.height = height;
+        RodMovement.fixedRotationDegrees = fixedRotationDegrees;
     }
 
     void Start()
@@ -73,6 +77,7 @@ public class MixMiniGame : MiniGameAbstract
         public static Vector3 mixingRodDefaultPosition;
         public static float width = 0;
         public static float height = 0;
+        public static float fixedRotationDegrees;
 
         private static bool sweeping = false;
         private static float lapDuration = 0f;
@@ -80,21 +85,27 @@ public class MixMiniGame : MiniGameAbstract
 
         public static void SetDefaultPosition()
         {
-            mixingRod.transform.localPosition = mixingRodDefaultPosition + calculatePosition(0);
+            ApplyTransform(0);
         }
 
         public static void Animating()
         {
             if (!sweeping) return;
-            
+
             float angularVelocity = (Mathf.PI * 2f) / lapDuration;
             angle += Time.deltaTime * angularVelocity;
-            mixingRod.transform.localPosition = mixingRodDefaultPosition + calculatePosition(angle);
+            ApplyTransform(angle);
             if (angle >= Mathf.PI * 2f)
             {
                 sweeping = false;
                 SetDefaultPosition();
             }
+        }
+
+        private static void ApplyTransform(float ang)
+        {
+            mixingRod.transform.localPosition = mixingRodDefaultPosition + calculatePosition(ang);
+            mixingRod.transform.localRotation = Quaternion.Euler(0f, 0f, fixedRotationDegrees);
         }
 
         public static void sweep(float period)

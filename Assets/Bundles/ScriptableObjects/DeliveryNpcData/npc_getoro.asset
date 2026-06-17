@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::DeliveryNpcData
   id: npc_getoro
   characterName: "\uAC8C\uD1A0\uB85C"
-  sprite: {fileID: 21300000, guid: b8f97c09ec4a64d8daaad6cf88b58969, type: 3}
+  sprite: {fileID: -1150192711547279982, guid: 234c23eaca0c74d7a826386d814d0eea, type: 3}
   position: {x: 13.53, y: 0.3}
   state: 0
   groupId: power_room_pair
+  prerequisiteGroupId: 

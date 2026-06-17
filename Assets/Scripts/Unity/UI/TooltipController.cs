@@ -2,8 +2,8 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-// TooltipController는 Food 또는 CookingTool 프리팹에 부착 — 두 Model 동시 require 불가 (XOR).
-// 본문에서 GetComponent<FoodModel/CookingToolModel> null-check로 동적 분기.
+// TooltipController는 Food/CookingTool 프리팹에 부착. 글로벌 툴팁 1개를 공유.
+// 콘텐츠는 RegisterContentUpdater로 등록한 콜백이 hover 발동 시점에 채운다.
 [RequireComponent(typeof(HoverStateUtil))]
 [RequireComponent(typeof(ClickStateUtil))]
 public class TooltipController : MonoBehaviour
@@ -49,10 +49,7 @@ public class TooltipController : MonoBehaviour
             return;
         }
 
-        if (GetComponent<FoodModel>() != null)
-            tooltipObject = ui.IngredientTooltip;
-        else if (GetComponent<CookingToolModel>() != null)
-            tooltipObject = ui.CookingToolTooltip;
+        tooltipObject = ui.Tooltip;
 
         if (tooltipObject == null)
             Debug.LogError($"[TooltipController] {gameObject.name}: Failed to get global tooltip!");

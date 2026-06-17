@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::DeliveryNpcData
   id: npc_nimo
   characterName: "\uB2C8\uBAA8"
-  sprite: {fileID: 21300000, guid: 1071998672bf4469180c2c4e23a8cd90, type: 3}
+  sprite: {fileID: 4101381209462587745, guid: 664a4d4f1eaff40a6b3f905dd61d4071, type: 3}
   position: {x: -21.2, y: 5.4}
   state: 0
   groupId: nimo_solo

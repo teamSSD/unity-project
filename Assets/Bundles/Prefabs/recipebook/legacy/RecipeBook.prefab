@@ -1829,6 +1829,7 @@ MonoBehaviour:
   barExpired: {r: 0.85, g: 0.25, b: 0.25, a: 1}
   barExpiredRatio: 0.3
   barWarningRatio: 0.6
+  discardSfx: {fileID: 8300000, guid: 438d05766992e47919ed02c9792e9353, type: 3}
 --- !u!1 &4120393540363418743
 GameObject:
   m_ObjectHideFlags: 0

@@ -97,6 +97,12 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
         UILockManager.Unlock(UILockManager.Owner.Shop);
     }
 
+    private void Update()
+    {
+        if (bookInstance != null && bookInstance.activeSelf && Input.GetKeyDown(KeyCode.Escape))
+            CloseShop();
+    }
+
     private void SwitchTab(Tab tab)
     {
         currentTab = tab;

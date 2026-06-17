@@ -30,16 +30,35 @@ public class BentoModel : MonoBehaviour
         scanColliderUtil = GetComponent<ScanColliderUtil>();
         clickStateUtil = GetComponent<ClickStateUtil>();
 
+        clickStateUtil.OnDragStart += ShowAvailablePositions;
+        clickStateUtil.OnDragEnd += HideAvailablePositions;
         clickStateUtil.OnDragEnd += SetPosition;
     }
 
     private void OnDestroy()
     {
+        clickStateUtil.OnDragStart -= ShowAvailablePositions;
+        clickStateUtil.OnDragEnd -= HideAvailablePositions;
         clickStateUtil.OnDragEnd -= SetPosition;
         if (bentoPositionModel != null)
         {
             bentoPositionModel.isSet = false;
         }
+    }
+
+    private void ShowAvailablePositions()
+    {
+        var all = FindObjectsByType<BentoPositionModel>(FindObjectsSortMode.None);
+        foreach (var pos in all)
+        {
+            if (!pos.isSet) pos.ShowHighlight();
+        }
+    }
+
+    private void HideAvailablePositions()
+    {
+        var all = FindObjectsByType<BentoPositionModel>(FindObjectsSortMode.None);
+        foreach (var pos in all) pos.HideHighlight();
     }
     public bool AddIngredient(FoodSchema food)
     {
@@ -85,6 +104,7 @@ public class BentoModel : MonoBehaviour
     {
         if (bentoPositionModel == null)
         {
+            // 첫 배치 — 빈 BentoPosition에만 안착
             bentoPositionModel = scanColliderUtil.GetOverlappingWithComponent<BentoPositionModel>();
             if (bentoPositionModel != null && !bentoPositionModel.isSet)
             {
@@ -96,15 +116,27 @@ public class BentoModel : MonoBehaviour
             {
                 Destroy(this.gameObject);
             }
+            return;
         }
-        else
+
+        // 이미 자리잡은 상태 — Trashcan 우선
+        GameObject trashcan = scanColliderUtil.GetOverlappingWithTag(Tags.Trashcan.ToString());
+        if (trashcan != null)
         {
-            GameObject gameObject = scanColliderUtil.GetOverlappingWithTag(Tags.Trashcan.ToString());
-            if (gameObject != null)
-            {
-                SoundManager.Instance?.Play2DSFX(trashcanSfx);
-                Destroy(this.gameObject);
-            }
+            SoundManager.Instance?.Play2DSFX(trashcanSfx);
+            Destroy(this.gameObject);
+            return;
+        }
+
+        // 다른 빈 BentoPosition 으로 이동 (점유 자리는 자동 복귀)
+        BentoPositionModel newPosition = scanColliderUtil.GetOverlappingWithComponent<BentoPositionModel>();
+        if (newPosition != null && newPosition != bentoPositionModel && !newPosition.isSet)
+        {
+            bentoPositionModel.isSet = false;
+            bentoPositionModel = newPosition;
+            bentoPositionModel.isSet = true;
+            BehaviorInstance.defaultPosition = bentoPositionModel.transform.position;
+            SoundManager.Instance.Play2DSFX(bentoPutSfx, 0.4f);
         }
     }
 

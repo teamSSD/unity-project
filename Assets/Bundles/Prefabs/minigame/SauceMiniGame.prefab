@@ -278,7 +278,7 @@ Transform:
   m_GameObject: {fileID: 2899877712096204643}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -8.15, y: 1.21, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -299,16 +299,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49f52a7a8b3d935499ba30718e8603f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoringPrefab: {fileID: 0}
+  scoringPrefab: {fileID: 5058520501755347154, guid: 3d32c5ae1d8e545918e845b30fbdcacc, type: 3}
   miniGameBgSource: {fileID: 4917050209121447711, guid: 021eb9aa84fdafa4f88bf57435a6cc97, type: 3}
   gaugeBar: {fileID: 6270032678367151959}
   stackRenderer: {fileID: 944562236939760790}
+  interactionSfx: {fileID: 8300000, guid: 43b1bf5e91cf643b2a88f59761eb852c, type: 3}
   decreasePerPress: 2
   targetGauge: 65
   upperArrow: {fileID: 6132707111305442208}
   lowerArrow: {fileID: 18504464439148836}
-  coldStart: 1.29
-  interactionSfx: {fileID: 8300000, guid: 43b1bf5e91cf643b2a88f59761eb852c, type: 3}
 --- !u!1 &3145584585879916145
 GameObject:
   m_ObjectHideFlags: 0
@@ -410,7 +409,7 @@ Transform:
   m_GameObject: {fileID: 3932114159814952190}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.66, z: 0}
+  m_LocalPosition: {x: 0, y: 0.11, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -465,15 +464,15 @@ SpriteRenderer:
   m_SortingLayer: 5
   m_SortingOrder: 20
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 1761232180282281933, guid: affb399a3a2134c0eab4785bc6f1a7e3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e71354f6c0c1e4103818d59279651043, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 3.41, y: 1.3}
+  m_Size: {x: 4, y: 4}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
 --- !u!1 &5074471795802524348
 GameObject:

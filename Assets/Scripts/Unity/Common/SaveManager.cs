@@ -10,6 +10,7 @@ public class GameSaveData
     public InventorySaveData inventory = new();
     public OrderSaveData orders = new();
     public DeliveryQuestSaveData deliveryQuest = new();
+    public NpcNormalCycleSaveData npcNormalCycle = new();
     public ToolUpgradeSaveData toolUpgrades = new();
     public StorageUpgradeSaveData storageUpgrades = new();
     public FarmUpgradeSaveData farmUpgrades = new();

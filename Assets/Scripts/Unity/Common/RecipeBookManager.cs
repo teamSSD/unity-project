@@ -103,7 +103,7 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
                 Open();
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape) && isRecipeBookActive)
+        if (Input.GetKeyDown(KeyCode.Escape) && isRecipeBookActive && !ConfirmModal.IsOpen)
         {
             if (MenuCardController.Instance != null)
                 CloseMenuCard();

@@ -14,24 +14,14 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
 
     public Canvas GlobalCanvas { get; private set; }
 
-    private GameObject _ingredientTooltip;
-    private GameObject _cookingToolTooltip;
+    private GameObject _tooltip;
 
-    public GameObject IngredientTooltip
+    public GameObject Tooltip
     {
         get
         {
             EnsureInitialized();
-            return _ingredientTooltip;
-        }
-    }
-
-    public GameObject CookingToolTooltip
-    {
-        get
-        {
-            EnsureInitialized();
-            return _cookingToolTooltip;
+            return _tooltip;
         }
     }
 
@@ -83,30 +73,17 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
 
     private void CreateGlobalTooltips()
     {
-        // Ingredient 툴팁 (재료/음식용) - 1개만
-        GameObject ingredientPrefab = CatalogProvider.Prefabs?.ingredientDescription;
-        if (ingredientPrefab != null)
+        // 재료/요리도구 공용 툴팁 - 1개만
+        GameObject prefab = CatalogProvider.Prefabs?.cookingToolDescription;
+        if (prefab != null)
         {
-            _ingredientTooltip = Instantiate(ingredientPrefab, GlobalCanvas.transform);
-            _ingredientTooltip.name = "GlobalIngredientTooltip";
-            _ingredientTooltip.SetActive(false);
+            _tooltip = Instantiate(prefab, GlobalCanvas.transform);
+            _tooltip.name = "GlobalTooltip";
+            _tooltip.SetActive(false);
         }
         else
         {
-            Debug.LogError("[UIManager] IngredientDescription prefab not in PrefabCatalog");
-        }
-
-        // CookingTool 툴팁 (조리 도구용) - 1개만
-        GameObject toolPrefab = CatalogProvider.Prefabs?.cookingToolDescription;
-        if (toolPrefab != null)
-        {
-            _cookingToolTooltip = Instantiate(toolPrefab, GlobalCanvas.transform);
-            _cookingToolTooltip.name = "GlobalCookingToolTooltip";
-            _cookingToolTooltip.SetActive(false);
-        }
-        else
-        {
-            Debug.LogError("[UIManager] Failed to load CookingToolDescription prefab");
+            Debug.LogError("[UIManager] Failed to load tooltip prefab");
         }
     }
 }

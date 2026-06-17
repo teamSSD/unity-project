@@ -89,6 +89,16 @@ namespace Game.Domain.Common
             return new List<InventoryBatch>(batches);
         }
 
+        /// <summary>특정 배치를 통째로 폐기 (환불 없음). 인벤토리 UI 버리기 버튼에서 호출.</summary>
+        public bool DiscardBatch(FoodData food, InventoryBatch batch)
+        {
+            if (food == null || batch == null) return false;
+            if (!_inventory.TryGetValue(food, out var batches)) return false;
+            if (!batches.Remove(batch)) return false;
+            if (batches.Count == 0) _inventory.Remove(food);
+            return true;
+        }
+
         public List<(FoodData food, IngredientData ingredient)> LoadIngredientsByCategory(IngredientDisplayCategory category)
         {
             return _inventory

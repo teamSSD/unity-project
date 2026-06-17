@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::DeliveryNpcData
   id: npc_seraph
   characterName: "\uC138\uB77C\uD504"
-  sprite: {fileID: 0}
+  sprite: {fileID: 1940058010014537853, guid: 8bf338d7c4f4649e0bb8cb0060ceeff6, type: 3}
   position: {x: 5, y: -7.2}
   state: 0
   groupId: seraph_solo

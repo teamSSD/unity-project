@@ -7,17 +7,41 @@ public partial class DeliveryNpcDialogueInteraction
 {
     DialogueSO GetDialogueForStage(DeliveryQuestStage stage)
     {
+        if (stage == DeliveryQuestStage.Normal || stage == DeliveryQuestStage.Completed)
+            return GetNormalSection();
+
         if (dialogueConfig == null) return null;
         return stage switch
         {
             DeliveryQuestStage.FirstMeet  => dialogueConfig.firstMeet,
-            DeliveryQuestStage.Normal     => dialogueConfig.normal,
             DeliveryQuestStage.QuestStart => dialogueConfig.questStart,
             DeliveryQuestStage.Ordering   => dialogueConfig.ordering,
             DeliveryQuestStage.OrderEnd   => dialogueConfig.orderEnd,
-            DeliveryQuestStage.Completed  => dialogueConfig.normal,
             _ => null
         };
+    }
+
+    /// <summary>Normal 사이클 인덱스를 다음으로 진행 + 저장. Quest 단계와 무관.</summary>
+    void AdvanceNormalCycle()
+    {
+        var catalog = CatalogProvider.NpcNormalDialogue;
+        var sections = catalog?.GetSections(npcId);
+        if (sections == null || sections.Count == 0) return;
+        GameSessionRoot.Instance?.NpcNormalDialogue?.Advance(npcId, sections.Count);
+    }
+
+    /// <summary>npcId 기반 NpcNormalDialogueCatalog에서 현재 사이클 인덱스의 section 반환. 없으면 fallback.</summary>
+    DialogueSO GetNormalSection()
+    {
+        var catalog = CatalogProvider.NpcNormalDialogue;
+        var sections = catalog?.GetSections(npcId);
+        if (sections == null || sections.Count == 0)
+            return dialogueConfig?.normal; // legacy fallback
+
+        var svc = GameSessionRoot.Instance?.NpcNormalDialogue;
+        int idx = svc?.GetIndex(npcId) ?? 0;
+        if (idx < 0 || idx >= sections.Count) idx = 0;
+        return sections[idx];
     }
 
     void AdvanceQuestStage(string resultTag)
@@ -31,10 +55,13 @@ public partial class DeliveryNpcDialogueInteraction
         switch (current)
         {
             case DeliveryQuestStage.FirstMeet:
-                svc.SetStage(groupId, DeliveryQuestStage.Normal);
+                // FirstMeet 끝나면 곧바로 QuestStart로 진행 (Normal 단계 거치지 않음)
+                svc.SetStage(groupId, DeliveryQuestStage.QuestStart);
                 break;
             case DeliveryQuestStage.Normal:
-                svc.SetStage(groupId, DeliveryQuestStage.QuestStart);
+            case DeliveryQuestStage.Completed:
+                // 일상 대화 사이클 인덱스만 진행. 다른 quest 단계로는 전이하지 않음.
+                AdvanceNormalCycle();
                 break;
             case DeliveryQuestStage.QuestStart:
                 if (resultTag == "accept")
@@ -55,10 +82,9 @@ public partial class DeliveryNpcDialogueInteraction
     DeliveryQuestStage GetCurrentStage()
     {
         var svc = GameSessionRoot.Instance?.DeliveryQuest;
-        if (svc == null) return DeliveryQuestStage.Normal;
-        var stage = svc.GetStage(groupId);
-        // Service는 미등록 시 FirstMeet 반환하지만, 이 클래스는 Normal을 기본값으로 사용
-        return MallPersistentHasGroup(groupId) ? stage : DeliveryQuestStage.Normal;
+        if (svc == null) return DeliveryQuestStage.FirstMeet;
+        // Service는 미등록 시 FirstMeet 반환 — 새 플레이어/새 NPC는 자연스럽게 FirstMeet에서 시작.
+        return svc.GetStage(groupId);
     }
 
     bool IsQuestUnlocked()

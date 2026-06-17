@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929a58dbdcff141c4a39130b9a1497bb, type: 3}
+  m_Name: Section_1
+  m_EditorClassIdentifier: Game.Schema::DialogueSO
+  entries:
+  - speaker: "\uC138\uB77C\uD504"
+    text: "\uAC74\uD3D0\uC728\uC774 89\uD37C\uC13C\uD2B8\uC778\uAC00."
+    choices: []
+  - speaker: "\uC138\uB77C\uD504"
+    text: "\uBCF4\uD1B5\uC740 \uC7AC\uB09C \uC0AC\uB840\uB85C \uBD84\uB958\uB418\uB294
+      \uC218\uCE58\uC778\uB370..."
+    choices: []

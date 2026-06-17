@@ -26,7 +26,7 @@ MonoBehaviour:
   toolVariants:
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: -1998838684964746424, guid: 297eb5bd0859b42abaf7c2eb6e5c017a, type: 3}
   - {fileID: 0}
   - {fileID: 0}
   bentoVariants:

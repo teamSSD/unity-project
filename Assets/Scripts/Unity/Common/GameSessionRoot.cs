@@ -30,6 +30,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     public ToolUpgradeService ToolUpgrade { get; private set; }
     public PurchaseService Purchase { get; private set; }
     public DeliveryQuestService DeliveryQuest { get; private set; }
+    public NpcNormalDialogueService NpcNormalDialogue { get; private set; }
     public OrderService Order { get; private set; }
     public QuestMenuCatalog QuestMenus { get; private set; }
     public InventoryService Inventory { get; private set; }
@@ -90,6 +91,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     private void WireMallDomain(IMoneyService money)
     {
         DeliveryQuest = new DeliveryQuestService(State.mall.persistent);
+        NpcNormalDialogue = new NpcNormalDialogueService(State.mall.persistent);
         Order = new OrderService(money);
         QuestMenus = new QuestMenuCatalog(ParseQuestMenus());
     }
