@@ -1,12 +1,15 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 [RequireComponent(typeof(DeliveryNpcInteraction))]
 [RequireComponent(typeof(SpriteRenderer))]
 public class DeliveryNpcView : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
-    [SerializeField] private string npcId;
+    [Tooltip("이 NPC에 적용할 데이터. 인스펙터에서 drag.")]
+    [SerializeField] private DeliveryNpcData npcData;
+    [SerializeField] private int sortingOrder = 5;
     [SerializeField] private GameObject speechBubblePrefab;
+    private string npcId;
     private string groupId;
     private string characterName;
     private string prerequisiteGroupId;
@@ -16,15 +19,22 @@ public class DeliveryNpcView : MonoBehaviour
     public Sprite Sprite => spriteRenderer?.sprite;
     public string CharacterName => characterName;
 
+    void Awake()
+    {
+        if (npcData != null)
+            Init(npcData);
+    }
+
+    /// <summary>인스펙터 데이터 적용. transform은 씬 배치값 그대로 — position을 덮어쓰지 않는다.</summary>
     public void Init(DeliveryNpcData data, DeliveryNpcState? stateOverride = null)
     {
+        if (data == null) return;
         if (spriteRenderer == null)
             spriteRenderer = GetComponent<SpriteRenderer>();
 
         spriteRenderer.sprite = data.sprite;
-        spriteRenderer.sortingOrder = 5;
+        spriteRenderer.sortingOrder = sortingOrder;
 
-        transform.position = data.position;
         npcId = data.id;
         groupId = data.groupId;
         characterName = data.characterName;

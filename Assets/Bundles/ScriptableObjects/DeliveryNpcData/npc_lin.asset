@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e01c5fde229bc46c9af25c4e9958cba9, type: 3}
+  m_Name: npc_lin
+  m_EditorClassIdentifier: Game.Schema::DeliveryNpcData
+  id: npc_lin
+  characterName: "\uB9B0"
+  sprite: {fileID: 21300000, guid: 7b570e9acbdf4461daec5bd58e3745e6, type: 3}
+  position: {x: 0, y: 0}
+  state: 0
+  groupId: 
+  prerequisiteGroupId: 

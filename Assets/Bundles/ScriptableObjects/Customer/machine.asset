@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: machine
   m_EditorClassIdentifier: 
   type: machine
+  npcId: npc_jar
   characterImage: {fileID: -1691976317863304467, guid: 487d28ff637e3482aa244a3fea0be92d, type: 3}
   orderingMessage: "{0} \uD558\uB098\uC694"
   satisfiedMessage: "\uC0C1\uD0DC \uC591\uD638. \uC7AC\uC8FC\uBB38 \uAC00\uB2A5."

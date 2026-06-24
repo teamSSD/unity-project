@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7c213fca0a714e4499ef3ffa048d9e2, type: 3}
+  m_Name: lede
+  m_EditorClassIdentifier: Game.Schema::CustomerData
+  type: warm
+  npcId: npc_lede
+  characterImage: {fileID: -5244221666782989574, guid: 093e4827fa92a4cadb8dd71326fcff50, type: 3}
+  orderingMessage: "{0} \uD558\uB098\uC694"
+  satisfiedMessage: "\uC544\u2026 \uC774\uAC70 \uC88B\uAD6C\uB098."
+  unsatisfiedMessage: "\uC74C, \uC624\uB298\uC740 \uADF8\uC800 \uADF8\uB807\uB124."
+  escapeMessage: "\uBBF8\uC548\uD558\uB124. \uBAB8\uC774 \uAE09\uD574\uC11C."
