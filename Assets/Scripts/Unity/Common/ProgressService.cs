@@ -35,7 +35,6 @@ public class ProgressService : TimePhaseProvider
         if (session == null) return;
         session.State.phase = new PhaseData();
         _cumulativePhaseIndex = 0;
-        GameSessionRoot.Instance?.Weather?.UpdateWeather(0);
     }
 
     /// <summary>
@@ -47,7 +46,6 @@ public class ProgressService : TimePhaseProvider
         if (session == null || data == null) return;
         session.State.phase = data;
         _cumulativePhaseIndex = data.Day * TotalPhaseCount + (int)data.Phase;
-        GameSessionRoot.Instance?.Weather?.UpdateWeather(data.Day);
         OnPhaseChanged?.Invoke(data.Phase);
     }
 

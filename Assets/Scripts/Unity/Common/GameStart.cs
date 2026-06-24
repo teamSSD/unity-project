@@ -56,8 +56,10 @@ public class GameStart : MonoBehaviour
             // Continue: 저장된 시드 복원
             var stats = GameSessionRoot.Instance.Stats;
             var saveData = stats.GetSaveData();
-            GameRandom.InitSession(saveData.immutableSeed, (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            int contSessionSeed = (int)((uint)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds() ^ (uint)System.Environment.TickCount);
+            GameRandom.InitSession(saveData.immutableSeed, contSessionSeed);
             GameRandom.InitDay(stats.GetDay());
+            GameSessionRoot.Instance?.Weather?.UpdateWeather(stats.GetDay());
 
             HUDManager.Instance?.Initialize();
         });
@@ -74,8 +76,10 @@ public class GameStart : MonoBehaviour
             // NewGame: 새 시드 생성
             int now = (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             GameSessionRoot.Instance.Stats.GetSaveData().immutableSeed = now;
-            GameRandom.InitSession(now, now + 1);
+            int newSessionSeed = (int)((uint)now ^ (uint)System.Environment.TickCount);
+            GameRandom.InitSession(now, newSessionSeed);
             GameRandom.InitDay(0);
+            GameSessionRoot.Instance?.Weather?.UpdateWeather(0);
 
             SaveManager.SaveAll();
             HUDManager.Instance?.Initialize();

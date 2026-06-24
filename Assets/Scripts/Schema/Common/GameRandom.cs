@@ -8,8 +8,6 @@ using UnityEngine;
 /// </summary>
 public static class GameRandom
 {
-    private const int BaseSeed = 7919;
-
     /// <summary>불변 시드 — 세이브별 고유. 같은 세이브 + 같은 날 = 같은 결과.</summary>
     public static System.Random Immutable { get; private set; }
 
@@ -32,13 +30,30 @@ public static class GameRandom
     }
 
     /// <summary>
-    /// 매 PassDay 또는 씬 진입 시 호출.
+    /// 매 PassDay 시 호출. Continue/NewGame 부팅 시점에도 1회 호출.
+    /// 씬 진입에서는 호출하지 않는다 — Variable RNG의 "세션 내 진행" 의미가 깨짐.
     /// </summary>
     public static void InitDay(int day)
     {
         CurrentDay = day;
-        Immutable = new System.Random(day * BaseSeed + ImmutableSeed);
-        Variable = new System.Random(day * BaseSeed + SessionSeed);
+        Immutable = new System.Random(MixSeed(day, ImmutableSeed));
+        Variable = new System.Random(MixSeed(day, SessionSeed));
+    }
+
+    /// <summary>
+    /// splitmix32 변형 — 인접 입력 (day=0,1,... / seed=now,now+1)이 만들어내는
+    /// 약한 상관관계를 흩뜨려 System.Random 첫 몇 개 출력의 편향을 줄인다.
+    /// </summary>
+    private static int MixSeed(int day, int baseSeed)
+    {
+        unchecked
+        {
+            uint h = (uint)(day * 73856093) ^ (uint)(baseSeed * 19349663);
+            h ^= h >> 16; h *= 0x7feb352d;
+            h ^= h >> 15; h *= 0x846ca68b;
+            h ^= h >> 16;
+            return (int)h;
+        }
     }
 
     // ── 유틸리티: System.Random 확장 ──
