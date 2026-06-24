@@ -46,9 +46,13 @@ public class PhaseActionSelector : MonoBehaviour
         {
             [ActionType.Work] = () => TransitionScene("Cooking"),
             [ActionType.Rest] = () => {
-                GameSessionRoot.Instance?.Stats.SetStamina(100);
-                GameSessionRoot.Instance?.Progress?.PassPhase();
-                UpdateUI();
+                LoadingManager.Instance?.Blackout(
+                    midAction: () => {
+                        GameSessionRoot.Instance?.Stats.SetStamina(100);
+                        GameSessionRoot.Instance?.Progress?.PassPhase();
+                    },
+                    onComplete: UpdateUI
+                );
             },
             [ActionType.Shopping] = () => TransitionScene(SceneNames.Mall)
         };
@@ -85,7 +89,7 @@ public class PhaseActionSelector : MonoBehaviour
 
             if (phaseTypeText != null)
             {
-                phaseTypeText.text = GetPhaseText(currentPhase);
+                phaseTypeText.text = $"{GetPhaseText(currentPhase)} 페이즈 선택";
             }
 
             if (currentPhase == PhaseType.Morning)
@@ -98,7 +102,7 @@ public class PhaseActionSelector : MonoBehaviour
         else
         {
             if (phaseTypeText != null)
-                phaseTypeText.text = "아침";
+                phaseTypeText.text = "아침 페이즈 선택";
             currentPhaseIndex = 0;
         }
     }
