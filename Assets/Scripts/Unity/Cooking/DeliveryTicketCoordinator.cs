@@ -34,11 +34,7 @@ public class DeliveryTicketCoordinator : MonoBehaviour
 
     private void CreateOne(DeliveryOrderData order)
     {
-        var ticket = ticketController.CreateTicket(
-            order.menuSchema,
-            onTicketTaken: null,
-            onCustomerExit: null
-        );
+        var ticket = ticketController.CreateDeliveryTicket(order.menuSchema);
         ticket.IsDelivery = true;
         ticket.QuestId = order.questId;
         ticket.GetComponent<Receipt>().Set(order.menuSchema, isDelivery: true);

@@ -15,7 +15,7 @@ public class WaitingCustomer : MonoBehaviour
 
     public void inject(Canvas worldCanvas, CustomerData customerData)
     {
-        Vector3 offset = new Vector3(0, 2.3f, 0);
+        Vector3 offset = new Vector3(0, 2.034f, 0);
 
         gaugeUI.transform.SetParent(worldCanvas.transform);
         gaugeUI.transform.position = this.gameObject.transform.position + offset;

@@ -42,7 +42,7 @@ public class TakingCustomer : MonoBehaviour
         {
             sr.sprite = customerData.characterImage;
             sr.sortingLayerName = "Customer";
-            sr.sortingOrder = 0;
+            sr.sortingOrder = 1; // 가져가는 손님은 다른 손님 위로
         }
 
         var pc = GetComponent<PolygonCollider2D>();

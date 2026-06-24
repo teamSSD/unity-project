@@ -85,7 +85,7 @@ public class CustomerManager : MonoBehaviour
         var phase = GameSessionRoot.Instance?.Progress?.PhaseData?.Phase ?? PhaseType.Morning;
         switch (phase)
         {
-            case PhaseType.Morning:   baseSpawnInterval = 45f; spawnIntervalVariance = 10f; break;
+            case PhaseType.Morning:   baseSpawnInterval = 1f; spawnIntervalVariance = 1f; break;
             case PhaseType.Afternoon: baseSpawnInterval = 30f; spawnIntervalVariance = 8f;  break;
             case PhaseType.Evening:   baseSpawnInterval = 22f; spawnIntervalVariance = 5f;  break;
             case PhaseType.Night:     baseSpawnInterval = 15f; spawnIntervalVariance = 4f;  break;
@@ -110,7 +110,9 @@ public class CustomerManager : MonoBehaviour
 
         MenuSchema menu = PickRandomMenu();
         if (menu == null) return;
+
         CustomerData customerData = PickRandomCustomerData();
+        if (customerData == null) return; // 풀 비었거나 모두 제외 — 다음 tick 재시도
 
         CustomerLifecycle lifecycle = new CustomerLifecycle(menu, customerData, spawner, ticketController);
         lifecycle.OnCustomerServed += OnCustomerServed;
@@ -177,7 +179,49 @@ public class CustomerManager : MonoBehaviour
             Debug.LogWarning("[CustomerManager] No customer data available!");
             return null;
         }
-        return customerDataList[GameRandom.Range(GameRandom.Variable, 0, customerDataList.Count)];
+
+        var excluded = CollectExcludedNpcIds();
+        var pool = new List<CustomerData>(customerDataList.Count);
+        foreach (var cd in customerDataList)
+        {
+            if (cd == null) continue;
+            // npcId 없으면 NPC 매핑 없는 손님 — 중복/퀘스트 체크 대상 아님, 항상 후보
+            if (!string.IsNullOrEmpty(cd.npcId) && excluded.Contains(cd.npcId)) continue;
+            pool.Add(cd);
+        }
+
+        if (pool.Count == 0) return null; // 모두 제외 — 다음 tick 재시도
+        return pool[GameRandom.Range(GameRandom.Variable, 0, pool.Count)];
+    }
+
+    /// <summary>활성 손님(중복 방지) + 활성 주문(퀘스트 진행중) NPC id 집합.</summary>
+    private HashSet<string> CollectExcludedNpcIds()
+    {
+        var set = new HashSet<string>();
+        foreach (var lc in activeCustomers)
+        {
+            string id = lc.GetNpcId();
+            if (!string.IsNullOrEmpty(id)) set.Add(id);
+        }
+
+        var session = GameSessionRoot.Instance;
+        var orderSvc = session != null ? session.Order : null;
+        if (orderSvc == null) return set;
+
+        var npcCatalog = CatalogProvider.DeliveryNpc;
+        foreach (var o in orderSvc.GetOrders())
+        {
+            if (o.state == DeliveryOrderState.Delivered) continue;
+            // questId="quest_<groupId>" → 그룹 전체 멤버 제외 (페어/그룹 quest 대응)
+            string groupId = (o.questId != null && o.questId.StartsWith("quest_"))
+                ? o.questId[6..] : null;
+            if (!string.IsNullOrEmpty(groupId) && npcCatalog != null)
+            {
+                foreach (var id in npcCatalog.GetAllIdsByGroupId(groupId)) set.Add(id);
+            }
+            else if (!string.IsNullOrEmpty(o.npcId)) set.Add(o.npcId);
+        }
+        return set;
     }
 
     private void OnTimeEnd()

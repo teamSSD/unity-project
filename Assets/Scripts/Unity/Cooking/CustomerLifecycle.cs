@@ -58,9 +58,10 @@ public class CustomerLifecycle
             return;
         }
 
-        // Create order ticket
+        // Create order ticket — 손님 waitingPositionIndex와 1:1 매핑되는 슬롯에 배치
         orderTicket = ticketController.CreateTicket(
             menuSchema,
+            slotIndex: posIndex,
             onTicketTaken: OnOrderFulfilled,
             onCustomerExit: OnCustomerTimeout
         );
@@ -190,6 +191,8 @@ public class CustomerLifecycle
     /// 영업 종료 시 stuck lifecycle 청소용.
     /// </summary>
     public bool IsStuckPreOrder() => waitingCustomer == null && orderTicket == null;
+
+    public string GetNpcId() => customerData != null ? customerData.npcId : null;
 
     /// <summary>
     /// Cleanup (called when lifecycle ends) — 모든 외부 이벤트 구독 해제.
