@@ -3,49 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Manages order tickets (receipts) in the cooking scene
-/// Handles creation, positioning, and lifecycle of order tickets
+/// Cooking 씬 영수증(OrderTicket) 위치/생명주기 관리.
+/// - 일반 ticket: 손님 waitingPositionIndex와 1:1 매핑 (0~4번 슬롯, 가로)
+/// - delivery ticket: 6번 슬롯에 세로 스택 (멀티 quest 대비)
 /// </summary>
 public class OrderTicketController : MonoBehaviour
 {
     private GameObject receiptPrefab;
 
-    /// <summary>
-    /// Inject receipt prefab from CustomerManager
-    /// </summary>
     public void Inject(GameObject receiptPrefab)
     {
         this.receiptPrefab = receiptPrefab;
     }
 
-    private List<OrderTicketModel> activeTickets = new List<OrderTicketModel>();
-    private Vector3 basePosition = new Vector3(5.65f, 0.94f, 0);
-    private Vector3 verticalOffset = new Vector3(0, -2.38f, 0);
+    // 슬롯 배치 — 손님 대기 위치(CustomerSpawner)와 동일 X, 화면 상단 Y
+    private Vector3 basePosition  = new Vector3(-8f, 4.474f, 0);
+    private Vector3 slotOffset    = new Vector3(1.75f, 0, 0);
+    private const int QuestSlotIndex = 5; // 6번째 자리
+    private Vector3 questStackOffset = new Vector3(0, -1f, 0);
 
-    public int ActiveTicketCount => activeTickets.Count;
+    private readonly Dictionary<int, OrderTicketModel> regularTickets = new(); // slotIndex → ticket
+    private readonly List<OrderTicketModel> deliveryTickets = new();
 
-    /// <summary>
-    /// Create a new order ticket for the given menu
-    /// </summary>
-    public OrderTicketModel CreateTicket(MenuSchema menuSchema, Action onTicketTaken, Action onCustomerExit)
+    public int ActiveTicketCount => regularTickets.Count + deliveryTickets.Count;
+
+    /// <summary>일반 손님 ticket. slotIndex는 손님 waitingPositionIndex와 동일하게 전달.</summary>
+    public OrderTicketModel CreateTicket(MenuSchema menuSchema, int slotIndex, Action onTicketTaken, Action onCustomerExit)
     {
-        GameObject ticketObj = Instantiate(receiptPrefab);
-        OrderTicketModel ticketModel = ticketObj.GetComponent<OrderTicketModel>();
-        Receipt receiptScript = ticketObj.GetComponent<Receipt>();
+        var (ticketObj, ticketModel) = InstantiateTicket(menuSchema);
 
-        // Setup ticket
-        ticketModel.SetMenu(menuSchema);
-        receiptScript.Set(menuSchema);
-
-        // Calculate position
-        Vector3 position = CalculateTicketPosition(activeTickets.Count);
+        Vector3 position = CalculateRegularPosition(slotIndex);
         ticketModel.SetDefaultPosition(position);
-        ticketObj.transform.position = position + new Vector3(0, -2f, 0); // Spawn below, will animate up
+        ticketObj.transform.position = position + new Vector3(0, -2f, 0); // Spawn 아래에서 → 애니메이션으로 올라옴
 
-        // Register ticket
-        activeTickets.Add(ticketModel);
+        regularTickets[slotIndex] = ticketModel;
 
-        // Setup events
         ticketModel.onTake += (main, sides, pos) =>
         {
             RemoveTicket(ticketModel);
@@ -55,75 +47,75 @@ public class OrderTicketController : MonoBehaviour
         return ticketModel;
     }
 
-    /// <summary>
-    /// Remove a ticket and rearrange remaining tickets
-    /// </summary>
+    /// <summary>배달 ticket. 6번 자리에 세로로 쌓인다.</summary>
+    public OrderTicketModel CreateDeliveryTicket(MenuSchema menuSchema)
+    {
+        var (ticketObj, ticketModel) = InstantiateTicket(menuSchema);
+
+        deliveryTickets.Add(ticketModel);
+        int stackIndex = deliveryTickets.Count - 1;
+
+        Vector3 position = CalculateDeliveryPosition(stackIndex);
+        ticketModel.SetDefaultPosition(position);
+        ticketObj.transform.position = position + new Vector3(0, -2f, 0);
+
+        ticketModel.onTake += (main, sides, pos) => RemoveTicket(ticketModel);
+
+        return ticketModel;
+    }
+
+    private (GameObject, OrderTicketModel) InstantiateTicket(MenuSchema menuSchema)
+    {
+        GameObject ticketObj = Instantiate(receiptPrefab);
+        OrderTicketModel ticketModel = ticketObj.GetComponent<OrderTicketModel>();
+        Receipt receiptScript = ticketObj.GetComponent<Receipt>();
+        ticketModel.SetMenu(menuSchema);
+        receiptScript.Set(menuSchema);
+        return (ticketObj, ticketModel);
+    }
+
     public void RemoveTicket(OrderTicketModel ticket)
     {
-        if (activeTickets.Remove(ticket))
+        int slotKey = -1;
+        foreach (var kv in regularTickets)
         {
-            RearrangeTickets();
+            if (kv.Value == ticket) { slotKey = kv.Key; break; }
+        }
+        if (slotKey >= 0)
+        {
+            regularTickets.Remove(slotKey);
+            return;
+        }
+        if (deliveryTickets.Remove(ticket))
+        {
+            RearrangeDelivery();
         }
     }
 
-    /// <summary>
-    /// Rearrange all active tickets to fill gaps
-    /// </summary>
-    private void RearrangeTickets()
+    private void RearrangeDelivery()
     {
-        for (int i = 0; i < activeTickets.Count; i++)
-        {
-            Vector3 newPosition = CalculateTicketPosition(i);
-            activeTickets[i].SetDefaultPosition(newPosition);
-        }
+        for (int i = 0; i < deliveryTickets.Count; i++)
+            deliveryTickets[i].SetDefaultPosition(CalculateDeliveryPosition(i));
     }
 
-    /// <summary>
-    /// Calculate position for ticket at given index
-    /// </summary>
-    private Vector3 CalculateTicketPosition(int index)
-    {
-        return basePosition + verticalOffset * index;
-    }
+    private Vector3 CalculateRegularPosition(int slotIndex)
+        => basePosition + slotOffset * slotIndex;
 
-    /// <summary>
-    /// Clear all tickets (for scene cleanup)
-    /// </summary>
+    private Vector3 CalculateDeliveryPosition(int stackIndex)
+        => basePosition + slotOffset * QuestSlotIndex + questStackOffset * stackIndex;
+
     public void ClearAllTickets()
     {
-        foreach (var ticket in activeTickets)
-        {
-            if (ticket != null)
-            {
-                Destroy(ticket.gameObject);
-            }
-        }
-        activeTickets.Clear();
+        foreach (var t in regularTickets.Values) if (t != null) Destroy(t.gameObject);
+        regularTickets.Clear();
+        foreach (var t in deliveryTickets) if (t != null) Destroy(t.gameObject);
+        deliveryTickets.Clear();
     }
 
-    /// <summary>
-    /// Check if there are any active tickets
-    /// </summary>
-    public bool HasActiveTickets()
-    {
-        return activeTickets.Count > 0;
-    }
+    public bool HasActiveTickets() => regularTickets.Count + deliveryTickets.Count > 0;
 
-    /// <summary>
-    /// Check if there are any active non-delivery tickets (배달 티켓 제외)
-    /// </summary>
-    public bool HasActiveCustomerTickets()
-    {
-        foreach (var ticket in activeTickets)
-        {
-            if (ticket != null && !ticket.IsDelivery)
-                return true;
-        }
-        return false;
-    }
+    /// <summary>일반(non-delivery) ticket 존재 여부 — 영업 종료 게이트 판정에 사용.</summary>
+    public bool HasActiveCustomerTickets() => regularTickets.Count > 0;
 
-    private void OnDestroy()
-    {
-        ClearAllTickets();
-    }
+    private void OnDestroy() => ClearAllTickets();
 }

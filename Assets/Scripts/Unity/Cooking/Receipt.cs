@@ -6,7 +6,7 @@ public class Receipt : MonoBehaviour
     [SerializeField] private GameObject linePrefab;
     [SerializeField] private TextMeshPro orderNumber;
 
-    private Vector3 std = new Vector3(0, 0, 0);
+    private Vector3 std = new Vector3(0, 0.42f, 0);
     private Vector3 off = new Vector3(0, -0.25f, 0);
     
     public void Set(MenuSchema menuSchema, bool isDelivery = false)

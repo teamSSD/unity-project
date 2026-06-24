@@ -17,7 +17,6 @@ public class BentoModel : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioClip bentoPutSfx;
     [SerializeField] private AudioClip trashcanSfx;
-    [SerializeField] private Sprite receiptSprite;
 
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
@@ -92,12 +91,9 @@ public class BentoModel : MonoBehaviour
 
     public bool AddOrderTicket(OrderTicketModel orderTicket)
     {
-        if (foodList.Count >= 1)
-        {
-            BehaviorInstance.AddTexture(receiptSprite);
-            return true;
-        }
-        return false;
+        // 영수증 자체가 OrderTicketModel.AddToBento에서 도시락 자식으로 reparent되어 표시됨.
+        // 여기서는 attach 가능 여부만 판정.
+        return foodList.Count >= 1;
     }
 
     public void SetPosition()

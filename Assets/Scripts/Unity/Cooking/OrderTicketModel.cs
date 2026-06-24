@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [RequireComponent(typeof(OrderTicketBehavior))]
 [RequireComponent(typeof(ClickStateUtil))]
@@ -14,8 +16,18 @@ public class OrderTicketModel : MonoBehaviour
     private OrderTicketBehavior BehaviorInstance;
     private MenuSchema menuSchema;
     [SerializeField] private AudioClip attachSfx;
+    [Tooltip("도시락에 부착될 때의 local position (도시락 기준)")]
+    [SerializeField] private Vector3 attachedLocalPosition = Vector3.zero;
+    [Tooltip("드래그/부착 시 영수증 크기 배율 (1 = 원래 크기). 부착 후에도 이 비율 유지.")]
+    [SerializeField] private float shrinkFactor = 0.5f;
+    [Tooltip("크기 변경 시 lerp 시간 (초). 0이면 즉시.")]
+    [SerializeField] private float scaleLerpDuration = 0.12f;
+    [Tooltip("부착 시 영수증을 도시락 위로 띄울 sortingOrder offset (도시락 SR 기준 +offset). 음식 아이콘들보다 높아야 함.")]
+    [SerializeField] private int attachedSortingOrderOffset = 100;
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
+    private Vector3 originalScale;
+    private Coroutine scaleCoroutine;
     public bool IsAttached {get; private set;} = false;
     public bool IsDelivery { get; set; }
     public string QuestId { get; set; }
@@ -28,17 +40,62 @@ public class OrderTicketModel : MonoBehaviour
         scanColliderUtil = GetComponent<ScanColliderUtil>();
         clickStateUtil = GetComponent<ClickStateUtil>();
 
-        clickStateUtil.OnDragEnd += AddToBento;
+        originalScale = transform.localScale;
+
+        // OnDragStart는 Awake 등록 OK (scale만 건드림).
+        clickStateUtil.OnDragStart += ShrinkScale;
     }
 
     void Start()
     {
+        // OnDragEnd는 Start에서 등록 — DragSortingBump.OnEnable(Awake 후 Start 전)이 먼저 등록되어야
+        // invoke 순서가 [DSB → AddToBento]가 되고, AddToBento에서 set한 sortingOrder가 살아남는다.
+        // (Awake에 두면 [AddToBento → DSB]가 되어 DSB가 sortingOrder를 0으로 reset해버림.)
+        clickStateUtil.OnDragEnd += AddToBento;
+        clickStateUtil.OnDragEnd += RestoreScaleIfNotAttached;
+
         SoundManager.Instance?.Play2DSFX(attachSfx, 0.4f);
     }
 
     void OnDestroy()
     {
+        clickStateUtil.OnDragStart -= ShrinkScale;
         clickStateUtil.OnDragEnd -= AddToBento;
+        clickStateUtil.OnDragEnd -= RestoreScaleIfNotAttached;
+    }
+
+    private void ShrinkScale() => StartScaleTo(originalScale * shrinkFactor);
+    private void RestoreScaleIfNotAttached()
+    {
+        if (!IsAttached) StartScaleTo(originalScale);
+    }
+
+    private void StartScaleTo(Vector3 target)
+    {
+        if (scaleCoroutine != null) StopCoroutine(scaleCoroutine);
+        if (scaleLerpDuration <= 0f || !gameObject.activeInHierarchy)
+        {
+            transform.localScale = target;
+            scaleCoroutine = null;
+            return;
+        }
+        scaleCoroutine = StartCoroutine(LerpScale(target));
+    }
+
+    private IEnumerator LerpScale(Vector3 target)
+    {
+        Vector3 start = transform.localScale;
+        float elapsed = 0f;
+        while (elapsed < scaleLerpDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / scaleLerpDuration);
+            // hierarchy 전체에 적용 → 자식 TMP 텍스트도 함께 스케일됨.
+            transform.localScale = Vector3.Lerp(start, target, t);
+            yield return null;
+        }
+        transform.localScale = target;
+        scaleCoroutine = null;
     }
     public void AddToBento()
     {
@@ -55,8 +112,28 @@ public class OrderTicketModel : MonoBehaviour
                 collision.BehaviorInstance.locked = true; // 완성된 도시락은 이동 불가
                 WaitAndTakeAsync(GameRandom.NormalRange(GameRandom.Variable, 0.5f, 1.5f), collision).Forget();
 
-                GetComponent<SpriteRenderer>().enabled = false;
-                foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = false;
+                // 진행 중인 scale lerp가 있으면 stop — reparent 후 도시락 lossyScale이 영향 주지 않도록.
+                if (scaleCoroutine != null) { StopCoroutine(scaleCoroutine); scaleCoroutine = null; }
+
+                // 드래그한 영수증을 도시락 자식으로 reparent.
+                // worldPositionStays=true → 시각 크기(world scale) 보존. localScale은 자동 보정.
+                transform.SetParent(collision.transform, worldPositionStays: true);
+                transform.localPosition = attachedLocalPosition;
+                transform.localRotation = Quaternion.identity;
+
+                // 영수증이 도시락 위에 보이게 — SortingGroup으로 자식 TMP까지 일괄 정렬.
+                var sg = GetComponent<SortingGroup>() ?? gameObject.AddComponent<SortingGroup>();
+                var bentoSr = collision.GetComponent<SpriteRenderer>();
+                if (bentoSr != null)
+                {
+                    sg.sortingLayerID = bentoSr.sortingLayerID;
+                    sg.sortingOrder = bentoSr.sortingOrder + attachedSortingOrderOffset;
+                }
+
+
+                // 부착된 영수증은 더 이상 드래그/클릭 못함.
+                clickStateUtil.enabled = false;
+                foreach (var c in GetComponents<Collider2D>()) c.enabled = false;
 
                 OnAttached.Invoke();
                 SoundManager.Instance.Play2DSFX(attachSfx, 0.4f);
