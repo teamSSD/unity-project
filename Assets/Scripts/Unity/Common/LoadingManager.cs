@@ -25,6 +25,38 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
     }
 
     /// <summary>
+    /// 씬 전환 없이 검은 화면으로 페이드 인/아웃. 페이드 중간(완전 가려진 상태)에 midAction 실행.
+    /// holdSeconds만큼 검은 화면 유지 후 페이드 아웃. 전 구간 UILockManager.Lock(Loading).
+    /// </summary>
+    public void Blackout(System.Action midAction, float holdSeconds = 0.3f, System.Action onComplete = null)
+    {
+        if (isLoading) return;
+        BlackoutAsync(midAction, holdSeconds, onComplete).Forget();
+    }
+
+    private async UniTaskVoid BlackoutAsync(System.Action midAction, float holdSeconds, System.Action onComplete)
+    {
+        isLoading = true;
+        UILockManager.Lock(UILockManager.Owner.Loading);
+
+        canvas.enabled = true;
+        await FadeAsync(0f, 1f, FADE_DURATION);
+
+        midAction?.Invoke();
+
+        if (holdSeconds > 0f)
+            await UniTask.Delay(System.TimeSpan.FromSeconds(holdSeconds),
+                cancellationToken: this.GetCancellationTokenOnDestroy());
+
+        await FadeAsync(1f, 0f, FADE_DURATION);
+
+        canvas.enabled = false;
+        isLoading = false;
+        UILockManager.Unlock(UILockManager.Owner.Loading);
+        onComplete?.Invoke();
+    }
+
+    /// <summary>
     /// Additive 씬 전환: fade-in → initAction → 이전 씬 unload → 새 씬 additive load → SetActiveScene → fade-out
     /// initAction은 화면이 불투명한 상태에서 실행돼야 하는 무거운 동기 초기화(예: SaveManager.LoadAll).
     /// </summary>

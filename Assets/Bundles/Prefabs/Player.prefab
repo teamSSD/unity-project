@@ -84,7 +84,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_MaskInteraction: 0
+  m_MaskInteraction: 2
   m_Sprite: {fileID: 21300000, guid: d23b44942a1654e16ba35ee8e65f9e05, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a339bc714f2b3846a7a193f92e594eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 6
+  moveSpeed: 4
   walkSfx: {fileID: 8300000, guid: 53de61b27d72c4864bab03061ea3cb1d, type: 3}
   stepInterval: 0.35
 --- !u!95 &2297049052306415397

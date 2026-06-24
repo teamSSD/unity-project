@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 7b570e9acbdf4461daec5bd58e3745e6
+guid: 7135d96ae35dc434694d18730446ca23
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4772860165066191537
-    second: char_lin_default_0
+      213: -6821618143610276073
+    second: bg_mall_store14_0
+  - first:
+      213: -6988973134402404372
+    second: bg_mall_store14_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,10 +51,10 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 1
   spriteExtrude: 1
-  spriteMeshType: 1
-  alignment: 0
-  spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 77
+  spriteMeshType: 0
+  alignment: 9
+  spritePivot: {x: 0.5, y: 0.8912037}
+  spritePixelsToUnits: 510
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -100,13 +103,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: char_lin_default_0
+      name: bg_mall_store14_0
       rect:
         serializedVersion: 2
-        x: 555
-        y: 180
-        width: 760
-        height: 2524
+        x: 426
+        y: 182
+        width: 3349
+        height: 1978
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +118,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1b2f16d480b9c3240800000000000000
-      internalID: 4772860165066191537
+      spriteID: 717ffbcd07eb451a0800000000000000
+      internalID: -6821618143610276073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bg_mall_store14_1
+      rect:
+        serializedVersion: 2
+        x: 3637
+        y: 1923
+        width: 18
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cef3233a6fd220f90800000000000000
+      internalID: -6988973134402404372
       vertices: []
       indices: 
       edges: []
@@ -135,7 +160,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      char_lin_default_0: 4772860165066191537
+      bg_mall_store14_0: -6821618143610276073
+      bg_mall_store14_1: -6988973134402404372
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

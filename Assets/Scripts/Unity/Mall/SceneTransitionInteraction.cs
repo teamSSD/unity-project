@@ -5,6 +5,8 @@ public class SceneTransitionInteraction : MonoBehaviour
 {
     [SerializeField] private string targetScene;
     [SerializeField] private string promptMessage = "(press spacebar)";
+    [Tooltip("Mall로 돌아올 때 player X 좌표. 0이면 transform.position.x 사용.")]
+    [SerializeField] private float spawnX = 0f;
 
     private bool isPlayerNear;
 
@@ -15,7 +17,12 @@ public class SceneTransitionInteraction : MonoBehaviour
             isPlayerNear = false;
             InteractPromptUI.Hide();
             if (SceneLoader.CurrentScene == SceneNames.Mall)
-                SceneLoader.SetMallReturnPosition(transform.position);
+            {
+                var player = GameObject.FindGameObjectWithTag(Tags.Player);
+                float x = (spawnX != 0f) ? spawnX : transform.position.x;
+                float y = player != null ? player.transform.position.y : transform.position.y;
+                SceneLoader.SetMallReturnPosition(new Vector3(x, y, 0));
+            }
             SceneLoader.LoadScene(targetScene);
         }
     }

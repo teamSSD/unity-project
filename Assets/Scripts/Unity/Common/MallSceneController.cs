@@ -73,10 +73,11 @@ public class MallSceneController : MonoBehaviour
             dialogueManager = Object.FindFirstObjectByType<DialogueManager>();
 
         if (goHomeButton != null)
-            goHomeButton.onClick.AddListener(OnGoHome);
+            goHomeButton.onClick.AddListener(GoHome);
     }
 
-    private void OnGoHome()
+    /// <summary>Phase 따라 메뉴 선택 modal 또는 phase 종료 확인 다이얼로그 — Canvas Button + GoHomeInteraction 공용.</summary>
+    public void GoHome()
     {
         var phase = GameSessionRoot.Instance?.Progress?.PhaseData.Phase ?? PhaseType.Preparation;
 

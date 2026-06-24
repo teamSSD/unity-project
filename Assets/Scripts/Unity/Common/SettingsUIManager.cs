@@ -39,18 +39,27 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
         settingsPanel.SetActive(false);
     }
 
+    private bool prevLocked;
+
     void Update()
     {
+        // 직전 프레임 lock 상태를 매 프레임 캡처. ESC로 다른 modal이 같은 프레임에 닫혀
+        // Unlock해도, 이 캡처 덕에 "방금 닫힌 modal이 있던 상태"를 판별할 수 있다.
+        // (Update 순서가 modal보다 늦으면 IsLocked=false인데, 사실 그 ESC는 modal이 소비한 것)
+        bool wasLocked = prevLocked;
+        prevLocked = UILockManager.IsLocked;
+
         if (!Input.GetKeyDown(KeyCode.Escape)) return;
 
         if (settingsPanel.activeSelf)
         {
             Close();
+            return;
         }
-        else if (!UILockManager.IsLocked && SceneManager.GetActiveScene().name != SceneNames.GameStart)
-        {
-            Open();
-        }
+        if (UILockManager.IsLocked) return;
+        if (wasLocked) return;
+        if (SceneManager.GetActiveScene().name == SceneNames.GameStart) return;
+        Open();
     }
 
     public void Open()
