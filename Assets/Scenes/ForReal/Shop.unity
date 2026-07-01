@@ -415,6 +415,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::SceneTransitionInteraction
   targetScene: Mall
   promptMessage: (press spacebar to return to mall)
+  spawnX: 0
 --- !u!212 &972929948
 SpriteRenderer:
   serializedVersion: 2
@@ -561,11 +562,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3093472286701614652, guid: ebb29e65ccc6c4124873d01c34125361, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.56
+      value: 12.11
       objectReference: {fileID: 0}
     - target: {fileID: 3093472286701614652, guid: ebb29e65ccc6c4124873d01c34125361, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.17
+      value: -2.7
       objectReference: {fileID: 0}
     - target: {fileID: 3093472286701614652, guid: ebb29e65ccc6c4124873d01c34125361, type: 3}
       propertyPath: m_LocalPosition.z
