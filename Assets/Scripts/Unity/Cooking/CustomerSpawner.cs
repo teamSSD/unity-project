@@ -10,7 +10,7 @@ using UnityEngine;
 public class CustomerSpawner : MonoBehaviour
 {
     [SerializeField, Tooltip("Ordering/Taking 손님 크기 배율 (Waiting은 prefab scale 그대로)")]
-    private float emphasizedCustomerScale = 1.5f;
+    private float emphasizedCustomerScale = 0.52f;
 
     private GameObject orderingCustomerPrefab;
     private GameObject waitingCustomerPrefab;
@@ -30,7 +30,7 @@ public class CustomerSpawner : MonoBehaviour
 
     // Waiting position management — X 범위 -8 ~ -1 (5명 균등, offset 1.75)
     private List<int> availableWaitingPositions = new List<int> { 0, 1, 2, 3, 4 };
-    private Vector3 waitingBasePosition = new Vector3(-8f, 0.35f, 0);
+    private Vector3 waitingBasePosition = new Vector3(-8f, 0.99f, 0);
     private Vector3 waitingPositionOffset = new Vector3(1.75f, 0, 0);
     private Vector3 waitingPositionVariance = new Vector3(0.3f, 0.5f, 0);
 
@@ -41,7 +41,7 @@ public class CustomerSpawner : MonoBehaviour
     public int MaxWaitingCustomers => 3;
 
     // Position Settings
-    private Vector3 orderingPosition = new Vector3(3.02f, 0.06f, 0f);
+    private Vector3 orderingPosition = new Vector3(3.02f, 0.08f, 0f);
 
     /// <summary>
     /// Spawn an ordering customer (at counter)
@@ -99,6 +99,8 @@ public class CustomerSpawner : MonoBehaviour
         GameObject customer = Instantiate(takingCustomerPrefab);
         TakingCustomer script = customer.GetComponent<TakingCustomer>();
 
+        // Taking 손님도 Ordering과 같은 y로 정렬 (caller가 넘긴 x/z만 사용).
+        position.y = orderingPosition.y;
         customer.transform.position = position;
         customer.transform.localScale *= emphasizedCustomerScale * (customerData != null ? customerData.displayScale : 1f);
         script.customerData = customerData;

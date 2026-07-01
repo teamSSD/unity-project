@@ -651,7 +651,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e4bff09c9400485186a9712538f15b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::CustomerSpawner
-  emphasizedCustomerScale: 1.5
+  emphasizedCustomerScale: 0.52
 --- !u!114 &244096698
 MonoBehaviour:
   m_ObjectHideFlags: 0
