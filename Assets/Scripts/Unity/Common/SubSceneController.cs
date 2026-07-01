@@ -2,12 +2,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// 서브씬(Delivery, Shop, Market)에서 Idle 씬으로 복귀
+/// 서브씬(Cooking, Garden 등)에서 Mall 씬으로 복귀
 /// </summary>
 public class SubSceneController : MonoBehaviour
 {
     [Header("Return Scene")]
-    [SerializeField] private string returnSceneName = SceneNames.Idle;
+    [SerializeField] private string returnSceneName = SceneNames.Mall;
 
     private void Start()
     {

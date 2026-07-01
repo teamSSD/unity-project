@@ -22,7 +22,6 @@ public class GoHomeInteraction : MonoBehaviour
     {
         if (isPlayerNear && !UILockManager.IsLocked && Input.GetKeyDown(KeyCode.Space))
         {
-            isPlayerNear = false;
             InteractPromptUI.Hide();
             var player = GameObject.FindGameObjectWithTag(Tags.Player);
             float x = (spawnX != 0f) ? spawnX : transform.position.x;

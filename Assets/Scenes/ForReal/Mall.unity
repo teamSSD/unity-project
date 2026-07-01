@@ -11529,7 +11529,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::MallSceneController
   goHomeButton: {fileID: 1260570318}
   bentoSelectionPrefab: {fileID: 2982246101368685665, guid: 25a35e68b56754ec8a459e64f2775f1f, type: 3}
-  dialogueManager: {fileID: 0}
+  phaseSelectionPrefab: {fileID: 8382747419339801567, guid: 725b4cd43ac574ef197f906c81c5dd43, type: 3}
 --- !u!4 &1887685399
 Transform:
   m_ObjectHideFlags: 0

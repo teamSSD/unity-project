@@ -16,7 +16,8 @@ public static class UILockManager
         GameStart,
         Loading,
         Shop,
-        Settings
+        Settings,
+        PhaseSelection
     }
 
     private static readonly HashSet<Owner> activeLocks = new();

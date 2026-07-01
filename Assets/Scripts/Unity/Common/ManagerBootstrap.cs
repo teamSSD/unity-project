@@ -26,7 +26,6 @@ public static class ManagerBootstrap
     /// </summary>
     public static void EnsureAll()
     {
-        Ensure<ActionSelectionManager>();
         Ensure<LoadingManager>();
         Ensure<HUDManager>();
         Ensure<UIManager>();

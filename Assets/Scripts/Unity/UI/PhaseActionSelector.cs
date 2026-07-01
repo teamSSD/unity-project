@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using TMPro;
 
 /// <summary>
-/// Idle 씬의 페이즈별 Work/Rest/Shopping 액션 선택 UI.
-/// 씬 전환은 IdleSceneController.TransitionToScene()을 통해 수행.
+/// Mall 씬의 페이즈별 Work/Rest/Shopping 액션 선택 UI (Idle 씬 흡수 후).
+/// MallSceneController가 prefab 인스턴스화 → GoHome 상호작용 시 Show().
 /// </summary>
 public class PhaseActionSelector : MonoBehaviour
 {
@@ -27,43 +26,37 @@ public class PhaseActionSelector : MonoBehaviour
     [SerializeField] private TextMeshProUGUI shoppingTitle;
     [SerializeField] private TextMeshProUGUI shoppingDescription;
 
-    private int currentPhaseIndex = 0;
-
     private Dictionary<ActionType, Action> actionExecutors;
-    private IdleSceneController idleSceneController;
 
-    private void Start()
+    /// <summary>선택된 액션 후 호출 — 호출자가 UI 정리(Hide)나 씬 전환 처리.</summary>
+    public event Action<ActionType> OnActionExecuted;
+
+    private void Awake()
     {
-        idleSceneController = FindFirstObjectByType<IdleSceneController>();
         InitializeActionExecutors();
         SetupButtons();
-        UpdateUI();
     }
 
     private void InitializeActionExecutors()
     {
         actionExecutors = new Dictionary<ActionType, Action>
         {
-            [ActionType.Work] = () => TransitionScene("Cooking"),
-            [ActionType.Rest] = () => {
+            [ActionType.Work] = () => SceneLoader.LoadScene(SceneNames.Cooking),
+            [ActionType.Rest] = () =>
+            {
                 LoadingManager.Instance?.Blackout(
-                    midAction: () => {
+                    midAction: () =>
+                    {
                         GameSessionRoot.Instance?.Stats.SetStamina(100);
                         GameSessionRoot.Instance?.Progress?.PassPhase();
                     },
-                    onComplete: UpdateUI
-                );
+                    onComplete: UpdateUI);
             },
-            [ActionType.Shopping] = () => TransitionScene(SceneNames.Mall)
+            [ActionType.Shopping] = () =>
+            {
+                // Mall에 이미 있으므로 UI만 닫음 (MallSceneController가 Hide 처리).
+            }
         };
-    }
-
-    private void TransitionScene(string sceneName)
-    {
-        if (idleSceneController != null)
-            idleSceneController.TransitionToScene(sceneName);
-        else
-            SceneLoader.LoadScene(sceneName);
     }
 
     private void SetupButtons()
@@ -80,64 +73,47 @@ public class PhaseActionSelector : MonoBehaviour
         if (shoppingDescription != null) shoppingDescription.text = "상가로 이동합니다.";
     }
 
+    public void Show()
+    {
+        UpdateUI();
+        gameObject.SetActive(true);
+        UILockManager.Lock(UILockManager.Owner.PhaseSelection);
+    }
+
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+        UILockManager.Unlock(UILockManager.Owner.PhaseSelection);
+    }
+
+    private void Update()
+    {
+        if (gameObject.activeInHierarchy && Input.GetKeyDown(KeyCode.Escape))
+            Hide();
+    }
+
     private void UpdateUI()
     {
         var progress = GameSessionRoot.Instance?.Progress;
-        if (progress != null && progress.PhaseData != null)
-        {
-            PhaseType currentPhase = progress.PhaseData.Phase;
-
-            if (phaseTypeText != null)
-            {
-                phaseTypeText.text = $"{GetPhaseText(currentPhase)} 페이즈 선택";
-            }
-
-            if (currentPhase == PhaseType.Morning)
-                currentPhaseIndex = 0;
-            else if (currentPhase == PhaseType.Afternoon)
-                currentPhaseIndex = 1;
-            else if (currentPhase == PhaseType.Evening)
-                currentPhaseIndex = 2;
-        }
-        else
-        {
-            if (phaseTypeText != null)
-                phaseTypeText.text = "아침 페이즈 선택";
-            currentPhaseIndex = 0;
-        }
+        PhaseType currentPhase = progress?.PhaseData?.Phase ?? PhaseType.Morning;
+        if (phaseTypeText != null)
+            phaseTypeText.text = $"{GetPhaseText(currentPhase)} 페이즈 선택";
     }
 
-    private string GetPhaseText(PhaseType phase)
+    private static string GetPhaseText(PhaseType phase) => phase switch
     {
-        switch (phase)
-        {
-            case PhaseType.Preparation:
-                return "준비";
-            case PhaseType.Morning:
-                return "아침";
-            case PhaseType.Afternoon:
-                return "점심";
-            case PhaseType.Evening:
-                return "저녁";
-            case PhaseType.Night:
-                return "밤";
-            default:
-                return "아침";
-        }
-    }
+        PhaseType.Preparation => "준비",
+        PhaseType.Morning     => "아침",
+        PhaseType.Afternoon   => "점심",
+        PhaseType.Evening     => "저녁",
+        PhaseType.Night       => "밤",
+        _                     => "아침",
+    };
 
     private void OnActionClicked(ActionType actionType)
     {
-        ActionSelectionManager.Instance?.SetAction(currentPhaseIndex, actionType);
         actionExecutors[actionType]?.Invoke();
-    }
-
-    /// <summary>
-    /// 외부에서 UI 업데이트 요청 시 호출
-    /// </summary>
-    public void RefreshUI()
-    {
-        UpdateUI();
+        OnActionExecuted?.Invoke(actionType);
     }
 
 #if UNITY_EDITOR

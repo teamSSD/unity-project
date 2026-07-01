@@ -651,6 +651,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e4bff09c9400485186a9712538f15b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::CustomerSpawner
+  emphasizedCustomerScale: 1.5
 --- !u!114 &244096698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3084,7 +3085,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0941b1f770ef544c6985dd9f949f25b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::SubSceneController
-  returnSceneName: Idle
+  returnSceneName: Mall
 --- !u!4 &1535436168
 Transform:
   m_ObjectHideFlags: 0
