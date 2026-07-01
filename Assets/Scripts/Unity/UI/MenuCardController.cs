@@ -98,6 +98,21 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
         if (lastTabWasIngredient) OpenIngredient();
         else OpenRecipe();
         isMenuCardActive = true;
+
+        // === 진단 로그 ===
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
+        var rootRt = (RectTransform)transform;
+        var foodImgRt = transform.Find("FoodImage") as RectTransform;
+        var raiRt = transform.Find("RecipeAndIngredient") as RectTransform;
+        var recipeRt = transform.Find("RecipeAndIngredient/Recipe") as RectTransform;
+        var recipeVlg = recipeRt?.GetComponent<VerticalLayoutGroup>();
+        string lineHeights = "";
+        foreach (var line in spawnedLines)
+        {
+            var lrt = line.GetComponent<RectTransform>();
+            if (lrt != null) lineHeights += lrt.rect.height.ToString("F1") + ",";
+        }
+        Debug.Log($"[MenuCard runtime] id={foodId} chain={chain.Count} FoodImg={foodImgRt?.rect.size.y:F1} RAI={raiRt?.rect.size.y:F1} Recipe={recipeRt?.rect.size.y:F1} spacing={recipeVlg?.spacing:F1} lineHs=[{lineHeights}]");
     }
 
     private void ApplyHeaderImage(FoodData foodData, List<RecipeData> chain)
@@ -137,6 +152,40 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
             spawnedLines.Add(lineGO);
             PopulateRecipeLine(lineGO.transform, recipe);
         }
+
+        AdjustRecipeVerticalSpacing();
+    }
+
+    // 짧아도 line끼리 조금 겹치는 게 원래 의도 — 항상 음수 고정.
+    // 긴 레시피(N=5+)면 계산으로 더 겹침 필요할 때만 그 값 사용.
+    private const float DefaultLineOverlap = -10f;
+
+    /// <summary>
+    /// Recipe.VLG.spacing 계산 — 항상 살짝 겹침(DefaultLineOverlap).
+    /// N 많아서 Recipe 영역 넘칠 위험이면 더 음수로.
+    /// </summary>
+    private void AdjustRecipeVerticalSpacing()
+    {
+        var rt = recipeContainer as RectTransform;
+        if (rt == null) return;
+        var vlg = rt.GetComponent<VerticalLayoutGroup>();
+        if (vlg == null || spawnedLines.Count <= 1) return;
+
+        var recipeLE = rt.GetComponent<LayoutElement>();
+        float recipeH = recipeLE != null && recipeLE.preferredHeight > 0
+            ? recipeLE.preferredHeight : rt.rect.height;
+        float available = recipeH - vlg.padding.top - vlg.padding.bottom;
+
+        var firstLE = spawnedLines[0].GetComponent<LayoutElement>();
+        float lineH = firstLE != null && firstLE.preferredHeight > 0
+            ? firstLE.preferredHeight : spawnedLines[0].GetComponent<RectTransform>().rect.height;
+        if (lineH <= 0) return;
+
+        int n = spawnedLines.Count;
+        float fitSpacing = (available - n * lineH) / (n - 1);
+        // 항상 DefaultLineOverlap 이하 (더 음수). fit 계산이 더 작으면 그거 사용 (더 겹침).
+        vlg.spacing = Mathf.Min(DefaultLineOverlap, fitSpacing);
+        vlg.childAlignment = TextAnchor.UpperCenter;
     }
 
     private void PopulateRecipeLine(Transform line, RecipeData recipe)
@@ -149,34 +198,11 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
         if (inputContainer != null)
             MenuCardItemHelper.PopulateInputSection(inputContainer, recipe, toolData);
 
-        DecorateMinigameSection(line.Find("Minigame"));
+        // Minigame 섹션(bg disable, label 숨김, arrow ">" 등)은 prefab 정적 설정으로 이관.
 
         Transform resultContainer = line.Find("Result");
         if (resultContainer != null && resultContainer.childCount > 0)
             MenuCardItemHelper.PopulateResultItem(resultContainer.GetChild(0), recipe.outputFood, toolId, toolData);
-    }
-
-    private static void DecorateMinigameSection(Transform minigame)
-    {
-        if (minigame == null) return;
-
-        Image minigameBg = minigame.GetComponent<Image>();
-        if (minigameBg != null) minigameBg.enabled = false;
-
-        TextMeshProUGUI label = minigame.Find("Text (TMP)")?.GetComponent<TextMeshProUGUI>();
-        if (label != null) label.gameObject.SetActive(false);
-
-        Transform arrow = minigame.Find("Arrow");
-        if (arrow == null) return;
-
-        arrow.gameObject.SetActive(true);
-        TextMeshProUGUI arrowText = arrow.GetComponent<TextMeshProUGUI>();
-        if (arrowText == null) return;
-
-        arrowText.text = ">";
-        arrowText.fontSize = 28;
-        arrowText.fontStyle = FontStyles.Bold;
-        arrowText.alignment = TextAlignmentOptions.Center;
     }
 
     public void OpenRecipe()

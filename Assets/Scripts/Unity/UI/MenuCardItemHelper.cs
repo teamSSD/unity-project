@@ -45,9 +45,6 @@ public static class MenuCardItemHelper
             PopulateToolItem(toolItem, toolData);
         }
 
-        // 동적 간격 조절
-        if (inputContainer is RectTransform rectTrans)
-            MenuCardLayoutHelper.AdjustSpacing(rectTrans);
     }
 
     public static void PopulateInputItem(Transform item, FoodData food)
