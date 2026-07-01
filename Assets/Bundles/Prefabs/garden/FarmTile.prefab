@@ -191,7 +191,7 @@ MonoBehaviour:
   cropSpriteRenderer: {fileID: 8902883799851120429}
   uiOffsetY: 0.5
   growthGauge: {fileID: 2011731236556914326}
-  gaugeCanvas: {fileID: 0}
+  gaugeCanvas: {fileID: 2136378795540798559}
   farmIndex: 0
 --- !u!61 &372574293562405825
 BoxCollider2D:
@@ -723,9 +723,14 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7146361496879134003, guid: 7dc98fbbd91294b7397a6874121d3cbb, type: 3}
   m_PrefabInstance: {fileID: 8703174452852706213}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2136378795540798559}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 506335aaebd8d49a087ff83832f48912, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2136378795540798559 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7305421610518353914, guid: 7dc98fbbd91294b7397a6874121d3cbb, type: 3}
+  m_PrefabInstance: {fileID: 8703174452852706213}
+  m_PrefabAsset: {fileID: 0}
