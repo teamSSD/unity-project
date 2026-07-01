@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(SpriteRenderer))]
@@ -7,9 +8,17 @@ public class PlayerMove : MonoBehaviour
 {
     public float moveSpeed = 5f;
 
+    [System.Serializable]
+    public struct SceneSpeed { public string sceneName; public float speed; }
+
+    [Tooltip("씬 이름별 이동 속도 override. 매칭 없으면 moveSpeed default 유지.")]
+    [SerializeField] private SceneSpeed[] sceneSpeeds;
+
     [Header("SFX")]
     [SerializeField] private AudioClip walkSfx;
     [SerializeField] private float stepInterval = 0.22f;
+
+    private float defaultMoveSpeed;
 
     private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
 
@@ -24,6 +33,25 @@ public class PlayerMove : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        defaultMoveSpeed = moveSpeed;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        ApplySpeedForScene(SceneManager.GetActiveScene().name);
+    }
+
+    void OnDestroy() => SceneManager.sceneLoaded -= OnSceneLoaded;
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) => ApplySpeedForScene(scene.name);
+
+    private void ApplySpeedForScene(string sceneName)
+    {
+        if (sceneSpeeds != null)
+        {
+            foreach (var s in sceneSpeeds)
+            {
+                if (s.sceneName == sceneName) { moveSpeed = s.speed; return; }
+            }
+        }
+        moveSpeed = defaultMoveSpeed;
     }
 
     void Update()
