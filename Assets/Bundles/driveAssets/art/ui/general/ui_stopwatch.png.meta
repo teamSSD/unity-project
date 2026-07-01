@@ -146,6 +146,50 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: ui_stopwatch_0_dial
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 398
+        width: 528
+        height: 479
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8620a6f3c5c3244a1ae126d8df72ea56
+      internalID: -379833316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_stopwatch_1_dial
+      rect:
+        serializedVersion: 2
+        x: 821
+        y: 386
+        width: 526
+        height: 479
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 27209aaab2ab946df99ed02f615bbac3
+      internalID: -1197775652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -161,7 +205,9 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       ui_stopwatch_0: 4800004736923831974
+      ui_stopwatch_0_dial: -379833316
       ui_stopwatch_1: 3272331910588760061
+      ui_stopwatch_1_dial: -1197775652
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
