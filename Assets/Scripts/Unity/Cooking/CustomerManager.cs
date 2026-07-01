@@ -74,7 +74,7 @@ public class CustomerManager : MonoBehaviour
 
         ApplyPhaseSettings();
         deliveryCoord.CreateAll();
-        nextSpawnTime = GameRandom.Normal(GameRandom.Variable, 5f, 3f); // 첫 손님은 빠르게
+        nextSpawnTime = GameRandom.Normal(GameRandom.Variable, 3f, 1f); // 첫 손님은 빠르게 (평균 3s, σ 1)
 
         var subScene = FindFirstObjectByType<SubSceneController>();
         if (subScene != null) OnGameEnd += subScene.ReturnToIdle;
