@@ -97,25 +97,29 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
         dimRt.anchorMin = Vector2.zero; dimRt.anchorMax = Vector2.one;
         dimRt.offsetMin = Vector2.zero; dimRt.offsetMax = Vector2.zero;
 
-        // 메인 패널 — RecipeBook 페이지 톤(아이보리)
-        panel = new GameObject("Panel", typeof(Image), typeof(VerticalLayoutGroup));
+        // 메인 패널 — UIColors 시스템 통일 + 자식 크기에 맞춰 자동 height
+        panel = new GameObject("Panel", typeof(Image), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter));
         panel.transform.SetParent(canvasObj.transform, false);
         var panelImg = panel.GetComponent<Image>();
-        panelImg.color = new Color(0.996f, 0.996f, 0.972f, 1f);
+        panelImg.color = UIColors.PanelBg;
         var panelRt = (RectTransform)panel.transform;
         panelRt.anchorMin = new Vector2(0.5f, 0.5f); panelRt.anchorMax = new Vector2(0.5f, 0.5f);
         panelRt.pivot = new Vector2(0.5f, 0.5f);
-        panelRt.sizeDelta = new Vector2(600f, 280f);
+        panelRt.sizeDelta = new Vector2(600f, 0f); // height는 ContentSizeFitter가 결정
 
         var vlg = panel.GetComponent<VerticalLayoutGroup>();
-        vlg.padding = new RectOffset(32, 32, 28, 24);
+        vlg.padding = new RectOffset(32, 32, 28, 28);
         vlg.spacing = 16;
-        vlg.childAlignment = TextAnchor.UpperCenter;
+        vlg.childAlignment = TextAnchor.MiddleCenter;
         vlg.childForceExpandWidth = true;
         vlg.childForceExpandHeight = false;
 
-        titleText = AddText(panel.transform, 36, FontStyles.Bold, new Color(0.20f, 0.16f, 0.12f));
-        messageText = AddText(panel.transform, 26, FontStyles.Normal, new Color(0.30f, 0.25f, 0.20f));
+        var fitter = panel.GetComponent<ContentSizeFitter>();
+        fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+        fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        titleText = AddText(panel.transform, 36, FontStyles.Bold, UIColors.TextPrimary);
+        messageText = AddText(panel.transform, 26, FontStyles.Normal, UIColors.TextSecondary);
 
         // 버튼 행
         var buttonRow = new GameObject("Buttons", typeof(HorizontalLayoutGroup), typeof(LayoutElement));
@@ -125,9 +129,8 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
         hlg.childForceExpandWidth = false; hlg.childForceExpandHeight = false;
         buttonRow.GetComponent<LayoutElement>().preferredHeight = 70;
 
-        // RecipeBook bookmark sage(0.55,0.62,0.49) 변형으로 통일감
-        (yesButton, yesLabel) = AddButton(buttonRow.transform, new Color(0.55f, 0.62f, 0.49f), Color.white);
-        (noButton,  noLabel)  = AddButton(buttonRow.transform, new Color(0.85f, 0.83f, 0.78f), new Color(0.30f, 0.25f, 0.20f));
+        (yesButton, yesLabel) = AddButton(buttonRow.transform, UIColors.ButtonAccent, UIColors.OnAccent);
+        (noButton,  noLabel)  = AddButton(buttonRow.transform, UIColors.ButtonNeutral, UIColors.PanelBg);
 
         yesButton.onClick.AddListener(OnYes);
         noButton.onClick.AddListener(OnNo);
@@ -140,7 +143,7 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
         var t = go.GetComponent<TextMeshProUGUI>();
         t.fontSize = size; t.fontStyle = style; t.color = color;
         t.alignment = TextAlignmentOptions.Center;
-        t.enableWordWrapping = true;
+        t.textWrappingMode = TextWrappingModes.Normal;
         return t;
     }
 

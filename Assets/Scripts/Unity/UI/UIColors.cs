@@ -9,6 +9,9 @@ public static class UIColors
     // Button
     public static readonly Color ButtonPrimary   = new Color(0.9804f, 0.9608f, 0.9451f); // #FAF5F1 confirm/active
     public static readonly Color ButtonSecondary = new Color(218/255f, 175/255f, 144/255f); // #DAAF90 back/inactive
+    public static readonly Color ButtonAccent    = new Color(201/255f, 102/255f,  90/255f); // #C9665A terracotta — destructive 강조 (버리기 / 삭제 / 위험)
+    public static readonly Color OnAccent        = Color.white;                              // ButtonAccent 위 텍스트
+    public static readonly Color ButtonNeutral   = new Color(176/255f, 168/255f, 158/255f); // #B0A89E warm gray — 취소 / 보조
 
     // Text
     public static readonly Color TextPrimary     = new Color( 88/255f,  60/255f,  40/255f); // #583C28 dark brown
