@@ -80,6 +80,11 @@ public class MallSceneController : MonoBehaviour
 
         if (goHomeButton != null)
             goHomeButton.onClick.AddListener(GoHome);
+
+        // Cooking 종료로 Mall 복귀한 직후엔 이번 페이즈 액션을 바로 선택하게 UI 자동 표시.
+        // Preparation/Night는 대상 아님(각각 메뉴 선택/하루 마치기 흐름).
+        if (SceneLoader.ConsumePendingPhaseSelector())
+            OpenActionSelection();
     }
 
     private void OnDestroy()
@@ -88,24 +93,26 @@ public class MallSceneController : MonoBehaviour
             phaseSelector.OnActionExecuted -= OnPhaseActionExecuted;
     }
 
-    /// <summary>Phase 따라 메뉴 선택 modal / 액션 선택 UI / 밤 종료 확인.</summary>
+    /// <summary>Preparation은 메뉴 선택, 그 외 모든 phase는 페이즈 마치기 confirm. 액션 선택은
+    /// Cooking 복귀 시 Start에서 자동 표시(GoHome 트리거 아님).</summary>
     public void GoHome()
     {
         var phase = GameSessionRoot.Instance?.Progress?.PhaseData.Phase ?? PhaseType.Preparation;
 
         if (phase == PhaseType.Preparation)
             OpenMenuSelection();
-        else if (phase == PhaseType.Night)
-            ConfirmEndDay();
         else
-            OpenActionSelection();
+            ConfirmPassPhase(phase);
     }
 
-    private void ConfirmEndDay()
+    private static void ConfirmPassPhase(PhaseType phase)
     {
+        bool isNight = phase == PhaseType.Night;
+        string title = isNight ? "하루를 마치시겠습니까?" : "이 페이즈를 마치시겠습니까?";
+        string message = isNight ? "잠들면 다음 날이 시작됩니다." : "다음 페이즈로 넘어갑니다.";
         ConfirmModal.Show(
-            title: "하루를 마치시겠습니까?",
-            message: "잠들면 다음 날이 시작됩니다.",
+            title: title,
+            message: message,
             onConfirm: () => GameSessionRoot.Instance?.Progress?.PassPhase(),
             yesText: "마치기",
             noText: "취소"
