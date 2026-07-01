@@ -27,23 +27,18 @@ public class MallSceneController : MonoBehaviour
         if (EventSystem.current != null)
             EventSystem.current.sendNavigationEvents = false;
 
-        if (SceneLoader.MallReturnPosition.HasValue)
+        // Return position 있으면 player 위치 override. 카메라는 return 유무와 무관하게
+        // player+offset으로 즉시 정렬 (첫 진입에도 lerp 슬라이드 방지).
+        var player = GameObject.FindGameObjectWithTag(Tags.Player);
+        if (player != null)
         {
-            var player = GameObject.FindGameObjectWithTag(Tags.Player);
-            if (player != null)
+            if (SceneLoader.MallReturnPosition.HasValue)
             {
                 player.transform.position = SceneLoader.MallReturnPosition.Value;
-
-                var cam = Object.FindFirstObjectByType<CameraFollow>();
-                if (cam != null)
-                {
-                    cam.transform.position = new Vector3(
-                        player.transform.position.x + cam.offset.x,
-                        player.transform.position.y + cam.offset.y,
-                        cam.transform.position.z);
-                }
+                SceneLoader.ClearMallReturnPosition();
             }
-            SceneLoader.ClearMallReturnPosition();
+
+            Object.FindFirstObjectByType<CameraFollow>()?.SnapToPlayer();
         }
 
         var session = GameSessionRoot.Instance;
