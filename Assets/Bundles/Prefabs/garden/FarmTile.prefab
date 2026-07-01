@@ -620,6 +620,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2570979685115809648}
     m_Modifications:
+    - target: {fileID: 7146361496879134003, guid: 7dc98fbbd91294b7397a6874121d3cbb, type: 3}
+      propertyPath: reverse
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7305421610518353914, guid: 7dc98fbbd91294b7397a6874121d3cbb, type: 3}
       propertyPath: m_Name
       value: GrowthGauge
