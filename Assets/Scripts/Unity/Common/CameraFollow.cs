@@ -24,7 +24,20 @@ public class CameraFollow : MonoBehaviour
     void LateUpdate()
     {
         if (player == null) return;
+        transform.position = Vector3.SmoothDamp(
+            transform.position, ComputeTargetPos(), ref velocity, smoothTime, maxSpeed);
+    }
 
+    /// <summary>Player 위치에 카메라를 즉시 스냅 + lerp velocity 리셋. 씬 진입 시 초기 슬라이드 방지용.</summary>
+    public void SnapToPlayer()
+    {
+        if (player == null) return;
+        transform.position = ComputeTargetPos();
+        velocity = Vector3.zero;
+    }
+
+    private Vector3 ComputeTargetPos()
+    {
         Vector3 targetPos = new Vector3(
             player.position.x + offset.x,
             player.position.y + offset.y,
@@ -38,8 +51,6 @@ public class CameraFollow : MonoBehaviour
             targetPos.x = Mathf.Clamp(targetPos.x, b.min.x + halfW, b.max.x - halfW);
             targetPos.y = Mathf.Clamp(targetPos.y, b.min.y + halfH, b.max.y - halfH);
         }
-
-        transform.position = Vector3.SmoothDamp(
-            transform.position, targetPos, ref velocity, smoothTime, maxSpeed);
+        return targetPos;
     }
 }
