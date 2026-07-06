@@ -9,8 +9,14 @@ using UnityEngine;
 /// </summary>
 public class CustomerSpawner : MonoBehaviour
 {
-    [SerializeField, Tooltip("Ordering/Taking 손님 크기 배율 (Waiting은 prefab scale 그대로)")]
-    private float emphasizedCustomerScale = 0.52f;
+    [SerializeField, Tooltip("Ordering/Taking 손님의 최종 world scale (displayScale=1 기준). displayScale이 곱해짐.")]
+    private float orderingTakingScale = 0.5f;
+    [SerializeField, Tooltip("Waiting 손님의 최종 world scale (displayScale=1 기준). displayScale이 곱해짐.")]
+    private float waitingScale = 0.33f;
+    [SerializeField, Tooltip("Waiting 손님 머리 위 타이머(gauge)의 localScale.")]
+    private float timerScale = 0.6f;
+    [SerializeField, Tooltip("Waiting 손님 머리 위 타이머의 캔버스 y (RectTransform.anchoredPosition.y). x는 npc 위치에서 자동 계산.")]
+    private float timerCanvasY = 426f;
 
     private GameObject orderingCustomerPrefab;
     private GameObject waitingCustomerPrefab;
@@ -30,7 +36,7 @@ public class CustomerSpawner : MonoBehaviour
 
     // Waiting position management — X 범위 -8 ~ -1 (5명 균등, offset 1.75)
     private List<int> availableWaitingPositions = new List<int> { 0, 1, 2, 3, 4 };
-    private Vector3 waitingBasePosition = new Vector3(-8f, 0.99f, 0);
+    private Vector3 waitingBasePosition = new Vector3(-8f, 0.78f, 0);
     private Vector3 waitingPositionOffset = new Vector3(1.75f, 0, 0);
     private Vector3 waitingPositionVariance = new Vector3(0.3f, 0.5f, 0);
 
@@ -41,7 +47,7 @@ public class CustomerSpawner : MonoBehaviour
     public int MaxWaitingCustomers => 3;
 
     // Position Settings
-    private Vector3 orderingPosition = new Vector3(3.02f, 0.53f, 0f);
+    private Vector3 orderingPosition = new Vector3(3.02f, -0.26f, 0f);
 
     /// <summary>
     /// Spawn an ordering customer (at counter)
@@ -50,7 +56,8 @@ public class CustomerSpawner : MonoBehaviour
     {
         GameObject customer = Instantiate(orderingCustomerPrefab);
         customer.transform.position = orderingPosition; // 위치 명시적 설정
-        customer.transform.localScale *= emphasizedCustomerScale * (customerData != null ? customerData.displayScale : 1f);
+        float scale = orderingTakingScale * (customerData != null ? customerData.displayScale : 1f);
+        customer.transform.localScale = new Vector3(scale, scale, 1f);
 
         OrderingCustomer script = customer.GetComponent<OrderingCustomer>();
         script.Inject(menuSchema, customerData);
@@ -84,8 +91,9 @@ public class CustomerSpawner : MonoBehaviour
 
         Vector3 position = CalculateWaitingPosition(positionIndex);
         customerObj.transform.position = position;
-        customerObj.transform.localScale *= (customerData != null ? customerData.displayScale : 1f);
-        waitingCustomer.inject(worldCanvas, customerData);
+        float scale = waitingScale * (customerData != null ? customerData.displayScale : 1f);
+        customerObj.transform.localScale = new Vector3(scale, scale, 1f);
+        waitingCustomer.inject(worldCanvas, customerData, timerScale, timerCanvasY);
 
         return (waitingCustomer, positionIndex);
     }
@@ -102,7 +110,8 @@ public class CustomerSpawner : MonoBehaviour
         // Taking 손님도 Ordering과 같은 y로 정렬 (caller가 넘긴 x/z만 사용).
         position.y = orderingPosition.y;
         customer.transform.position = position;
-        customer.transform.localScale *= emphasizedCustomerScale * (customerData != null ? customerData.displayScale : 1f);
+        float scale = orderingTakingScale * (customerData != null ? customerData.displayScale : 1f);
+        customer.transform.localScale = new Vector3(scale, scale, 1f);
         script.customerData = customerData;
 
         if (isExit)

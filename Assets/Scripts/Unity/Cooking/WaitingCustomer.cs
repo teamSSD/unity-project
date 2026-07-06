@@ -13,12 +13,18 @@ public class WaitingCustomer : MonoBehaviour
     private GaugeUI guageScript;
     private bool injected = false;
 
-    public void inject(Canvas worldCanvas, CustomerData customerData)
+    public void inject(Canvas worldCanvas, CustomerData customerData, float timerScale = 1f, float timerCanvasY = 0f)
     {
-        Vector3 offset = new Vector3(0, 2.034f, 0);
+        // 타이머: 캔버스 상대 좌표. y는 고정, x는 npc world x → canvas anchoredPosition x로 변환.
+        gaugeUI.transform.SetParent(worldCanvas.transform, false);
+        var timerRt = (RectTransform)gaugeUI.transform;
+        timerRt.localScale = new Vector3(timerScale, timerScale, 1f);
 
-        gaugeUI.transform.SetParent(worldCanvas.transform);
-        gaugeUI.transform.position = this.gameObject.transform.position + offset;
+        var camera = worldCanvas.worldCamera;
+        var canvasRt = (RectTransform)worldCanvas.transform;
+        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(camera, transform.position);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRt, screenPos, camera, out Vector2 canvasPos);
+        timerRt.anchoredPosition = new Vector2(canvasPos.x, timerCanvasY);
 
         var sr = GetComponent<SpriteRenderer>();
         if (sr != null)
