@@ -41,7 +41,7 @@ public class CustomerSpawner : MonoBehaviour
     public int MaxWaitingCustomers => 3;
 
     // Position Settings
-    private Vector3 orderingPosition = new Vector3(3.02f, 0.08f, 0f);
+    private Vector3 orderingPosition = new Vector3(3.02f, 0.53f, 0f);
 
     /// <summary>
     /// Spawn an ordering customer (at counter)
