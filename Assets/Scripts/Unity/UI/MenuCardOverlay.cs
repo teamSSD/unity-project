@@ -24,8 +24,11 @@ public class MenuCardOverlay : MonoBehaviour
             return;
         }
 
+        // 화면 전체 dim을 위해 book 안이 아닌 최상위 Canvas 밑에 붙임.
+        var canvas = bookRoot.GetComponentInParent<Canvas>();
+        var dimParent = canvas != null ? canvas.transform : bookRoot;
         overlay = new GameObject("MenuCardOverlay");
-        overlay.transform.SetParent(bookRoot, false);
+        overlay.transform.SetParent(dimParent, false);
         var overlayRect = overlay.AddComponent<RectTransform>();
         overlayRect.anchorMin = Vector2.zero;
         overlayRect.anchorMax = Vector2.one;
