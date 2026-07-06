@@ -175,7 +175,14 @@ _원천: [reports/review_2026-07_deepdig.md](reports/review_2026-07_deepdig.md) 
 | VisibleStateUtil.cs:18 Awake clobber 제거 (인스펙터 값 상시 무효화) | `9ccd41a` | ✅ done |
 | StaminaGauge 40/15 하드코딩 → maxValue 비율 SerializeField | `89a22d0` | ✅ done |
 
-**미결**: 극성 반전 버그 도달성 triage (라이브 vs 잠복) — 씬/콜라이더 검증으로 기존 세이브에 손실 여부 판정. 후속.
+**도달성 triage 완료**: **LIVE bug 확정**. 시나리오:
+1. `CookingSceneManager.FillStorage`가 인벤토리 raw INGREDIENT를 `FoodModel` 인스턴스로 fridge/shelf에 배치.
+2. Player가 `BentoSetModel` 드래그로 `BentoModel` 씬 소환·배치.
+3. Player가 raw 재료 드래그 → 놓기. `FoodModel.Awake` (line 34-35)가 `OnDragEnd`에 `AddToCookingTool`+`AddToBento` 둘 다 구독 → 어느 쪽이든 겹치면 발화.
+4. bento 위 놓기 시 `BentoModel.AddIngredient` = false (MAIN/SIDE만 수용, line 66-69).
+5. **구 극성 반전**: `if (!reflected)` → ConsumeFood + Destroy → **raw 재료 조용히 소실**.
+
+Cooking 씬 표준 플로우 완전 포함. 릴리즈 빌드가 이 코드였다면 세이브에 raw 재료 사고 소실 잠복 가능. Wave 0 `c0044b1` fix 이후 안전.
 
 ### Wave 1 (근접) — 대부분 진행됨
 
