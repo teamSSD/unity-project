@@ -37,6 +37,10 @@ public class OrderTicketBehavior : MonoBehaviour
             return;
         }
 
+        // None 상태에서만 rest lerp. DragEnd 프레임에서 lerp 시작하면 방금 붙인 도시락에서 밀려남.
+        // 부착 후엔 clickStateUtil.enabled=false라 state가 DragEnd에 고정 → 여기 안 걸림 → 부착 유지.
+        if (clickState != ClickState.None) return;
+
         // 호버 O → defaultPosition으로 내려옴, 호버 X → 위(restY)로 숨음.
         Vector3 rest = hoverStateUtil.IsHovering()
             ? defaultPosition
