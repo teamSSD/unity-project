@@ -198,7 +198,7 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
 
         switch (row.UserData)
         {
-            case ItemRowData item:    detailPanel?.ShowItem(item.Food, item.UnitPrice, item.RemainingStock); break;
+            case ItemRowData item:    detailPanel?.ShowItem(item.Food, item.UnitPrice, item.IsUnlimited ? int.MaxValue : item.RemainingStock); break;
             case ToolRowData tool:    ShowToolDetail(tool.Id);    break;
             case StorageRowData stg:  ShowStorageDetail(stg.Type); break;
             case FarmRowData farm:    ShowFarmDetail(farm.Type);   break;
@@ -209,21 +209,32 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
     {
         if (purchase == null) return;
 
-        // Day SSOT = PhaseData.Day (BasicStats.day 폐기됨).
-        int today = progress?.PhaseData?.Day ?? 0;
-        var slots = purchase.GetItemListForDay(today);
+        // 라인업 키: (day, phase). BasicStats.day 폐기됨 — SSOT는 PhaseData.
+        int day = progress?.PhaseData?.Day ?? 0;
+        int phaseIndex = (int)(progress?.PhaseData?.Phase ?? PhaseType.Preparation);
+        var slots = purchase.GetItemList(day, phaseIndex);
 
         foreach (var info in slots)
         {
             int remaining = purchase.GetRemaining(info);
             int price = info.item.ingredient != null ? info.item.ingredient.defaultPrice : 0;
 
+            // General(unlimited)은 재고 표시 없음. Special만 "재고 N" (0도 표시).
+            string leftSub = info.IsUnlimited ? "" : $"재고 {remaining}";
+
             AddRow(
                 info.item.image,
                 info.item.ingredientName,
-                $"재고 {remaining}/{info.stock}",
+                leftSub,
                 $"{price}G",
-                new ItemRowData { Food = info.item, UnitPrice = price, Stock = info.stock, RemainingStock = remaining }
+                new ItemRowData
+                {
+                    Food = info.item,
+                    UnitPrice = price,
+                    IsUnlimited = info.IsUnlimited,
+                    InitialStock = info.stock,
+                    RemainingStock = remaining
+                }
             );
         }
     }
@@ -236,12 +247,15 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
         {
             if (row.UserData is ItemRowData d && d.Food == item)
             {
-                d.RemainingStock = purchase != null
-                    ? Mathf.Max(0, d.Stock - purchase.GetPurchasedToday(item))
-                    : d.RemainingStock;
-                row.SetData(item.image, item.ingredientName,
-                    $"재고 {d.RemainingStock}/{d.Stock}", $"{d.UnitPrice}G", d);
-                if (selectedRow == row) detailPanel?.ShowItem(d.Food, d.UnitPrice, d.RemainingStock);
+                if (!d.IsUnlimited)
+                {
+                    d.RemainingStock = purchase != null
+                        ? Mathf.Max(0, d.InitialStock - purchase.GetPurchasedThisPhase(item))
+                        : d.RemainingStock;
+                    row.SetData(item.image, item.ingredientName,
+                        $"재고 {d.RemainingStock}", $"{d.UnitPrice}G", d);
+                }
+                if (selectedRow == row) detailPanel?.ShowItem(d.Food, d.UnitPrice, d.IsUnlimited ? int.MaxValue : d.RemainingStock);
                 break;
             }
         }
@@ -253,8 +267,9 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
     {
         public FoodData Food;
         public int UnitPrice;
-        public int Stock;
-        public int RemainingStock;
+        public bool IsUnlimited;
+        public int InitialStock;   // Special만 의미 있음 (원 재고)
+        public int RemainingStock; // Special만 의미 있음
     }
     private class ToolRowData    { public string Id; }
     private class StorageRowData { public string Type; }

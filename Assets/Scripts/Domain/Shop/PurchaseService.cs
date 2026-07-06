@@ -5,9 +5,10 @@ using Game.Domain.Common;
 namespace Game.Domain.Shop
 {
     /// <summary>
-    /// 재료 상점 구매 로직 (POCO Service). UnifiedShopManager에서 추출 + ShopDetailPanel.OnBuy 흡수 (Sprint 2-E).
-    /// 일일 구매 누적 + 슬롯 캐시 + TryBuy 트랜잭션 (잔액/수용량/차감/지출/추가 일괄).
-    /// 영구 상태 없음 (오늘 구매 캐시는 PassDay 시 today 변경으로 자동 리셋).
+    /// 재료 상점 구매 로직 (POCO Service). Phase 단위 라인업 갱신 지원.
+    /// - Special: 페이즈마다 새 라인업 뽑음, 페이즈별 재고/구매수 트래킹, 페이즈 넘어가면 리셋.
+    /// - General: 무한 매입, 재고 개념 없음.
+    /// 캐시 키 = (day, phase). 재현성은 GameRandom.PhaseRandom(day, phase)로 보장.
     /// </summary>
     public class PurchaseService
     {
@@ -16,8 +17,8 @@ namespace Game.Domain.Shop
         private readonly IMoneyService _money;
         private readonly IExpenseLog _expense;
 
-        private readonly Dictionary<FoodData, int> _dailyPurchased = new();
-        private int _cachedDay = -1;
+        private readonly Dictionary<FoodData, int> _phasePurchased = new();
+        private long _cachedKey = long.MinValue;
         private List<ItemShopSlotInfo> _cachedItemList;
 
         public PurchaseService(ShopConfigSO config, InventoryService inventory, IMoneyService money, IExpenseLog expense)
@@ -28,30 +29,38 @@ namespace Game.Domain.Shop
             _expense = expense;
         }
 
+        private static long MakeKey(int day, int phaseIndex) => ((long)day << 8) | (uint)phaseIndex;
+
         /// <summary>
-        /// 오늘의 슬롯 리스트. 날짜 바뀌면 재구축 + 일일 구매 캐시 리셋.
+        /// (day, phase) 조합의 슬롯 리스트. 조합 바뀌면 새 라인업 뽑고 페이즈별 구매수 리셋.
         /// </summary>
-        public IReadOnlyList<ItemShopSlotInfo> GetItemListForDay(int today)
+        public IReadOnlyList<ItemShopSlotInfo> GetItemList(int day, int phaseIndex)
         {
             if (_config == null) return Array.Empty<ItemShopSlotInfo>();
-            if (_cachedDay != today || _cachedItemList == null)
+            long key = MakeKey(day, phaseIndex);
+            if (_cachedKey != key || _cachedItemList == null)
             {
-                _cachedItemList = _config.BuildSlotList();
-                _cachedDay = today;
-                _dailyPurchased.Clear();
+                var rng = GameRandom.PhaseRandom(day, phaseIndex);
+                _cachedItemList = _config.BuildSlotList(rng);
+                _cachedKey = key;
+                _phasePurchased.Clear();
             }
             return _cachedItemList;
         }
 
-        public int GetPurchasedToday(FoodData item)
-            => _dailyPurchased.TryGetValue(item, out var v) ? v : 0;
+        public int GetPurchasedThisPhase(FoodData item)
+            => _phasePurchased.TryGetValue(item, out var v) ? v : 0;
 
         public int GetRemaining(ItemShopSlotInfo info)
-            => Math.Max(0, info.stock - GetPurchasedToday(info.item));
+        {
+            if (info == null) return 0;
+            if (info.IsUnlimited) return int.MaxValue;
+            return Math.Max(0, info.stock - GetPurchasedThisPhase(info.item));
+        }
 
         public void NotifyPurchased(FoodData item, int qty)
         {
-            _dailyPurchased[item] = GetPurchasedToday(item) + qty;
+            _phasePurchased[item] = GetPurchasedThisPhase(item) + qty;
         }
 
         /// <summary>
@@ -66,8 +75,7 @@ namespace Game.Domain.Shop
         }
 
         /// <summary>
-        /// 구매 트랜잭션: 잔액 차감 → 지출 기록 → 인벤토리 추가 → 일일 캐시 누적.
-        /// 모든 검증 통과 시에만 실행. ShopDetailPanel.OnBuy 흡수.
+        /// 구매 트랜잭션: 잔액 차감 → 지출 기록 → 인벤토리 추가 → 페이즈별 구매수 누적.
         /// </summary>
         public bool TryBuy(FoodData food, int qty, int unitPrice)
         {

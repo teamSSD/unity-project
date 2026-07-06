@@ -41,6 +41,16 @@ public static class GameRandom
     }
 
     /// <summary>
+    /// 페이즈 단위 재현 가능 RNG. 같은 세이브 + 같은 (day, phase) = 같은 결과.
+    /// GameRandom.Immutable static 시퀀스를 건드리지 않아 호출자 간 독립.
+    /// 상점 페이즈별 라인업 뽑기 등에 사용.
+    /// </summary>
+    public static System.Random PhaseRandom(int day, int phaseIndex)
+    {
+        return new System.Random(MixSeed(day * 8 + phaseIndex, ImmutableSeed));
+    }
+
+    /// <summary>
     /// splitmix32 변형 — 인접 입력 (day=0,1,... / seed=now,now+1)이 만들어내는
     /// 약한 상관관계를 흩뜨려 System.Random 첫 몇 개 출력의 편향을 줄인다.
     /// </summary>
