@@ -49,8 +49,8 @@ public class SauceMiniGame : MiniGameAbstract
 
     private float waitingTime = 0f;
     private float waitingThreshold = 0.7f;
-    [SerializeField, Tooltip("정답 허용치 (%). |current-target| 값이 이 이하면 감점 없음. 1틱=decreasePerPress=2.5.")]
-    private float tolerance = 3f;
+    [SerializeField, Tooltip("정답 허용치 (%). |current-target| 값이 이 이하면 감점 없음(perfect). 1틱=decreasePerPress=2.5. 5 = 2틱 여유(반응 지연 흡수).")]
+    private float tolerance = 5f;
     [SerializeField, Tooltip("score 0이 되는 diff (%). tolerance ~ 이 값 사이는 linear.")]
     private float zeroScoreDiff = 20f;
 
