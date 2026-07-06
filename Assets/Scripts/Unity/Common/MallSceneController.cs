@@ -16,6 +16,7 @@ public class MallSceneController : MonoBehaviour
 
     private BentoSelectionController bentoSelectionController;
     private PhaseActionSelector phaseSelector;
+    private ProgressService progressService;
 
     private void Start()
     {
@@ -81,8 +82,14 @@ public class MallSceneController : MonoBehaviour
         if (goHomeButton != null)
             goHomeButton.onClick.AddListener(GoHome);
 
+        // Mall 체류 중 페이즈가 넘어가는 순간마다(Rest / GoHome confirm / etc.) 새 페이즈의 UI를
+        // 즉시 자동 표시. 씬 진입 전에 이미 넘어간 페이즈(Cooking → Mall 흐름)는 아래 flag가 대신 잡음.
+        progressService = session?.Progress;
+        if (progressService != null)
+            progressService.OnPhaseChanged += OnPhaseChangedInMall;
+
         // Cooking 종료로 Mall 복귀한 직후엔 이번 페이즈 액션을 바로 선택하게 UI 자동 표시.
-        // Preparation/Night는 대상 아님(각각 메뉴 선택/하루 마치기 흐름).
+        // (Mall.Start 이전에 PassPhase가 발화되어 OnPhaseChanged 구독 이전이라 이 flag가 필요.)
         if (SceneLoader.ConsumePendingPhaseSelector())
             OpenActionSelection();
     }
@@ -91,6 +98,17 @@ public class MallSceneController : MonoBehaviour
     {
         if (phaseSelector != null)
             phaseSelector.OnActionExecuted -= OnPhaseActionExecuted;
+        if (progressService != null)
+            progressService.OnPhaseChanged -= OnPhaseChangedInMall;
+    }
+
+    /// <summary>Mall 체류 중 페이즈 전환 시 다음 페이즈 UI 즉시 표시.</summary>
+    private void OnPhaseChangedInMall(PhaseType newPhase)
+    {
+        if (newPhase == PhaseType.Preparation)
+            OpenMenuSelection();
+        else
+            OpenActionSelection();
     }
 
     /// <summary>Preparation은 메뉴 선택, 그 외 모든 phase는 페이즈 마치기 confirm. 액션 선택은
