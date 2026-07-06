@@ -94,9 +94,9 @@ public class MallSceneController : MonoBehaviour
         {
             OpenActionSelection();
         }
-        // 새 하루(Settlement→Mall) 또는 게임 첫 진입 시 Preparation 상태 → 메뉴 선택 자동. Cooking 복귀
-        // 케이스와 disjoint (Cooking→Mall은 Afternoon/Evening/Night 로만 도달, Preparation X).
-        else if (session?.Progress?.PhaseData.Phase == PhaseType.Preparation)
+        // Settlement 종료 → 새 하루 Mall 진입 시엔 메뉴 선택 자동. 게임 첫 진입(Continue/NewGame)엔
+        // flag가 세팅 안 되어 유저 자유롭게 Mall 탐색 가능.
+        else if (SceneLoader.ConsumePendingMenuSelection())
         {
             OpenMenuSelection();
         }

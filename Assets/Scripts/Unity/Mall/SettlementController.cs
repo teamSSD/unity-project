@@ -39,6 +39,8 @@ public class SettlementController : MonoBehaviour
         if (waitingForInput && Input.anyKeyDown)
         {
             waitingForInput = false;
+            // 새 하루 시작 → Mall 진입 즉시 메뉴 선택 UI 자동 표시.
+            SceneLoader.RequestMenuSelectionOnNextMall();
             SceneLoader.LoadScene(SceneNames.Mall);
         }
     }

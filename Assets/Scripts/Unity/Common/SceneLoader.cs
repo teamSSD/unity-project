@@ -26,6 +26,17 @@ public static class SceneLoader
         return v;
     }
 
+    private static bool _pendingMenuSelection;
+    // 다음 Mall 진입 시 BentoSelection 자동 표시할지. Settlement → 새 하루 → Mall 흐름용.
+    // 게임 첫 진입(Continue/NewGame)엔 세팅 안 됨 → 유저 자유롭게 Mall 탐색.
+    public static void RequestMenuSelectionOnNextMall() => _pendingMenuSelection = true;
+    public static bool ConsumePendingMenuSelection()
+    {
+        bool v = _pendingMenuSelection;
+        _pendingMenuSelection = false;
+        return v;
+    }
+
     /// <summary>
     /// BootLoader에서 초기 씬 이름 설정용 (로드 완료 후 호출)
     /// </summary>
