@@ -19,6 +19,8 @@ public class OrderTicketModel : MonoBehaviour
     [SerializeField] private Vector3 attachedLocalPosition = Vector3.zero;
     [Tooltip("부착 시 영수증을 도시락 위로 띄울 sortingOrder offset (도시락 SR 기준 +offset). 음식 아이콘들보다 높아야 함.")]
     [SerializeField] private int attachedSortingOrderOffset = 100;
+    [Tooltip("부착 시 영수증의 world scale 배율 (1 = 원래 크기). 드래그/rest 시엔 원 크기 유지.")]
+    [SerializeField] private float attachedScale = 0.7f;
     private ScanColliderUtil scanColliderUtil;
     private ClickStateUtil clickStateUtil;
     public bool IsAttached {get; private set;} = false;
@@ -69,6 +71,8 @@ public class OrderTicketModel : MonoBehaviour
                 transform.SetParent(collision.transform, worldPositionStays: true);
                 transform.localPosition = attachedLocalPosition;
                 transform.localRotation = Quaternion.identity;
+                // 부착 시 영수증 world 크기를 attachedScale 배율로 축소.
+                transform.localScale *= attachedScale;
 
                 // 영수증이 도시락 위에 보이게 — SortingGroup으로 자식 TMP까지 일괄 정렬.
                 var sg = GetComponent<SortingGroup>() ?? gameObject.AddComponent<SortingGroup>();
