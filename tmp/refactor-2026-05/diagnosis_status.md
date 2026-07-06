@@ -177,11 +177,21 @@ _원천: [reports/review_2026-07_deepdig.md](reports/review_2026-07_deepdig.md) 
 
 **미결**: 극성 반전 버그 도달성 triage (라이브 vs 잠복) — 씬/콜라이더 검증으로 기존 세이브에 손실 여부 판정. 후속.
 
-### Wave 1 (근접) — 대기
+### Wave 1 (근접) — 대부분 진행됨
 
-- B `transform.Find` 계층 문자열 → SerializeField (ShopUIAdapter 우선 → MenuCardController 9곳 등)
-- C 하드코딩 팔레트/수치 → UIColors/SerializeField
-- ConfirmModal류 프리팹화 (Resources 대신 PrefabCatalog 등록)
+| 항목 | 커밋 | 상태 |
+|---|---|---|
+| B ShopUIAdapter Find(8+) → ShopBookRefs + SerializeField | `ccaaa2e` | ✅ done |
+| B MenuCardController Find(9) → SerializeField | `e2b8862` | ✅ done |
+| B InventoryPageController row Find(4) → BatchRowRefs | `984c89a` | ✅ done |
+| B DialogueManager Find(5) → DialoguePanelRefs | `8739f44` | ✅ done |
+| B RecipeBookManager Chrome Find(4) → SerializeField | `8d3af04` | ✅ done |
+| C MenuCardController 탭 색상 → UIColors + TabActive 신설 | `7c758d6` | ✅ done |
+| C SettlementLineItemUI Income/Expense → UIColors | `669105b` | ✅ done |
+| C InventoryPageController bar 세만틱 태그 (default 그대로) | `669105b` | ✅ done |
+| **ConfirmModal 프리팹화** | — | 🟡 deferred (자기완결·저위험. Unity asset 작업 별도 phase) |
+
+**Find 제거 소계**: 22곳 (5개 시스템). 프리팹 rename/reparent 시 조용한 파손 방어선 확보.
 
 ### Wave 2 — 대기
 
