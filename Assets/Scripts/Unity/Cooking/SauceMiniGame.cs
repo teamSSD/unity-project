@@ -33,6 +33,8 @@ public class SauceMiniGame : MiniGameAbstract
     [SerializeField, Tooltip("동적 목표 범위 최대값 (%).")] private float targetMax = 80f;
     [SerializeField, Tooltip("목표 위치 마커 (Sauce 자식). anchor y가 target/100으로 갱신됨.")]
     private RectTransform stopMarker;
+    [SerializeField, Tooltip("마커 x offset — 양수면 게이지 안쪽(오른쪽)으로 이동. Sauce local 좌표.")]
+    private float stopMarkerXOffset = 0.35f;
     public GameObject upperArrow;
     public GameObject lowerArrow;
     private GuidedButtonAnimator upperArrowAnim;
@@ -64,7 +66,7 @@ public class SauceMiniGame : MiniGameAbstract
         float ratio = Mathf.Clamp01(targetGauge / 100f);
         stopMarker.anchorMin = new Vector2(0f, ratio);
         stopMarker.anchorMax = new Vector2(0f, ratio);
-        stopMarker.anchoredPosition = Vector2.zero;
+        stopMarker.anchoredPosition = new Vector2(stopMarkerXOffset, 0f);
     }
 
     public override void OnUpdate()
