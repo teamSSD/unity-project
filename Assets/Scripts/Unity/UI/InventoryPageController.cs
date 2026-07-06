@@ -200,7 +200,7 @@ public class InventoryPageController : MonoBehaviour
 
     private void WireDiscardButton(GameObject row, FoodData food, InventoryBatch batch)
     {
-        var btn = row.transform.Find("DiscardButton")?.GetComponent<Button>();
+        var btn = row.GetComponent<BatchRowRefs>()?.DiscardButton;
         if (btn == null) return;
         btn.onClick.RemoveAllListeners();
         btn.onClick.AddListener(() =>
@@ -225,14 +225,15 @@ public class InventoryPageController : MonoBehaviour
 
     private void SetupBatchRow(GameObject row, int qty, int daysRemaining, int maxDays)
     {
-        // 수량 레이블
-        var qtyLabel = row.transform.Find("QtyLabel")?.GetComponent<TextMeshProUGUI>();
-        if (qtyLabel != null) qtyLabel.text = $"● {qty}개";
+        var refs = row.GetComponent<BatchRowRefs>();
+        if (refs == null) return;
+
+        if (refs.QtyLabel != null) refs.QtyLabel.text = $"● {qty}개";
 
         float ratio = maxDays > 0 ? Mathf.Clamp01((float)daysRemaining / maxDays) : 0f;
 
         // 진행 바: anchor.x로 폭 조절 → sprite 없이 순수 색 사각형
-        var barRect = row.transform.Find("BarBg/Bar") as RectTransform;
+        var barRect = refs.BarRect;
         if (barRect != null)
         {
             barRect.anchorMin = new Vector2(0f, 0f);
@@ -244,7 +245,7 @@ public class InventoryPageController : MonoBehaviour
         }
 
         // 남은 일수 레이블: 만료일 때만 빨강 강조, 그 외엔 본문 텍스트 색 유지
-        var daysLabel = row.transform.Find("DaysLabel")?.GetComponent<TextMeshProUGUI>();
+        var daysLabel = refs.DaysLabel;
         if (daysLabel != null)
         {
             daysLabel.text = daysRemaining > 0 ? $"{daysRemaining}/{maxDays}" : "만료";

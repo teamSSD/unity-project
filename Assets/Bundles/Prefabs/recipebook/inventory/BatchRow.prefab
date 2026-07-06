@@ -641,6 +641,7 @@ GameObject:
   - component: {fileID: 3545439867753957795}
   - component: {fileID: 1392648424410022783}
   - component: {fileID: 2818155337038113416}
+  - component: {fileID: 328369135901120166}
   m_Layer: 0
   m_Name: BatchRow
   m_TagString: Untagged
@@ -717,6 +718,22 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &328369135901120166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6473770129937418569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 210db9fa409ac40c994b57a40a80ff4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Unity::BatchRowRefs
+  discardButton: {fileID: 4552433638796999177}
+  qtyLabel: {fileID: 5639750006626365482}
+  barRect: {fileID: 1342567425780750286}
+  daysLabel: {fileID: 7935384897283021104}
 --- !u!1 &8866840473536297821
 GameObject:
   m_ObjectHideFlags: 0
