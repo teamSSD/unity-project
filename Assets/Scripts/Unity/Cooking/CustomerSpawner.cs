@@ -10,9 +10,9 @@ using UnityEngine;
 public class CustomerSpawner : MonoBehaviour
 {
     [SerializeField, Tooltip("Ordering/Taking 손님의 최종 world scale (displayScale=1 기준). displayScale이 곱해짐.")]
-    private float orderingTakingScale = 0.5f;
+    private float orderingTakingScale = 0.45f;
     [SerializeField, Tooltip("Waiting 손님의 최종 world scale (displayScale=1 기준). displayScale이 곱해짐.")]
-    private float waitingScale = 0.33f;
+    private float waitingScale = 0.297f;
     [SerializeField, Tooltip("Waiting 손님 머리 위 타이머(gauge)의 localScale.")]
     private float timerScale = 0.6f;
     [SerializeField, Tooltip("Waiting 손님 머리 위 타이머의 캔버스 y (RectTransform.anchoredPosition.y). x는 npc 위치에서 자동 계산.")]

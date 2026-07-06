@@ -15,11 +15,16 @@ public class WaitingCustomer : MonoBehaviour
 
     public void inject(Canvas worldCanvas, CustomerData customerData, float timerScale = 1f, float timerCanvasY = 0f)
     {
-        // 타이머: 캔버스 상대 좌표. y는 고정, x는 npc world x → canvas anchoredPosition x로 변환.
-        gaugeUI.transform.SetParent(worldCanvas.transform, false);
+        // Awake에서 world-instantiate된 gauge를 폐기하고 canvas 자식으로 재생성.
+        // 그래야 RectTransform이 canvas 안에서 정상 layout됨.
+        if (gaugeUI != null) Destroy(gaugeUI);
+        gaugeUI = Instantiate(gaugePrefab, worldCanvas.transform);
+        guageScript = gaugeUI.GetComponent<GaugeUI>();
+
         var timerRt = (RectTransform)gaugeUI.transform;
         timerRt.localScale = new Vector3(timerScale, timerScale, 1f);
 
+        // npc world x → canvas anchoredPosition x로 매핑, y는 timerCanvasY 고정.
         var camera = worldCanvas.worldCamera;
         var canvasRt = (RectTransform)worldCanvas.transform;
         Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(camera, transform.position);
