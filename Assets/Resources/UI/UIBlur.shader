@@ -1,71 +1,46 @@
-Shader "UI/Blur"
+Shader "Hidden/UIBlurPostProcess"
 {
-    // Built-in RP용 GrabPass 기반 UI 블러. Settings backdrop 등 UI overlay에 사용.
-    // 뒷 화면(그랩)에 tint color 오버레이 + gaussian 4-tap 블러.
+    // Graphics.Blit 오프스크린 블러용. UI 자체에 안 붙임 (RawImage는 blit 결과 텍스처만 표시).
     Properties
     {
-        _Color ("Tint Color (RGBA)", Color) = (0,0,0,0.5)
-        _BlurSize ("Blur Size (px)", Range(0, 20)) = 4
+        _MainTex ("Texture", 2D) = "white" {}
+        _Color ("Tint Color (RGBA — a로 검게 섞음)", Color) = (0,0,0,0.6)
+        _BlurSize ("Blur Size (px)", Range(0, 30)) = 6
     }
 
     SubShader
     {
-        Tags { "Queue"="Overlay" "RenderType"="Transparent" "IgnoreProjector"="True" }
-        LOD 100
-        Cull Off
-        ZWrite Off
-        ZTest Always
-        Blend SrcAlpha OneMinusSrcAlpha
-
-        // 뒤 화면 캡처
-        GrabPass { "_UIBlurGrabTex" }
+        Cull Off ZWrite Off ZTest Always
 
         Pass
         {
             CGPROGRAM
-            #pragma vertex vert
+            #pragma vertex vert_img
             #pragma fragment frag
             #include "UnityCG.cginc"
 
-            sampler2D _UIBlurGrabTex;
-            float4 _UIBlurGrabTex_TexelSize;
+            sampler2D _MainTex;
+            float4 _MainTex_TexelSize;
             float4 _Color;
             float _BlurSize;
 
-            struct appdata
+            fixed4 frag(v2f_img i) : SV_Target
             {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-            };
+                float2 texel = _MainTex_TexelSize.xy * _BlurSize;
 
-            struct v2f
-            {
-                float4 pos : SV_POSITION;
-                float4 grabPos : TEXCOORD0;
-            };
+                // 9-tap box blur
+                fixed4 c = tex2D(_MainTex, i.uv);
+                c += tex2D(_MainTex, i.uv + float2( texel.x,  texel.y));
+                c += tex2D(_MainTex, i.uv + float2(-texel.x,  texel.y));
+                c += tex2D(_MainTex, i.uv + float2( texel.x, -texel.y));
+                c += tex2D(_MainTex, i.uv + float2(-texel.x, -texel.y));
+                c += tex2D(_MainTex, i.uv + float2( texel.x, 0));
+                c += tex2D(_MainTex, i.uv + float2(-texel.x, 0));
+                c += tex2D(_MainTex, i.uv + float2(0,  texel.y));
+                c += tex2D(_MainTex, i.uv + float2(0, -texel.y));
+                c /= 9.0;
 
-            v2f vert(appdata v)
-            {
-                v2f o;
-                o.pos = UnityObjectToClipPos(v.vertex);
-                o.grabPos = ComputeGrabScreenPos(o.pos);
-                return o;
-            }
-
-            fixed4 frag(v2f i) : SV_Target
-            {
-                float2 uv = i.grabPos.xy / i.grabPos.w;
-                float2 texel = _UIBlurGrabTex_TexelSize.xy * _BlurSize;
-
-                // 5-tap box blur (center + 4 diagonal)
-                fixed4 c = tex2D(_UIBlurGrabTex, uv);
-                c += tex2D(_UIBlurGrabTex, uv + float2( texel.x,  texel.y));
-                c += tex2D(_UIBlurGrabTex, uv + float2(-texel.x,  texel.y));
-                c += tex2D(_UIBlurGrabTex, uv + float2( texel.x, -texel.y));
-                c += tex2D(_UIBlurGrabTex, uv + float2(-texel.x, -texel.y));
-                c /= 5.0;
-
-                // tint 오버레이 (검은색 반투명)
+                // tint 오버레이 (검정 α 만큼 어둡게)
                 fixed3 rgb = lerp(c.rgb, _Color.rgb, _Color.a);
                 return fixed4(rgb, 1.0);
             }

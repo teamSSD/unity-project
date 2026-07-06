@@ -5,9 +5,11 @@ using UnityEngine.UI;
 public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
 {
     private GameObject settingsPanel;
-    private GameObject backdrop;
-    private Image backdropImage;
-    private Material blurMaterial; // 씬별로 mat 스왑 (GameStart=solid, 그 외=blur)
+    private GameObject backdropRoot;
+    private Image solidBackdrop;    // GameStart 씬용 solid black
+    private RawImage blurBackdrop;  // 그 외 씬용 blur 결과 표시
+    private Material blurBlitMaterial; // Graphics.Blit으로 blur 계산 (UI 자체엔 안 붙임)
+    private RenderTexture blurRt;
 
     protected override void OnSingletonAwake()
     {
@@ -15,10 +17,7 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
         canvasGO.transform.SetParent(transform);
 
         var canvas = canvasGO.AddComponent<Canvas>();
-        // ScreenSpaceOverlay → Camera로 변경. Overlay에서는 GrabPass가 UI 자신을 못 캡처.
-        canvas.renderMode = RenderMode.ScreenSpaceCamera;
-        canvas.worldCamera = Camera.main;
-        canvas.planeDistance = 1f;
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = 100;
         var scaler = canvasGO.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -27,24 +26,46 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
         scaler.matchWidthOrHeight = 0f;
         canvasGO.AddComponent<GraphicRaycaster>();
 
-        backdrop = new GameObject("BlackBackdrop", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        backdrop.layer = LayerMask.NameToLayer("UI");
-        backdrop.transform.SetParent(canvasGO.transform, false);
-        var rt = (RectTransform)backdrop.transform;
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.one;
-        rt.sizeDelta = Vector2.zero;
-        rt.anchoredPosition = Vector2.zero;
-        backdropImage = backdrop.GetComponent<Image>();
-        backdropImage.color = Color.white; // 색은 material에서 tint (blur mat 사용 시). solid 모드는 색 오버라이드.
-        backdropImage.raycastTarget = true;
-        backdrop.SetActive(false);
+        // Backdrop root (raycast 차단 + 두 자식 스타일 담음)
+        backdropRoot = new GameObject("Backdrop", typeof(RectTransform));
+        backdropRoot.layer = LayerMask.NameToLayer("UI");
+        backdropRoot.transform.SetParent(canvasGO.transform, false);
+        StretchFullScreen((RectTransform)backdropRoot.transform);
 
-        blurMaterial = Resources.Load<Material>("UI/UIBlurBackdrop");
+        // 자식 1 — solid black (GameStart 씬용)
+        var solidGo = new GameObject("Solid", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        solidGo.layer = backdropRoot.layer;
+        solidGo.transform.SetParent(backdropRoot.transform, false);
+        StretchFullScreen((RectTransform)solidGo.transform);
+        solidBackdrop = solidGo.GetComponent<Image>();
+        solidBackdrop.color = Color.black;
+        solidBackdrop.raycastTarget = true;
+
+        // 자식 2 — blur RawImage (그 외 씬용)
+        var blurGo = new GameObject("Blur", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage));
+        blurGo.layer = backdropRoot.layer;
+        blurGo.transform.SetParent(backdropRoot.transform, false);
+        StretchFullScreen((RectTransform)blurGo.transform);
+        blurBackdrop = blurGo.GetComponent<RawImage>();
+        blurBackdrop.raycastTarget = true;
+
+        // Blur material (Blit 오프스크린 계산용, UI 자체엔 안 붙임)
+        var mat = Resources.Load<Material>("UI/UIBlurBackdrop");
+        if (mat != null) blurBlitMaterial = new Material(mat);
+
+        backdropRoot.SetActive(false);
 
         var prefab = CatalogProvider.Prefabs?.settings;
         settingsPanel = Instantiate(prefab, canvasGO.transform);
         settingsPanel.SetActive(false);
+    }
+
+    private static void StretchFullScreen(RectTransform rt)
+    {
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.sizeDelta = Vector2.zero;
+        rt.anchoredPosition = Vector2.zero;
     }
 
     private bool prevLocked;
@@ -73,7 +94,7 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
     public void Open()
     {
         ApplyBackdropStyle();
-        backdrop.SetActive(true);
+        backdropRoot.SetActive(true);
         settingsPanel.SetActive(true);
         Canvas.ForceUpdateCanvases();
         LayoutRebuilder.ForceRebuildLayoutImmediate(settingsPanel.GetComponent<RectTransform>());
@@ -81,28 +102,52 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
         TimeManager.Instance?.PauseTime();
     }
 
-    /// <summary>씬 컨텍스트에 따라 backdrop 스타일 결정.
-    /// GameStart: 배경이 어차피 정적이라 solid 검정. 그 외: blur + 반투명 검정 tint.</summary>
-    private void ApplyBackdropStyle()
-    {
-        bool onGameStart = SceneManager.GetActiveScene().name == SceneNames.GameStart;
-        if (onGameStart || blurMaterial == null)
-        {
-            backdropImage.material = null;
-            backdropImage.color = Color.black;
-        }
-        else
-        {
-            backdropImage.material = blurMaterial;
-            backdropImage.color = Color.white; // material에서 tint 처리
-        }
-    }
-
     public void Close()
     {
-        backdrop.SetActive(false);
+        backdropRoot.SetActive(false);
         settingsPanel.SetActive(false);
         UILockManager.Unlock(UILockManager.Owner.Settings);
         TimeManager.Instance?.ResumeTime();
+    }
+
+    /// <summary>씬 컨텍스트에 따라 backdrop 결정.
+    /// GameStart: solid black. 그 외: main camera를 RT에 렌더 → blur → RawImage.</summary>
+    private void ApplyBackdropStyle()
+    {
+        bool onGameStart = SceneManager.GetActiveScene().name == SceneNames.GameStart;
+        if (onGameStart || blurBlitMaterial == null || Camera.main == null)
+        {
+            solidBackdrop.enabled = true;
+            blurBackdrop.enabled = false;
+            return;
+        }
+
+        // 뒷 화면(main camera view) 캡처 후 블러 → RawImage
+        int w = Mathf.Max(64, Screen.width / 2);
+        int h = Mathf.Max(64, Screen.height / 2);
+        if (blurRt == null || blurRt.width != w || blurRt.height != h)
+        {
+            if (blurRt != null) blurRt.Release();
+            blurRt = new RenderTexture(w, h, 0);
+        }
+
+        var tempRt = RenderTexture.GetTemporary(w, h, 16);
+        var cam = Camera.main;
+        var prevTarget = cam.targetTexture;
+        cam.targetTexture = tempRt;
+        cam.Render();
+        cam.targetTexture = prevTarget;
+
+        Graphics.Blit(tempRt, blurRt, blurBlitMaterial);
+        RenderTexture.ReleaseTemporary(tempRt);
+
+        blurBackdrop.texture = blurRt;
+        blurBackdrop.enabled = true;
+        solidBackdrop.enabled = false;
+    }
+
+    private void OnDestroy()
+    {
+        if (blurRt != null) { blurRt.Release(); blurRt = null; }
     }
 }
