@@ -15,21 +15,18 @@ public class WaitingCustomer : MonoBehaviour
 
     public void inject(Canvas worldCanvas, CustomerData customerData, float timerScale = 1f, float timerCanvasY = 0f)
     {
-        // Awake에서 world-instantiate된 gauge를 폐기하고 canvas 자식으로 재생성.
-        // 그래야 RectTransform이 canvas 안에서 정상 layout됨.
-        if (gaugeUI != null) Destroy(gaugeUI);
-        gaugeUI = Instantiate(gaugePrefab, worldCanvas.transform);
-        guageScript = gaugeUI.GetComponent<GaugeUI>();
+        // Awake에서 world-instantiate된 gauge를 canvas 자식으로 이전.
+        // worldPositionStays=true → SetParent가 localScale을 canvas lossyScale 역수로 자동 보정
+        // (SizeDelta 1×1 픽셀이지만 이 자동 scale이 곱해져 시각적으로 큼).
+        // timerScale은 그 위에 곱하는 배율.
+        Vector3 worldPos = transform.position;
+        gaugeUI.transform.SetParent(worldCanvas.transform, worldPositionStays: true);
+        gaugeUI.transform.position = worldPos; // canvas SS-Camera는 world position 자동 변환
+        gaugeUI.transform.localScale *= timerScale;
 
+        // y는 캔버스 좌표 timerCanvasY로 고정 (x는 위 position에서 자동 계산된 값 유지).
         var timerRt = (RectTransform)gaugeUI.transform;
-        timerRt.localScale = new Vector3(timerScale, timerScale, 1f);
-
-        // npc world x → canvas anchoredPosition x로 매핑, y는 timerCanvasY 고정.
-        var camera = worldCanvas.worldCamera;
-        var canvasRt = (RectTransform)worldCanvas.transform;
-        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(camera, transform.position);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRt, screenPos, camera, out Vector2 canvasPos);
-        timerRt.anchoredPosition = new Vector2(canvasPos.x, timerCanvasY);
+        timerRt.anchoredPosition = new Vector2(timerRt.anchoredPosition.x, timerCanvasY);
 
         var sr = GetComponent<SpriteRenderer>();
         if (sr != null)
