@@ -122,28 +122,50 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
             return;
         }
 
-        // 뒷 화면(main camera view) 캡처 후 블러 → RawImage
-        int w = Mathf.Max(64, Screen.width / 2);
-        int h = Mathf.Max(64, Screen.height / 2);
-        if (blurRt == null || blurRt.width != w || blurRt.height != h)
+        // Main camera view를 RT에 렌더 후 Dual Kawase Blur → RawImage.
+        int fullW = Mathf.Max(64, Screen.width);
+        int fullH = Mathf.Max(64, Screen.height);
+        if (blurRt == null || blurRt.width != fullW || blurRt.height != fullH)
         {
             if (blurRt != null) blurRt.Release();
-            blurRt = new RenderTexture(w, h, 0);
+            blurRt = new RenderTexture(fullW, fullH, 0);
         }
 
-        var srcRt = RenderTexture.GetTemporary(w, h, 16);
-        var midRt = RenderTexture.GetTemporary(w, h, 0);
+        var srcRt = RenderTexture.GetTemporary(fullW, fullH, 16);
         var cam = Camera.main;
         var prevTarget = cam.targetTexture;
         cam.targetTexture = srcRt;
         cam.Render();
         cam.targetTexture = prevTarget;
 
-        // 분리형 가우시안: horizontal → vertical + tint.
-        Graphics.Blit(srcRt, midRt, blurBlitMaterial, 0);
-        Graphics.Blit(midRt, blurRt, blurBlitMaterial, 1);
+        // Dual Kawase: 여러 단계 downsample(pass 0) → 여러 단계 upsample(pass 1) → tint(pass 2).
+        // 반복 수 늘리면 더 넓은 블러.
+        const int iterations = 4;
+        var pyramid = new RenderTexture[iterations];
+        int cw = fullW, ch = fullH;
+        RenderTexture prev = srcRt;
+        for (int i = 0; i < iterations; i++)
+        {
+            cw = Mathf.Max(2, cw / 2);
+            ch = Mathf.Max(2, ch / 2);
+            pyramid[i] = RenderTexture.GetTemporary(cw, ch, 0);
+            Graphics.Blit(prev, pyramid[i], blurBlitMaterial, 0); // downsample
+            prev = pyramid[i];
+        }
+        for (int i = iterations - 2; i >= 0; i--)
+        {
+            Graphics.Blit(prev, pyramid[i], blurBlitMaterial, 1); // upsample
+            prev = pyramid[i];
+        }
+        // 마지막 upsample + tint → blurRt
+        var beforeTint = RenderTexture.GetTemporary(fullW, fullH, 0);
+        Graphics.Blit(prev, beforeTint, blurBlitMaterial, 1); // final upsample to full
+        Graphics.Blit(beforeTint, blurRt, blurBlitMaterial, 2); // tint
+
         RenderTexture.ReleaseTemporary(srcRt);
-        RenderTexture.ReleaseTemporary(midRt);
+        RenderTexture.ReleaseTemporary(beforeTint);
+        for (int i = 0; i < iterations; i++)
+            if (pyramid[i] != null) RenderTexture.ReleaseTemporary(pyramid[i]);
 
         blurBackdrop.texture = blurRt;
         blurBackdrop.enabled = true;
