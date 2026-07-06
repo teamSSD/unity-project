@@ -105,6 +105,11 @@ public class MallSceneController : MonoBehaviour
     /// <summary>Mall 체류 중 페이즈 전환 시 다음 페이즈 UI 즉시 표시.</summary>
     private void OnPhaseChangedInMall(PhaseType newPhase)
     {
+        // Morning은 오직 Preparation→Morning 경로로만 도달 (메뉴 선택 콜백에서 PassPhase 후
+        // LoadScene(Cooking)이 뒤따름). Mall UI 열면 순간 flicker → skip.
+        // Night 종료 = PassPhase가 Settlement 씬 로드 후 OnPhaseChanged 미발화 → 여기 도달 안 함.
+        if (newPhase == PhaseType.Morning) return;
+
         if (newPhase == PhaseType.Preparation)
             OpenMenuSelection();
         else
