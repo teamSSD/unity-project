@@ -10,32 +10,11 @@ public static class SceneLoader
 {
     private static string currentGameplayScene;
     private static Vector3? _mallReturnPosition;
-    private static bool _pendingPhaseSelector;
 
     public static string CurrentScene => currentGameplayScene;
     public static Vector3? MallReturnPosition => _mallReturnPosition;
     public static void SetMallReturnPosition(Vector3 pos) => _mallReturnPosition = pos;
     public static void ClearMallReturnPosition() => _mallReturnPosition = null;
-
-    // 다음 Mall 진입 시 PhaseActionSelector 자동 표시할지. Cooking 종료 → Mall 자동 복귀 흐름용.
-    public static void RequestPhaseSelectorOnNextMall() => _pendingPhaseSelector = true;
-    public static bool ConsumePendingPhaseSelector()
-    {
-        bool v = _pendingPhaseSelector;
-        _pendingPhaseSelector = false;
-        return v;
-    }
-
-    private static bool _pendingMenuSelection;
-    // 다음 Mall 진입 시 BentoSelection 자동 표시할지. Settlement → 새 하루 → Mall 흐름용.
-    // 게임 첫 진입(Continue/NewGame)엔 세팅 안 됨 → 유저 자유롭게 Mall 탐색.
-    public static void RequestMenuSelectionOnNextMall() => _pendingMenuSelection = true;
-    public static bool ConsumePendingMenuSelection()
-    {
-        bool v = _pendingMenuSelection;
-        _pendingMenuSelection = false;
-        return v;
-    }
 
     /// <summary>
     /// BootLoader에서 초기 씬 이름 설정용 (로드 완료 후 호출)

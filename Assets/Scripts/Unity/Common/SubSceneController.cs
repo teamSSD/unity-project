@@ -22,11 +22,8 @@ public class SubSceneController : MonoBehaviour
     {
         Debug.Log($"[SubSceneController] Returning to {returnSceneName}");
 
-        // Cooking 종료로 Mall 돌아갈 때는 페이즈 액션 선택 UI 자동 표시 요청. Garden 등 다른
-        // 서브씬은 대상 아님.
-        if (gameObject.scene.name == SceneNames.Cooking && returnSceneName == SceneNames.Mall)
-            SceneLoader.RequestPhaseSelectorOnNextMall();
-
+        // PassPhase가 Night case에서 자동으로 Settlement 씬 로드 후 true 반환 → return-scene 로드 skip.
+        // 그 외에는 PassPhase 후 지정된 return 씬(Mall)으로. Mall이 자체적으로 phase 보고 UI 결정.
         var ps = GameSessionRoot.Instance?.Progress;
         if (ps == null || !ps.PassPhase())
             SceneLoader.LoadScene(returnSceneName);
