@@ -14,6 +14,10 @@ public class LinearGauge : MonoBehaviour
     [SerializeField] private Sprite lowState;
     [SerializeField] private Sprite severeState;
     [SerializeField] private int maxValue = 100;
+    [Tooltip("이 비율 이하로 떨어지면 Low 상태(스프라이트) 전환.")]
+    [SerializeField, Range(0f, 1f)] private float lowThresholdRatio = 0.4f;
+    [Tooltip("이 비율 이하로 떨어지면 Severe 상태(스프라이트) 전환.")]
+    [SerializeField, Range(0f, 1f)] private float severeThresholdRatio = 0.15f;
     private GaugeState currentState;
 
     void OnEnable()
@@ -39,7 +43,9 @@ public class LinearGauge : MonoBehaviour
             return;
         }
 
-        if (currentValue > 40)
+        float ratio = (float)currentValue / maxValue;
+
+        if (ratio > lowThresholdRatio)
         {
             if (currentState != GaugeState.Fill)
             {
@@ -47,7 +53,7 @@ public class LinearGauge : MonoBehaviour
                 fillImage.sprite = fillState;
             }
         }
-        else if (currentValue <= 40 && currentValue > 15)
+        else if (ratio > severeThresholdRatio)
         {
             if (currentState != GaugeState.Low)
             {
@@ -55,7 +61,7 @@ public class LinearGauge : MonoBehaviour
                 fillImage.sprite = lowState;
             }
         }
-        else if (currentValue <= 15)
+        else
         {
             if (currentState != GaugeState.Severe)
             {
@@ -64,7 +70,7 @@ public class LinearGauge : MonoBehaviour
             }
         }
 
-        fillImage.fillAmount = (float)currentValue / maxValue;
+        fillImage.fillAmount = ratio;
     }
 
 #if UNITY_EDITOR
