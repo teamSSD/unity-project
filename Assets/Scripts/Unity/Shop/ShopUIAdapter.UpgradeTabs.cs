@@ -8,7 +8,7 @@ public partial class ShopUIAdapter
 {
     private void PopulateToolList()
     {
-        var mgr = GameSessionRoot.Instance?.ToolUpgrade;
+        var mgr = toolUpgrade;
         if (mgr == null) return;
         foreach (var id in mgr.GetAllToolIds())
         {
@@ -27,7 +27,7 @@ public partial class ShopUIAdapter
 
     private void ShowToolDetail(string id)
     {
-        var mgr = GameSessionRoot.Instance?.ToolUpgrade;
+        var mgr = toolUpgrade;
         if (mgr == null) return;
         var tool = SearchDataUtil.GetCookingToolDataById(id);
         var cur  = mgr.GetCurrentData(id);
@@ -58,7 +58,7 @@ public partial class ShopUIAdapter
 
     private void PopulateStorageList()
     {
-        var mgr = GameSessionRoot.Instance?.StorageUpgrade;
+        var mgr = storageUpgrade;
         if (mgr == null) return;
         foreach (var type in mgr.GetAllTypes())
         {
@@ -71,7 +71,7 @@ public partial class ShopUIAdapter
 
     private void ShowStorageDetail(string type)
     {
-        var mgr = GameSessionRoot.Instance?.StorageUpgrade;
+        var mgr = storageUpgrade;
         if (mgr == null) return;
         var cur = mgr.GetCurrentData(type);
         bool isMax = mgr.IsMax(type);
@@ -97,7 +97,7 @@ public partial class ShopUIAdapter
 
     private void PopulateFarmList()
     {
-        var mgr = GameSessionRoot.Instance?.FarmUpgrade;
+        var mgr = farmUpgrade;
         if (mgr == null) return;
         foreach (var type in mgr.GetAllTypes())
         {
@@ -110,7 +110,7 @@ public partial class ShopUIAdapter
 
     private void ShowFarmDetail(string type)
     {
-        var mgr = GameSessionRoot.Instance?.FarmUpgrade;
+        var mgr = farmUpgrade;
         if (mgr == null) return;
         var cur = mgr.GetCurrentData(type);
         bool isMax = mgr.IsMax(type);
@@ -134,8 +134,7 @@ public partial class ShopUIAdapter
         detailPanel?.ShowUpgrade(ShopDetailPanel.UpgradeKind.Farm, type, null, FarmTypeName(type), desc, levelText, costText, canUpgrade);
     }
 
-    private static bool HasMoney(int cost) =>
-        (GameSessionRoot.Instance?.Stats?.GetMoney() ?? 0) >= cost;
+    private bool HasMoney(int cost) => (stats?.GetMoney() ?? 0) >= cost;
 
     private static string StorageTypeName(string type) => type switch
     {

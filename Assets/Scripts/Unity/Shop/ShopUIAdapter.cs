@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using Game.Domain.Common;
+using Game.Domain.Garden;
+using Game.Domain.Shop;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,6 +28,13 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
     private ShopListRow selectedRow;
 
     private Tab currentTab = Tab.Item;
+
+    // ADR-008 — GameSessionRoot 하위 서비스는 캐시 후 재사용. .Instance 반복 금지.
+    private PurchaseService purchase;
+    private StatsService stats;
+    private ToolUpgradeService toolUpgrade;
+    private StorageUpgradeService storageUpgrade;
+    private FarmUpgradeService farmUpgrade;
 
     private const float BookmarkWidthUnselected = 70f;
     private const float BookmarkWidthSelected   = 105f;
@@ -65,6 +75,9 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
         closeButton = refs.CloseButton;
         if (closeButton != null) closeButton.onClick.AddListener(CloseShop);
 
+        CacheServices();
+        detailPanel?.Inject(purchase, toolUpgrade, storageUpgrade, farmUpgrade);
+
         var bookmarks = refs.BookmarkButtons;
         for (int i = 0; i < bookmarkButtons.Length && i < (bookmarks?.Length ?? 0); i++)
         {
@@ -75,6 +88,18 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
         }
 
         bookInstance.SetActive(false);
+    }
+
+    /// <summary>ADR-008 — GameSessionRoot 루트에서 하위 서비스를 한 번 fetch해서 필드에 보관.</summary>
+    private void CacheServices()
+    {
+        var session = GameSessionRoot.Instance;
+        if (session == null) return;
+        purchase       = session.Purchase;
+        stats          = session.Stats;
+        toolUpgrade    = session.ToolUpgrade;
+        storageUpgrade = session.StorageUpgrade;
+        farmUpgrade    = session.FarmUpgrade;
     }
 
     public void OpenShop(Tab tab = Tab.Item)
@@ -180,10 +205,9 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
 
     private void PopulateItemList()
     {
-        var purchase = GameSessionRoot.Instance?.Purchase;
         if (purchase == null) return;
 
-        int today = GameSessionRoot.Instance?.Stats.GetDay() ?? 0;
+        int today = stats?.GetDay() ?? 0;
         var slots = purchase.GetItemListForDay(today);
 
         foreach (var info in slots)
@@ -203,7 +227,6 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
 
     public void NotifyItemPurchased(FoodData item, int qty)
     {
-        var purchase = GameSessionRoot.Instance?.Purchase;
         purchase?.NotifyPurchased(item, qty);
 
         foreach (var row in currentRows)

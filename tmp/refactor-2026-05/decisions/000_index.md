@@ -19,6 +19,7 @@ _v2 ACCEPTED: 2026-05-28 / Phase 2 마스터 플랜의 입력_
 | [005](ADR-005-async-runtime.md) | Async Runtime | **UniTask 전면 마이그레이션** (Phase 2-C). 점진 폐기, 코루틴 0 목표. |
 | [006](ADR-006-domain-language.md) | Domain Language | **DOMAIN.md 작성 + 전면 rename PR**. 부분 통일 폐기. |
 | [007](ADR-007-asset-loading.md) | Asset Loading | **Resources → Addressables 전면 마이그레이션** (Phase 2-D). 보류 폐기, Resources/ 폴더 비움. |
+| [008](ADR-008-di-boundary.md) | DI Boundary | 2026-07 추가. **도메인 서비스=Inject, `.Instance`=GameSessionRoot/SoundManager만**. Shop 서비스 5개 캐시/주입으로 즉시 정리. "부분적용 거부" 원칙 A에 한해 완화. |
 
 ## 결정 후 Phase 2/3 구조
 

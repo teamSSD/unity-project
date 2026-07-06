@@ -1,3 +1,5 @@
+using Game.Domain.Garden;
+using Game.Domain.Shop;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -41,6 +43,21 @@ public class ShopDetailPanel : MonoBehaviour
     // 업그레이드 상태
     private UpgradeKind upgradeKind;
     private string upgradeId;
+
+    // ADR-008 — 도메인 서비스는 Inject. .Instance 회귀 금지.
+    private PurchaseService purchase;
+    private ToolUpgradeService toolUpgrade;
+    private StorageUpgradeService storageUpgrade;
+    private FarmUpgradeService farmUpgrade;
+
+    public void Inject(PurchaseService purchase, ToolUpgradeService toolUpgrade,
+        StorageUpgradeService storageUpgrade, FarmUpgradeService farmUpgrade)
+    {
+        this.purchase = purchase;
+        this.toolUpgrade = toolUpgrade;
+        this.storageUpgrade = storageUpgrade;
+        this.farmUpgrade = farmUpgrade;
+    }
 
     private void Awake()
     {
@@ -121,7 +138,6 @@ public class ShopDetailPanel : MonoBehaviour
 
     private void OnBuyClicked()
     {
-        var purchase = GameSessionRoot.Instance?.Purchase;
         if (purchase == null) return;
         if (purchase.TryBuy(itemFood, itemQty, itemUnitPrice))
             ShopUIAdapter.Instance?.NotifyItemPurchased(itemFood, itemQty);
@@ -134,7 +150,7 @@ public class ShopDetailPanel : MonoBehaviour
         if (priceLabel != null) priceLabel.text = $"{total}G";
         if (buyBtn != null)
         {
-            bool canBuy = GameSessionRoot.Instance?.Purchase?.CanBuy(itemFood, total) ?? false;
+            bool canBuy = purchase?.CanBuy(itemFood, total) ?? false;
             buyBtn.interactable = itemQty > 0 && canBuy;
         }
     }
@@ -145,9 +161,9 @@ public class ShopDetailPanel : MonoBehaviour
     {
         bool success = upgradeKind switch
         {
-            UpgradeKind.Tool    => GameSessionRoot.Instance?.ToolUpgrade?.TryUpgrade(upgradeId)    ?? false,
-            UpgradeKind.Storage => GameSessionRoot.Instance?.StorageUpgrade?.TryUpgrade(upgradeId) ?? false,
-            UpgradeKind.Farm    => GameSessionRoot.Instance?.FarmUpgrade?.TryUpgrade(upgradeId)    ?? false,
+            UpgradeKind.Tool    => toolUpgrade?.TryUpgrade(upgradeId)    ?? false,
+            UpgradeKind.Storage => storageUpgrade?.TryUpgrade(upgradeId) ?? false,
+            UpgradeKind.Farm    => farmUpgrade?.TryUpgrade(upgradeId)    ?? false,
             _                   => false,
         };
         if (success) ShopUIAdapter.Instance?.NotifyUpgradeApplied();
