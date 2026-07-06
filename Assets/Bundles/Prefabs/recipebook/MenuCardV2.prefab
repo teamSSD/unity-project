@@ -1558,6 +1558,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 871da0db355fd4b249d71e43b4edd279, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::MenuCardController
+  nameLabel: {fileID: 9114493697287520235}
+  foodToolImage: {fileID: 1807479329793382610}
+  foodImage: {fileID: 3111051613062117725}
+  recipeTab: {fileID: 6798734069438897737}
+  recipeTabLabel: {fileID: 6578710799353981287}
+  ingredientTab: {fileID: 778101979835117971}
+  ingredientTabLabel: {fileID: 8814475586647123245}
+  recipeContainer: {fileID: 10370085702011067}
+  ingredientContainer: {fileID: 4489117615629425956}
 --- !u!1 &3511760769371377329
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,16 +11,18 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
     // 세션 내 마지막 탭 기억 (static이라 Destroy 후에도 유지)
     private static bool lastTabWasIngredient = false;
 
-    // 자동 바인딩 (Awake에서 계층구조 기반으로 찾음)
-    private TextMeshProUGUI nameLabel;
-    private Image foodToolImage;
-    private Image foodImage;
-    private Image recipeTab;
-    private TextMeshProUGUI recipeTabLabel;
-    private Image ingredientTab;
-    private TextMeshProUGUI ingredientTabLabel;
-    private Transform recipeContainer;
-    private Transform ingredientContainer;
+    [Header("Header")]
+    [SerializeField] private TextMeshProUGUI nameLabel;
+    [SerializeField] private Image foodToolImage;
+    [SerializeField] private Image foodImage;
+    [Header("Tabs")]
+    [SerializeField] private Image recipeTab;
+    [SerializeField] private TextMeshProUGUI recipeTabLabel;
+    [SerializeField] private Image ingredientTab;
+    [SerializeField] private TextMeshProUGUI ingredientTabLabel;
+    [Header("Containers")]
+    [SerializeField] private Transform recipeContainer;
+    [SerializeField] private Transform ingredientContainer;
 
     private static readonly Color EnableButton = new Color(243f / 255f, 222f / 255f, 208f / 255f, 1f); // #F3DED0
     private static readonly Color EnableText = new Color(88f / 255f, 60f / 255f, 40f / 255f, 1f); // #583C28
@@ -35,27 +37,7 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
     protected override void OnSingletonAwake()
     {
         isMenuCardActive = false;
-        BindReferences();
         CacheTemplates();
-    }
-
-    private void BindReferences()
-    {
-        nameLabel = transform.Find("Header/Image/Text (TMP)")?.GetComponent<TextMeshProUGUI>();
-        foodToolImage = transform.Find("FoodImage/Tool")?.GetComponent<Image>();
-        foodImage = transform.Find("FoodImage/Image")?.GetComponent<Image>();
-
-        Transform riHeader = transform.Find("RecipeAndIngredient/Header");
-        if (riHeader != null)
-        {
-            recipeTab = riHeader.Find("RecipeTab")?.GetComponent<Image>();
-            recipeTabLabel = riHeader.Find("RecipeTab/Text (TMP)")?.GetComponent<TextMeshProUGUI>();
-            ingredientTab = riHeader.Find("IngredientTab")?.GetComponent<Image>();
-            ingredientTabLabel = riHeader.Find("IngredientTab/Text (TMP)")?.GetComponent<TextMeshProUGUI>();
-        }
-
-        recipeContainer = transform.Find("RecipeAndIngredient/Recipe");
-        ingredientContainer = transform.Find("RecipeAndIngredient/Ingredient");
     }
 
     private void CacheTemplates()
@@ -254,6 +236,10 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
             if (line != null) Destroy(line);
         spawnedIngredientLines.Clear();
     }
+
+#if UNITY_EDITOR
+    private void OnValidate() => RequiredFieldValidator.Validate(this);
+#endif
 
     private void PopulateIngredients(string foodId)
     {
