@@ -101,6 +101,16 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
 
         // === 진단 로그 ===
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
+
+        // Recipe line 내 Input 컨테이너를 space-between으로 정렬 — 부모 rect 크기가 첫 rebuild
+        // 이후에 확정되므로 여기서 계산 후 재빌드.
+        foreach (var line in spawnedLines)
+        {
+            var inputT = line.transform.Find("Input");
+            if (inputT != null) MenuCardItemHelper.ApplySpaceBetween(inputT);
+        }
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
+
         var rootRt = (RectTransform)transform;
         var foodImgRt = transform.Find("FoodImage") as RectTransform;
         var raiRt = transform.Find("RecipeAndIngredient") as RectTransform;
