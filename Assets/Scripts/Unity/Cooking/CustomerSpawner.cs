@@ -17,6 +17,8 @@ public class CustomerSpawner : MonoBehaviour
     private float timerScale = 0.6f;
     [SerializeField, Tooltip("Waiting 손님 머리 위 타이머의 캔버스 y (RectTransform.anchoredPosition.y). x는 npc 위치에서 자동 계산.")]
     private float timerCanvasY = 426f;
+    [SerializeField, Tooltip("Waiting 타이머 x 오프셋 (npc 기준 world→canvas 변환값에 더해짐, 캔버스 좌표).")]
+    private float timerCanvasXOffset = -65f;
 
     private GameObject orderingCustomerPrefab;
     private GameObject waitingCustomerPrefab;
@@ -93,7 +95,7 @@ public class CustomerSpawner : MonoBehaviour
         customerObj.transform.position = position;
         float scale = waitingScale * (customerData != null ? customerData.displayScale : 1f);
         customerObj.transform.localScale = new Vector3(scale, scale, 1f);
-        waitingCustomer.inject(worldCanvas, customerData, timerScale, timerCanvasY);
+        waitingCustomer.inject(worldCanvas, customerData, timerScale, timerCanvasY, timerCanvasXOffset);
 
         return (waitingCustomer, positionIndex);
     }

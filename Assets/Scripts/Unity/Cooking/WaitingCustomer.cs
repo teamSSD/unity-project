@@ -13,7 +13,7 @@ public class WaitingCustomer : MonoBehaviour
     private GaugeUI guageScript;
     private bool injected = false;
 
-    public void inject(Canvas worldCanvas, CustomerData customerData, float timerScale = 1f, float timerCanvasY = 0f)
+    public void inject(Canvas worldCanvas, CustomerData customerData, float timerScale = 1f, float timerCanvasY = 0f, float timerCanvasXOffset = 0f)
     {
         // Awake에서 world-instantiate된 gauge를 canvas 자식으로 이전.
         // worldPositionStays=true → SetParent가 localScale을 canvas lossyScale 역수로 자동 보정
@@ -24,9 +24,9 @@ public class WaitingCustomer : MonoBehaviour
         gaugeUI.transform.position = worldPos; // canvas SS-Camera는 world position 자동 변환
         gaugeUI.transform.localScale *= timerScale;
 
-        // y는 캔버스 좌표 timerCanvasY로 고정 (x는 위 position에서 자동 계산된 값 유지).
+        // y는 캔버스 좌표 timerCanvasY로 고정, x는 npc→canvas 자동값 + XOffset.
         var timerRt = (RectTransform)gaugeUI.transform;
-        timerRt.anchoredPosition = new Vector2(timerRt.anchoredPosition.x, timerCanvasY);
+        timerRt.anchoredPosition = new Vector2(timerRt.anchoredPosition.x + timerCanvasXOffset, timerCanvasY);
 
         var sr = GetComponent<SpriteRenderer>();
         if (sr != null)
