@@ -44,11 +44,19 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
         string yesText = "예", string noText = "아니요")
     {
         if (Instance == null) return;
-        Instance.ShowInternal(title, message, onConfirm, onCancel, yesText, noText);
+        Instance.ShowInternal(title, message, onConfirm, onCancel, yesText, noText, singleButton: false);
+    }
+
+    /// <summary>단일 버튼 알림. Yes만 노출, 클릭 시 닫힘 + 선택적 onOk.</summary>
+    public static void Alert(string title, string message,
+        Action onOk = null, string okText = "확인")
+    {
+        if (Instance == null) return;
+        Instance.ShowInternal(title, message, onOk, null, okText, "", singleButton: true);
     }
 
     private void ShowInternal(string title, string message,
-        Action onConfirm, Action onCancel, string yesText, string noText)
+        Action onConfirm, Action onCancel, string yesText, string noText, bool singleButton)
     {
         titleText.text = title;
         messageText.text = message;
@@ -56,6 +64,7 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
         noLabel.text = noText;
         currentOnConfirm = onConfirm;
         currentOnCancel = onCancel;
+        if (noButton != null) noButton.gameObject.SetActive(!singleButton);
         canvas.enabled = true;
     }
 

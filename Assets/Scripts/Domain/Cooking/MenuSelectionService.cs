@@ -75,6 +75,19 @@ namespace Game.Domain.Cooking
             return false;
         }
 
+        /// <summary>Side만 있고 Main 없는 슬롯의 (0-based) 인덱스 반환. Confirm 검증용.</summary>
+        public List<int> GetInvalidSlotIndices()
+        {
+            var invalid = new List<int>();
+            if (menuSelections == null) return invalid;
+            for (int i = 0; i < menuSelections.Length; i++)
+            {
+                if (menuSelections[i] != null && menuSelections[i].HasSideOnly())
+                    invalid.Add(i);
+            }
+            return invalid;
+        }
+
         public RecipeBookSaveData GetSaveData()
         {
             var data = new RecipeBookSaveData();

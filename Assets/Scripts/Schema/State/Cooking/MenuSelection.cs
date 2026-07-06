@@ -27,6 +27,12 @@ public class MenuSelection
         return MainMenu != null;
     }
 
+    /// <summary>Main 없이 Side만 있는 상태 — 도시락으로 성립 불가. Confirm 시 팝업 트리거.</summary>
+    public bool HasSideOnly()
+    {
+        return MainMenu == null && SideMenus != null && SideMenus.Count > 0;
+    }
+
     public void Clear()
     {
         MainMenu = null;
