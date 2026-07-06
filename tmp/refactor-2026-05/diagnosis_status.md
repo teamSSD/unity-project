@@ -160,3 +160,36 @@ WireServices 44 → 18라인. WireCatalogAndUpgrades / WireInventoryAndPurchase 
 2. **종료**: 진행한 항목 상태 갱신 (done/partial). 새로 발견한 누락은 🔴 추가.
 3. **gate.sh 실행** + delta 출력 확인 → 악화된 항목은 본 문서에 N.X로 기록
 4. **사용자 보고 시 이 파일 링크 + 미해결 top 3 명시** (게이트 점수만 보고 금지)
+
+---
+
+## 2026-07 재검토 (Code↔View 경합 심층 디깅) — 신규 진단
+
+_원천: [reports/review_2026-07_deepdig.md](reports/review_2026-07_deepdig.md) — 5월 종료 후 재검토에서 확인된 결함/구조 부채._
+
+### Wave 0 (즉시) — 확정 결함 3건
+
+| 항목 | 커밋 | 상태 |
+|---|---|---|
+| D-bug FoodModel.AddToBento 극성 반전 + 수락 브랜치 대칭 | `c0044b1` | ✅ done |
+| VisibleStateUtil.cs:18 Awake clobber 제거 (인스펙터 값 상시 무효화) | `9ccd41a` | ✅ done |
+| StaminaGauge 40/15 하드코딩 → maxValue 비율 SerializeField | `89a22d0` | ✅ done |
+
+**미결**: 극성 반전 버그 도달성 triage (라이브 vs 잠복) — 씬/콜라이더 검증으로 기존 세이브에 손실 여부 판정. 후속.
+
+### Wave 1 (근접) — 대기
+
+- B `transform.Find` 계층 문자열 → SerializeField (ShopUIAdapter 우선 → MenuCardController 9곳 등)
+- C 하드코딩 팔레트/수치 → UIColors/SerializeField
+- ConfirmModal류 프리팹화 (Resources 대신 PrefabCatalog 등록)
+
+### Wave 2 — 대기
+
+- A DI 규칙 공식화 + Shop 씬 컨트롤러 신설 (**"부분적용 거부" 원칙 A에서만 완화** — canonical에 예외 기록됨)
+
+### Wave 3 — 대기
+
+- D 구조 정리: `IngredientPlacementService` (POCO) 추출 → 뷰의 5개 드롭 규칙 통합, `OnDragEnd` 다중 구독 → 단일 디스패치
+- FoodModel convex-hull 수학 분리
+- 네이밍 (파일명 = 클래스명, `*Model` → `*View`)
+- **선행 조건**: 수동 회귀 체크리스트 (Playmode 자동 테스트 부재)
