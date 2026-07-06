@@ -27,7 +27,12 @@ public class SauceMiniGame : MiniGameAbstract
 
     [Header("게임 설정")]
     public float decreasePerPress = 2.5f;  // 스페이스바 당 게이지 증가량
-    public float targetGauge = 63;        // 목표 게이지
+    [Tooltip("Awake에서 targetMin~targetMax 범위 정규분포로 덮어씀. Inspector 값은 실전엔 미사용.")]
+    public float targetGauge = 63;
+    [SerializeField, Tooltip("동적 목표 범위 최소값 (%).")] private float targetMin = 20f;
+    [SerializeField, Tooltip("동적 목표 범위 최대값 (%).")] private float targetMax = 80f;
+    [SerializeField, Tooltip("목표 위치 마커 (Sauce 자식). anchor y가 target/100으로 갱신됨.")]
+    private RectTransform stopMarker;
     public GameObject upperArrow;
     public GameObject lowerArrow;
     private GuidedButtonAnimator upperArrowAnim;
@@ -44,9 +49,22 @@ public class SauceMiniGame : MiniGameAbstract
     {
         upperArrowAnim = upperArrow.GetComponent<GuidedButtonAnimator>();
         lowerArrowAnim = lowerArrow.GetComponent<GuidedButtonAnimator>();
-        
+
         upperArrowAnim.Guide();
-        
+
+        // 매 게임 target 랜덤화 — 20~80% 정규분포. GameRandom.Variable 사용해서
+        // 상점(PhaseRandom, ImmutableSeed 기반) 등 영향 안 줌.
+        targetGauge = GameRandom.NormalRange(GameRandom.Variable, targetMin, targetMax);
+        UpdateStopMarkerPosition();
+    }
+
+    private void UpdateStopMarkerPosition()
+    {
+        if (stopMarker == null) return;
+        float ratio = Mathf.Clamp01(targetGauge / 100f);
+        stopMarker.anchorMin = new Vector2(0f, ratio);
+        stopMarker.anchorMax = new Vector2(0f, ratio);
+        stopMarker.anchoredPosition = Vector2.zero;
     }
 
     public override void OnUpdate()
