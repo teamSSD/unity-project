@@ -52,27 +52,26 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
         scaler.referenceResolution = new Vector2(1920, 1080);
 
         bookInstance = Instantiate(prefab, wrapper.transform, false);
-        var book = bookInstance.transform;
+        var refs = bookInstance.GetComponent<ShopBookRefs>();
+        if (refs == null)
+        {
+            Debug.LogError("[ShopUIAdapter] ShopBook prefab missing ShopBookRefs component");
+            return;
+        }
 
-        listContent = book.Find("Page/ShopPage/Page_L/Scroll/Viewport/Content");
-        var headerT = book.Find("Page/ShopPage/Page_L/Header");
-        if (headerT != null) headerLabel = headerT.GetComponent<TextMeshProUGUI>();
-        var pageR = book.Find("Page/ShopPage/Page_R");
-        if (pageR != null) detailPanel = pageR.GetComponent<ShopDetailPanel>();
-
-        closeButton = book.Find("Button_Close")?.GetComponent<Button>();
+        listContent = refs.ListContent;
+        headerLabel = refs.HeaderLabel;
+        detailPanel = refs.DetailPanel;
+        closeButton = refs.CloseButton;
         if (closeButton != null) closeButton.onClick.AddListener(CloseShop);
 
-        for (int i = 0; i < 4; i++)
+        var bookmarks = refs.BookmarkButtons;
+        for (int i = 0; i < bookmarkButtons.Length && i < (bookmarks?.Length ?? 0); i++)
         {
-            var bm = book.Find($"Page/ShopPage/BookMark_{(Tab)i}");
-            if (bm != null) bookmarkButtons[i] = bm.GetComponent<Button>();
-        }
-        for (int i = 0; i < 4; i++)
-        {
+            bookmarkButtons[i] = bookmarks[i];
+            if (bookmarkButtons[i] == null) continue;
             int idx = i;
-            if (bookmarkButtons[i] != null)
-                bookmarkButtons[i].onClick.AddListener(() => SwitchTab((Tab)idx));
+            bookmarkButtons[i].onClick.AddListener(() => SwitchTab((Tab)idx));
         }
 
         bookInstance.SetActive(false);

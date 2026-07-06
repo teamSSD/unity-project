@@ -626,6 +626,7 @@ GameObject:
   - component: {fileID: 4220273185544828018}
   - component: {fileID: 2805457987752289253}
   - component: {fileID: 4107757074430525181}
+  - component: {fileID: 7455458743771901794}
   m_Layer: 5
   m_Name: ShopBook
   m_TagString: Untagged
@@ -692,6 +693,27 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7455458743771901794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860260944345430814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34bd709ebbeb54cc08203fe5121b2ddf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Unity::ShopBookRefs
+  listContent: {fileID: 4479752464376274555}
+  headerLabel: {fileID: 4100318493552379107}
+  detailPanel: {fileID: 5932208576384499273}
+  closeButton: {fileID: 4920239127859746041}
+  bookmarkButtons:
+  - {fileID: 7590156966431042448}
+  - {fileID: 7742319050924434568}
+  - {fileID: 5543329522815634837}
+  - {fileID: 3394467699160702314}
 --- !u!1 &889374042750964165
 GameObject:
   m_ObjectHideFlags: 0
