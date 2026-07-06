@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Domain.Cooking;
 using UnityEngine;
 
 [RequireComponent(typeof(FoodBehavior))]
@@ -202,18 +203,21 @@ public class FoodModel : MonoBehaviour
             return;
         }
 
-        // 1) CookingTool — food의 availableTools에 포함된 도구여야 accept.
+        // 1) CookingTool — 규칙(availableTools 포함) 통과 시 accept 시도.
         var tool = scanColliderUtil.GetOverlappingWithComponent<CookingToolModel>();
-        if (tool != null && SchemaInstance.foodData.availableTools.Contains(tool.GetToolId())
+        if (tool != null
+            && IngredientPlacementRules.CanFoodEnterTool(SchemaInstance.foodData, tool.GetToolId())
             && tool.AddIngredient(this.SchemaInstance))
         {
             ConsumeAndReposition();
             return;
         }
 
-        // 2) Bento — MAIN/SIDE만 accept (BentoModel.AddIngredient가 판정). raw INGREDIENT는 false 반환 → no-op.
+        // 2) Bento — 규칙(MAIN/SIDE) 통과 시 accept 시도. raw INGREDIENT는 여기서 조기 거부.
         var bento = scanColliderUtil.GetOverlappingWithComponent<BentoModel>();
-        if (bento != null && bento.AddIngredient(this.SchemaInstance))
+        if (bento != null
+            && IngredientPlacementRules.CanFoodEnterBento(SchemaInstance.foodData)
+            && bento.AddIngredient(this.SchemaInstance))
         {
             ConsumeAndReposition();
         }
