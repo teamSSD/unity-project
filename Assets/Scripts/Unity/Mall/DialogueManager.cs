@@ -66,14 +66,17 @@ public partial class DialogueManager : MonoBehaviour
 
         dialoguePanel = Instantiate(dialoguePanelPrefab, canvasObj.transform);
 
-        nameText = dialoguePanel.transform.Find("nameText").GetComponent<TMP_Text>();
-        dialogueText = dialoguePanel.transform.Find("dialogueText").GetComponent<TMP_Text>();
-        choicesParent = dialoguePanel.transform.Find("choicesPanel");
-
-        // 프리팹에서 초상화 요소 찾기
-        var portraitTransform = dialoguePanel.transform.Find("PortraitContainer");
-        portraitContainer = portraitTransform.gameObject;
-        npcPortraitImage = portraitTransform.Find("NpcPortrait").GetComponent<Image>();
+        var refs = dialoguePanel.GetComponent<DialoguePanelRefs>();
+        if (refs == null)
+        {
+            Debug.LogError("[DialogueManager] DialoguePanel prefab missing DialoguePanelRefs component");
+            return;
+        }
+        nameText          = refs.NameText;
+        dialogueText      = refs.DialogueText;
+        choicesParent     = refs.ChoicesParent;
+        portraitContainer = refs.PortraitContainer;
+        npcPortraitImage  = refs.NpcPortraitImage;
 
         // 대화창 클릭으로 넘기기
         var panelBtn = dialoguePanel.GetComponent<Button>();
