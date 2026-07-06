@@ -15,6 +15,12 @@ public class Farm : MonoBehaviour
     public GaugeUI growthGauge;
     public GameObject gaugeCanvas;
 
+    [Header("작물 이름 UI")]
+    public GameObject cropNameCanvas;
+    public TextMeshProUGUI cropNameLabel;
+    [Tooltip("crop sprite 하단에서 이름 라벨까지의 offset (양수 = 더 아래).")]
+    public float nameOffsetY = 0.3f;
+
     public int farmIndex;
     private FarmTile tile;
     private TimePhaseProvider phaseProvider;
@@ -135,10 +141,12 @@ public class Farm : MonoBehaviour
         {
             cropSpriteRenderer.sprite = null;
             if (gaugeCanvas != null) gaugeCanvas.SetActive(false);
+            if (cropNameCanvas != null) cropNameCanvas.SetActive(false);
             return;
         }
 
         if (gaugeCanvas != null) gaugeCanvas.SetActive(true);
+        if (cropNameCanvas != null) cropNameCanvas.SetActive(true);
         cropSpriteRenderer.sprite = currentCrop.sprite;
 
         if (growthGauge != null)
@@ -148,6 +156,12 @@ public class Farm : MonoBehaviour
                 growthGauge.SnapTo(0, currentCrop.growPhaseCount);
             else
                 growthGauge.SetProgress(passed, currentCrop.growPhaseCount);
+        }
+
+        if (cropNameLabel != null)
+        {
+            var food = SearchDataUtil.GetFoodDataById(currentCrop.cropId);
+            cropNameLabel.text = food?.ingredientName ?? currentCrop.cropId;
         }
 
         AdjustUIPosition();
@@ -169,13 +183,21 @@ public class Farm : MonoBehaviour
 
     private void AdjustUIPosition()
     {
-        if (cropSpriteRenderer.sprite == null || gaugeCanvas == null) return;
+        if (cropSpriteRenderer.sprite == null) return;
 
         Bounds bounds = cropSpriteRenderer.bounds;
-        float topY = bounds.max.y;
-        Vector3 newPos = gaugeCanvas.transform.position;
-        newPos.y = topY + uiOffsetY;
-        gaugeCanvas.transform.position = newPos;
+        if (gaugeCanvas != null)
+        {
+            Vector3 newPos = gaugeCanvas.transform.position;
+            newPos.y = bounds.max.y + uiOffsetY;
+            gaugeCanvas.transform.position = newPos;
+        }
+        if (cropNameCanvas != null)
+        {
+            Vector3 namePos = cropNameCanvas.transform.position;
+            namePos.y = bounds.min.y - nameOffsetY;
+            cropNameCanvas.transform.position = namePos;
+        }
     }
 
     private void OnTimePassed()
