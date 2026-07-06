@@ -44,11 +44,23 @@ public class PhaseActionSelector : MonoBehaviour
             [ActionType.Work] = () => SceneLoader.LoadScene(SceneNames.Cooking),
             [ActionType.Rest] = () =>
             {
+                var progress = GameSessionRoot.Instance?.Progress;
+                var stats    = GameSessionRoot.Instance?.Stats;
+
+                // Night → Settlement 씬 이동. Blackout으로 감싸면 LoadingManager.isLoading이 걸려
+                // 내부 LoadScene 호출이 무시됨(재귀 락). LoadScene 자체가 fade 처리하므로 우회.
+                if (progress?.PhaseData?.Phase == PhaseType.Night)
+                {
+                    stats?.SetStamina(100);
+                    progress.PassPhase();
+                    return;
+                }
+
                 LoadingManager.Instance?.Blackout(
                     midAction: () =>
                     {
-                        GameSessionRoot.Instance?.Stats.SetStamina(100);
-                        GameSessionRoot.Instance?.Progress?.PassPhase();
+                        stats?.SetStamina(100);
+                        progress?.PassPhase();
                     },
                     onComplete: UpdateUI);
             },
