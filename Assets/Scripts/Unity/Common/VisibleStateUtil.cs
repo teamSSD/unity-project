@@ -7,7 +7,7 @@ using UnityEngine;
 public class VisibleStateUtil : MonoBehaviour
 {
     [Header("투명도 임계값")]
-    [Range(0f, 1f)] public float minAlpha;
+    [Range(0f, 1f)] public float minAlpha = 0.01f;
     private Camera targetCamera;
 
     private SpriteRenderer spriteRenderer;
@@ -15,7 +15,6 @@ public class VisibleStateUtil : MonoBehaviour
 
     void Awake()
     {
-        minAlpha = 0.01f;
         spriteRenderer = GetComponent<SpriteRenderer>();
         targetRenderer = GetComponent<Renderer>();
         targetCamera = Camera.main;
