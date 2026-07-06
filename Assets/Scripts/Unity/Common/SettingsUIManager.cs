@@ -6,6 +6,8 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
 {
     private GameObject settingsPanel;
     private GameObject backdrop;
+    private Image backdropImage;
+    private Material blurMaterial; // 씬별로 mat 스왑 (GameStart=solid, 그 외=blur)
 
     protected override void OnSingletonAwake()
     {
@@ -13,7 +15,10 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
         canvasGO.transform.SetParent(transform);
 
         var canvas = canvasGO.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        // ScreenSpaceOverlay → Camera로 변경. Overlay에서는 GrabPass가 UI 자신을 못 캡처.
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        canvas.worldCamera = Camera.main;
+        canvas.planeDistance = 1f;
         canvas.sortingOrder = 100;
         var scaler = canvasGO.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -30,9 +35,12 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
         rt.anchorMax = Vector2.one;
         rt.sizeDelta = Vector2.zero;
         rt.anchoredPosition = Vector2.zero;
-        backdrop.GetComponent<Image>().color = Color.black;
-        backdrop.GetComponent<Image>().raycastTarget = true;
+        backdropImage = backdrop.GetComponent<Image>();
+        backdropImage.color = Color.white; // 색은 material에서 tint (blur mat 사용 시). solid 모드는 색 오버라이드.
+        backdropImage.raycastTarget = true;
         backdrop.SetActive(false);
+
+        blurMaterial = Resources.Load<Material>("UI/UIBlurBackdrop");
 
         var prefab = CatalogProvider.Prefabs?.settings;
         settingsPanel = Instantiate(prefab, canvasGO.transform);
@@ -64,12 +72,30 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
 
     public void Open()
     {
+        ApplyBackdropStyle();
         backdrop.SetActive(true);
         settingsPanel.SetActive(true);
         Canvas.ForceUpdateCanvases();
         LayoutRebuilder.ForceRebuildLayoutImmediate(settingsPanel.GetComponent<RectTransform>());
         UILockManager.Lock(UILockManager.Owner.Settings);
         TimeManager.Instance?.PauseTime();
+    }
+
+    /// <summary>씬 컨텍스트에 따라 backdrop 스타일 결정.
+    /// GameStart: 배경이 어차피 정적이라 solid 검정. 그 외: blur + 반투명 검정 tint.</summary>
+    private void ApplyBackdropStyle()
+    {
+        bool onGameStart = SceneManager.GetActiveScene().name == SceneNames.GameStart;
+        if (onGameStart || blurMaterial == null)
+        {
+            backdropImage.material = null;
+            backdropImage.color = Color.black;
+        }
+        else
+        {
+            backdropImage.material = blurMaterial;
+            backdropImage.color = Color.white; // material에서 tint 처리
+        }
     }
 
     public void Close()
