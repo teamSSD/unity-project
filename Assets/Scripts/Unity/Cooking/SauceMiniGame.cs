@@ -37,8 +37,8 @@ public class SauceMiniGame : MiniGameAbstract
     private RectTransform stopMarker;
     [SerializeField, Tooltip("마커 x offset — 양수면 게이지 안쪽(오른쪽)으로 이동. Sauce local 좌표.")]
     private float stopMarkerXOffset = 0.35f;
-    [SerializeField, Tooltip("마커 y ratio 보정 — 시각적 fill top과 마커가 안 맞을 때 이 값으로 조정. target/100에 더해짐. Play test 결과 sprite 시각적 fill 위치가 anchor보다 약 8% 높게 보여 -0.08 기본값.")]
-    private float stopMarkerYRatioOffset = -0.08f;
+    [SerializeField, Tooltip("마커 y ratio 보정 — 시각적 fill top과 마커가 안 맞을 때 이 값으로 조정. target/100에 더해짐. Play test 결과 marker 시각 위치와 유저 aim이 약 4% 어긋나 -0.04 기본값.")]
+    private float stopMarkerYRatioOffset = -0.04f;
     public GameObject upperArrow;
     public GameObject lowerArrow;
     private GuidedButtonAnimator upperArrowAnim;
@@ -49,8 +49,8 @@ public class SauceMiniGame : MiniGameAbstract
 
     private float waitingTime = 0f;
     private float waitingThreshold = 0.7f;
-    [SerializeField, Tooltip("정답 허용치 (%). |current-target| 값이 이 이하면 감점 없음(perfect). 1틱=decreasePerPress=2.5. 5 = 2틱 여유(반응 지연 흡수).")]
-    private float tolerance = 5f;
+    [SerializeField, Tooltip("정답 허용치 (%). |current-target| 값이 이 이하면 감점 없음(perfect). 1틱=decreasePerPress=2.5.")]
+    private float tolerance = 3f;
     [SerializeField, Tooltip("score 0이 되는 diff (%). tolerance ~ 이 값 사이는 linear.")]
     private float zeroScoreDiff = 20f;
 

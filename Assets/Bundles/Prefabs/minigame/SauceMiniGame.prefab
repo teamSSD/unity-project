@@ -313,10 +313,10 @@ MonoBehaviour:
   targetStdDev: 10
   stopMarker: {fileID: 1766240383613761077}
   stopMarkerXOffset: 0.35
-  stopMarkerYRatioOffset: -0.08
+  stopMarkerYRatioOffset: -0.04
   upperArrow: {fileID: 6132707111305442208}
   lowerArrow: {fileID: 18504464439148836}
-  tolerance: 5
+  tolerance: 3
   zeroScoreDiff: 20
 --- !u!1 &3101921119096370196
 GameObject:
