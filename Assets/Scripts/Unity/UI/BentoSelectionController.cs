@@ -139,8 +139,10 @@ public class BentoSelectionController : MonoBehaviour
 
     public void ConfirmAll()
     {
-        // 규칙: side만 있는 슬롯은 도시락 성립 불가 → 팝업 후 진행 차단.
-        // 완전히 빈 슬롯 / main만 있는 슬롯 / 전부 빈 상태는 모두 허용.
+        // 규칙:
+        // - side만 있는 슬롯 존재 → 팝업 후 차단 (도시락 성립 불가)
+        // - 전부 빈 상태 → 팝업 후 차단 (최소 1개 도시락 필요)
+        // - 완전히 빈 슬롯 / main만 있는 슬롯 / main+side 슬롯 → 허용
         var invalidIndices = menuAccess?.GetInvalidSlotIndices();
         if (invalidIndices != null && invalidIndices.Count > 0)
         {
@@ -153,6 +155,15 @@ public class BentoSelectionController : MonoBehaviour
             ConfirmModal.Alert(
                 title: "메뉴 확인 필요",
                 message: $"{string.Join(", ", names)}에 메인 메뉴가 없습니다.\n사이드 메뉴만으로는 도시락을 만들 수 없어요."
+            );
+            return;
+        }
+
+        if (!(menuAccess?.HasAnySelection() ?? false))
+        {
+            ConfirmModal.Alert(
+                title: "메뉴 확인 필요",
+                message: "최소 하나의 도시락을 선택해주세요."
             );
             return;
         }
