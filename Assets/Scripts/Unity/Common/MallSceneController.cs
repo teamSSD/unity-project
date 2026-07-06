@@ -91,7 +91,15 @@ public class MallSceneController : MonoBehaviour
         // Cooking 종료로 Mall 복귀한 직후엔 이번 페이즈 액션을 바로 선택하게 UI 자동 표시.
         // (Mall.Start 이전에 PassPhase가 발화되어 OnPhaseChanged 구독 이전이라 이 flag가 필요.)
         if (SceneLoader.ConsumePendingPhaseSelector())
+        {
             OpenActionSelection();
+        }
+        // 새 하루(Settlement→Mall) 또는 게임 첫 진입 시 Preparation 상태 → 메뉴 선택 자동. Cooking 복귀
+        // 케이스와 disjoint (Cooking→Mall은 Afternoon/Evening/Night 로만 도달, Preparation X).
+        else if (session?.Progress?.PhaseData.Phase == PhaseType.Preparation)
+        {
+            OpenMenuSelection();
+        }
     }
 
     private void OnDestroy()
