@@ -217,8 +217,9 @@ Cooking 씬 표준 플로우 완전 포함. 릴리즈 빌드가 이 코드였다
 | 항목 | 커밋 | 상태 |
 |---|---|---|
 | FoodModel 2메서드(AddToCookingTool/AddToBento) → OnFoodDropped 단일 dispatched | `5777aff` | ✅ done |
-| CookingToolModel 2메서드(AddToBento/TransferIngredient) → 통합 | — | 🟡 deferred |
-| IngredientPlacementService (POCO) 완전 추출 | — | 🟡 deferred (option ① — 코어 45파일 blast radius, 수동 회귀 체크리스트 선행 필요) |
+| CookingToolModel 2메서드(AddToBento/TransferIngredient) → OnToolDropped 단일 | `9088571` | ✅ done |
+| IngredientPlacementRules (POCO) + EditMode 회귀 앵커 8건 (Bento/Tool 매트릭스) | `5545113` | ✅ done |
+| IngredientPlacementService (POCO) 완전 추출 (Service 형태 + Result enum) | — | 🟡 deferred (Rules로 90% 대체됨, Service는 더 큰 리팩터라 phase 후 재개) |
 | FoodModel convex-hull 수학 분리 | — | 🟡 deferred |
 | 네이밍 (파일명↔클래스명, *Model→*View 대량 rename) | — | 🟡 deferred |
 
