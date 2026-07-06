@@ -193,9 +193,17 @@ _원천: [reports/review_2026-07_deepdig.md](reports/review_2026-07_deepdig.md) 
 
 **Find 제거 소계**: 22곳 (5개 시스템). 프리팹 rename/reparent 시 조용한 파손 방어선 확보.
 
-### Wave 2 — 대기
+### Wave 2 — 진행됨
 
-- A DI 규칙 공식화 + Shop 씬 컨트롤러 신설 (**"부분적용 거부" 원칙 A에서만 완화** — canonical에 예외 기록됨)
+| 항목 | 커밋 | 상태 |
+|---|---|---|
+| ADR-008 DI 경계 규칙 문서화 (whitelist/blacklist, 채널, 완화 원칙) | `412d600` | ✅ done |
+| ShopUIAdapter 5개 서비스 캐싱 (Purchase/Stats/ToolUpgrade/StorageUpgrade/FarmUpgrade) | `412d600` | ✅ done |
+| ShopDetailPanel `Inject(purchase, tool, storage, farm)` API + `.Instance` 5회 제거 | `412d600` | ✅ done |
+
+**정리 소계**: `.Instance` 접근 Shop 계열 17회 → 0회. 씬 컨트롤러(MallSceneController)의 `.Instance`는 ADR-008 whitelist(GameSessionRoot 루트) 라 정당.
+
+**deferred**: MallSceneController의 `.Instance` 반복 접근을 캐싱 스타일로 정리하는 것은 규칙 위반이 아니라 코드 품질 개선이라 우선순위 낮음. 향후 신규 코드에 ADR-008 준수만 유지.
 
 ### Wave 3 — 대기
 
