@@ -33,12 +33,16 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     [SerializeField] private Transform mainRecipeL;
     [SerializeField] private Transform mainRecipeR;
 
+    [Header("Chrome")]
+    [SerializeField] private Button closeButton;
+    [SerializeField] private Button menuBookmarkButton;
+    [SerializeField] private Button inventoryBookmarkButton;
+
     private Canvas canvas;
     private MenuCardOverlay cardOverlay;
-    private Button closeButton;
     private InventoryPageController inventoryPageController;
 
-    // 북마크 RT (선택 시 가로 늘림)
+    // 북마크 RT (선택 시 가로 늘림) — 인스펙터 노출 대신 Awake에서 Button 참조로 GetComponent.
     private RectTransform menuBookmarkRT;
     private RectTransform inventoryBookmarkRT;
     private const float BookmarkWidthUnselected = 95f;
@@ -69,24 +73,18 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         cardOverlay = gameObject.GetComponent<MenuCardOverlay>();
         if (cardOverlay == null) cardOverlay = gameObject.AddComponent<MenuCardOverlay>();
 
-        closeButton = bookRoot.transform.Find("Button_Close")?.GetComponentInChildren<Button>();
         inventoryPageController = inventory.GetComponentInChildren<InventoryPageController>(true);
 
-        // 북마크는 페이지 밖(Page 직속 형제). 클릭 와이어도 여기서.
-        var page = bookRoot.transform.Find("Page");
-        var menuBM = page?.Find("MainRecipe_BookMark");
-        var invBM  = page?.Find("Inventory_BookMark");
-        if (menuBM != null)
+        // 북마크 RT 캐시 + 클릭 와이어. 인스펙터에서 wire된 Button 기준.
+        if (menuBookmarkButton != null)
         {
-            menuBookmarkRT = menuBM.GetComponent<RectTransform>();
-            var btn = menuBM.GetComponent<Button>();
-            if (btn != null) btn.onClick.AddListener(OpenMenu);
+            menuBookmarkRT = menuBookmarkButton.GetComponent<RectTransform>();
+            menuBookmarkButton.onClick.AddListener(OpenMenu);
         }
-        if (invBM != null)
+        if (inventoryBookmarkButton != null)
         {
-            inventoryBookmarkRT = invBM.GetComponent<RectTransform>();
-            var btn = invBM.GetComponent<Button>();
-            if (btn != null) btn.onClick.AddListener(OpenInventory);
+            inventoryBookmarkRT = inventoryBookmarkButton.GetComponent<RectTransform>();
+            inventoryBookmarkButton.onClick.AddListener(OpenInventory);
         }
 
         isRecipeBookActive = false;

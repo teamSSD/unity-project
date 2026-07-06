@@ -410,6 +410,9 @@ MonoBehaviour:
   cardInstantiateTransform_R: {fileID: 5088560018758335332}
   mainRecipeL: {fileID: 420803134423817378}
   mainRecipeR: {fileID: 2883681856563030891}
+  closeButton: {fileID: 4920239127859746041}
+  menuBookmarkButton: {fileID: 9110584061852188109}
+  inventoryBookmarkButton: {fileID: 6379790699018575622}
 --- !u!1 &1051127502832108431
 GameObject:
   m_ObjectHideFlags: 0
