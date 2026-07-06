@@ -37,6 +37,8 @@ public class SauceMiniGame : MiniGameAbstract
     private RectTransform stopMarker;
     [SerializeField, Tooltip("마커 x offset — 양수면 게이지 안쪽(오른쪽)으로 이동. Sauce local 좌표.")]
     private float stopMarkerXOffset = 0.35f;
+    [SerializeField, Tooltip("마커 y ratio 보정 — 시각적 fill top과 마커가 안 맞을 때 이 값으로 조정. target/100에 더해짐.")]
+    private float stopMarkerYRatioOffset = 0f;
     public GameObject upperArrow;
     public GameObject lowerArrow;
     private GuidedButtonAnimator upperArrowAnim;
@@ -47,7 +49,8 @@ public class SauceMiniGame : MiniGameAbstract
 
     private float waitingTime = 0f;
     private float waitingThreshold = 0.7f;
-    private int tolerance = 2;
+    [SerializeField, Tooltip("정답 허용치 (%). |current-target| 값이 이 이하면 감점 없음. 1틱=decreasePerPress=2.5.")]
+    private float tolerance = 3f;
 
     private void Awake()
     {
@@ -75,7 +78,7 @@ public class SauceMiniGame : MiniGameAbstract
     private void UpdateStopMarkerPosition()
     {
         if (stopMarker == null) return;
-        float ratio = Mathf.Clamp01(targetGauge / 100f);
+        float ratio = Mathf.Clamp01(targetGauge / 100f + stopMarkerYRatioOffset);
         stopMarker.anchorMin = new Vector2(0f, ratio);
         stopMarker.anchorMax = new Vector2(0f, ratio);
         stopMarker.anchoredPosition = new Vector2(stopMarkerXOffset, 0f);
@@ -133,7 +136,7 @@ public class SauceMiniGame : MiniGameAbstract
         return Mathf.Clamp01(score);
     }
 
-    public override void ApplyUpgrade(float m, int s) { base.ApplyUpgrade(m, s); tolerance = (int)Mathf.Ceil(tolerance / m); }
+    public override void ApplyUpgrade(float m, int s) { base.ApplyUpgrade(m, s); tolerance = Mathf.Ceil(tolerance / m); }
 
     public override void SetIngredients(List<FoodData> ingredients, string toolId = null)
     {
