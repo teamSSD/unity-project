@@ -154,7 +154,10 @@ public class CustomerManager : MonoBehaviour
 
         lifecycle.Cleanup();
         activeCustomers.Remove(lifecycle);
-        currentOrderingCustomer = null;
+
+        // currentOrderingCustomer는 여기서 리셋 안 함 — 이 이벤트는 taking 애니 완료 시점
+        // 이라 이미 다음 손님이 ordering 슬롯을 차지했을 수 있음. Ordering 손님은
+        // OnOrderPlaced에서 destroy되므로 Unity의 destroyed==null 매직으로 자연 해제됨.
 
         CheckGameEnd();
     }
