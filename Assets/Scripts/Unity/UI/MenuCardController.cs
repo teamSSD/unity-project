@@ -24,10 +24,7 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
     [SerializeField] private Transform recipeContainer;
     [SerializeField] private Transform ingredientContainer;
 
-    private static readonly Color EnableButton = new Color(243f / 255f, 222f / 255f, 208f / 255f, 1f); // #F3DED0
-    private static readonly Color EnableText = new Color(88f / 255f, 60f / 255f, 40f / 255f, 1f); // #583C28
-    private static readonly Color DisableButton = new Color(218f / 255f, 175f / 255f, 144f / 255f, 1f); // #DAAF90
-    private static readonly Color DisableText = new Color(98f / 255f, 70f / 255f, 52f / 255f, 1f); // #624634
+    // 탭 색상: UIColors 경유. 활성=TabActive/TextPrimary, 비활성=ButtonSecondary/TextSecondary.
 
     private GameObject recipeLineTemplate;
     private GameObject ingredientLineTemplate;
@@ -193,10 +190,10 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
         if (recipeContainer != null) recipeContainer.gameObject.SetActive(true);
         if (ingredientContainer != null) ingredientContainer.gameObject.SetActive(false);
 
-        if (recipeTab != null) recipeTab.color = EnableButton;
-        if (recipeTabLabel != null) recipeTabLabel.color = EnableText;
-        if (ingredientTab != null) ingredientTab.color = DisableButton;
-        if (ingredientTabLabel != null) ingredientTabLabel.color = DisableText;
+        if (recipeTab != null) recipeTab.color = UIColors.TabActive;
+        if (recipeTabLabel != null) recipeTabLabel.color = UIColors.TextPrimary;
+        if (ingredientTab != null) ingredientTab.color = UIColors.ButtonSecondary;
+        if (ingredientTabLabel != null) ingredientTabLabel.color = UIColors.TextSecondary;
     }
 
     public void OpenIngredient()
@@ -205,10 +202,10 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
         if (recipeContainer != null) recipeContainer.gameObject.SetActive(false);
         if (ingredientContainer != null) ingredientContainer.gameObject.SetActive(true);
 
-        if (ingredientTab != null) ingredientTab.color = EnableButton;
-        if (ingredientTabLabel != null) ingredientTabLabel.color = EnableText;
-        if (recipeTab != null) recipeTab.color = DisableButton;
-        if (recipeTabLabel != null) recipeTabLabel.color = DisableText;
+        if (ingredientTab != null) ingredientTab.color = UIColors.TabActive;
+        if (ingredientTabLabel != null) ingredientTabLabel.color = UIColors.TextPrimary;
+        if (recipeTab != null) recipeTab.color = UIColors.ButtonSecondary;
+        if (recipeTabLabel != null) recipeTabLabel.color = UIColors.TextSecondary;
     }
 
     public void ClearMenuCard()
