@@ -46,8 +46,7 @@ public class CookingToolModel : MonoBehaviour
 
         clickStateUtil.OnDragEnd += DetectTrashcan;
         clickStateUtil.OnClicked += PlayMinigame;
-        clickStateUtil.OnDragEnd += TransferIngredient;
-        clickStateUtil.OnDragEnd += AddToBento;
+        clickStateUtil.OnDragEnd += OnToolDropped;
     }
 
     void Start()
@@ -90,8 +89,7 @@ public class CookingToolModel : MonoBehaviour
     {
         clickStateUtil.OnDragEnd -= DetectTrashcan;
         clickStateUtil.OnClicked -= PlayMinigame;
-        clickStateUtil.OnDragEnd -= TransferIngredient;
-        clickStateUtil.OnDragEnd -= AddToBento;
+        clickStateUtil.OnDragEnd -= OnToolDropped;
     }
 
     public bool AddIngredient(FoodSchema food)
@@ -110,7 +108,14 @@ public class CookingToolModel : MonoBehaviour
         }
         return false;
     }
-    public void AddToBento()
+    /// <summary>
+    /// 드래그 종료 시 단일 dispatched 진입점. 이전엔 TransferIngredient + AddToBento 두 핸들러가
+    /// 각자 OnDragEnd에 구독해 독립 스캔했음 (review_2026-07_deepdig.md D "다중-구독" 온상).
+    /// FoodModel.OnFoodDropped와 동일 패턴.
+    ///
+    /// 우선순위: CookingTool(전이) → Bento. 이전 구독 순서(TransferIngredient → AddToBento) 보존.
+    /// </summary>
+    private void OnToolDropped()
     {
         if (!injected)
         {
@@ -118,48 +123,53 @@ public class CookingToolModel : MonoBehaviour
             return;
         }
 
-        BentoModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoModel>();
-        if (collision != null)
-        {
-            if (SchemaInstance.GetResult() != null)
-            {
-                bool reflected = collision.AddIngredient(SchemaInstance.GetResult());
-                if (reflected)
-                {
-                    SchemaInstance.ClearIngredient();
-                    BehaviorInstance.ResetTexture();
-                }
-            }
-        }
+        // 1) 다른 CookingTool로 전이 시도 — 이전 TransferIngredient.
+        var otherTool = scanColliderUtil.GetOverlappingWithComponent<CookingToolModel>();
+        if (otherTool != null && TryTransferToTool(otherTool)) return;
+
+        // 2) Bento로 결과물 전이 시도 — 이전 AddToBento. 완성된 요리(GetResult()!=null)만.
+        var bento = scanColliderUtil.GetOverlappingWithComponent<BentoModel>();
+        if (bento != null) TryTransferToBento(bento);
     }
 
-    public void TransferIngredient()
+    private bool TryTransferToTool(CookingToolModel target)
     {
-        if (!injected)
+        var cooked = SchemaInstance.GetResult();
+        if (cooked != null)
         {
-            Debug.LogWarning("Interface didn't injected.");
-            return;
-        }
-        CookingToolModel collision = scanColliderUtil.GetOverlappingWithComponent<CookingToolModel>();
-        if (collision != null)
-        {
-            if (SchemaInstance.GetResult() != null)
+            if (target.AddIngredient(cooked))
             {
-                bool reflected = collision.AddIngredient(SchemaInstance.GetResult());
-                if (reflected)
-                {
-                    SchemaInstance.ClearIngredient();
-                    BehaviorInstance.ResetTexture();
-                }
-            }
-            else if (SchemaInstance.Ingredients.Count != 0
-                    && SchemaInstance.Ingredients.All(ingredient => collision.SchemaInstance.IsAddable(ingredient)))
-            {
-                SchemaInstance.Ingredients.ForEach(ingredient =>collision.AddIngredient(ingredient));
-                SchemaInstance.ClearIngredient();
-                BehaviorInstance.ResetTexture();
+                ClearSelfAfterTransfer();
+                return true;
             }
         }
+        else if (SchemaInstance.Ingredients.Count != 0
+                && SchemaInstance.Ingredients.All(ing => target.SchemaInstance.IsAddable(ing)))
+        {
+            // IsAddable 사전 검증이 all-pass 이므로 개별 AddIngredient도 모두 성공 가정.
+            SchemaInstance.Ingredients.ForEach(ing => target.AddIngredient(ing));
+            ClearSelfAfterTransfer();
+            return true;
+        }
+        return false;
+    }
+
+    private bool TryTransferToBento(BentoModel target)
+    {
+        var cooked = SchemaInstance.GetResult();
+        if (cooked == null) return false;
+        if (target.AddIngredient(cooked))
+        {
+            ClearSelfAfterTransfer();
+            return true;
+        }
+        return false;
+    }
+
+    private void ClearSelfAfterTransfer()
+    {
+        SchemaInstance.ClearIngredient();
+        BehaviorInstance.ResetTexture();
     }
 
     public string GetToolId()
