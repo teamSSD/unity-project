@@ -29,6 +29,10 @@ public class BentoSetModel : MonoBehaviour
         mousePos.z = 0;
         GameObject bento = Instantiate(prefab, mousePos, Quaternion.identity);
 
+        // 스폰된 도시락을 소스(BentoSet)의 시각 크기와 일치시킴.
+        // Instantiate는 부모 없이 world에 생성하므로 lossyScale을 그대로 localScale로.
+        bento.transform.localScale = transform.lossyScale;
+
         BentoBehavior behavior = bento.GetComponent<BentoBehavior>();
         behavior.defaultPosition = mousePos;
 
