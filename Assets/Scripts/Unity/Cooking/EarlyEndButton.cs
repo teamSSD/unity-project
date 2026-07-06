@@ -21,7 +21,7 @@ public class EarlyEndButton : MonoBehaviour
     {
         ConfirmModal.Show(
             title: "영업 조기 종료",
-            message: "다음 페이즈로 넘어갑니다.\n남은 손님은 모두 떠납니다.",
+            message: "다음 페이즈로 넘어갑니다.",
             onConfirm: () => customerManager?.EndEarly(),
             yesText: "종료하기",
             noText: "취소"
