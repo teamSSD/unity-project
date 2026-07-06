@@ -51,6 +51,8 @@ public class SauceMiniGame : MiniGameAbstract
     private float waitingThreshold = 0.7f;
     [SerializeField, Tooltip("정답 허용치 (%). |current-target| 값이 이 이하면 감점 없음. 1틱=decreasePerPress=2.5.")]
     private float tolerance = 3f;
+    [SerializeField, Tooltip("score 0이 되는 diff (%). tolerance ~ 이 값 사이는 linear.")]
+    private float zeroScoreDiff = 20f;
 
     private void Awake()
     {
@@ -61,11 +63,12 @@ public class SauceMiniGame : MiniGameAbstract
 
         // 매 게임 target 랜덤화 — mean 중심 정규분포, [min, max] 클램프.
         // GameRandom.Variable 사용 → 상점(PhaseRandom, ImmutableSeed 기반) 등 영향 없음.
-        targetGauge = Mathf.Clamp(
+        // decreasePerPress(2.5) 배수로 스냅 — 플레이어가 실제 도달 가능한 값으로 맞춤.
+        float raw = Mathf.Clamp(
             GameRandom.Normal(GameRandom.Variable, targetMean, targetStdDev),
             targetMin, targetMax);
-        Debug.Log($"[SauceMiniGame] target set to {targetGauge:F1}% " +
-                  $"(range [{targetMin}, {targetMax}], mean {targetMean}, σ {targetStdDev})");
+        targetGauge = Mathf.Round(raw / decreasePerPress) * decreasePerPress;
+        Debug.Log($"[SauceMiniGame] target {targetGauge:F1}% (raw {raw:F1}, snapped to ×{decreasePerPress})");
         UpdateStopMarkerPosition();
     }
 
@@ -129,11 +132,11 @@ public class SauceMiniGame : MiniGameAbstract
 
     public override float CalculateScore()
     {
-        float maxPossibleDiff = Mathf.Max(targetGauge, 100f - targetGauge);;
+        // diff ≤ tolerance → 1.0. diff = zeroScoreDiff → 0.0. 그 사이 linear.
+        // target 위치와 무관하게 대칭. (기존 공식은 maxPossibleDiff로 나눠서 극단 target 유리)
         float diff = Mathf.Abs(currentGauge - targetGauge);
-        float penaltyDiff = Mathf.Max(0, diff - tolerance);
-        float score = 1.0f - (penaltyDiff / (maxPossibleDiff - tolerance));
-        return Mathf.Clamp01(score);
+        float t = Mathf.Clamp01((diff - tolerance) / (zeroScoreDiff - tolerance));
+        return 1f - t;
     }
 
     public override void ApplyUpgrade(float m, int s) { base.ApplyUpgrade(m, s); tolerance = Mathf.Ceil(tolerance / m); }
