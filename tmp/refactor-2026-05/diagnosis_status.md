@@ -212,9 +212,16 @@ Cooking 씬 표준 플로우 완전 포함. 릴리즈 빌드가 이 코드였다
 
 **deferred**: MallSceneController의 `.Instance` 반복 접근을 캐싱 스타일로 정리하는 것은 규칙 위반이 아니라 코드 품질 개선이라 우선순위 낮음. 향후 신규 코드에 ADR-008 준수만 유지.
 
-### Wave 3 — 대기
+### Wave 3 — 부분 진행 (option ②)
 
-- D 구조 정리: `IngredientPlacementService` (POCO) 추출 → 뷰의 5개 드롭 규칙 통합, `OnDragEnd` 다중 구독 → 단일 디스패치
-- FoodModel convex-hull 수학 분리
-- 네이밍 (파일명 = 클래스명, `*Model` → `*View`)
-- **선행 조건**: 수동 회귀 체크리스트 (Playmode 자동 테스트 부재)
+| 항목 | 커밋 | 상태 |
+|---|---|---|
+| FoodModel 2메서드(AddToCookingTool/AddToBento) → OnFoodDropped 단일 dispatched | `5777aff` | ✅ done |
+| CookingToolModel 2메서드(AddToBento/TransferIngredient) → 통합 | — | 🟡 deferred |
+| IngredientPlacementService (POCO) 완전 추출 | — | 🟡 deferred (option ① — 코어 45파일 blast radius, 수동 회귀 체크리스트 선행 필요) |
+| FoodModel convex-hull 수학 분리 | — | 🟡 deferred |
+| 네이밍 (파일명↔클래스명, *Model→*View 대량 rename) | — | 🟡 deferred |
+
+**성과**: 극성 반전 fix에 이어 FoodModel의 `OnDragEnd` 다중 구독을 단일로 정리 — review D의 "발화 순서 의존" 미래 버그 온상 축소. 신규 target(Storage 등) 추가 시 OnFoodDropped 한 지점만 편집.
+
+**deferred 이유 (Playmode 회귀 부재)**: CookingToolModel의 두 메서드는 `SchemaInstance.GetResult()`/`Ingredients.ForEach` 등 상태 결합 로직이 있어 통합 시 미묘한 순서 변경 리스크. 완전한 IngredientPlacementService 추출은 자동 회귀 테스트 도입 이후로 미룸.
