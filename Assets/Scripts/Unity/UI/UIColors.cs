@@ -14,7 +14,7 @@ public static class UIColors
     public static readonly Color ButtonNeutral   = new Color(176/255f, 168/255f, 158/255f); // #B0A89E warm gray — 취소 / 보조
 
     // Tab
-    public static readonly Color TabActive       = new Color(243/255f, 222/255f, 208/255f); // #F3DED0 선택된 탭 배경 (활성)
+    public static readonly Color TabActive       = new Color(240/255f, 216/255f, 202/255f); // #F0D8CA 선택된 탭 배경 — MenuCardV2 Recipe/Ingredient 컨테이너 배경과 일치(seamless)
 
     // Text
     public static readonly Color TextPrimary     = new Color( 88/255f,  60/255f,  40/255f); // #583C28 dark brown
