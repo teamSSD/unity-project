@@ -136,7 +136,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::MenuSlot
   MenuImage: {fileID: 1174839631132788789}
+  toolImage: {fileID: 2438906310177328799}
   NameLabel: {fileID: 436961577709685436}
+  imageContainer: {fileID: 3967246068321610074}
+  labelContainer: {fileID: 8157145669735841997}
   Id: 
 --- !u!114 &2676622079431242864
 MonoBehaviour:

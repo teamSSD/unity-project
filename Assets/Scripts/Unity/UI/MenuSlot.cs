@@ -5,29 +5,30 @@ using UnityEngine.UI;
 public class MenuSlot : MonoBehaviour
 {
     [SerializeField] private Image MenuImage;
+    [SerializeField] private Image toolImage;
     [SerializeField] private TextMeshProUGUI NameLabel;
+    [Tooltip("MenuImage 컨테이너. InitEmpty/InitSlot이 SetActive로 토글.")]
+    [SerializeField] private GameObject imageContainer;
+    [Tooltip("NameLabel 컨테이너. InitEmpty/InitSlot이 SetActive로 토글.")]
+    [SerializeField] private GameObject labelContainer;
     [Header("Menu ID")]
     [SerializeField] public string Id;
 
     private FoodData foodData;
-    private Image toolImage;
 
     public void InitEmpty()
     {
-        if (MenuImage != null) MenuImage.transform.parent.gameObject.SetActive(false);
-        if (NameLabel != null) NameLabel.transform.parent.gameObject.SetActive(false);
+        if (imageContainer != null) imageContainer.SetActive(false);
+        if (labelContainer != null) labelContainer.SetActive(false);
     }
 
     public void InitSlot()
     {
-        if (MenuImage != null) MenuImage.transform.parent.gameObject.SetActive(true);
-        if (NameLabel != null) NameLabel.transform.parent.gameObject.SetActive(true);
+        if (imageContainer != null) imageContainer.SetActive(true);
+        if (labelContainer != null) labelContainer.SetActive(true);
 
         foodData = SearchDataUtil.GetFoodDataById(Id);
         if (foodData == null) return;
-
-        if (toolImage == null && MenuImage != null)
-            toolImage = MenuImage.transform.parent?.Find("Tool")?.GetComponent<Image>();
 
         NameLabel.text = foodData.ingredientName;
 
