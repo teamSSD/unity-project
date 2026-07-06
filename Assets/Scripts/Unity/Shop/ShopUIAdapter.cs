@@ -32,6 +32,7 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
     // ADR-008 — GameSessionRoot 하위 서비스는 캐시 후 재사용. .Instance 반복 금지.
     private PurchaseService purchase;
     private StatsService stats;
+    private ProgressService progress;
     private ToolUpgradeService toolUpgrade;
     private StorageUpgradeService storageUpgrade;
     private FarmUpgradeService farmUpgrade;
@@ -97,6 +98,7 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
         if (session == null) return;
         purchase       = session.Purchase;
         stats          = session.Stats;
+        progress       = session.Progress;
         toolUpgrade    = session.ToolUpgrade;
         storageUpgrade = session.StorageUpgrade;
         farmUpgrade    = session.FarmUpgrade;
@@ -207,7 +209,8 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
     {
         if (purchase == null) return;
 
-        int today = stats?.GetDay() ?? 0;
+        // Day SSOT = PhaseData.Day (BasicStats.day 폐기됨).
+        int today = progress?.PhaseData?.Day ?? 0;
         var slots = purchase.GetItemListForDay(today);
 
         foreach (var info in slots)

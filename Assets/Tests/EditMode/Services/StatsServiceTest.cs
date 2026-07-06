@@ -50,16 +50,17 @@ public class StatsServiceTest
     }
 
     [Test]
-    public void Time_AddRollsOverDay()
+    public void Time_AddOverflow_WrapsAndLogsError()
     {
-        int dayChanged = -1;
-        svc.OnDayChanged += d => dayChanged = d;
-
+        // Day SSOT = PhaseData.Day → AddTime overflow는 로그 후 wrap만.
+        // Day 증가는 ProgressService.PassDay 경로에서만.
+        UnityEngine.TestTools.LogAssert.Expect(
+            UnityEngine.LogType.Error,
+            new System.Text.RegularExpressions.Regex(".*AddTime overflow.*"));
         svc.SetTime(23, 30);
-        svc.AddTime(1, 0); // 24:30 → 00:30 + day++
+        svc.AddTime(1, 0); // 24:30 → 00:30 (log error, no day change)
         Assert.AreEqual(0, svc.GetHour());
         Assert.AreEqual(30, svc.GetMinute());
-        Assert.AreEqual(1, dayChanged);
     }
 
     [Test]
@@ -93,16 +94,14 @@ public class StatsServiceTest
     [Test]
     public void ApplySaveData_CopiesFields_FiresAllEvents()
     {
-        int money = -1, stamina = -1, day = -1, hour = -1, minute = -1;
+        int money = -1, stamina = -1, hour = -1, minute = -1;
         svc.OnMoneyChanged += v => money = v;
         svc.OnStaminaChanged += v => stamina = v;
-        svc.OnDayChanged += v => day = v;
         svc.OnTimeChanged += (h, m) => { hour = h; minute = m; };
 
-        var loaded = new BasicStats { day = 5, time = 7 * 60 + 15, stamina = 80, money = 12000 };
+        var loaded = new BasicStats { time = 7 * 60 + 15, stamina = 80, money = 12000 };
         svc.ApplySaveData(loaded);
 
-        Assert.AreEqual(5, svc.GetDay());
         Assert.AreEqual(12000, svc.GetMoney());
         Assert.AreEqual(80, svc.GetStamina());
         Assert.AreEqual(7, svc.GetHour());
@@ -110,7 +109,6 @@ public class StatsServiceTest
 
         Assert.AreEqual(12000, money);
         Assert.AreEqual(80, stamina);
-        Assert.AreEqual(5, day);
         Assert.AreEqual(7, hour);
         Assert.AreEqual(15, minute);
     }
@@ -120,7 +118,7 @@ public class StatsServiceTest
     {
         // 클로저가 GameState.stats를 가리키는 점 보존 — 새 인스턴스 할당 X
         var original = stats;
-        var loaded = new BasicStats { day = 3, money = 5000 };
+        var loaded = new BasicStats { money = 5000 };
         svc.ApplySaveData(loaded);
         Assert.AreSame(original, stats); // 원본 인스턴스 그대로
     }
@@ -130,19 +128,15 @@ public class StatsServiceTest
     {
         svc.SetMoney(9999);
         svc.SetStamina(50);
-        svc.AddDay(7);
 
-        int money = -1, stamina = -1, day = -1;
+        int money = -1, stamina = -1;
         svc.OnMoneyChanged += v => money = v;
         svc.OnStaminaChanged += v => stamina = v;
-        svc.OnDayChanged += v => day = v;
 
         svc.Reset();
         Assert.AreEqual(0, svc.GetMoney());
         Assert.AreEqual(0, svc.GetStamina());
-        Assert.AreEqual(0, svc.GetDay());
         Assert.AreEqual(0, money);
         Assert.AreEqual(0, stamina);
-        Assert.AreEqual(0, day);
     }
 }

@@ -53,13 +53,14 @@ public class GameStart : MonoBehaviour
 
             SaveManager.LoadAll();
 
-            // Continue: 저장된 시드 복원
-            var stats = GameSessionRoot.Instance.Stats;
-            var saveData = stats.GetSaveData();
+            // Continue: 저장된 시드 복원. Day SSOT = PhaseData.Day.
+            var session = GameSessionRoot.Instance;
+            var saveData = session.Stats.GetSaveData();
+            int day = session.Progress?.PhaseData?.Day ?? 0;
             int contSessionSeed = (int)((uint)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds() ^ (uint)System.Environment.TickCount);
             GameRandom.InitSession(saveData.immutableSeed, contSessionSeed);
-            GameRandom.InitDay(stats.GetDay());
-            GameSessionRoot.Instance?.Weather?.UpdateWeather(stats.GetDay());
+            GameRandom.InitDay(day);
+            session?.Weather?.UpdateWeather(day);
 
             HUDManager.Instance?.Initialize();
         });

@@ -16,7 +16,6 @@ public class PocoStateShapeTest
     {
         var s = new BasicStats();
         Assert.AreEqual(0, s.stamina);
-        Assert.AreEqual(0, s.day);
         Assert.AreEqual(0, s.time);
         Assert.AreEqual(0, s.money);
     }
@@ -24,11 +23,10 @@ public class PocoStateShapeTest
     [Test]
     public void BasicStats_JsonRoundTrip()
     {
-        var s = new BasicStats { stamina = 50, day = 7, time = 720, money = 12345 };
+        var s = new BasicStats { stamina = 50, time = 720, money = 12345 };
         var json = JsonUtility.ToJson(s);
         var clone = JsonUtility.FromJson<BasicStats>(json);
         Assert.AreEqual(50, clone.stamina);
-        Assert.AreEqual(7, clone.day);
         Assert.AreEqual(720, clone.time);
         Assert.AreEqual(12345, clone.money);
     }
@@ -110,7 +108,7 @@ public class PocoStateShapeTest
     public void PhaseData_DefaultMorning()
     {
         var pd = new PhaseData();
-        Assert.AreEqual(0, pd.Day);
+        Assert.AreEqual(1, pd.Day); // 생성자 초기값. GameStart.ApplyNewGameDefaults는 0으로 override.
         Assert.IsNotNull(pd.SelectedMenus);
         Assert.IsNotNull(pd.UnlockedRecipes);
     }

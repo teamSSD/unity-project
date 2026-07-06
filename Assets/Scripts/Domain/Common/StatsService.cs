@@ -12,7 +12,6 @@ namespace Game.Domain.Common
     public class StatsService
     {
         public event Action<int, int> OnTimeChanged;   // (hour, minute)
-        public event Action<int>      OnDayChanged;
         public event Action<int>      OnStaminaChanged;
         public event Action<int>      OnMoneyChanged;
         public event Action           OnStaminaExhausted;
@@ -37,7 +36,6 @@ namespace Game.Domain.Common
         {
             var s = Stats;
             if (s == null || data == null) return;
-            s.day = data.day;
             s.time = data.time;
             s.stamina = data.stamina;
             s.money = data.money;
@@ -46,7 +44,6 @@ namespace Game.Domain.Common
             // UI 갱신을 위해 모든 이벤트 broadcast
             OnMoneyChanged?.Invoke(s.money);
             OnStaminaChanged?.Invoke(s.stamina);
-            OnDayChanged?.Invoke(s.day);
             OnTimeChanged?.Invoke(GetHour(), GetMinute());
         }
 
@@ -54,21 +51,11 @@ namespace Game.Domain.Common
         {
             var s = Stats;
             if (s == null) return;
-            s.day = 0; s.time = 0; s.stamina = 0; s.money = 0;
+            s.time = 0; s.stamina = 0; s.money = 0;
             // Reset 후 UI도 갱신
             OnMoneyChanged?.Invoke(0);
             OnStaminaChanged?.Invoke(0);
-            OnDayChanged?.Invoke(0);
             OnTimeChanged?.Invoke(0, 0);
-        }
-
-        // ── Day ──
-        public int GetDay() => Stats?.day ?? 0;
-        public void AddDay(int value)
-        {
-            var s = Stats; if (s == null) return;
-            s.day += value;
-            OnDayChanged?.Invoke(s.day);
         }
 
         // ── Time ──
@@ -86,7 +73,13 @@ namespace Game.Domain.Common
         {
             var s = Stats; if (s == null) return;
             s.time += hour * 60 + minute;
-            if (s.time >= 1440) { s.time %= 1440; AddDay(1); }
+            // Day 카운터는 PhaseData.Day가 SSOT — Day 전환은 ProgressService.PassDay 경로로.
+            // 정상 플레이 흐름은 SetPhaseTime(SetTime) 만 사용 → 여기 오버플로우는 실질 미도달.
+            if (s.time >= 1440)
+            {
+                s.time %= 1440;
+                Debug.LogError("[StatsService] AddTime overflow crossed a day boundary; use ProgressService.PassDay for day transitions.");
+            }
             OnTimeChanged?.Invoke(GetHour(), GetMinute());
         }
 
