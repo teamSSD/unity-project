@@ -37,8 +37,8 @@ public class SauceMiniGame : MiniGameAbstract
     private RectTransform stopMarker;
     [SerializeField, Tooltip("마커 x offset — 양수면 게이지 안쪽(오른쪽)으로 이동. Sauce local 좌표.")]
     private float stopMarkerXOffset = 0.35f;
-    [SerializeField, Tooltip("마커 y ratio 보정 — 시각적 fill top과 마커가 안 맞을 때 이 값으로 조정. target/100에 더해짐.")]
-    private float stopMarkerYRatioOffset = 0f;
+    [SerializeField, Tooltip("마커 y ratio 보정 — 시각적 fill top과 마커가 안 맞을 때 이 값으로 조정. target/100에 더해짐. Play test 결과 sprite 시각적 fill 위치가 anchor보다 약 8% 높게 보여 -0.08 기본값.")]
+    private float stopMarkerYRatioOffset = -0.08f;
     public GameObject upperArrow;
     public GameObject lowerArrow;
     private GuidedButtonAnimator upperArrowAnim;

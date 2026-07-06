@@ -309,9 +309,14 @@ MonoBehaviour:
   targetGauge: 65
   targetMin: 20
   targetMax: 80
+  targetMean: 50
+  targetStdDev: 10
   stopMarker: {fileID: 1766240383613761077}
+  stopMarkerXOffset: 0.35
+  stopMarkerYRatioOffset: -0.08
   upperArrow: {fileID: 6132707111305442208}
   lowerArrow: {fileID: 18504464439148836}
+  tolerance: 3
 --- !u!1 &3101921119096370196
 GameObject:
   m_ObjectHideFlags: 0
@@ -412,7 +417,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 4
-  m_VerticalAlignment: 4096
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
