@@ -265,6 +265,37 @@ public class CustomerManager : MonoBehaviour
         }
     }
 
+    /// <summary>영업 조기 종료 — 모든 손님/티켓 즉시 파괴 후 페이즈 넘김.
+    /// 스킵 버튼용. 정산은 지금까지 벌어들인 금액 그대로 반영.</summary>
+    public void EndEarly()
+    {
+        if (!isOpen) return;
+        Debug.Log("[CustomerManager] EndEarly — force close");
+        isOpen = false;
+
+        if (currentOrderingCustomer != null)
+        {
+            Destroy(currentOrderingCustomer);
+            currentOrderingCustomer = null;
+        }
+
+        // 모든 활성 lifecycle 정리 (waiting customer 있어도 강제 종료)
+        for (int i = activeCustomers.Count - 1; i >= 0; i--)
+        {
+            var lc = activeCustomers[i];
+            lc.OnCustomerServed -= OnCustomerServed;
+            lc.OnCustomerLeft -= OnCustomerLeft;
+            lc.Cleanup();
+            activeCustomers.RemoveAt(i);
+        }
+
+        // 모든 티켓 강제 제거 → HasActiveCustomerTickets false → OnGameEnd 발화
+        ticketController.ClearAllTickets();
+
+        LogSessionSummary();
+        OnGameEnd?.Invoke();
+    }
+
     private void OnDestroy()
     {
         foreach (var lifecycle in activeCustomers)
