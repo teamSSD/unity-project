@@ -56,8 +56,8 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
-        // A,D 또는 ←,→ 키 입력(-1(왼쪽), 0, 1(오른쪽))
-        moveInput = Input.GetAxisRaw("Horizontal");
+        // UI가 잠긴 상태(PhaseSelection/Shop/Modal 등)에서는 이동 입력 차단.
+        moveInput = UILockManager.IsLocked ? 0f : Input.GetAxisRaw("Horizontal");
 
         if (moveInput < 0)
             sr.flipX = true;
