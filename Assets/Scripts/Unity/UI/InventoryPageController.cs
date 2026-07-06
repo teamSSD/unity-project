@@ -28,8 +28,11 @@ public class InventoryPageController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI emptyHint;
 
     [Header("Bar Colors (남은일수 비율 기준)")]
+    [Tooltip("남은 기간이 넉넉할 때. 기본은 UIColors.Income.")]
     [SerializeField] private Color barFresh   = new Color(0.18f, 0.70f, 0.35f);
+    [Tooltip("경고 구간. 팔레트에 대응 상수가 없어 리터럴 사용(따뜻한 앰버).")]
     [SerializeField] private Color barWarning = new Color(1.00f, 0.75f, 0.00f);
+    [Tooltip("만료/위험 구간. 기본은 UIColors.Expense.")]
     [SerializeField] private Color barExpired = new Color(0.85f, 0.25f, 0.25f);
 
     [Header("Bar Thresholds (0~1, 이 비율 이하일 때 색 적용)")]
