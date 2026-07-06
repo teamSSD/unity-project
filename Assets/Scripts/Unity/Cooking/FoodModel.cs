@@ -31,8 +31,7 @@ public class FoodModel : MonoBehaviour
         clickStateUtil = GetComponent<ClickStateUtil>();
         tooltipController = GetComponent<TooltipController>();
 
-        clickStateUtil.OnDragEnd += AddToCookingTool;
-        clickStateUtil.OnDragEnd += AddToBento;
+        clickStateUtil.OnDragEnd += OnFoodDropped;
     }
 
     void Start()
@@ -47,8 +46,7 @@ public class FoodModel : MonoBehaviour
     void OnDestroy()
     {
         onDestroy?.Invoke(this);
-        clickStateUtil.OnDragEnd -= AddToCookingTool;
-        clickStateUtil.OnDragEnd -= AddToBento;
+        clickStateUtil.OnDragEnd -= OnFoodDropped;
     }
 
     public void Inject(Canvas canvas, LoadInventoryUsecase loadInventoryUsecase, FoodData foodData, int price)
@@ -183,7 +181,14 @@ public class FoodModel : MonoBehaviour
         tooltipController.RequestPositionNear(GetComponent<SpriteRenderer>().bounds, forceRight: true);
     }
 
-    public void AddToCookingTool()
+    /// <summary>
+    /// 드래그 종료 시 단일 dispatched 진입점. 이전엔 AddToCookingTool/AddToBento 두 핸들러가
+    /// 각자 OnDragEnd에 구독해 독립 스캔했음 (review_2026-07_deepdig.md D "다중-구독" 온상).
+    /// 이제 target을 우선순위대로 해석 → 매칭되면 accept 시도 → 성공 시 공통 side effect.
+    ///
+    /// 우선순위: CookingTool(사용 가능 도구) → Bento. 겹침이 동시일 경우 이전 구독 순서(Tool 먼저)와 동일.
+    /// </summary>
+    private void OnFoodDropped()
     {
         if (!injected)
         {
@@ -191,52 +196,36 @@ public class FoodModel : MonoBehaviour
             return;
         }
 
-        CookingToolModel collision = scanColliderUtil.GetOverlappingWithComponent<CookingToolModel>();
         if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData) <= 0)
         {
             Destroy(this.gameObject);
             return;
         }
-        if (collision != null && SchemaInstance.foodData.availableTools.Contains(collision.GetToolId()))
+
+        // 1) CookingTool — food의 availableTools에 포함된 도구여야 accept.
+        var tool = scanColliderUtil.GetOverlappingWithComponent<CookingToolModel>();
+        if (tool != null && SchemaInstance.foodData.availableTools.Contains(tool.GetToolId())
+            && tool.AddIngredient(this.SchemaInstance))
         {
-            bool reflected = collision.AddIngredient(this.SchemaInstance);
-            if (reflected)
-            {
-                loadInventoryUsecase.ConsumeFood(SchemaInstance.foodData, 1);
-                gameObject.transform.position = BehaviorInstance.defaultPosition;
-                if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData) <= 0)
-                {
-                    Destroy(gameObject);
-                }
-            }
+            ConsumeAndReposition();
+            return;
+        }
+
+        // 2) Bento — MAIN/SIDE만 accept (BentoModel.AddIngredient가 판정). raw INGREDIENT는 false 반환 → no-op.
+        var bento = scanColliderUtil.GetOverlappingWithComponent<BentoModel>();
+        if (bento != null && bento.AddIngredient(this.SchemaInstance))
+        {
+            ConsumeAndReposition();
         }
     }
-    public void AddToBento()
-    {
-        if (!injected)
-        {
-            Debug.LogWarning("Interface didn't injected.");
-            return;
-        }
 
-        BentoModel collision = scanColliderUtil.GetOverlappingWithComponent<BentoModel>();
+    private void ConsumeAndReposition()
+    {
+        loadInventoryUsecase.ConsumeFood(SchemaInstance.foodData, 1);
+        gameObject.transform.position = BehaviorInstance.defaultPosition;
         if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData) <= 0)
         {
             Destroy(this.gameObject);
-            return;
-        }
-        if (collision != null)
-        {
-            bool reflected = collision.AddIngredient(this.SchemaInstance);
-            if (reflected)
-            {
-                loadInventoryUsecase.ConsumeFood(SchemaInstance.foodData, 1);
-                gameObject.transform.position = BehaviorInstance.defaultPosition;
-                if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData) <= 0)
-                {
-                    Destroy(this.gameObject);
-                }
-            }
         }
     }
 
