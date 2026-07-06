@@ -29,8 +29,10 @@ public class SauceMiniGame : MiniGameAbstract
     public float decreasePerPress = 2.5f;  // 스페이스바 당 게이지 증가량
     [Tooltip("Awake에서 targetMin~targetMax 범위 정규분포로 덮어씀. Inspector 값은 실전엔 미사용.")]
     public float targetGauge = 63;
-    [SerializeField, Tooltip("동적 목표 범위 최소값 (%).")] private float targetMin = 20f;
-    [SerializeField, Tooltip("동적 목표 범위 최대값 (%).")] private float targetMax = 80f;
+    [SerializeField, Tooltip("동적 목표 범위 최소값 (%). 하한.")] private float targetMin = 20f;
+    [SerializeField, Tooltip("동적 목표 범위 최대값 (%). 상한.")] private float targetMax = 70f;
+    [SerializeField, Tooltip("정규분포 평균 (%). 범위의 중심이 아닌 별도 지정 — 예: [20,70]에서 평균 50 가능.")] private float targetMean = 50f;
+    [SerializeField, Tooltip("정규분포 표준편차 (%). 클수록 target이 mean에서 더 자주 벗어남.")] private float targetStdDev = 10f;
     [SerializeField, Tooltip("목표 위치 마커 (Sauce 자식). anchor y가 target/100으로 갱신됨.")]
     private RectTransform stopMarker;
     [SerializeField, Tooltip("마커 x offset — 양수면 게이지 안쪽(오른쪽)으로 이동. Sauce local 좌표.")]
@@ -54,10 +56,20 @@ public class SauceMiniGame : MiniGameAbstract
 
         upperArrowAnim.Guide();
 
-        // 매 게임 target 랜덤화 — 20~80% 정규분포. GameRandom.Variable 사용해서
-        // 상점(PhaseRandom, ImmutableSeed 기반) 등 영향 안 줌.
-        targetGauge = GameRandom.NormalRange(GameRandom.Variable, targetMin, targetMax);
+        // 매 게임 target 랜덤화 — mean 중심 정규분포, [min, max] 클램프.
+        // GameRandom.Variable 사용 → 상점(PhaseRandom, ImmutableSeed 기반) 등 영향 없음.
+        targetGauge = Mathf.Clamp(
+            GameRandom.Normal(GameRandom.Variable, targetMean, targetStdDev),
+            targetMin, targetMax);
+        Debug.Log($"[SauceMiniGame] target set to {targetGauge:F1}% " +
+                  $"(range [{targetMin}, {targetMax}], mean {targetMean}, σ {targetStdDev})");
         UpdateStopMarkerPosition();
+    }
+
+    protected override void OnGameEnded()
+    {
+        float diff = Mathf.Abs(currentGauge - targetGauge);
+        Debug.Log($"[SauceMiniGame] finished — current {currentGauge:F1}% / target {targetGauge:F1}% / diff {diff:F1} / tolerance {tolerance}");
     }
 
     private void UpdateStopMarkerPosition()
