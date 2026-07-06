@@ -131,15 +131,19 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
             blurRt = new RenderTexture(w, h, 0);
         }
 
-        var tempRt = RenderTexture.GetTemporary(w, h, 16);
+        var srcRt = RenderTexture.GetTemporary(w, h, 16);
+        var midRt = RenderTexture.GetTemporary(w, h, 0);
         var cam = Camera.main;
         var prevTarget = cam.targetTexture;
-        cam.targetTexture = tempRt;
+        cam.targetTexture = srcRt;
         cam.Render();
         cam.targetTexture = prevTarget;
 
-        Graphics.Blit(tempRt, blurRt, blurBlitMaterial);
-        RenderTexture.ReleaseTemporary(tempRt);
+        // 분리형 가우시안: horizontal → vertical + tint.
+        Graphics.Blit(srcRt, midRt, blurBlitMaterial, 0);
+        Graphics.Blit(midRt, blurRt, blurBlitMaterial, 1);
+        RenderTexture.ReleaseTemporary(srcRt);
+        RenderTexture.ReleaseTemporary(midRt);
 
         blurBackdrop.texture = blurRt;
         blurBackdrop.enabled = true;
