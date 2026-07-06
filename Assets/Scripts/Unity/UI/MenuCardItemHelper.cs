@@ -95,31 +95,6 @@ public static class MenuCardItemHelper
         }
     }
 
-    /// <summary>
-    /// CSS space-between처럼 활성 자식들이 부모 rect 좌·우 끝을 채우고 사이 간격을 균등하게 설정.
-    /// HorizontalLayoutGroup 이 붙어있어야 하며 childAlignment는 MiddleLeft 권장.
-    /// 호출 전에 부모 rect 크기가 확정돼 있어야 함 (LayoutRebuilder 후 호출 권장).
-    /// </summary>
-    public static void ApplySpaceBetween(Transform inputContainer)
-    {
-        var rt = inputContainer as RectTransform;
-        var hlg = rt?.GetComponent<HorizontalLayoutGroup>();
-        if (hlg == null) return;
-
-        float itemsWidth = 0f;
-        int activeCount = 0;
-        foreach (RectTransform child in rt)
-        {
-            if (!child.gameObject.activeSelf) continue;
-            itemsWidth += LayoutUtility.GetPreferredWidth(child);
-            activeCount++;
-        }
-        if (activeCount < 2) { hlg.spacing = 0f; return; }
-
-        float available = rt.rect.width - hlg.padding.left - hlg.padding.right;
-        hlg.spacing = Mathf.Max(0f, (available - itemsWidth) / (activeCount - 1));
-    }
-
     public static void PopulateResultItem(Transform item, FoodData food, string toolId, CookingToolData toolData)
     {
         Image toolImage = item.Find("Tool")?.GetComponent<Image>();
