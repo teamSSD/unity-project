@@ -19,11 +19,13 @@ public class SpeechBubble : MonoBehaviour
     [SerializeField, Tooltip("Tail tip이 버블 하단에서 얼마나 아래로 (rect units). 원래 스타일 = 132.")]
     private float tailBelowBubble = 132f;
 
-    [Header("Target 오프셋 (bounds 기반, world unit)")]
-    [SerializeField, Tooltip("손님 sprite edge에서 X offset. customerOnLeft면 max.x + x, 아니면 min.x - x. 양수 = 손님 더 바깥.")]
-    private float targetXOffsetWorld = 0.5f;
-    [SerializeField, Tooltip("손님 sprite top(bounds.max.y)에서 Y offset. 음수 = 아래로.")]
-    private float targetYOffsetWorld = -0.6f;
+    [Header("Target 위치 (bounds 정규화 좌표)")]
+    [SerializeField, Range(-1f, 1f),
+     Tooltip("X 위치: bounds.center 기준 extents.x 비율. 0=중앙, ±1=edge. 손님 얼굴이 중앙 근처면 0.")]
+    private float targetXFractionFromCenter = 0f;
+    [SerializeField, Range(-1f, 1f),
+     Tooltip("Y 위치: bounds.center 기준 extents.y 비율. 0=중앙, 1=top edge. 얼굴이 상단 근처면 0.7~0.8.")]
+    private float targetYFractionFromCenter = 0.7f;
 
     public void setContents(string text)
     {
@@ -54,11 +56,11 @@ public class SpeechBubble : MonoBehaviour
         // customerOnLeft → 손님 방향(왼쪽)으로 뻗어야 → flip. 반대 케이스는 flip X.
         tail.localScale = new Vector3(customerOnLeft ? -1f : 1f, 1f, 1f);
 
-        // Target world point
+        // Target world point — 손님 bounds 정규화 위치 (extents 비율).
+        // 크기 무관하게 얼굴/머리 영역을 일관되게 가리킴.
         Vector3 target = new Vector3(
-            customerOnLeft ? targetBounds.max.x + targetXOffsetWorld
-                           : targetBounds.min.x - targetXOffsetWorld,
-            targetBounds.max.y + targetYOffsetWorld,
+            targetBounds.center.x + targetXFractionFromCenter * targetBounds.extents.x,
+            targetBounds.center.y + targetYFractionFromCenter * targetBounds.extents.y,
             targetBounds.center.z
         );
 
