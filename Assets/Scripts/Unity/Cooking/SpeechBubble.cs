@@ -30,6 +30,10 @@ public class SpeechBubble : MonoBehaviour
      Tooltip("Y: 0=중앙, 1=top edge. 얼굴이 상단이면 0.7~0.8.")]
     private float targetYFractionFromCenter = 0.7f;
 
+    [Header("Bubble world offset (최종 위치에 더함)")]
+    [SerializeField, Tooltip("계산된 bubble 위치에 더할 world offset. 미세 조정용.")]
+    private Vector2 bubbleWorldOffset = new Vector2(-0.78f, -0.42f);
+
     public void setContents(string text)
     {
         contents.text = text;
@@ -73,10 +77,10 @@ public class SpeechBubble : MonoBehaviour
             targetBounds.center.z
         );
 
-        // Bubble world = target - tail tip local offset (canvas lossyScale 반영).
+        // Bubble world = target - tail tip local offset (canvas lossyScale 반영) + 미세조정 offset.
         Vector3 tipLocalOffset = new Vector3(tailX, tailY, 0f);
         Vector3 tipWorldOffset = tipLocalOffset * rt.lossyScale.x;
-        transform.position = target - tipWorldOffset;
+        transform.position = target - tipWorldOffset + (Vector3)bubbleWorldOffset;
     }
 
 #if UNITY_EDITOR
