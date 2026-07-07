@@ -66,7 +66,8 @@ public class TakingCustomer : MonoBehaviour
         GameObject speechBubble = Instantiate(speechBubblePrefab);
         SpeechBubble speechBubbleScript = speechBubble.GetComponent<SpeechBubble>();
         speechBubbleScript.setContents(message);
-        speechBubbleScript.PlaceNear(GetComponent<SpriteRenderer>().bounds);
+        // Bubble offset이 손님 왼쪽 어깨 기준으로 캘리브됨 → 항상 손님 왼쪽에 강제.
+        speechBubbleScript.PlaceNear(GetComponent<SpriteRenderer>().bounds, forceBubbleOnLeftOfCustomer: true);
         Destroy(speechBubble, 3f);
 
         SoundManager.Instance.Play2DSFX(takeSoundEffect, 0.3f);

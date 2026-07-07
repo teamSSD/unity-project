@@ -39,14 +39,23 @@ public class SpeechBubble : MonoBehaviour
         contents.text = text;
     }
 
-    public void PlaceNear(Bounds targetBounds)
+    /// <summary>Bubble을 손님 근처에 배치.
+    /// forceBubbleOnLeftOfCustomer: null=카메라 기준 자동, true=항상 손님 왼쪽, false=항상 오른쪽.
+    /// bubbleWorldOffset이 특정 side 기준으로 캘리브된 경우 side를 고정해야 오프셋 유효.</summary>
+    public void PlaceNear(Bounds targetBounds, bool? forceBubbleOnLeftOfCustomer = null)
     {
         Camera cam = Camera.main;
 
         RectTransform rt = GetComponent<RectTransform>();
         LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
 
-        bool customerOnLeft = cam.WorldToViewportPoint(targetBounds.center).x < 0.5f;
+        // bubble이 손님 왼쪽 → customerOnLeft(카메라 기준 손님이 왼쪽) = false.
+        // 즉 forceBubbleOnLeft=true → customerOnLeft=false.
+        bool customerOnLeft;
+        if (forceBubbleOnLeftOfCustomer.HasValue)
+            customerOnLeft = !forceBubbleOnLeftOfCustomer.Value;
+        else
+            customerOnLeft = cam.WorldToViewportPoint(targetBounds.center).x < 0.5f;
 
         float halfW = rt.rect.width * 0.5f;
         float halfH = rt.rect.height * 0.5f;
