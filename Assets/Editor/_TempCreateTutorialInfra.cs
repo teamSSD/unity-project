@@ -41,6 +41,42 @@ public static class _TempCreateTutorialInfra
         PlaceOverlayInManagers();
     }
 
+    [MenuItem("Tools/Tutorial/Place TutorialController + Wire Refs")]
+    public static void PlaceController()
+    {
+        var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+
+        GameObject canvasGO = null;
+        foreach (var r in scene.GetRootGameObjects())
+            if (r.name == "TutorialOverlayCanvas") { canvasGO = r; break; }
+        if (canvasGO == null) { Debug.LogError("[Tutorial] TutorialOverlayCanvas 미발견. 먼저 Build 실행."); return; }
+
+        GameObject ctrlGO = null;
+        foreach (var r in scene.GetRootGameObjects())
+            if (r.name == "TutorialController") { ctrlGO = r; break; }
+        if (ctrlGO == null)
+        {
+            ctrlGO = new GameObject("TutorialController");
+            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(ctrlGO, scene);
+        }
+
+        var ctrl = ctrlGO.GetComponent<TutorialController>();
+        if (ctrl == null) ctrl = ctrlGO.AddComponent<TutorialController>();
+
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+        var bubbleComp = prefab != null ? prefab.GetComponent<TutorialBubble>() : null;
+
+        var so = new SerializedObject(ctrl);
+        so.FindProperty("bubblePrefab").objectReferenceValue = bubbleComp;
+        so.FindProperty("overlayCanvas").objectReferenceValue = canvasGO.GetComponent<RectTransform>();
+        // catalog는 나중에 SO 생성 후 wire (Step 3의 다음 단계)
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log($"[Tutorial] TutorialController 배치 + wire 완료 (catalog는 별도 assign 필요)");
+    }
+
     private static void BuildPrefab()
     {
         Sprite bodySprite = null, tailSprite = null;
