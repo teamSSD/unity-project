@@ -39,6 +39,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     public RecipeLookupService RecipeLookup { get; private set; }
     public WeatherService Weather { get; private set; }
     public SettlementService Settlement { get; private set; }
+    public TutorialService Tutorial { get; private set; }
 
     protected override void OnSingletonAwake()
     {
@@ -63,6 +64,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
 
         Weather = new WeatherService();
         Settlement = new SettlementService();
+        Tutorial = new TutorialService(() => State?.tutorial);
     }
 
     private void WireCatalogAndUpgrades(IMoneyService money, IExpenseLog expense)

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using Game.Domain.Common;
 using UnityEngine;
 
 [System.Serializable]
@@ -18,6 +19,7 @@ public class GameSaveData
     // Phase 2 Sprint 2: piggyback 매니저 분리 (H) — RecipeData/UnlockedFood를 자체 슬롯으로
     public RecipeBookSaveData recipeBook = new();
     public UnlockedRecipesSaveData unlockedRecipes = new();
+    public TutorialSaveData tutorial = new();
 }
 
 /// <summary>
@@ -101,6 +103,7 @@ public static class SaveManager
         // Self-contained 매니저 (piggyback 분리 후, H 해결)
         if (GameSessionRoot.Instance?.MenuSelection != null) save.recipeBook = GameSessionRoot.Instance?.MenuSelection.GetSaveData();
         if (GameSessionRoot.Instance?.UnlockedFood != null) save.unlockedRecipes = GameSessionRoot.Instance?.UnlockedFood.GetSaveData();
+        if (GameSessionRoot.Instance?.Tutorial != null) save.tutorial = GameSessionRoot.Instance?.Tutorial.GetSaveData();
 
         DataSaveUtil.SaveData(save, SavePath);
     }
@@ -140,6 +143,7 @@ public static class SaveManager
             else
                 session.MenuSelection.LoadMenusFromProgressLegacy(save.phase);
         }
+        session?.Tutorial?.ApplySaveData(save.tutorial);
     }
 
     /// <summary>

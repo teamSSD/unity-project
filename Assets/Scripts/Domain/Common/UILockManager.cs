@@ -17,7 +17,8 @@ public static class UILockManager
         Loading,
         Shop,
         Settings,
-        PhaseSelection
+        PhaseSelection,
+        Tutorial
     }
 
     private static readonly HashSet<Owner> activeLocks = new();
