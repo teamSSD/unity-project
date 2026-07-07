@@ -4,30 +4,53 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>일회성. TutorialBubble prefab + TutorialOverlayCanvas GO 생성/배치.</summary>
+/// <summary>일회성. TutorialBubble 프리팹 (원본 SpeechBubble 스프라이트 매핑 정확히) + Overlay canvas 배치.
+///
+/// 정확한 스프라이트 매핑 (SpeechBubble.prefab 분석 결과):
+///   Body sprite = ui_speechBubble_0 (fileID 7860725457570909701), Type=Sliced
+///   Tail sprite = ui_speechBubble_1 (fileID -3876946149166117198), Type=Simple
+///
+/// 구조:
+///   Root (RectTransform + TutorialBubble, pivot 0.5 0)
+///     Body (Image body sprite + VLG + CSF, pivot 0.5 0, anchoredPos (0, tailH-overlap))
+///       OptionalImage (Image, 비활성)
+///       Contents (TMP)
+///     Tail (Image tail sprite, pivot 0.5 0, anchoredPos (0, 0))
+/// </summary>
 public static class _TempCreateTutorialInfra
 {
     private const string PrefabPath = "Assets/Bundles/Prefabs/tutorial/TutorialBubble.prefab";
     private const string ScenePath = "Assets/Scenes/ForReal/Managers.unity";
     private const string AtlasPath = "Assets/Bundles/driveAssets/art/ui/cooking/ui_speechBubble.png";
+    private const string SpeechBubblePrefab = "Assets/Bundles/Prefabs/cooking/SpeechBubble.prefab";
+
+    // 튜닝 값 — Overlay canvas 1920x1080 기준.
+    // 원본 SpeechBubble tail = 126x184, overlap = 52. 그것보다 훨씬 작게.
+    private const float TailWidth = 60f;
+    private const float TailHeight = 85f;
+    private const float TailOverlapWithBubble = 25f;
+    private const float BodyMinWidth = 260f;
+    private const int PadLR = 40;
+    private const int PadTB = 28;
+    private const int FontSize = 32; // 프로젝트 dominant sizes: 36/32/24. 튜토리얼은 32.
 
     [MenuItem("Tools/Tutorial/Build Bubble Prefab + Overlay Canvas")]
     public static void Build()
     {
-        CreatePrefab();
+        BuildPrefab();
         PlaceOverlayInManagers();
     }
 
-    private static void CreatePrefab()
+    private static void BuildPrefab()
     {
-        // 스프라이트 로드
         Sprite bodySprite = null, tailSprite = null;
         foreach (var a in AssetDatabase.LoadAllAssetsAtPath(AtlasPath))
         {
             if (a is Sprite s)
             {
-                if (s.name == "ui_speechBubble_1") bodySprite = s;
-                else if (s.name == "ui_speechBubble_0") tailSprite = s;
+                // 원본 매핑: _0 = body (sliced), _1 = tail (simple)
+                if (s.name == "ui_speechBubble_0") bodySprite = s;
+                else if (s.name == "ui_speechBubble_1") tailSprite = s;
             }
         }
         if (bodySprite == null || tailSprite == null)
@@ -36,16 +59,15 @@ public static class _TempCreateTutorialInfra
             return;
         }
 
-        // SpeechBubble 프리팹에서 폰트 상속
         TMP_FontAsset font = null;
-        var speechPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Bundles/Prefabs/cooking/SpeechBubble.prefab");
+        var speechPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SpeechBubblePrefab);
         if (speechPrefab != null)
         {
             var speechTmp = speechPrefab.GetComponentInChildren<TextMeshProUGUI>(true);
             if (speechTmp != null) font = speechTmp.font;
         }
 
-        // Root (visual 없음)
+        // Root
         var root = new GameObject("TutorialBubble", typeof(RectTransform), typeof(TutorialBubble));
         var rootRt = (RectTransform)root.transform;
         rootRt.anchorMin = new Vector2(0, 0);
@@ -53,15 +75,16 @@ public static class _TempCreateTutorialInfra
         rootRt.pivot = new Vector2(0.5f, 0f);
         rootRt.sizeDelta = Vector2.zero;
 
-        // Body: Image + VLG + CSF
+        // Body: Image (sliced) + VLG + CSF
         var bodyGO = new GameObject("Body", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image),
                                     typeof(VerticalLayoutGroup), typeof(ContentSizeFitter));
         bodyGO.transform.SetParent(root.transform, false);
         var bodyRt = (RectTransform)bodyGO.transform;
         bodyRt.anchorMin = new Vector2(0, 0);
         bodyRt.anchorMax = new Vector2(0, 0);
-        bodyRt.pivot = new Vector2(0.5f, 0f); // pivot at bottom-center → position = 아래 중앙 좌표
-        bodyRt.anchoredPosition = Vector2.zero;
+        bodyRt.pivot = new Vector2(0.5f, 0f);
+        // Body 하단이 tail top 근처에 오도록 anchor 위치: tail 안의 base 부분과 overlap.
+        bodyRt.anchoredPosition = new Vector2(0, TailHeight - TailOverlapWithBubble);
 
         var bodyImg = bodyGO.GetComponent<Image>();
         bodyImg.sprite = bodySprite;
@@ -70,8 +93,8 @@ public static class _TempCreateTutorialInfra
         bodyImg.color = Color.white;
 
         var vlg = bodyGO.GetComponent<VerticalLayoutGroup>();
-        vlg.padding = new RectOffset(60, 60, 50, 50);
-        vlg.spacing = 12;
+        vlg.padding = new RectOffset(PadLR, PadLR, PadTB, PadTB);
+        vlg.spacing = 10;
         vlg.childAlignment = TextAnchor.MiddleCenter;
         vlg.childControlWidth = true;
         vlg.childControlHeight = true;
@@ -82,7 +105,11 @@ public static class _TempCreateTutorialInfra
         csf.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
         csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-        // OptionalImage (Body의 자식)
+        // Body 최소 너비 보장 (짧은 텍스트에도 아주 좁아지진 않게)
+        var bodyLE = bodyGO.AddComponent<LayoutElement>();
+        bodyLE.minWidth = BodyMinWidth;
+
+        // OptionalImage
         var imgGO = new GameObject("OptionalImage", typeof(RectTransform), typeof(CanvasRenderer),
                                     typeof(Image), typeof(LayoutElement));
         imgGO.transform.SetParent(bodyGO.transform, false);
@@ -100,27 +127,31 @@ public static class _TempCreateTutorialInfra
         textGO.transform.SetParent(bodyGO.transform, false);
         var tmp = textGO.GetComponent<TextMeshProUGUI>();
         tmp.text = "튜토리얼 안내 텍스트";
-        tmp.fontSize = 30;
+        tmp.fontSize = FontSize;
+        tmp.fontStyle = FontStyles.Normal;
+        tmp.fontWeight = FontWeight.Regular;
         tmp.color = new Color(0.19f, 0.13f, 0.09f, 1f);
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.textWrappingMode = TextWrappingModes.Normal;
         tmp.raycastTarget = false;
         if (font != null) tmp.font = font;
 
-        // Tail (Body와 sibling, target 좌표에 tip 꽂힘)
+        // Tail (Body와 sibling)
         var tailGO = new GameObject("Tail", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
         tailGO.transform.SetParent(root.transform, false);
         var tailRt = (RectTransform)tailGO.transform;
         tailRt.anchorMin = new Vector2(0, 0);
         tailRt.anchorMax = new Vector2(0, 0);
-        tailRt.pivot = new Vector2(0.5f, 0f); // 스프라이트 하단 중앙 = tip 근사
-        tailRt.sizeDelta = new Vector2(63, 92); // 원본 126x184의 절반
-        tailRt.anchoredPosition = Vector2.zero;
+        tailRt.pivot = new Vector2(0.5f, 0f); // tail 하단 중앙 = tip
+        tailRt.sizeDelta = new Vector2(TailWidth, TailHeight);
+        tailRt.anchoredPosition = Vector2.zero; // tail 하단이 root origin
+
         var tailImg = tailGO.GetComponent<Image>();
         tailImg.sprite = tailSprite;
+        tailImg.type = Image.Type.Simple;
         tailImg.raycastTarget = false;
 
-        // Serialize refs wire
+        // Wire refs
         var bubble = root.GetComponent<TutorialBubble>();
         var so = new SerializedObject(bubble);
         so.FindProperty("body").objectReferenceValue = bodyRt;
@@ -133,7 +164,7 @@ public static class _TempCreateTutorialInfra
         AssetDatabase.Refresh();
         PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
         Object.DestroyImmediate(root);
-        Debug.Log($"[Tutorial] Prefab created at {PrefabPath}");
+        Debug.Log($"[Tutorial] Prefab 생성 완료: {PrefabPath}");
     }
 
     private static void PlaceOverlayInManagers()
@@ -145,10 +176,7 @@ public static class _TempCreateTutorialInfra
             if (r.name == "TutorialOverlayCanvas") { existing = r; break; }
 
         GameObject go;
-        if (existing != null)
-        {
-            go = existing;
-        }
+        if (existing != null) go = existing;
         else
         {
             go = new GameObject("TutorialOverlayCanvas", typeof(Canvas), typeof(CanvasScaler),
@@ -158,7 +186,7 @@ public static class _TempCreateTutorialInfra
 
         var canvas = go.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 1000; // 다른 Overlay UI 위에
+        canvas.sortingOrder = 1000;
 
         var scaler = go.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;

@@ -3,28 +3,30 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// 튜토리얼 말풍선 (ScreenSpaceOverlay canvas 자식). ui_speechBubble 스프라이트 재활용.
+/// 튜토리얼 말풍선 (ScreenSpaceOverlay canvas 자식).
 /// 구조:
-///  Root (RectTransform + TutorialBubble)
-///   ├─ Body   (Image ui_speechBubble_1 sliced + VLG + CSF) — 텍스트 길이에 맞춰 자동 크기, pivot bottom-center
+///  Root (pivot 0.5 0) — position = target screen point
+///   ├─ Body (VLG+CSF 자동 크기)
 ///   │   ├─ OptionalImage (기본 비활성)
 ///   │   └─ Contents (TMP)
-///   └─ Tail   (Image ui_speechBubble_0, pivot tip 위치) — target 좌표에 tip이 꽂힘
+///   └─ Tail (pivot 0.5 0 by default) — tip at root origin
 ///
-/// 배치: Body는 위, Tail은 아래로 뻗음. Tail tip이 targetScreenPos.
+/// SetDirection에 따라 tail 회전 + body 반대편 배치.
 /// </summary>
 public class TutorialBubble : MonoBehaviour
 {
+    public enum TailDirection { Down, Up }
+
     [SerializeField] private RectTransform body;
     [SerializeField] private RectTransform tail;
     [SerializeField] private TextMeshProUGUI contents;
     [SerializeField] private Image optionalImage;
 
     [Header("Placement")]
-    [SerializeField, Tooltip("body bottom과 tail top 사이 seamless 겹침 (px)")]
-    private float tailBodyOverlap = 20f;
-    [SerializeField, Tooltip("target 위 추가 gap (px). 0이면 tail tip이 정확히 target에 꽂힘.")]
-    private float extraGapAboveTarget = 0f;
+    [SerializeField, Tooltip("body와 tail base 사이 seamless overlap (px)")]
+    private float tailBodyOverlap = 25f;
+    [SerializeField, Tooltip("Tail이 body의 어느 쪽에 붙을지. -1=body 왼쪽 코너, 0=중앙, +1=body 오른쪽 코너. 대략 ±0.5 권장.")]
+    private float tailHorizontalFraction = -0.5f;
 
     private bool _interactive;
     private System.Action _onDismiss;
@@ -55,37 +57,59 @@ public class TutorialBubble : MonoBehaviour
         }
     }
 
-    /// <summary>스크린 좌표에 tail tip 꽂고, body를 위에 배치.</summary>
-    public void PlaceAtScreenPoint(Vector2 targetScreenPos)
+    /// <summary>스크린 좌표에 tail tip 꽂음. dir로 tail 방향/body 위치 결정.</summary>
+    public void PlaceAtScreenPoint(Vector2 targetScreenPos, TailDirection dir = TailDirection.Down)
     {
         if (body != null) LayoutRebuilder.ForceRebuildLayoutImmediate(body);
-        if (tail != null) tail.position = (Vector3)(targetScreenPos + Vector2.up * extraGapAboveTarget);
-        if (body != null)
-        {
-            float tailH = tail != null ? tail.rect.height : 0f;
-            body.position = (Vector3)(targetScreenPos + new Vector2(0, tailH - tailBodyOverlap + extraGapAboveTarget));
-        }
+        ApplyDirection(dir);
+        transform.position = (Vector3)targetScreenPos;
     }
 
-    /// <summary>월드 좌표 → 스크린 변환 후 배치.</summary>
-    public void PlaceAtWorldPoint(Vector3 worldPoint)
+    public void PlaceAtWorldPoint(Vector3 worldPoint, TailDirection dir = TailDirection.Down)
     {
         var cam = Camera.main;
         if (cam == null) return;
         Vector2 screenPos = cam.WorldToScreenPoint(worldPoint);
-        PlaceAtScreenPoint(screenPos);
+        PlaceAtScreenPoint(screenPos, dir);
     }
 
-    /// <summary>UI RectTransform 위쪽 중앙에 tail tip 꽂음.</summary>
-    public void PlaceNearRectTransform(RectTransform target)
+    public void PlaceNearRectTransform(RectTransform target, TailDirection dir = TailDirection.Down)
     {
         if (target == null) return;
         Vector3[] corners = new Vector3[4];
         target.GetWorldCorners(corners);
-        // Overlay canvas 하위 RectTransform의 GetWorldCorners는 스크린 픽셀 좌표를 반환.
-        // corners[1]=top-left, corners[2]=top-right → top center
-        Vector2 topCenter = new Vector2((corners[1].x + corners[2].x) * 0.5f, corners[1].y);
-        PlaceAtScreenPoint(topCenter);
+        // corners[0]=bl, [1]=tl, [2]=tr, [3]=br
+        Vector2 tip = dir == TailDirection.Up
+            ? new Vector2((corners[0].x + corners[3].x) * 0.5f, corners[0].y)  // 대상 bottom-center
+            : new Vector2((corners[1].x + corners[2].x) * 0.5f, corners[1].y); // 대상 top-center
+        PlaceAtScreenPoint(tip, dir);
+    }
+
+    /// <summary>tail 회전 + body offset. 세로 sprite라 Down/Up만 지원.
+    /// tailHorizontalFraction: -1(body 왼쪽 끝) ~ +1(body 오른쪽 끝). body는 tail 반대편으로 밀림.</summary>
+    private void ApplyDirection(TailDirection dir)
+    {
+        if (tail == null || body == null) return;
+        float baseOffset = tail.rect.height - tailBodyOverlap;
+        float bodyW = body.rect.width;
+        // tail이 body의 X 방향으로 얼마나 오프셋됐는지 → body는 반대 방향으로 이동.
+        float bodyOffsetX = -tailHorizontalFraction * 0.5f * bodyW;
+
+        tail.pivot = new Vector2(0.5f, 0f);
+        tail.anchoredPosition = Vector2.zero;
+
+        if (dir == TailDirection.Up)
+        {
+            tail.localRotation = Quaternion.Euler(0, 0, 180);
+            body.pivot = new Vector2(0.5f, 1f);
+            body.anchoredPosition = new Vector2(bodyOffsetX, -baseOffset);
+        }
+        else // Down
+        {
+            tail.localRotation = Quaternion.identity;
+            body.pivot = new Vector2(0.5f, 0f);
+            body.anchoredPosition = new Vector2(bodyOffsetX, baseOffset);
+        }
     }
 
     private void Update()
