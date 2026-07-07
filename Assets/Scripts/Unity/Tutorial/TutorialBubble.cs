@@ -25,6 +25,8 @@ public class TutorialBubble : MonoBehaviour
     [Header("Placement")]
     [SerializeField, Tooltip("body와 tail base 사이 seamless overlap (px)")]
     private float tailBodyOverlap = 25f;
+    [SerializeField, Tooltip("Tail 스프라이트 하단의 투명 padding 보정 (px). 실제 visual tip이 rect bottom보다 위에 있음.")]
+    private float tailTipVisualPadding = 8f;
     [SerializeField, Tooltip("Tail이 body의 어느 쪽에 붙을지. -1=body 왼쪽 코너, 0=중앙, +1=body 오른쪽 코너. 대략 ±0.5 권장.")]
     private float tailHorizontalFraction = -0.5f;
 
@@ -92,21 +94,23 @@ public class TutorialBubble : MonoBehaviour
         if (tail == null || body == null) return;
         float baseOffset = tail.rect.height - tailBodyOverlap;
         float bodyW = body.rect.width;
-        // tail이 body의 X 방향으로 얼마나 오프셋됐는지 → body는 반대 방향으로 이동.
         float bodyOffsetX = -tailHorizontalFraction * 0.5f * bodyW;
 
         tail.pivot = new Vector2(0.5f, 0f);
-        tail.anchoredPosition = Vector2.zero;
 
         if (dir == TailDirection.Up)
         {
+            // 회전 180°: rect가 위로 뒤집힘. visual tip padding 보정도 반대.
             tail.localRotation = Quaternion.Euler(0, 0, 180);
+            tail.anchoredPosition = new Vector2(0, tailTipVisualPadding);
             body.pivot = new Vector2(0.5f, 1f);
             body.anchoredPosition = new Vector2(bodyOffsetX, -baseOffset);
         }
         else // Down
         {
+            // Tail을 y=-padding으로 내려서 실제 visual tip이 root origin(target)에 오게.
             tail.localRotation = Quaternion.identity;
+            tail.anchoredPosition = new Vector2(0, -tailTipVisualPadding);
             body.pivot = new Vector2(0.5f, 0f);
             body.anchoredPosition = new Vector2(bodyOffsetX, baseOffset);
         }

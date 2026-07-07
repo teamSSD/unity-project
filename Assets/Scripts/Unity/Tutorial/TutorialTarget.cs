@@ -15,6 +15,18 @@ public class TutorialTarget : MonoBehaviour
     [SerializeField, Tooltip("고유 key. TutorialStepPart.targetKey와 매치.")]
     private string key;
 
+    [SerializeField,
+     Tooltip("있으면 이 Transform의 world position을 anchor로 사용 (SpriteRenderer/RectTransform 무시). 자식 Empty GO를 원하는 위치에 두고 여기 wire.")]
+    private Transform anchorOverride;
+
+    [SerializeField, Range(0f, 1f),
+     Tooltip("SpriteRenderer 대상의 수직 앵커 (anchorOverride 없을 때). 0=하단, 0.5=중앙, 1=상단.")]
+    private float verticalAnchorFraction = 1f;
+
+    [SerializeField,
+     Tooltip("최종 스크린 좌표에 더할 오프셋 (px). 미세 조정.")]
+    private Vector2 screenOffset = Vector2.zero;
+
     public string Key => key;
 
     private void OnEnable()
@@ -32,14 +44,21 @@ public class TutorialTarget : MonoBehaviour
     /// <summary>이 타겟의 화면(스크린) 위치 반환. bubble tail이 여기 꽂힘.</summary>
     public Vector2 GetScreenPosition()
     {
+        // anchorOverride가 있으면 그 world position을 스크린으로 변환.
+        if (anchorOverride != null)
+        {
+            var cam0 = Camera.main;
+            if (cam0 == null) return Vector2.zero;
+            return (Vector2)cam0.WorldToScreenPoint(anchorOverride.position) + screenOffset;
+        }
+
         var rt = transform as RectTransform;
         if (rt != null)
         {
             Vector3[] corners = new Vector3[4];
             rt.GetWorldCorners(corners);
-            // Overlay canvas UI인 경우 WorldCorners = 스크린 픽셀 좌표.
-            // 중앙점 반환 (호출부가 top-center 등을 원하면 TutorialBubble.PlaceNearRectTransform 사용).
-            return new Vector2((corners[0].x + corners[2].x) * 0.5f, (corners[0].y + corners[2].y) * 0.5f);
+            var center = new Vector2((corners[0].x + corners[2].x) * 0.5f, (corners[0].y + corners[2].y) * 0.5f);
+            return center + screenOffset;
         }
 
         var cam = Camera.main;
@@ -48,11 +67,12 @@ public class TutorialTarget : MonoBehaviour
         var sr = GetComponent<SpriteRenderer>();
         if (sr != null)
         {
-            // Sprite bounds의 위쪽(bubble이 위에 오게 tail이 target 위쪽에 꽂힘).
-            var topCenter = sr.bounds.center + Vector3.up * sr.bounds.extents.y;
-            return cam.WorldToScreenPoint(topCenter);
+            // verticalAnchorFraction: 0=하단, 1=상단.
+            float y = sr.bounds.min.y + sr.bounds.size.y * verticalAnchorFraction;
+            var anchorWorld = new Vector3(sr.bounds.center.x, y, sr.bounds.center.z);
+            return (Vector2)cam.WorldToScreenPoint(anchorWorld) + screenOffset;
         }
 
-        return cam.WorldToScreenPoint(transform.position);
+        return (Vector2)cam.WorldToScreenPoint(transform.position) + screenOffset;
     }
 }

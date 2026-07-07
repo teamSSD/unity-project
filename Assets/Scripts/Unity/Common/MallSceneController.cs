@@ -98,6 +98,18 @@ public class MallSceneController : MonoBehaviour
         bool cameFromShop = SceneLoader.CurrentScene == SceneNames.Shop;
         if (currentPhase != PhaseType.Preparation && currentPhase != PhaseType.Morning && !cameFromShop)
             OpenActionSelection();
+
+        TryStartWelcomeTutorial(currentPhase);
+    }
+
+    /// <summary>Preparation 첫 진입 시 튜토리얼 활성 상태면 Welcome 스텝 순차 표시.</summary>
+    private void TryStartWelcomeTutorial(PhaseType currentPhase)
+    {
+        if (currentPhase != PhaseType.Preparation) return;
+        var tc = TutorialController.Instance;
+        if (tc == null) return;
+        if (!tc.CanShow(TutorialStepId.WelcomeAtSpawn)) return;
+        tc.Show(TutorialStepId.WelcomeAtSpawn);
     }
 
     private void OnDestroy()

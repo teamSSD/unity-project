@@ -337,7 +337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eeb083bfd5e5b49cdb6ebca979f01044, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Unity::TutorialController
-  catalog: {fileID: 0}
+  catalog: {fileID: 11400000, guid: 07f65543bda9f41619672e212240960f, type: 2}
   bubblePrefab: {fileID: 4971999808010525228, guid: a2e9dc9804f384824bfed5c92f82d558, type: 3}
   overlayCanvas: {fileID: 419853729}
 --- !u!4 &1308974501

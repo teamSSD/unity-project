@@ -3228,6 +3228,37 @@ Transform:
   - {fileID: 270900042}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &392165470
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 392165471}
+  m_Layer: 0
+  m_Name: TutorialAnchor_Head
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &392165471
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 392165470}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.3, y: 0.9, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 964561689}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &393859242
 GameObject:
   m_ObjectHideFlags: 0
@@ -4562,6 +4593,37 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &656914161
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 656914162}
+  m_Layer: 0
+  m_Name: TutorialAnchor_Door
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &656914162
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 656914161}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 968083239}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &660434612
 GameObject:
   m_ObjectHideFlags: 0
@@ -6573,6 +6635,7 @@ GameObject:
   - component: {fileID: 968083240}
   - component: {fileID: 968083242}
   - component: {fileID: 968083241}
+  - component: {fileID: 968083243}
   m_Layer: 0
   m_Name: playerStore
   m_TagString: Untagged
@@ -6592,7 +6655,8 @@ Transform:
   m_LocalPosition: {x: -7.51, y: 0.12, z: 0}
   m_LocalScale: {x: 0.9004, y: 0.9004, z: 0.9004}
   m_ConstrainProportionsScale: 1
-  m_Children: []
+  m_Children:
+  - {fileID: 656914162}
   m_Father: {fileID: 439474510}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &968083240
@@ -6714,6 +6778,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.2744474, y: 2.263885}
   m_EdgeRadius: 0
+--- !u!114 &968083243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 968083238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f318b8a268bcc490184c5a1cf5079998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Unity::TutorialTarget
+  key: playerStore
+  anchorOverride: {fileID: 656914162}
+  verticalAnchorFraction: 0.3
+  screenOffset: {x: 0, y: 0}
 --- !u!1 &991607088
 GameObject:
   m_ObjectHideFlags: 0
@@ -12551,7 +12631,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 4
+  orthographic size: 2.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -12595,7 +12675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 964561689}
-  offset: {x: 0, y: 1.8, z: 0}
+  offset: {x: 0, y: 0.88, z: 0}
   smoothTime: 0.1
   maxSpeed: 12
   boundsSource: {fileID: 1686758170}
@@ -13334,9 +13414,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 3093472286701614652, guid: ebb29e65ccc6c4124873d01c34125361, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 392165471}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4330111519854398260, guid: ebb29e65ccc6c4124873d01c34125361, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3867380719675754937}
   m_SourcePrefab: {fileID: 100100000, guid: ebb29e65ccc6c4124873d01c34125361, type: 3}
+--- !u!1 &3867380719675754936 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4330111519854398260, guid: ebb29e65ccc6c4124873d01c34125361, type: 3}
+  m_PrefabInstance: {fileID: 3867380719675754935}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3867380719675754937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3867380719675754936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f318b8a268bcc490184c5a1cf5079998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Unity::TutorialTarget
+  key: player
+  anchorOverride: {fileID: 392165471}
+  verticalAnchorFraction: 1
+  screenOffset: {x: 42, y: 65}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

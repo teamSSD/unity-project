@@ -28,7 +28,7 @@ public static class _TempCreateTutorialInfra
     // 원본 SpeechBubble tail = 126x184, overlap = 52. 그것보다 훨씬 작게.
     private const float TailWidth = 60f;
     private const float TailHeight = 85f;
-    private const float TailOverlapWithBubble = 25f;
+    private const float TailOverlapWithBubble = 40f; // body 안쪽으로 40px 겹침 — seamless
     private const float BodyMinWidth = 260f;
     private const int PadLR = 40;
     private const int PadTB = 28;
@@ -194,6 +194,8 @@ public static class _TempCreateTutorialInfra
         so.FindProperty("tail").objectReferenceValue = tailRt;
         so.FindProperty("contents").objectReferenceValue = tmp;
         so.FindProperty("optionalImage").objectReferenceValue = img;
+        so.FindProperty("tailBodyOverlap").floatValue = TailOverlapWithBubble;
+        so.FindProperty("tailTipVisualPadding").floatValue = 8f;
         so.ApplyModifiedPropertiesWithoutUndo();
 
         System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(PrefabPath));
