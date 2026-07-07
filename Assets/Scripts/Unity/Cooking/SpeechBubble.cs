@@ -19,6 +19,8 @@ public class SpeechBubble : MonoBehaviour
     [Header("Tail attachment on bubble bottom flat area")]
     [SerializeField, Tooltip("Tail base가 버블 corner에서 최소 얼마나 안쪽에 붙어야 하나 (rect units). 라운드 코너 반경보다 크게.")]
     private float tailBaseMarginFromCorner = 50f;
+    [SerializeField, Tooltip("Tail sprite top이 버블 bottom을 얼마나 뚫고 올라와 seamless 연결 (rect units). 원래 = 52.")]
+    private float tailOverlapWithBubble = 52f;
 
     [Header("Target 위치 (bounds 정규화 좌표)")]
     [SerializeField, Range(-1f, 1f),
@@ -58,7 +60,9 @@ public class SpeechBubble : MonoBehaviour
         //   base right edge = anchor.x = halfW - tailBaseMarginFromCorner.
         float tailX = customerOnLeft ? -halfW + tailBaseMarginFromCorner
                                      : halfW - tailBaseMarginFromCorner;
-        float tailY = -halfH - tailH;
+        // tailY: tip Y. sprite top = anchor.y + tailH. Base가 bubble bottom을 overlap만큼 뚫고 올라오려면
+        // sprite top = -halfH + overlap → anchor.y = -halfH + overlap - tailH.
+        float tailY = -halfH + tailOverlapWithBubble - tailH;
         tail.anchoredPosition = new Vector2(tailX, tailY);
         tail.localScale = new Vector3(customerOnLeft ? 1f : -1f, 1f, 1f);
 
