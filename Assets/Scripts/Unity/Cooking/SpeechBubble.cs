@@ -3,7 +3,8 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// 손님 위 말풍선. Tail의 tip(sprite 왼쪽 아래)이 손님 상대적 target에 정확히 닿게 배치.
+/// 손님 위 말풍선. Tail의 tip(sprite 왼쪽 아래)이 손님 상대적 target에 닿게 배치.
+/// Tail sprite는 버블 edge 밖으로 뻗어나가고 sprite body가 버블 안쪽으로 들어가는 구조.
 /// Bubble world position = target - (tail tip local offset * canvas lossyScale).
 /// </summary>
 [RequireComponent(typeof(RectTransform))]
@@ -12,19 +13,18 @@ public class SpeechBubble : MonoBehaviour
     [SerializeField] private TextMeshProUGUI contents;
     [SerializeField] private RectTransform tail;
 
-    [Header("Tail 배치 (버블 내부)")]
-    [SerializeField, Range(0f, 1f),
-     Tooltip("Tail 앵커가 손님-쪽 edge에서 안쪽으로 얼마나 (0=edge, 0.3=30% 인셋, 0.5=버블 중앙).")]
-    private float tailInsetFromCustomerEdge = 0.3f;
+    [Header("Tail 배치")]
+    [SerializeField, Tooltip("Tail tip이 버블 customer-facing edge에서 얼마나 밖으로 (rect units, 양수 = 밖). 원래 스타일 = 53.")]
+    private float tailBeyondBubbleEdgeX = 53f;
     [SerializeField, Tooltip("Tail tip이 버블 하단에서 얼마나 아래로 (rect units). 원래 스타일 = 132.")]
     private float tailBelowBubble = 132f;
 
     [Header("Target 위치 (bounds 정규화 좌표)")]
     [SerializeField, Range(-1f, 1f),
-     Tooltip("X 위치: bounds.center 기준 extents.x 비율. 0=중앙, ±1=edge. 손님 얼굴이 중앙 근처면 0.")]
-    private float targetXFractionFromCenter = 0f;
+     Tooltip("X: 0=중앙, 1=customer-facing edge (양수 = 버블 반대편 edge 방향).")]
+    private float targetXFractionTowardBubbleFacing = 0.9f;
     [SerializeField, Range(-1f, 1f),
-     Tooltip("Y 위치: bounds.center 기준 extents.y 비율. 0=중앙, 1=top edge. 얼굴이 상단 근처면 0.7~0.8.")]
+     Tooltip("Y: 0=중앙, 1=top edge. 얼굴이 상단 근처면 0.7~0.8.")]
     private float targetYFractionFromCenter = 0.7f;
 
     public void setContents(string text)
@@ -39,33 +39,37 @@ public class SpeechBubble : MonoBehaviour
         RectTransform rt = GetComponent<RectTransform>();
         LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
 
-        // 손님이 카메라 왼쪽 절반 → 버블은 손님 오른쪽에 → 손님-쪽 edge는 버블 왼쪽
+        // 손님이 카메라 왼쪽 절반 → 버블은 손님 오른쪽에 위치.
+        // customerOnLeft = 손님이 카메라 왼쪽, 버블은 오른쪽 → 버블의 customer-facing edge = 버블 왼쪽 (min.x).
+        // !customerOnLeft = 버블이 왼쪽 → customer-facing edge = 버블 오른쪽 (max.x).
         bool customerOnLeft = cam.WorldToViewportPoint(targetBounds.center).x < 0.5f;
 
-        // Tail anchoredPosition (버블 pivot 0.5,0.5 기준).
-        // Tail의 RectTransform pivot이 (0,0)이라 sprite bottom-left(=tip)가 anchoredPosition 지점.
-        // Tail X: 손님-쪽 edge에서 insetX만큼 안쪽.
-        // Tail Y: 버블 하단에서 tailBelowBubble 만큼 아래 (tip이 sprite bottom-left이라 sprite는 이 위로 뻗음).
+        // Tail anchor: 버블 customer-facing edge 바깥으로 tailBeyondBubbleEdgeX 만큼 나감.
+        // Tail의 RectTransform pivot(0,0)이 sprite bottom-left(=tip)이라 anchoredPosition = tip.
+        // sprite body는 anchor에서 up-toward-bubble 방향으로 뻗어 버블 안으로 들어감.
         float halfW = rt.rect.width * 0.5f;
         float halfH = rt.rect.height * 0.5f;
-        float insetX = tailInsetFromCustomerEdge * rt.rect.width;
-        float tailX = customerOnLeft ? -halfW + insetX : halfW - insetX;
+        float tailX = customerOnLeft ? -halfW - tailBeyondBubbleEdgeX
+                                     : halfW + tailBeyondBubbleEdgeX;
         float tailY = -halfH - tailBelowBubble;
         tail.anchoredPosition = new Vector2(tailX, tailY);
-        // Flip: pivot(0,0)에선 sprite가 anchor에서 up-right로 뻗음.
-        // customerOnLeft → 손님 방향(왼쪽)으로 뻗어야 → flip. 반대 케이스는 flip X.
-        tail.localScale = new Vector3(customerOnLeft ? -1f : 1f, 1f, 1f);
+        // Sprite 방향:
+        // - customerOnLeft: 버블이 오른쪽, tail anchor는 버블 왼쪽 밖. Sprite body가 오른쪽(버블) 향해 뻗음
+        //   → pivot(0,0) + no-flip → 자연스레 up-right.
+        // - !customerOnLeft: 버블이 왼쪽, tail anchor는 버블 오른쪽 밖. Sprite body가 왼쪽(버블) 향해 뻗음
+        //   → flip (scale.x = -1) → up-left.
+        tail.localScale = new Vector3(customerOnLeft ? 1f : -1f, 1f, 1f);
 
-        // Target world point — 손님 bounds 정규화 위치 (extents 비율).
-        // 크기 무관하게 얼굴/머리 영역을 일관되게 가리킴.
+        // Target world point — 손님 bounds 정규화 위치.
+        // X: customer-facing edge 방향으로 fraction만큼. 손님이 왼쪽이면 max.x 방향, 아니면 min.x 방향.
+        float xSign = customerOnLeft ? +1f : -1f;
         Vector3 target = new Vector3(
-            targetBounds.center.x + targetXFractionFromCenter * targetBounds.extents.x,
+            targetBounds.center.x + xSign * targetXFractionTowardBubbleFacing * targetBounds.extents.x,
             targetBounds.center.y + targetYFractionFromCenter * targetBounds.extents.y,
             targetBounds.center.z
         );
 
-        // Bubble world position = target - (tail tip local offset * canvas lossyScale).
-        // tail tip local = tail.anchoredPosition (pivot at tip이라 그대로).
+        // Bubble world = target - tail tip local offset (canvas lossyScale 반영).
         Vector3 tipLocalOffset = new Vector3(tailX, tailY, 0f);
         Vector3 tipWorldOffset = tipLocalOffset * rt.lossyScale.x;
         transform.position = target - tipWorldOffset;
