@@ -14,8 +14,10 @@ public class SpeechBubble : MonoBehaviour
 
     [Header("Tail 배치 (버블 내부)")]
     [SerializeField, Range(0f, 1f),
-     Tooltip("Tail이 손님-쪽 edge에서 안쪽으로 얼마나 들어와 있나. 0=edge에 딱, 0.3=30% 인셋, 0.5=버블 중앙.")]
+     Tooltip("Tail 앵커가 손님-쪽 edge에서 안쪽으로 얼마나 (0=edge, 0.3=30% 인셋, 0.5=버블 중앙).")]
     private float tailInsetFromCustomerEdge = 0.3f;
+    [SerializeField, Tooltip("Tail tip이 버블 하단에서 얼마나 아래로 (rect units). 원래 스타일 = 132.")]
+    private float tailBelowBubble = 132f;
 
     [Header("Target 오프셋 (bounds 기반, world unit)")]
     [SerializeField, Tooltip("손님 sprite edge에서 X offset. customerOnLeft면 max.x + x, 아니면 min.x - x. 양수 = 손님 더 바깥.")]
@@ -41,14 +43,16 @@ public class SpeechBubble : MonoBehaviour
         // Tail anchoredPosition (버블 pivot 0.5,0.5 기준).
         // Tail의 RectTransform pivot이 (0,0)이라 sprite bottom-left(=tip)가 anchoredPosition 지점.
         // Tail X: 손님-쪽 edge에서 insetX만큼 안쪽.
+        // Tail Y: 버블 하단에서 tailBelowBubble 만큼 아래 (tip이 sprite bottom-left이라 sprite는 이 위로 뻗음).
         float halfW = rt.rect.width * 0.5f;
         float halfH = rt.rect.height * 0.5f;
         float insetX = tailInsetFromCustomerEdge * rt.rect.width;
         float tailX = customerOnLeft ? -halfW + insetX : halfW - insetX;
-        float tailY = -halfH; // 버블 하단 = tail tip
+        float tailY = -halfH - tailBelowBubble;
         tail.anchoredPosition = new Vector2(tailX, tailY);
-        // Flip: 손님이 오른쪽이면 sprite 반전 (tip 위치는 anchor 그대로, sprite 몸통만 반전).
-        tail.localScale = new Vector3(customerOnLeft ? 1f : -1f, 1f, 1f);
+        // Flip: pivot(0,0)에선 sprite가 anchor에서 up-right로 뻗음.
+        // customerOnLeft → 손님 방향(왼쪽)으로 뻗어야 → flip. 반대 케이스는 flip X.
+        tail.localScale = new Vector3(customerOnLeft ? -1f : 1f, 1f, 1f);
 
         // Target world point
         Vector3 target = new Vector3(
