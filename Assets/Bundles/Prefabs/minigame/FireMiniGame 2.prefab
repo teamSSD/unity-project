@@ -61,7 +61,7 @@ MonoBehaviour:
   maxVelocity: 1
   loopSfx: {fileID: 8300000, guid: d13e15232a21d438ba17e472ed8b29c7, type: 3}
   volumeTracksArrow: 1
-  baseLoopVolume: 0.6
+  baseLoopVolume: 0.36
 --- !u!1 &4158257247090499813
 GameObject:
   m_ObjectHideFlags: 0

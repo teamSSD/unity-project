@@ -10,7 +10,7 @@ public class GriddleMinigame : MiniGameAbstract
 
     [Header("SFX")]
     [SerializeField] private AudioClip loopSfx;
-    [SerializeField] private float baseLoopVolume = 0.6f;
+    [SerializeField] private float baseLoopVolume = 0.36f;
 
     [Header("Settings")]
     [SerializeField] private int totalArrowCount = 10;
@@ -156,7 +156,7 @@ public class GriddleMinigame : MiniGameAbstract
         UpdateVisualPositions();
     }
 
-    protected override void OnGameStarted() => SoundManager.Instance?.PlayLoopSFX(loopSfx, 0.2f);
+    protected override void OnGameStarted() => SoundManager.Instance?.PlayLoopSFX(loopSfx, 0.12f);
     protected override void OnGameEnded()   => SoundManager.Instance?.StopLoopSFX(0.2f);
 
     private void RestartVolumeSpike()
@@ -169,7 +169,7 @@ public class GriddleMinigame : MiniGameAbstract
 
     private async UniTaskVoid VolumeSpikeAsync(CancellationToken ct)
     {
-        SoundManager.Instance?.SetLoopSFXVolume(1f);
+        SoundManager.Instance?.SetLoopSFXVolume(0.6f);
         await UniTask.Delay(System.TimeSpan.FromSeconds(0.15f), cancellationToken: ct);
         SoundManager.Instance?.SetLoopSFXVolume(baseLoopVolume);
     }

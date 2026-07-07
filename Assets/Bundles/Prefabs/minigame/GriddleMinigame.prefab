@@ -57,7 +57,7 @@ MonoBehaviour:
   effectParent: {fileID: 9108272839199408845}
   spacing: 0.55
   loopSfx: {fileID: 8300000, guid: 311ab480ff29c46b58ebb6dfc5ef3d79, type: 3}
-  baseLoopVolume: 0.6
+  baseLoopVolume: 0.36
 --- !u!114 &7436736717814215148
 MonoBehaviour:
   m_ObjectHideFlags: 0

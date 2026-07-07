@@ -12,7 +12,7 @@ public class FireMiniGame : MiniGameAbstract
     [Header("SFX")]
     [SerializeField] private AudioClip loopSfx;
     [SerializeField] private bool volumeTracksArrow;
-    [SerializeField] private float baseLoopVolume = 0.6f;
+    [SerializeField] private float baseLoopVolume = 0.36f;
     
     [Header("게이지 설정")]
     [SerializeField] private Vector3 gaugePosition = new Vector3(-2f, 0.33f, 0);
@@ -106,7 +106,7 @@ public class FireMiniGame : MiniGameAbstract
             }
             else
             {
-                v = Input.GetKey(KeyCode.Space) ? 1f : baseLoopVolume;
+                v = Input.GetKey(KeyCode.Space) ? 0.6f : baseLoopVolume;
             }
             SoundManager.Instance?.SetLoopSFXVolume(v);
         }
@@ -135,7 +135,7 @@ public class FireMiniGame : MiniGameAbstract
         return Mathf.Max(0, 1.0f - penalty);
     }
 
-    protected override void OnGameStarted() => SoundManager.Instance?.PlayLoopSFX(loopSfx, 0.2f);
+    protected override void OnGameStarted() => SoundManager.Instance?.PlayLoopSFX(loopSfx, 0.12f);
     protected override void OnGameEnded()   => SoundManager.Instance?.StopLoopSFX(0.2f);
 
     public override float CalculateScore()
