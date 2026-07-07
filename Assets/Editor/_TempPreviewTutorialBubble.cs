@@ -2,13 +2,13 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-/// <summary>일회성 미리보기. 5가지 케이스를 화면 여러 곳에 배치.</summary>
+/// <summary>Managers 씬 TutorialOverlayCanvas에 여러 방향/fraction 조합의 bubble preview 배치.</summary>
 public static class _TempPreviewTutorialBubble
 {
     private const string PrefabPath = "Assets/Bundles/Prefabs/tutorial/TutorialBubble.prefab";
     private const string ScenePath = "Assets/Scenes/ForReal/Managers.unity";
 
-    [MenuItem("Tools/Tutorial/Preview Bubble in Managers Scene")]
+    [MenuItem("Tools/Tutorial/Preview Bubble Directions in Managers Scene")]
     public static void Preview()
     {
         var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
@@ -18,6 +18,7 @@ public static class _TempPreviewTutorialBubble
             if (r.name == "TutorialOverlayCanvas") { canvasRt = (RectTransform)r.transform; break; }
         if (canvasRt == null) { Debug.LogError("[Tutorial] TutorialOverlayCanvas 미발견"); return; }
 
+        // 기존 preview 제거
         for (int i = canvasRt.childCount - 1; i >= 0; i--)
             if (canvasRt.GetChild(i).name.StartsWith("[Preview]"))
                 Object.DestroyImmediate(canvasRt.GetChild(i).gameObject);
@@ -25,30 +26,36 @@ public static class _TempPreviewTutorialBubble
         var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
         if (prefab == null) { Debug.LogError($"[Tutorial] Prefab 미발견: {PrefabPath}"); return; }
 
-        // 1920x1080 기준 배치. 각 preview는 tail tip이 지정 좌표에 꽂힘.
-        SpawnPreview(prefab, canvasRt, "[Preview] Down_Short",  new Vector2(960, 300),  TutorialBubble.TailDirection.Down,
-                     "한 줄 안내입니다.");
-        SpawnPreview(prefab, canvasRt, "[Preview] Down_Long",   new Vector2(400, 250),  TutorialBubble.TailDirection.Down,
-                     "여러 줄 안내가 들어갈 때\n어떻게 보이는지 확인하는\n케이스입니다.");
-        SpawnPreview(prefab, canvasRt, "[Preview] Up_Short",    new Vector2(1500, 900), TutorialBubble.TailDirection.Up,
-                     "타겟이 위에 있어요.");
+        // 6개 preview: Down/Up x fraction {-0.5, 0, +0.5}
+        // 1920x1080 canvas — 그리드 배치
+        Spawn(prefab, canvasRt, "[Preview] Down_L",  new Vector2(320, 800),  TutorialBubble.TailDirection.Down, -0.5f, "Down / f=-0.5");
+        Spawn(prefab, canvasRt, "[Preview] Down_C",  new Vector2(960, 800),  TutorialBubble.TailDirection.Down,  0.0f, "Down / f=0");
+        Spawn(prefab, canvasRt, "[Preview] Down_R",  new Vector2(1600, 800), TutorialBubble.TailDirection.Down, +0.5f, "Down / f=+0.5");
+        Spawn(prefab, canvasRt, "[Preview] Up_L",    new Vector2(320, 280),  TutorialBubble.TailDirection.Up,   -0.5f, "Up / f=-0.5");
+        Spawn(prefab, canvasRt, "[Preview] Up_C",    new Vector2(960, 280),  TutorialBubble.TailDirection.Up,    0.0f, "Up / f=0");
+        Spawn(prefab, canvasRt, "[Preview] Up_R",    new Vector2(1600, 280), TutorialBubble.TailDirection.Up,   +0.5f, "Up / f=+0.5");
 
         EditorSceneManager.MarkSceneDirty(scene);
-        Debug.Log("[Tutorial] 5개 preview 배치. Scene 뷰에서 확인.");
+        Debug.Log("[Tutorial] Preview 6개 배치. Scene 뷰에서 확인. 완료 후 Remove Preview로 정리.");
     }
 
-    private static void SpawnPreview(GameObject prefab, RectTransform canvas, string name,
-                                     Vector2 tipScreen, TutorialBubble.TailDirection dir, string text)
+    private static void Spawn(GameObject prefab, RectTransform canvas, string name, Vector2 tipScreen,
+                              TutorialBubble.TailDirection dir, float fraction, string label)
     {
         var inst = (GameObject)PrefabUtility.InstantiatePrefab(prefab, canvas);
         inst.name = name;
         var bubble = inst.GetComponent<TutorialBubble>();
-        if (bubble != null)
-        {
-            var tmp = inst.GetComponentInChildren<TMPro.TextMeshProUGUI>(true);
-            if (tmp != null) tmp.text = text;
-            bubble.PlaceAtScreenPoint(tipScreen, dir);
-        }
+        if (bubble == null) return;
+
+        var tmp = inst.GetComponentInChildren<TMPro.TextMeshProUGUI>(true);
+        if (tmp != null) tmp.text = label;
+
+        // fraction 세팅 (SerializeField에 리플렉션)
+        var so = new SerializedObject(bubble);
+        so.FindProperty("tailHorizontalFraction").floatValue = fraction;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        bubble.PlaceAtScreenPoint(tipScreen, dir);
     }
 
     [MenuItem("Tools/Tutorial/Remove Preview")]

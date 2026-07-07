@@ -87,8 +87,10 @@ public class TutorialBubble : MonoBehaviour
         PlaceAtScreenPoint(tip, dir);
     }
 
-    /// <summary>tail 회전 + body offset. 세로 sprite라 Down/Up만 지원.
-    /// tailHorizontalFraction: -1(body 왼쪽 끝) ~ +1(body 오른쪽 끝). body는 tail 반대편으로 밀림.</summary>
+    /// <summary>Tail scale.x/scale.y로 방향/좌우 반전. Sprite tip이 rect bottom-LEFT라 pivot (0,0)로 설정.
+    /// tailHorizontalFraction: -1(body 왼쪽 끝) ~ +1(body 오른쪽 끝).
+    /// - fraction > 0 → scale.x = -1 (스프라이트 좌우 반전, base가 왼쪽으로 뻗어 body 안쪽 향함)
+    /// - Up 방향 → scale.y = -1 (스프라이트 상하 반전)</summary>
     private void ApplyDirection(TailDirection dir)
     {
         if (tail == null || body == null) return;
@@ -96,21 +98,25 @@ public class TutorialBubble : MonoBehaviour
         float bodyW = body.rect.width;
         float bodyOffsetX = -tailHorizontalFraction * 0.5f * bodyW;
 
-        tail.pivot = new Vector2(0.5f, 0f);
+        // Tail pivot을 (0, 0) = rect의 bottom-left에 두면 sprite tip과 pivot 위치 일치.
+        tail.pivot = new Vector2(0f, 0f);
+        tail.localRotation = Quaternion.identity;
+
+        float scaleY = (dir == TailDirection.Up) ? -1f : 1f;
+        // fraction > 0 (tail이 body 오른쪽에 붙음) → sprite도 좌우 반전해서 base가 body 안쪽(왼쪽)으로 향하게.
+        float scaleX = (tailHorizontalFraction > 0f) ? -1f : 1f;
+        tail.localScale = new Vector3(scaleX, scaleY, 1f);
+
+        // tip은 sprite texture y=padding에 있음. scale.y로 방향 반전 시 anchor y 부호도 반전.
+        tail.anchoredPosition = new Vector2(0, -tailTipVisualPadding * scaleY);
 
         if (dir == TailDirection.Up)
         {
-            // 회전 180°: rect가 위로 뒤집힘. visual tip padding 보정도 반대.
-            tail.localRotation = Quaternion.Euler(0, 0, 180);
-            tail.anchoredPosition = new Vector2(0, tailTipVisualPadding);
             body.pivot = new Vector2(0.5f, 1f);
             body.anchoredPosition = new Vector2(bodyOffsetX, -baseOffset);
         }
-        else // Down
+        else
         {
-            // Tail을 y=-padding으로 내려서 실제 visual tip이 root origin(target)에 오게.
-            tail.localRotation = Quaternion.identity;
-            tail.anchoredPosition = new Vector2(0, -tailTipVisualPadding);
             body.pivot = new Vector2(0.5f, 0f);
             body.anchoredPosition = new Vector2(bodyOffsetX, baseOffset);
         }
