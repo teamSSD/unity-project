@@ -14,10 +14,10 @@ public class SpeechBubble : MonoBehaviour
     [SerializeField] private RectTransform tail;
 
     [Header("Tail 배치")]
-    [SerializeField, Tooltip("Tail tip이 버블 customer-facing edge에서 얼마나 밖으로 (rect units, 양수 = 밖). 원래 스타일 = 53.")]
-    private float tailBeyondBubbleEdgeX = 53f;
-    [SerializeField, Tooltip("Tail tip이 버블 하단에서 얼마나 아래로 (rect units). 원래 스타일 = 132.")]
-    private float tailBelowBubble = 132f;
+    [SerializeField, Tooltip("Tail tip이 버블 customer-facing edge에서 얼마나 밖으로 (rect units, 양수 = 밖). 작을수록 tail이 버블 body 안쪽에 안정.")]
+    private float tailBeyondBubbleEdgeX = 15f;
+    [SerializeField, Tooltip("Tail tip이 버블 하단에서 얼마나 아래로 (rect units). 작을수록 tail이 버블 하단에 밀착.")]
+    private float tailBelowBubble = 40f;
 
     [Header("Target 위치 (bounds 정규화 좌표)")]
     [SerializeField, Range(-1f, 1f),
