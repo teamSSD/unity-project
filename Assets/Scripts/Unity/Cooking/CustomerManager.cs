@@ -46,6 +46,8 @@ public class CustomerManager : MonoBehaviour
     private GameObject currentOrderingCustomer;
 
     public event Action OnGameEnd;
+    /// <summary>튜토리얼 mock 종료 트리거용. 손님 완료(성공/실패) 시 발화.</summary>
+    public event Action OnCustomerResolved;
 
     void Awake()
     {
@@ -159,6 +161,7 @@ public class CustomerManager : MonoBehaviour
         // 이라 이미 다음 손님이 ordering 슬롯을 차지했을 수 있음. Ordering 손님은
         // OnOrderPlaced에서 destroy되므로 Unity의 destroyed==null 매직으로 자연 해제됨.
 
+        OnCustomerResolved?.Invoke();
         CheckGameEnd();
     }
 

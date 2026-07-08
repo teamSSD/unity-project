@@ -18,7 +18,8 @@ public static class UILockManager
         Shop,
         Settings,
         PhaseSelection,
-        Tutorial
+        Tutorial,
+        CookingTutorial
     }
 
     private static readonly HashSet<Owner> activeLocks = new();

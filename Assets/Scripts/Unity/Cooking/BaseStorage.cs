@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -50,14 +51,19 @@ public abstract class BaseStorage : MonoBehaviour
         ingredients.ForEach(ingredient => AddIngredients(ingredient)); // Fixed: was AddIngredients(ingredients)
     }
 
+    /// <summary>튜토리얼 mock refill 훅. HandleFoodDestroyed 이후 발화 (storage, foodData).</summary>
+    public event Action<BaseStorage, FoodData> OnFoodDestroyedForRefill;
+
     /// <summary>
     /// Handle ingredient destruction (e.g., when consumed)
     /// </summary>
     public void HandleFoodDestroyed(FoodModel destroyedFood)
     {
+        FoodData data = destroyedFood?.GetFoodData();
         foodModels.Remove(destroyedFood);
         destroyedFood.onDestroy -= HandleFoodDestroyed;
         RefreshPosition();
+        OnFoodDestroyedForRefill?.Invoke(this, data);
     }
 
     /// <summary>

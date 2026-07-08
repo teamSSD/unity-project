@@ -9,6 +9,8 @@ public class HorizontalCameraMove : MonoBehaviour
     [SerializeField] private KeyCode holdKey = KeyCode.None;
     [SerializeField] private Collider2D worldCollider;
 
+    public Collider2D WorldCollider => worldCollider;
+
     private Camera cam;
     private Transform tr;
     private float smoothedInput;

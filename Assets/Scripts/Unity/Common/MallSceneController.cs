@@ -163,10 +163,12 @@ public class MallSceneController : MonoBehaviour
 
         bentoSelectionController.Show(() =>
         {
-            // Preparation → Morning 후 자동으로 Cooking 씬 진입
+            // Preparation → Morning 후 자동으로 Cooking 씬 진입.
+            // 튜토리얼 활성 시엔 격리된 CookingTutorial 씬 (Mock).
             var ps = GameSessionRoot.Instance?.Progress;
             ps?.PassPhase();
-            SceneLoader.LoadScene(SceneNames.Cooking);
+            bool tutorialActive = GameSessionRoot.Instance?.Tutorial?.IsActive ?? false;
+            SceneLoader.LoadScene(tutorialActive ? SceneNames.CookingTutorial : SceneNames.Cooking);
         });
     }
 

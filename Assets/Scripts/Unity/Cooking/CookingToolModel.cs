@@ -200,6 +200,8 @@ public class CookingToolModel : MonoBehaviour
             Debug.LogWarning("Interface didn't injected.");
             return;
         }
+        // 튜토리얼 등 UI 잠금 중엔 조리 시작 불가.
+        if (UILockManager.IsLocked) return;
         if (SchemaInstance.IsCookable())
         {
             BehaviorInstance.locked = true;

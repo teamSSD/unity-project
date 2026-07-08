@@ -29,5 +29,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ForReal/Settlement.unity
     guid: d461bd3c8f8d24569ba207f939e523c9
+  - enabled: 1
+    path: Assets/Scenes/ForReal/CookingTutorial.unity
+    guid: edc9c9b34cf55464db89cfe77f8f3cc8
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

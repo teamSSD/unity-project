@@ -36,4 +36,10 @@ public class TutorialStepPart
 
     [Range(-1f, 1f), Tooltip("Tail이 body의 어느 쪽에 붙을지. -1=왼쪽 코너, 0=중앙, +1=오른쪽 코너.")]
     public float tailHorizontalFraction = -0.5f;
+
+    [Tooltip("이 파트를 dismiss하는 키. 기본 Space. Recipe Tab처럼 특정 키를 요구할 때 변경.")]
+    public KeyCode dismissKey = KeyCode.Space;
+
+    [Tooltip("체크하면 target의 스크린 X 위치에 따라 tailHorizontalFraction 부호 자동 반전. 우측 target = tail body 오른쪽, 좌측 = 왼쪽.")]
+    public bool autoFlipByScreenSide;
 }

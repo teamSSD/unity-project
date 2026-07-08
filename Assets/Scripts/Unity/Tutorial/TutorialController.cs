@@ -18,6 +18,16 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
     private static readonly Dictionary<string, TutorialTarget> _targets = new();
     private TutorialBubble _active;
 
+    /// <summary>파트가 표시될 때 발화 (카메라 focus 등 부수 처리용).</summary>
+    public event System.Action<int, int, TutorialStepPart> OnPartShown;
+
+    /// <summary>key로 등록된 TutorialTarget 조회 (world position 필요할 때).</summary>
+    public TutorialTarget GetTarget(string key)
+    {
+        if (string.IsNullOrEmpty(key)) return null;
+        return _targets.TryGetValue(key, out var t) ? t : null;
+    }
+
     // ── Target registry ─────────────────────────────
     public static void RegisterTarget(string key, TutorialTarget t)
     {
@@ -71,8 +81,34 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
         _active.SetContents(part.message);
         _active.SetImage(part.optionalImage);
 
-        Vector2 screenPos = ResolveScreenPos(part.targetKey) + part.screenOffset;
-        _active.PlaceAtScreenPoint(screenPos, part.tailDirection, part.tailHorizontalFraction);
+        var targetKey = part.targetKey;
+        var offset = part.screenOffset;
+        var dir = part.tailDirection;
+        var baseFrac = part.tailHorizontalFraction;
+        bool autoFlip = part.autoFlipByScreenSide;
+
+        System.Func<Vector2, float> effectiveFraction = (screenPos) =>
+        {
+            if (!autoFlip) return baseFrac;
+            // Target이 스크린 우측 절반 → tail이 body 오른쪽에 붙게 (fraction > 0). 좌측 절반 → 음수.
+            float sign = screenPos.x > Screen.width * 0.5f ? +1f : -1f;
+            return sign * Mathf.Abs(baseFrac);
+        };
+
+        Vector2 initialScreenPos = ResolveScreenPos(targetKey) + offset;
+        _active.PlaceAtScreenPoint(initialScreenPos, dir, effectiveFraction(initialScreenPos));
+        _active.SetDismissKey(part.dismissKey);
+
+        // targetKey가 있으면 매 프레임 target 위치를 다시 계산 (카메라 이동/target 이동 대응).
+        if (!string.IsNullOrEmpty(targetKey))
+        {
+            _active.EnableDynamicFollow(
+                () => ResolveScreenPos(targetKey) + offset,
+                dir,
+                effectiveFraction);
+        }
+
+        OnPartShown?.Invoke(stepId, idx, part);
 
         _active.EnableInteractiveDismiss(() =>
         {

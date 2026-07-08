@@ -14,6 +14,9 @@ using UnityEngine;
 public class FoodModel : MonoBehaviour
 {
     private FoodSchema SchemaInstance;
+
+    /// <summary>튜토리얼 mock refill용 접근자.</summary>
+    public FoodData GetFoodData() => SchemaInstance?.foodData;
     private FoodBehavior BehaviorInstance;
     public event Action<FoodModel> onDestroy;
 
@@ -196,6 +199,9 @@ public class FoodModel : MonoBehaviour
             Debug.LogWarning("Interface didn't injected.");
             return;
         }
+
+        // 튜토리얼 등 UI 잠금 중엔 드롭 무시 (원 위치로 자동 복귀).
+        if (UILockManager.IsLocked) return;
 
         if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData) <= 0)
         {

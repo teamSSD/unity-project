@@ -34,6 +34,23 @@ public class TutorialBubble : MonoBehaviour
     private System.Action _onDismiss;
     private bool _spawnFrameSkipped;
     private bool _tutorialLocked;
+    private KeyCode _dismissKey = KeyCode.Space;
+
+    // Dynamic follow: 매 프레임 다시 위치 계산 (카메라가 움직이는 튜토리얼용).
+    private System.Func<Vector2> _screenPosGetter;
+    private System.Func<Vector2, float> _fractionGetter;
+    private TailDirection _followDir;
+
+    public void SetDismissKey(KeyCode key) { _dismissKey = key; }
+
+    /// <summary>매 프레임 screenPosGetter/fractionGetter를 재호출해 위치+fraction 재계산.
+    /// fractionGetter는 screen 좌표를 받아 상황별 fraction 반환 (autoFlip 등).</summary>
+    public void EnableDynamicFollow(System.Func<Vector2> screenPosGetter, TailDirection dir, System.Func<Vector2, float> fractionGetter)
+    {
+        _screenPosGetter = screenPosGetter;
+        _fractionGetter = fractionGetter;
+        _followDir = dir;
+    }
 
     public void SetContents(string text)
     {
@@ -125,9 +142,17 @@ public class TutorialBubble : MonoBehaviour
 
     private void Update()
     {
+        // Dynamic follow — 카메라 이동/target 이동 대응. dismiss와 무관.
+        if (_screenPosGetter != null)
+        {
+            var pos = _screenPosGetter();
+            float frac = _fractionGetter != null ? _fractionGetter(pos) : 0f;
+            PlaceAtScreenPoint(pos, _followDir, frac);
+        }
+
         if (!_interactive) return;
         if (!_spawnFrameSkipped) { _spawnFrameSkipped = true; return; }
-        if (Input.GetKeyDown(KeyCode.Space)) Dismiss();
+        if (Input.GetKeyDown(_dismissKey)) Dismiss();
     }
 
     private void Dismiss()

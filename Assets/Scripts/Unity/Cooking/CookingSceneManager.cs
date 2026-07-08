@@ -41,6 +41,21 @@ public class CookingSceneManager : MonoBehaviour
         FillStorage(refrigerator, IngredientDisplayCategory.Refrigerator, refrigeratorGameObject);
         FillStorage(upperShelf, IngredientDisplayCategory.UpperShelf, upperShelfGameObject);
         FillStorage(lowerShelf, IngredientDisplayCategory.LowerShelf, lowerShelfGameObject);
+
+        TryStartCookingTutorial();
+    }
+
+    private void TryStartCookingTutorial()
+    {
+        var tc = TutorialController.Instance;
+        if (tc == null || !tc.CanShow(TutorialStepId.CookingIntro)) return;
+        tc.Show(TutorialStepId.CookingIntro, onDone: () =>
+        {
+            // 마지막 파트 (Tab) dismiss 후 — Cooking mock의 상호작용 해제 + 손님 스폰 재활성.
+            // Tab 자체는 RecipeBookManager가 감지해서 레시피북 자동 열림.
+            var tcc = FindFirstObjectByType<TutorialCookingController>();
+            tcc?.ReleaseTutorialLocks();
+        });
     }
 
     private static void InjectStorageCapacity(BaseStorage storage, int fallback)
@@ -76,6 +91,29 @@ public class CookingSceneManager : MonoBehaviour
         foodModel.Inject(canvas, loadInventoryUsecase, food, data.defaultPrice);
         instance.transform.position = foodModel.GetDefaultPosition();
         return foodModel;
+    }
+
+    /// <summary>튜토리얼 mock refill. 지정 storage에 FoodData로 신규 인스턴스 spawn (price=0).</summary>
+    public bool TryTutorialRefill(BaseStorage storage, FoodData food)
+    {
+        if (storage == null || food == null || foodPrefab == null || loadInventoryUsecase == null) return false;
+        GameObject parent = null;
+        if (storage == refrigerator) parent = refrigeratorGameObject;
+        else if (storage == upperShelf) parent = upperShelfGameObject;
+        else if (storage == lowerShelf) parent = lowerShelfGameObject;
+        if (parent == null) return false;
+
+        GameObject instance = Instantiate(foodPrefab, parent.transform);
+        instance.name = food.ingredientName;
+        FoodModel foodModel = instance.GetComponent<FoodModel>();
+        foodModel.Inject(canvas, loadInventoryUsecase, food, 0);
+        instance.transform.position = foodModel.GetDefaultPosition();
+        if (!storage.AddIngredients(foodModel))
+        {
+            Destroy(instance);
+            return false;
+        }
+        return true;
     }
 
 #if UNITY_EDITOR
