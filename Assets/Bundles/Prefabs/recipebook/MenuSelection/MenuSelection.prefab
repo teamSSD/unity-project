@@ -273,6 +273,7 @@ GameObject:
   - component: {fileID: 4120580201693771526}
   - component: {fileID: 6738614870915479064}
   - component: {fileID: 8869273747425262552}
+  - component: {fileID: 6799970628081284560}
   m_Layer: 5
   m_Name: SelectionGroup
   m_TagString: Untagged
@@ -348,6 +349,22 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &6799970628081284560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1183173809232741736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f318b8a268bcc490184c5a1cf5079998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Unity::TutorialTarget
+  key: menu-items
+  anchorOverride: {fileID: 0}
+  verticalAnchorFraction: 1
+  screenOffset: {x: 0, y: 0}
 --- !u!1 &1642720537984448686
 GameObject:
   m_ObjectHideFlags: 0
@@ -362,6 +379,7 @@ GameObject:
   - component: {fileID: 3792787298036027323}
   - component: {fileID: 5850680282436843332}
   - component: {fileID: 6375762956339900099}
+  - component: {fileID: 5983683475622813812}
   m_Layer: 5
   m_Name: BentoSelectionGroup
   m_TagString: Untagged
@@ -489,6 +507,22 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &5983683475622813812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642720537984448686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f318b8a268bcc490184c5a1cf5079998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Unity::TutorialTarget
+  key: bento-slots
+  anchorOverride: {fileID: 0}
+  verticalAnchorFraction: 1
+  screenOffset: {x: 0, y: 0}
 --- !u!1 &2982246101368685665
 GameObject:
   m_ObjectHideFlags: 0
@@ -847,6 +881,7 @@ GameObject:
   - component: {fileID: 5463977548649384216}
   - component: {fileID: 7968552782746033199}
   - component: {fileID: 7964379160137393558}
+  - component: {fileID: 2020387003819757832}
   m_Layer: 0
   m_Name: ConfirmButton
   m_TagString: Untagged
@@ -976,6 +1011,22 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &2020387003819757832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4074564888760038072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f318b8a268bcc490184c5a1cf5079998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Unity::TutorialTarget
+  key: confirm-button
+  anchorOverride: {fileID: 0}
+  verticalAnchorFraction: 1
+  screenOffset: {x: 0, y: 0}
 --- !u!1 &4121934951298429052
 GameObject:
   m_ObjectHideFlags: 0
@@ -1126,6 +1177,7 @@ GameObject:
   - component: {fileID: 814795774397118709}
   - component: {fileID: 5295142406648726623}
   - component: {fileID: 5121450856225437454}
+  - component: {fileID: 2949745595432620126}
   m_Layer: 5
   m_Name: BackButton
   m_TagString: Untagged
@@ -1255,6 +1307,22 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &2949745595432620126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7083140319585095687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f318b8a268bcc490184c5a1cf5079998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Unity::TutorialTarget
+  key: back-button
+  anchorOverride: {fileID: 0}
+  verticalAnchorFraction: 1
+  screenOffset: {x: 0, y: 0}
 --- !u!1 &8134340728729752948
 GameObject:
   m_ObjectHideFlags: 0

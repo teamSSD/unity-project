@@ -183,12 +183,51 @@ public class BentoSelectionController : MonoBehaviour
         // 신규 unlock(퀘스트 수락 후 추가된 메뉴) 반영을 위해 매번 갱신
         LoadAllFoodData();
         InitializeController();
+
+        TryShowMenuSelectionTutorial();
+    }
+
+    private void TryShowMenuSelectionTutorial()
+    {
+        var tc = TutorialController.Instance;
+        if (tc == null || !tc.CanShow(TutorialStepId.MenuSelection)) return;
+
+        // 튜토리얼 중 BentoSelection 상호작용 완전 차단 (버튼/ESC).
+        var cg = GetOrAddCanvasGroup();
+        cg.interactable = false;
+        cg.blocksRaycasts = false;
+
+        StartCoroutine(ShowNextFrame(tc, cg));
+    }
+
+    private System.Collections.IEnumerator ShowNextFrame(TutorialController tc, CanvasGroup cg)
+    {
+        // Layout이 실제 크기로 rebuild될 때까지 몇 프레임 대기 (BentoSlot 동적 생성 대응).
+        yield return null;
+        yield return null;
+        tc.Show(TutorialStepId.MenuSelection, onDone: () =>
+        {
+            cg.interactable = true;
+            cg.blocksRaycasts = true;
+        });
+    }
+
+    private CanvasGroup GetOrAddCanvasGroup()
+    {
+        var cg = GetComponent<CanvasGroup>();
+        if (cg == null) cg = gameObject.AddComponent<CanvasGroup>();
+        return cg;
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            // 튜토리얼 활성 중엔 임의 취소 금지.
+            var tc = TutorialController.Instance;
+            if (tc != null && !tc.IsCompleted) return;
             Close();
+        }
     }
 
     public void Close()

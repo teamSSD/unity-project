@@ -62,9 +62,12 @@ public static class _TempCreateWelcomeStep
             catalog = ScriptableObject.CreateInstance<TutorialStepCatalog>();
             AssetDatabase.CreateAsset(catalog, CatalogPath);
         }
-        catalog.steps.Clear();
-        catalog.steps.Add(step);
-        EditorUtility.SetDirty(catalog);
+        // 다른 스텝 남겨두고 Welcome만 idempotent add.
+        if (!catalog.steps.Contains(step))
+        {
+            catalog.steps.Add(step);
+            EditorUtility.SetDirty(catalog);
+        }
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -116,7 +119,7 @@ public static class _TempCreateWelcomeStep
 
         // playerStore: 문 위쪽 anchor (Scene 뷰에서 드래그로 조정 가능).
         Transform doorAnchor = EnsureChildAnchor(playerStore, "TutorialAnchor_Door", new Vector3(0, -1.0f, 0));
-        AddTutorialTarget(playerStore, "playerStore", 0.3f, doorAnchor, Vector2.zero);
+        AddTutorialTarget(playerStore, "playerStore", 0.3f, doorAnchor, new Vector2(423.73f, 0f));
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);

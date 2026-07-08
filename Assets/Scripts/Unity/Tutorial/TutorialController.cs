@@ -71,8 +71,8 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
         _active.SetContents(part.message);
         _active.SetImage(part.optionalImage);
 
-        Vector2 screenPos = ResolveScreenPos(part.targetKey);
-        _active.PlaceAtScreenPoint(screenPos, part.tailDirection);
+        Vector2 screenPos = ResolveScreenPos(part.targetKey) + part.screenOffset;
+        _active.PlaceAtScreenPoint(screenPos, part.tailDirection, part.tailHorizontalFraction);
 
         _active.EnableInteractiveDismiss(() =>
         {

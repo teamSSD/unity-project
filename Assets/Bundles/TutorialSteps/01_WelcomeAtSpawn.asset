@@ -18,28 +18,40 @@ MonoBehaviour:
     optionalImage: {fileID: 0}
     targetKey: player
     tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: -0.5
   - message: "\uAC8C\uC784 \uC2DC\uC791\uC5D0 \uC55E\uC11C \uAC8C\uC784 \uBC29\uC2DD\uC5D0
       \uB300\uD574 \uAC04\uB2E8\uD788 \uC548\uB0B4\uB4DC\uB9AC\uACA0\uC2B5\uB2C8\uB2E4."
     optionalImage: {fileID: 0}
     targetKey: player
     tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: -0.5
   - message: "\uC774\uB3D9\uC740 A/D \uB610\uB294 \u2190/\u2192 \uD0A4\uB85C \uD560
       \uC218 \uC788\uC2B5\uB2C8\uB2E4."
     optionalImage: {fileID: 0}
     targetKey: player
     tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: -0.5
   - message: "ESC\uB97C \uB204\uB974\uBA74 \uB744\uC6CC\uB454 \uCC3D\uC744 \uB2EB\uAC70\uB098
       \uC124\uC815\uC744 \uC5F4 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
     optionalImage: {fileID: 0}
     targetKey: player
     tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: -0.5
   - message: "\uC2A4\uD398\uC774\uC2A4\uBC14\uB97C \uD1B5\uD574 \uC0C1\uD638\uC791\uC6A9\uC774
       \uAC00\uB2A5\uD569\uB2C8\uB2E4."
     optionalImage: {fileID: 0}
     targetKey: player
     tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: -0.5
   - message: "\uAC00\uAC8C \uBB38\uCABD\uC5D0\uC11C \uC2A4\uD398\uC774\uC2A4\uBC14\uB97C
       \uB20C\uB7EC \uD558\uB8E8 \uC601\uC5C5\uC744 \uC2DC\uC791\uD574\uBD10\uC694."
     optionalImage: {fileID: 0}
     targetKey: playerStore
     tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: -0.5

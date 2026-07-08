@@ -59,11 +59,12 @@ public class TutorialBubble : MonoBehaviour
         }
     }
 
-    /// <summary>스크린 좌표에 tail tip 꽂음. dir로 tail 방향/body 위치 결정.</summary>
-    public void PlaceAtScreenPoint(Vector2 targetScreenPos, TailDirection dir = TailDirection.Down)
+    /// <summary>스크린 좌표에 tail tip 꽂음. dir로 tail 방향/body 위치 결정.
+    /// horizontalFractionOverride 있으면 SerializeField tailHorizontalFraction 대신 사용.</summary>
+    public void PlaceAtScreenPoint(Vector2 targetScreenPos, TailDirection dir = TailDirection.Down, float? horizontalFractionOverride = null)
     {
         if (body != null) LayoutRebuilder.ForceRebuildLayoutImmediate(body);
-        ApplyDirection(dir);
+        ApplyDirection(dir, horizontalFractionOverride ?? tailHorizontalFraction);
         transform.position = (Vector3)targetScreenPos;
     }
 
@@ -91,12 +92,12 @@ public class TutorialBubble : MonoBehaviour
     /// tailHorizontalFraction: -1(body 왼쪽 끝) ~ +1(body 오른쪽 끝).
     /// - fraction > 0 → scale.x = -1 (스프라이트 좌우 반전, base가 왼쪽으로 뻗어 body 안쪽 향함)
     /// - Up 방향 → scale.y = -1 (스프라이트 상하 반전)</summary>
-    private void ApplyDirection(TailDirection dir)
+    private void ApplyDirection(TailDirection dir, float horizontalFraction)
     {
         if (tail == null || body == null) return;
         float baseOffset = tail.rect.height - tailBodyOverlap;
         float bodyW = body.rect.width;
-        float bodyOffsetX = -tailHorizontalFraction * 0.5f * bodyW;
+        float bodyOffsetX = -horizontalFraction * 0.5f * bodyW;
 
         // Tail pivot을 (0, 0) = rect의 bottom-left에 두면 sprite tip과 pivot 위치 일치.
         tail.pivot = new Vector2(0f, 0f);
@@ -104,7 +105,7 @@ public class TutorialBubble : MonoBehaviour
 
         float scaleY = (dir == TailDirection.Up) ? -1f : 1f;
         // fraction > 0 (tail이 body 오른쪽에 붙음) → sprite도 좌우 반전해서 base가 body 안쪽(왼쪽)으로 향하게.
-        float scaleX = (tailHorizontalFraction > 0f) ? -1f : 1f;
+        float scaleX = (horizontalFraction > 0f) ? -1f : 1f;
         tail.localScale = new Vector3(scaleX, scaleY, 1f);
 
         // tip은 sprite texture y=padding에 있음. scale.y로 방향 반전 시 anchor y 부호도 반전.

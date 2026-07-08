@@ -30,4 +30,10 @@ public class TutorialStepPart
 
     [Tooltip("tail 방향. Down=타겟이 아래(bubble 위), Up=타겟이 위(bubble 아래).")]
     public TutorialBubble.TailDirection tailDirection = TutorialBubble.TailDirection.Down;
+
+    [Tooltip("타겟 스크린 좌표에서 이 파트 전용 offset (px). 미세 조정.")]
+    public Vector2 screenOffset;
+
+    [Range(-1f, 1f), Tooltip("Tail이 body의 어느 쪽에 붙을지. -1=왼쪽 코너, 0=중앙, +1=오른쪽 코너.")]
+    public float tailHorizontalFraction = -0.5f;
 }
