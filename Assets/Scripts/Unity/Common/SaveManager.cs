@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using Game.Domain.Common;
 using UnityEngine;
 
@@ -73,6 +74,13 @@ public static class SaveManager
     private static string Dir => Application.persistentDataPath + "/saves";
     private static string SavePath => Dir + "/gamedata";
 
+#if UNITY_WEBGL && !UNITY_EDITOR
+    // Assets/Plugins/WebGL/SaveSync.jslib — IDBFS in-memory 캐시를 IndexedDB에 flush.
+    // 이 호출 없으면 브라우저 강제 종료 시 저장 유실 (탭 정상 종료는 자동 flush됨).
+    [DllImport("__Internal")]
+    private static extern void SyncFiles();
+#endif
+
     /// <summary>
     /// 저장 데이터 존재 여부 (Continue 버튼 활성화용)
     /// </summary>
@@ -106,6 +114,10 @@ public static class SaveManager
         if (GameSessionRoot.Instance?.Tutorial != null) save.tutorial = GameSessionRoot.Instance?.Tutorial.GetSaveData();
 
         DataSaveUtil.SaveData(save, SavePath);
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        SyncFiles();
+#endif
     }
 
     /// <summary>
@@ -172,6 +184,10 @@ public static class SaveManager
         DeleteLegacyFile(Dir + "/deliveryQuest");
 
         Debug.Log("[SaveManager] Legacy save migrated to single file");
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        SyncFiles();
+#endif
     }
 
     private static void DeleteLegacyFile(string path)

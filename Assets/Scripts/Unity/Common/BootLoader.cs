@@ -23,6 +23,6 @@ public class BootLoader : MonoBehaviour
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(SceneNames.GameStart));
 
         // 4. Boot 씬 자체 unload (await하지 않음 — fire and forget)
-        SceneManager.UnloadSceneAsync(SceneNames.Boot);
+        _ = SceneManager.UnloadSceneAsync(SceneNames.Boot);
     }
 }

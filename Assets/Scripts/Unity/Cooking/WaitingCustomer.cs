@@ -11,7 +11,6 @@ public class WaitingCustomer : MonoBehaviour
     private int managerTimerId = -1;
     private GameObject gaugeUI;
     private GaugeUI guageScript;
-    private bool injected = false;
 
     public void inject(Canvas worldCanvas, CustomerData customerData, float timerScale = 1f, float timerCanvasY = 0f, float timerCanvasXOffset = 0f)
     {
@@ -50,8 +49,6 @@ public class WaitingCustomer : MonoBehaviour
                 pc.SetPath(i, pathPoints);
             }
         }
-        
-        injected = true;
     }
 
     void Awake()

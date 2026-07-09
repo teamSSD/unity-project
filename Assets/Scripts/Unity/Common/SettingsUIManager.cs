@@ -172,8 +172,9 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
         solidBackdrop.enabled = false;
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
         if (blurRt != null) { blurRt.Release(); blurRt = null; }
     }
 }

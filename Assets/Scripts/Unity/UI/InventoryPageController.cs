@@ -44,9 +44,6 @@ public class InventoryPageController : MonoBehaviour
 
     private InventorySlot selectedSlot;
 
-    private static readonly (IngredientDisplayCategory category, Transform container, string upgradeType)[] CategoryMap
-        = default; // 런타임에 세팅
-
     public void Refresh()
     {
         PopulateCategory(upperShelfContainer,   IngredientDisplayCategory.UpperShelf,   "upperShelf");
