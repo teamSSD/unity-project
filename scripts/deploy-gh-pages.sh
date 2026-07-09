@@ -32,7 +32,7 @@ if [ ! -f "$BUILD_SRC/index.html" ] || [ ! -d "$BUILD_SRC/Build" ]; then
   exit 1
 fi
 
-BUILD_LABEL="$(basename $(dirname "$BUILD_SRC"))/$(basename "$BUILD_SRC")"
+BUILD_LABEL="$(basename "$(dirname "$BUILD_SRC")")/$(basename "$BUILD_SRC")"
 echo "📦 배포 소스: $BUILD_SRC"
 echo "🏷  라벨: $BUILD_LABEL"
 
