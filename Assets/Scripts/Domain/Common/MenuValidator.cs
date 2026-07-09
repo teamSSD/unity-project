@@ -203,7 +203,7 @@ public static class MenuValidator
     /// 영업 보상 (기획 공식: Aftertaste_Book.md):
     ///   보상 = 총 가격 × 메인 배율 × 사이드 배율
     ///   메인 배율: 일치 1.0 / 불일치 0.7
-    ///   사이드 배율: 1.0 + (일치 사이드 × 0.05)
+    ///   사이드 배율: 1.0 + (일치 사이드 × 0.15)  ← 2026-07 튜닝: 5% → 15% (sim 기반)
     /// 총 가격 = 제공된 메인 + 사이드 가격 단순 합 (개별 페널티 없음).
     /// </summary>
     public static int CalculateReward(MenuSchema order, FoodSchema providedMain, List<FoodSchema> providedSides)
@@ -228,7 +228,7 @@ public static class MenuValidator
 
         bool mainMatches = order.mainMenu.id == providedMain.foodData.id;
         float mainMultiplier = mainMatches ? 1.0f : 0.7f;
-        float sideMultiplier = 1.0f + (matchingSidesCount * 0.05f);
+        float sideMultiplier = 1.0f + (matchingSidesCount * 0.15f);
 
         return Mathf.RoundToInt(totalPrice * mainMultiplier * sideMultiplier);
     }

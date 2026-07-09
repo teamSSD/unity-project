@@ -101,7 +101,7 @@ public class GameStart : MonoBehaviour
         if (session != null)
         {
             session.Stats.SetTime(5, 0);
-            session.Stats.SetMoney(8000);
+            session.Stats.SetMoney(12000);
             session.Stats.SetStamina(100);
             session.Progress.PhaseData.Day = 0;
         }
