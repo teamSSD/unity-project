@@ -43,12 +43,11 @@ public class DeliveryTicketCoordinator : MonoBehaviour
         var capturedOrder = order;
         Action<FoodSchema, List<FoodSchema>, Vector3> handler = (main, sides, pos) =>
         {
-            int totalPrice = 0;
-            if (sides != null)
-                foreach (var food in sides)
-                    if (food != null) totalPrice += food.Price;
-
-            GameSessionRoot.Instance?.Order.MarkCookedWithPrice(capturedOrder.questId, totalPrice);
+            // 정상 손님(CustomerLifecycle)과 동일한 공식으로 계산:
+            //   (메인 + 사이드 가격) × 메인 배율 × 사이드 배율
+            // 이전엔 사이드만 합산 → 단품 quest는 0G 배달, 절반 이상 quest 무보상 버그.
+            int reward = MenuValidator.CalculateReward(capturedOrder.menuSchema, main, sides);
+            GameSessionRoot.Instance?.Order.MarkCookedWithPrice(capturedOrder.questId, reward);
         };
         ticket.onTake += handler;
         handlers[ticket] = handler;
