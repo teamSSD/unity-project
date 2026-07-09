@@ -11,6 +11,23 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
     public static bool IsRecipeBookActive => isRecipeBookActive;
     public static bool IsReadOnly => true;
 
+    /// <summary>튜토리얼이 강제로 열린 상태 유지 (Tab/ESC/X 버튼 무시). 카드 닫기는 여전히 가능.
+    /// Setter가 X(closeButton) interactable도 함께 토글.</summary>
+    private static bool _tutorialForceOpen;
+    public static bool TutorialForceOpen
+    {
+        get => _tutorialForceOpen;
+        set
+        {
+            _tutorialForceOpen = value;
+            if (Instance != null && Instance.closeButton != null)
+                Instance.closeButton.interactable = !value;
+        }
+    }
+
+    /// <summary>Tab으로 책 오픈 차단. 레시피북 안내 이전 튜토리얼 파트들에서 사용.</summary>
+    public static bool TutorialBlockOpen { get; set; }
+
     [Header("Recipe Book Root")]
     [SerializeField] public GameObject bookRoot;
 
@@ -96,8 +113,12 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             if (isRecipeBookActive)
-                Close();
-            else if (UILockManager.CanOpen(UILockManager.Owner.RecipeBook))
+            {
+                if (!TutorialForceOpen) Close(); // 튜토리얼 강제 유지 중엔 Tab으로 안 닫힘.
+            }
+            else if (!TutorialBlockOpen &&
+                     (UILockManager.CanOpen(UILockManager.Owner.RecipeBook)
+                      || UILockManager.IsLockedBy(UILockManager.Owner.CookingTutorial)))
                 Open();
         }
 
@@ -105,14 +126,19 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         {
             if (MenuCardController.Instance != null)
                 CloseMenuCard();
-            else
-                Close();
+            else if (!TutorialForceOpen)
+                Close(); // 튜토리얼 강제 유지 중엔 ESC로도 안 닫힘 (카드는 위 branch에서 여전히 닫힘).
         }
     }
 
     public void OpenRecipeBook(bool active)
     {
-        if (closeButton != null) closeButton.gameObject.SetActive(active);
+        if (closeButton != null)
+        {
+            closeButton.gameObject.SetActive(active);
+            // 튜토리얼 forceOpen 중이면 X 눌러도 안 닫히게 interactable=false.
+            closeButton.interactable = !TutorialForceOpen;
+        }
 
         if (isRecipeBookActive)
         {
@@ -139,6 +165,9 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         isRecipeBookActive = true;
     }
 
+    /// <summary>레시피북이 실제로 닫힌 직후 발화 (카드 닫힘과 구분). 튜토리얼 등이 훅.</summary>
+    public event System.Action OnRecipeBookClosed;
+
     public void CloseRecipeBook()
     {
         if (MenuCardController.Instance != null)
@@ -147,6 +176,7 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         canvas.enabled = false;
         isRecipeBookActive = false;
         UILockManager.Unlock(UILockManager.Owner.RecipeBook);
+        OnRecipeBookClosed?.Invoke();
     }
 
     private void ShowOnlyPage(GameObject page)

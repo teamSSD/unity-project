@@ -29,6 +29,20 @@ public class TutorialTarget : MonoBehaviour
 
     public string Key => key;
 
+    /// <summary>런타임 key 지정 (mock 컨트롤러가 스폰된 GO에 target 부여할 때).
+    /// 이미 등록되어 있으면 재등록.</summary>
+    public void SetKey(string newKey)
+    {
+        if (!string.IsNullOrEmpty(key) && key != newKey)
+            TutorialController.UnregisterTarget(key);
+        key = newKey;
+        if (!string.IsNullOrEmpty(key) && isActiveAndEnabled)
+            TutorialController.RegisterTarget(key, this);
+    }
+
+    /// <summary>런타임 vertical anchor 지정. 0=하단, 0.5=중앙, 1=상단.</summary>
+    public void SetVerticalAnchor(float fraction) => verticalAnchorFraction = Mathf.Clamp01(fraction);
+
     private void OnEnable()
     {
         if (!string.IsNullOrEmpty(key))

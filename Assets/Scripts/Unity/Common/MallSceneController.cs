@@ -133,6 +133,19 @@ public class MallSceneController : MonoBehaviour
     {
         var phase = GameSessionRoot.Instance?.Progress?.PhaseData.Phase ?? PhaseType.Preparation;
 
+        // 튜토리얼 마무리 훅 — Afternoon 페이즈 튜토리얼 진행 중 GoHome 클릭 시 Closing 표시 후
+        // Complete + Settlement 씬 로드 (0일차 정산 → 유저가 확인 시 Day 1로 넘어감).
+        var tc = TutorialController.Instance;
+        if (phase == PhaseType.Afternoon && tc != null && tc.CanShow(TutorialStepId.Closing))
+        {
+            tc.Show(TutorialStepId.Closing, onDone: () =>
+            {
+                tc.Complete();
+                SceneLoader.LoadScene(SceneNames.Settlement);
+            });
+            return;
+        }
+
         if (phase == PhaseType.Preparation)
             OpenMenuSelection();
         else
@@ -180,12 +193,59 @@ public class MallSceneController : MonoBehaviour
             return;
         }
         phaseSelector.Show();
+        TryStartPhaseSelectTutorial();
+    }
+
+    /// <summary>Afternoon 페이즈 진입 시 PhaseSelectAfternoon 스텝 시도.
+    /// - Work/Rest 비활성 (Shopping만 가능)
+    /// - Part 0 동안엔 Shopping도 비활성 (설명 중 실수 클릭 방지). Part 1 진입 시 Shopping 활성.
+    /// - Shopping 클릭 시 튜토리얼 마감 → 연달아 MallCorridor 안내 시작</summary>
+    private void TryStartPhaseSelectTutorial()
+    {
+        var tc = TutorialController.Instance;
+        if (tc == null) return;
+        var phase = GameSessionRoot.Instance?.Progress?.PhaseData?.Phase ?? PhaseType.Preparation;
+        if (phase != PhaseType.Afternoon) return;
+        if (!tc.CanShow(TutorialStepId.PhaseSelectAfternoon)) return;
+
+        phaseSelector.SetActionEnabled(ActionType.Work, false);
+        phaseSelector.SetActionEnabled(ActionType.Rest, false);
+        phaseSelector.SetActionEnabled(ActionType.Shopping, false);
+
+        // Part 1 진입 감지 → Shopping 활성.
+        tc.OnPartShown += HandlePhaseSelectPartShown;
+
+        tc.Show(TutorialStepId.PhaseSelectAfternoon, onDone: () =>
+        {
+            tc.OnPartShown -= HandlePhaseSelectPartShown;
+            TryStartMallCorridorTutorial();
+        });
+    }
+
+    private void HandlePhaseSelectPartShown(int stepId, int partIdx, TutorialStepPart part)
+    {
+        if (stepId != TutorialStepId.PhaseSelectAfternoon) return;
+        // Part 1(Shopping 유도) 진입 시 Shopping 버튼 활성.
+        if ((part.message ?? "").StartsWith("이번 점심에는"))
+            phaseSelector?.SetActionEnabled(ActionType.Shopping, true);
+    }
+
+    /// <summary>PhaseSelectAfternoon 완료 후 자동 시작. Mall 전체 안내 (복도/텃밭/상점/NPC/복귀).</summary>
+    private void TryStartMallCorridorTutorial()
+    {
+        var tc = TutorialController.Instance;
+        if (tc == null || !tc.CanShow(TutorialStepId.MallCorridor)) return;
+        tc.Show(TutorialStepId.MallCorridor);
     }
 
     private void OnPhaseActionExecuted(ActionType actionType)
     {
         // 액션 실행 후 UI 닫음 (씬 전환되는 액션은 어차피 UI 자동 destroy).
         phaseSelector?.Hide();
+
+        // 튜토리얼 진행 중 Shopping 선택 → 활성 파트 dismiss (마지막 파트 dismiss 시 MarkShown + onDone).
+        if (actionType == ActionType.Shopping)
+            TutorialController.Instance?.DismissActivePart();
     }
 
     /// <summary>씬에 Canvas가 있으면 그것을, 없으면 새로 만들어 반환.</summary>

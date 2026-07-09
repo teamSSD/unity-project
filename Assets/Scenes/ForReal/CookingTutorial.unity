@@ -725,6 +725,7 @@ GameObject:
   - component: {fileID: 352939041}
   - component: {fileID: 352939040}
   - component: {fileID: 352939042}
+  - component: {fileID: 352939043}
   m_Layer: 6
   m_Name: "\uB3C4\uC2DC\uB77D\uBB36\uC74C"
   m_TagString: Untagged
@@ -954,6 +955,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 3014843813634200183, guid: 69cadaa2780f08740924cd2ab7fcff74, type: 3}
+--- !u!114 &352939043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 352939037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f318b8a268bcc490184c5a1cf5079998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Unity::TutorialTarget
+  key: bento-pile
+  anchorOverride: {fileID: 0}
+  verticalAnchorFraction: 1
+  screenOffset: {x: 0, y: 0}
 --- !u!1001 &371730914
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1938,6 +1955,7 @@ GameObject:
   - component: {fileID: 818913735}
   - component: {fileID: 818913734}
   - component: {fileID: 818913733}
+  - component: {fileID: 818913737}
   m_Layer: 5
   m_Name: EarlyEndButton
   m_TagString: Untagged
@@ -2060,6 +2078,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 818913731}
   m_CullTransparentMesh: 1
+--- !u!114 &818913737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 818913731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f318b8a268bcc490184c5a1cf5079998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Unity::TutorialTarget
+  key: skip
+  anchorOverride: {fileID: 0}
+  verticalAnchorFraction: 1
+  screenOffset: {x: 0, y: 0}
 --- !u!1 &835200204
 GameObject:
   m_ObjectHideFlags: 0

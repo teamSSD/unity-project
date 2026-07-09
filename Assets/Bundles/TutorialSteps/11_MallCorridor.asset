@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 900e472bf069f4b2fb54d61c9b149606, type: 3}
+  m_Name: 11_MallCorridor
+  m_EditorClassIdentifier: Game.Unity::TutorialStepData
+  stepId: 11
+  parts:
+  - message: "\uC7AC\uB8CC \uC218\uAE09\uC744 \uC120\uD0DD\uD558\uAC8C \uB418\uBA74
+      \uC0C1\uAC00 \uBCF5\uB3C4\uB85C \uC774\uB3D9\uD558\uAC8C \uB429\uB2C8\uB2E4."
+    optionalImage: {fileID: 0}
+    targetKey: 
+    tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: 0
+    dismissKey: 32
+    autoFlipByScreenSide: 0
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 0
+    freeCamera: 0
+    forceRecipeBookOpen: 0
+  - message: "\uC625\uC0C1 \uCE35\uC5D0\uB294 \uD2B9\uC815 \uC7AC\uB8CC\uB97C \uAE30\uB974\uACE0
+      \uC218\uD655\uD560 \uC218 \uC788\uB294 \uD143\uBC2D\uC774 \uC874\uC7AC\uD558\uBA70,\n\uAC00\uAC8C\uC758
+      \uC88C\uCE21\uD3B8\uC5D0\uB294 \uC7AC\uB8CC\uB97C \uC7AC\uD654\uB85C \uAD6C\uB9E4\uD558\uAC70\uB098
+      \uD143\uBC2D, \uB3C4\uAD6C, \uCC3D\uACE0 \uC5C5\uADF8\uB808\uC774\uB4DC\uAC00
+      \uAC00\uB2A5\uD55C \uC0C1\uC810\uC774 \uC874\uC7AC\uD569\uB2C8\uB2E4."
+    optionalImage: {fileID: 0}
+    targetKey: 
+    tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: 0
+    dismissKey: 32
+    autoFlipByScreenSide: 0
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 0
+    freeCamera: 0
+    forceRecipeBookOpen: 0
+  - message: "\uB610\uD55C \uC601\uC5C5 \uC900\uBE44\uC2DC\uAC04\uC774\uB098 \uC7AC\uB8CC
+      \uC218\uAE09 \uC2DC\uAC04\uC5D0\uB294 \uC0C1\uAC00\uB97C \uB3CC\uC544\uB2E4\uB2C8\uBA70
+      \uB9CC\uB098\uAC8C \uB418\uB294 \uC778\uBB3C\uB85C \uBD80\uD130\n\uBC24 \uC2DC\uAC04\uC5D0
+      \uC9C4\uD589\uB420 \uBC30\uB2EC \uC8FC\uBB38\uB4E4\uC744 \uBC1B\uC744 \uC218
+      \uC788\uC2B5\uB2C8\uB2E4."
+    optionalImage: {fileID: 0}
+    targetKey: 
+    tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: 0
+    dismissKey: 32
+    autoFlipByScreenSide: 0
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 0
+    freeCamera: 0
+    forceRecipeBookOpen: 0
+  - message: "\uC601\uC5C5 \uC900\uBE44\uB97C \uB9C8\uCE5C \uD6C4 \uB2E4\uC2DC \uAC00\uAC8C\uB85C
+      \uB3CC\uC544\uAC00\uBA74 \uB2E4\uC74C \uC601\uC5C5 \uD398\uC774\uC988\uB97C
+      \uC120\uD0DD \uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+    optionalImage: {fileID: 0}
+    targetKey: 
+    tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: 0
+    dismissKey: 32
+    autoFlipByScreenSide: 0
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 0
+    freeCamera: 0
+    forceRecipeBookOpen: 0

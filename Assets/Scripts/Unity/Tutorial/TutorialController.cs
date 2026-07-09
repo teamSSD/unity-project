@@ -68,6 +68,9 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
     {
         if (idx >= step.parts.Count)
         {
+            // 튜토리얼 종료 시 모든 RecipeBook 튜토리얼 flag 해제.
+            RecipeBookManager.TutorialForceOpen = false;
+            RecipeBookManager.TutorialBlockOpen = false;
             GameSessionRoot.Instance?.Tutorial?.MarkShown(stepId);
             SaveManager.SaveAll();
             onDone?.Invoke();
@@ -77,6 +80,10 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
         DestroyActive();
 
         var part = step.parts[idx];
+
+        // 파트 단위 flag 적용 — 다음 파트에서 override되거나 종료 시 해제.
+        RecipeBookManager.TutorialForceOpen = part.forceRecipeBookOpen;
+        RecipeBookManager.TutorialBlockOpen = part.blockRecipeBookOpen;
         _active = Instantiate(bubblePrefab, overlayCanvas);
         _active.SetContents(part.message);
         _active.SetImage(part.optionalImage);
@@ -97,7 +104,9 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
 
         Vector2 initialScreenPos = ResolveScreenPos(targetKey) + offset;
         _active.PlaceAtScreenPoint(initialScreenPos, dir, effectiveFraction(initialScreenPos));
-        _active.SetDismissKey(part.dismissKey);
+
+        // dismissOnRecipeBookClose 파트는 dismissKey를 None으로 (키 입력으로 안 넘어감).
+        _active.SetDismissKey(part.dismissOnRecipeBookClose ? KeyCode.None : part.dismissKey);
 
         // targetKey가 있으면 매 프레임 target 위치를 다시 계산 (카메라 이동/target 이동 대응).
         if (!string.IsNullOrEmpty(targetKey))
@@ -108,13 +117,26 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
                 effectiveFraction);
         }
 
+        // 레시피북 실제 닫힘 이벤트 훅 (카드 ESC 닫힘과 구분).
+        System.Action bookClosedHandler = null;
+        var bubbleRef = _active;
+        if (part.dismissOnRecipeBookClose && RecipeBookManager.HasInstance)
+        {
+            bookClosedHandler = () => {
+                if (bubbleRef != null) bubbleRef.DismissExternally();
+            };
+            RecipeBookManager.Instance.OnRecipeBookClosed += bookClosedHandler;
+        }
+
         OnPartShown?.Invoke(stepId, idx, part);
 
         _active.EnableInteractiveDismiss(() =>
         {
+            if (bookClosedHandler != null && RecipeBookManager.HasInstance)
+                RecipeBookManager.Instance.OnRecipeBookClosed -= bookClosedHandler;
             _active = null;
             ShowPart(step, idx + 1, stepId, onDone);
-        });
+        }, lockInput: !part.allowSceneInteraction);
     }
 
     private Vector2 ResolveScreenPos(string key)
@@ -128,6 +150,12 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
     {
         GameSessionRoot.Instance?.Tutorial?.Complete();
         SaveManager.SaveAll();
+    }
+
+    /// <summary>외부 조건으로 현재 활성 파트 강제 dismiss. mock 컨트롤러가 게임 이벤트 → 튜토리얼 진행 훅으로 사용.</summary>
+    public void DismissActivePart()
+    {
+        if (_active != null) _active.DismissExternally();
     }
 
     private void DestroyActive()

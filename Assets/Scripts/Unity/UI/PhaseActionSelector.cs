@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
@@ -88,8 +89,31 @@ public class PhaseActionSelector : MonoBehaviour
     public void Show()
     {
         UpdateUI();
+        // 튜토리얼이 disable한 상태가 남아있을 수 있어 매 Show마다 default(활성) reset.
+        if (workButton != null) workButton.interactable = true;
+        if (restButton != null) restButton.interactable = true;
+        if (shoppingButton != null) shoppingButton.interactable = true;
         gameObject.SetActive(true);
         UILockManager.Lock(UILockManager.Owner.PhaseSelection);
+
+        // EventSystem 자동 선택(Submit=Space가 선택된 버튼을 클릭시킴) 방지.
+        // 튜토리얼 진행 중 Space 입력이 Shopping을 실행하는 문제 회피.
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
+    }
+
+    /// <summary>튜토리얼용. 특정 액션 버튼 활성/비활성 (Shopping만 유도할 때 등).
+    /// Show() 다음에 호출. 다음 Show 시 자동 reset.</summary>
+    public void SetActionEnabled(ActionType type, bool enabled)
+    {
+        Button b = type switch
+        {
+            ActionType.Work => workButton,
+            ActionType.Rest => restButton,
+            ActionType.Shopping => shoppingButton,
+            _ => null,
+        };
+        if (b != null) b.interactable = enabled;
     }
 
     public void Hide()

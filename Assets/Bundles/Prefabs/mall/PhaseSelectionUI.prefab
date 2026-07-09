@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1346927220686672573}
   - component: {fileID: 8713601244907617243}
   - component: {fileID: 9101097772896546298}
+  - component: {fileID: 5733783593196609107}
   m_Layer: 0
   m_Name: Phase (2)
   m_TagString: Untagged
@@ -164,6 +165,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Nobi.UiRoundedCorners::Nobi.UiRoundedCorners.ImageWithRoundedCorners
   radius: 16
   image: {fileID: 6616796827230764377}
+--- !u!114 &5733783593196609107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1225439656953155128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f318b8a268bcc490184c5a1cf5079998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Unity::TutorialTarget
+  key: phase-shopping
+  anchorOverride: {fileID: 0}
+  verticalAnchorFraction: 1
+  screenOffset: {x: 0, y: 0}
 --- !u!1 &2036476745829833526
 GameObject:
   m_ObjectHideFlags: 0

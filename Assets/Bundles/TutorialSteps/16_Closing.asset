@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 900e472bf069f4b2fb54d61c9b149606, type: 3}
+  m_Name: 16_Closing
+  m_EditorClassIdentifier: Game.Unity::TutorialStepData
+  stepId: 16
+  parts:
+  - message: "\uC774\uC81C \uC9C4\uC9DC \uC2DC\uC791\uC774\uC5D0\uC694."
+    optionalImage: {fileID: 0}
+    targetKey: 
+    tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: 0
+    dismissKey: 32
+    autoFlipByScreenSide: 0
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 0
+    freeCamera: 0
+    forceRecipeBookOpen: 0

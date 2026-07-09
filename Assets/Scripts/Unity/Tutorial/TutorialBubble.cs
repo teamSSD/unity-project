@@ -65,11 +65,11 @@ public class TutorialBubble : MonoBehaviour
         optionalImage.gameObject.SetActive(true);
     }
 
-    public void EnableInteractiveDismiss(System.Action onDismissed)
+    public void EnableInteractiveDismiss(System.Action onDismissed, bool lockInput = true)
     {
         _interactive = true;
         _onDismiss = onDismissed;
-        if (!_tutorialLocked)
+        if (lockInput && !_tutorialLocked)
         {
             UILockManager.Lock(UILockManager.Owner.Tutorial);
             _tutorialLocked = true;
@@ -152,11 +152,25 @@ public class TutorialBubble : MonoBehaviour
 
         if (!_interactive) return;
         if (!_spawnFrameSkipped) { _spawnFrameSkipped = true; return; }
-        if (Input.GetKeyDown(_dismissKey)) Dismiss();
+
+        // Space dismiss 파트는 좌클릭도 대체 허용 (가이드성 안내 파트만 해당 — Tab/ESC/None 파트는 클릭 무시).
+        bool keyPressed = Input.GetKeyDown(_dismissKey);
+        bool clickAsSpace = _dismissKey == KeyCode.Space && Input.GetMouseButtonDown(0);
+        if (keyPressed || clickAsSpace)
+        {
+            // 레시피북 메뉴 카드가 열린 상태에선 Space/클릭 dismiss 차단.
+            // - IsMenuCardActive(static bool): CloseMenuCard 호출 시 즉시 false. Instance null 체크보다 결정론적.
+            if (_dismissKey == KeyCode.Space && MenuCardController.IsMenuCardActive) return;
+            Dismiss();
+        }
     }
+
+    /// <summary>외부에서 강제 dismiss (조건부 dismiss용, 예: 레시피북 닫힘 이벤트).</summary>
+    public void DismissExternally() => Dismiss();
 
     private void Dismiss()
     {
+        if (!_interactive) return; // 중복 호출 방지 (event + key press 등)
         _interactive = false;
         var cb = _onDismiss;
         _onDismiss = null;

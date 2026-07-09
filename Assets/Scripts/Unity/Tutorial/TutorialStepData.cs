@@ -42,4 +42,19 @@ public class TutorialStepPart
 
     [Tooltip("체크하면 target의 스크린 X 위치에 따라 tailHorizontalFraction 부호 자동 반전. 우측 target = tail body 오른쪽, 좌측 = 왼쪽.")]
     public bool autoFlipByScreenSide;
+
+    [Tooltip("체크하면 RecipeBookManager가 실제로 닫힐 때만 dismiss (dismissKey 무시). 카드 ESC로 닫혀도 안 넘어감.")]
+    public bool dismissOnRecipeBookClose;
+
+    [Tooltip("체크하면 이 파트 표시 중 UILockManager 잠금 해제 (bubble Tutorial owner + Cooking mock의 CookingTutorial owner). 손님 클릭/도시락 드래그 등 게임 상호작용 필요할 때.")]
+    public bool allowSceneInteraction;
+
+    [Tooltip("체크하면 이 파트 표시 중 카메라 자유 제어 (HorizontalCameraMove 활성). 요리하는 동안 유저가 카메라 움직일 수 있게. 미체크시 튜토리얼이 target으로 강제 이동.")]
+    public bool freeCamera;
+
+    [Tooltip("체크하면 이 파트 표시 중 RecipeBook을 강제로 열린 상태 유지 (Tab/ESC로 안 닫힘). '메뉴 클릭' 안내 파트용. 카드 ESC 닫기는 허용.")]
+    public bool forceRecipeBookOpen;
+
+    [Tooltip("체크하면 이 파트 표시 중 RecipeBook Tab으로 열리는 것 차단. 레시피북 안내(Tab hint) 이전 파트들에서 사용.")]
+    public bool blockRecipeBookOpen;
 }
