@@ -66,8 +66,9 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         await UniTask.Yield(cancellationToken: this.GetCancellationTokenOnDestroy());
         _hasAudioListener = FindFirstObjectByType<AudioListener>() != null;
         SetSourcesEnabled(_hasAudioListener);
+        // Listener 없어서 UpdateBGM에서 Play가 gated된 경우 재시도. Play는 stopped/paused 둘 다 처리.
         if (_hasAudioListener && bgmSource != null && bgmSource.clip != null && !bgmSource.isPlaying)
-            bgmSource.UnPause();
+            bgmSource.Play();
     }
 
     /// <summary>씬 unload로 카메라(AudioListener 소지자)가 사라지는 순간 즉시 AudioSource 비활성.
@@ -103,7 +104,8 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         if (bgmSource == null || bgmSource.clip == null) return;
         if (_hasAudioListener)
         {
-            if (!bgmSource.isPlaying) bgmSource.UnPause();
+            // Play는 stopped(처음)/paused(중간) 둘 다 커버. UnPause는 paused만.
+            if (!bgmSource.isPlaying) bgmSource.Play();
         }
         else
         {
