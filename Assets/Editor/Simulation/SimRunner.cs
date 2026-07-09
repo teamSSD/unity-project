@@ -24,8 +24,35 @@ namespace Game.Editor.Simulation
         [MenuItem("Tools/Simulation/Run AdaptiveSide (seed=42, days=60)")]
         public static void RunAdaptive60() => RunOne(new AdaptiveSidePolicy(), 42, 60);
 
+        [MenuItem("Tools/Simulation/Run Baseline dynamic-unlock (seed=42, days=90)")]
+        public static void RunBaselineDynamic90()
+        {
+            var cfg = new SimGameConfig
+            {
+                AssetTriggeredUnlock = new System.Collections.Generic.List<(int, string)>
+                {
+                    (160_000, "I049"), (160_000, "I034"),
+                    (230_000, "I039"), (280_000, "I053"),
+                }
+            };
+            var ctx = SimContext.Build(42, cfg);
+            ctx.Policy = new BaselinePolicy();
+            new SimHarness(ctx).Run(90);
+            string tag = $"BaselineDyn_seed42_90d_{System.DateTime.Now:yyyyMMdd_HHmmss}";
+            string runDir = System.IO.Path.Combine("tmp/simulation/runs", tag);
+            System.IO.Directory.CreateDirectory(runDir);
+            ctx.Log.Flush(System.IO.Path.Combine(runDir, "events.jsonl"));
+            Game.Editor.Simulation.Reports.CashFlowReport.WriteCsv(ctx.Log, System.IO.Path.Combine(runDir, "cashflow.csv"));
+            Game.Editor.Simulation.Reports.SummaryReport.Write(ctx.Log, System.IO.Path.Combine(runDir, "SUMMARY.md"), "Baseline", 42, 90);
+            Game.Editor.Simulation.Reports.DailyTrajectoryReport.WriteCsv(ctx.Log, System.IO.Path.Combine(runDir, "daily_trajectory.csv"));
+            UnityEngine.Debug.Log($"[Sim] Baseline dynamic 90d seed=42 → {runDir}");
+        }
+
         [MenuItem("Tools/Simulation/Run Baseline (seed=48, days=30)")]
         public static void RunBaselineSeed48() => RunOne(new BaselinePolicy(), 48, 30);
+
+        [MenuItem("Tools/Simulation/Run Baseline (seed=46, days=30)")]
+        public static void RunBaselineSeed46() => RunOne(new BaselinePolicy(), 46, 30);
 
         [MenuItem("Tools/Simulation/Run AdaptiveSide (seed=48, days=30)")]
         public static void RunAdaptiveSeed48() => RunOne(new AdaptiveSidePolicy(), 48, 30);
@@ -91,6 +118,7 @@ namespace Game.Editor.Simulation
             CustomerReport.WriteCsv(ctx.Log, Path.Combine(runDir, "customers.csv"));
             TimeoutCauseReport.WriteCsv(ctx.Log, Path.Combine(runDir, "timeout_causes.csv"));
             SummaryReport.Write(ctx.Log, Path.Combine(runDir, "SUMMARY.md"), ctx.Policy.Name, ctx.Seed, days);
+            DailyTrajectoryReport.WriteCsv(ctx.Log, Path.Combine(runDir, "daily_trajectory.csv"));
         }
     }
 }

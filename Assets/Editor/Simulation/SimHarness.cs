@@ -38,6 +38,9 @@ namespace Game.Editor.Simulation
             {
                 if (CheckBankrupt()) return;
 
+                // Progressive unlock (quest 완료 근사)
+                ApplyProgressiveUnlock(d);
+
                 selectedMenus = RunPreparation();
                 if (CheckBankrupt()) return;
 
@@ -57,6 +60,28 @@ namespace Game.Editor.Simulation
 
                 RunChoicePhase(PhaseType.Night, selectedMenus);
                 if (CheckBankrupt()) return;
+
+                // Quest daily income — unlock된 quest 메뉴 매일 자동 배달 수입.
+                var dailyIncomes = _ctx.GameConfig?.QuestDailyIncome;
+                if (dailyIncomes != null && dailyIncomes.Count > 0)
+                {
+                    int totalIncome = 0;
+                    foreach (var kv in dailyIncomes)
+                    {
+                        if (_ctx.UnlockedFood.IsUnlocked(kv.Key)) totalIncome += kv.Value;
+                    }
+                    if (totalIncome > 0)
+                    {
+                        _ctx.Stats.AddMoney(totalIncome);
+                        _ctx.Log.Add(new PhaseCashFlowEvent
+                        {
+                            day = _ctx.State.phase.Day,
+                            phase = (int)PhaseType.Night,
+                            category = "delivery",
+                            amount = totalIncome,
+                        });
+                    }
+                }
 
                 // Night PassPhase가 PassDay 호출 → 관리비 차감 + Weather 갱신 + 재고 만료.
                 int moneyBeforePassDay = _ctx.Stats.GetMoney();
@@ -265,6 +290,46 @@ namespace Game.Editor.Simulation
                 // 스냅샷 시점에서 자산 &lt;= 0이면 파산 예정. _ctx.Bankrupt는 CheckBankrupt 호출 후 세팅되므로 별도 판정.
                 bankrupt = _ctx.Stats.GetMoney() <= 0,
             });
+        }
+
+        /// <summary>ProgressiveUnlock 스케줄 확인 후 해당 day에 매칭되는 foodId unlock.</summary>
+        private void ApplyProgressiveUnlock(int currentDay)
+        {
+            var schedule = _ctx.GameConfig?.ProgressiveUnlock;
+            if (schedule != null)
+            {
+                foreach (var (day, foodId) in schedule)
+                {
+                    if (currentDay == day) _ctx.UnlockedFood.UnlockRecipe(foodId);
+                }
+            }
+
+            // 자산 임계치 기반 동적 unlock — 실 유저의 quest accept 판단 모사.
+            var assetSchedule = _ctx.GameConfig?.AssetTriggeredUnlock;
+            if (assetSchedule != null)
+            {
+                int money = _ctx.Stats.GetMoney();
+                foreach (var (threshold, foodId) in assetSchedule)
+                {
+                    if (money >= threshold && !_ctx.UnlockedFood.IsUnlocked(foodId))
+                    {
+                        _ctx.UnlockedFood.UnlockRecipe(foodId);
+                        // Quest 완료 보상 지급.
+                        var rewards = _ctx.GameConfig?.QuestUnlockReward;
+                        if (rewards != null && rewards.TryGetValue(foodId, out int reward) && reward > 0)
+                        {
+                            _ctx.Stats.AddMoney(reward);
+                            _ctx.Log.Add(new Game.Editor.Simulation.Events.PhaseCashFlowEvent
+                            {
+                                day = currentDay,
+                                phase = (int)_ctx.State.phase.Phase,
+                                category = "questReward",
+                                amount = reward,
+                            });
+                        }
+                    }
+                }
+            }
         }
 
         private bool CheckBankrupt()

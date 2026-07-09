@@ -36,7 +36,17 @@ namespace Game.Editor.Simulation.Cooking
         {
             int baseCount = BaseCountFor(phase);
             if (baseCount == 0) return 0;
-            return UnityEngine.Mathf.RoundToInt(baseCount * ToolThroughputBoost());
+            int toolBoosted = UnityEngine.Mathf.RoundToInt(baseCount * ToolThroughputBoost());
+
+            return toolBoosted;
+        }
+
+        private int CountUnlockedMains()
+        {
+            int c = 0;
+            foreach (var f in _ctx.FoodById.Values)
+                if (f?.type == FoodType.MAIN && _ctx.UnlockedFood.IsUnlocked(f.id)) c++;
+            return c;
         }
 
         /// <summary>Tool 5종 durationMultiplier 평균의 역수.

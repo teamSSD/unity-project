@@ -102,12 +102,11 @@ namespace Game.Editor.Simulation
             var cropRows = CsvModelConverter.Parse<CropData>(cats.csvs.cropData);
 
             float upMul = ctx.GameConfig.upgradeCostMultiplier;
-            if (System.Math.Abs(upMul - 1.0f) > 0.001f)
-            {
-                foreach (var r in farmRows) r.cost = (int)(r.cost * upMul);
-                foreach (var r in storageRows) r.cost = (int)(r.cost * upMul);
-                foreach (var r in toolRows) r.cost = (int)(r.cost * upMul);
-            }
+            float lateMul = ctx.GameConfig.lateUpgradeCostMultiplier;
+            // L1-L2 = upMul. L3+ = upMul × lateMul (endgame gate).
+            foreach (var r in farmRows) r.cost = (int)(r.cost * (r.level >= 3 ? upMul * lateMul : upMul));
+            foreach (var r in storageRows) r.cost = (int)(r.cost * (r.level >= 3 ? upMul * lateMul : upMul));
+            foreach (var r in toolRows) r.cost = (int)(r.cost * (r.level >= 3 ? upMul * lateMul : upMul));
 
             ctx.CropCatalog = new CropCatalogService(cropRows);
             ctx.FarmUpgrade = new FarmUpgradeService(ctx.State.garden.persistent, farmRows, ctx.Money, ctx.Expense);
@@ -133,6 +132,7 @@ namespace Game.Editor.Simulation
             // 초기 default 재료 + 기본 레시피
             ctx.Inventory.ResetToDefault();
             ctx.UnlockedFood.UnlockDefaultRecipes();
+            if (ctx.GameConfig.unlockAllMenus) ctx.UnlockedFood.UnlockAll();
             ctx.Weather.UpdateWeather(0);
             ctx.Settlement.Reset(ctx.Stats.GetMoney());
 
