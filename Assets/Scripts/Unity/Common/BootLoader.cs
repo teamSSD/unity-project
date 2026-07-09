@@ -16,6 +16,9 @@ public class BootLoader : MonoBehaviour
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(SceneNames.Managers));
         ManagerBootstrap.EnsureAll();
 
+        // 폰트 pre-warm — Dynamic 폰트에 게임 텍스트 미리 add (runtime hitch 방지)
+        FontPreWarmer.WarmAll();
+
         // 3. GameStart 씬 additive 로드 (완료 대기)
         await SceneManager.LoadSceneAsync(SceneNames.GameStart, LoadSceneMode.Additive);
 
