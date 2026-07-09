@@ -140,6 +140,12 @@ namespace Game.Editor.Simulation
         {
             EmitPhaseEnter(phase);
             var action = _ctx.Policy.DecidePhaseAction(_ctx, (int)phase);
+            _ctx.Log.Add(new PhaseActionEvent
+            {
+                day = _ctx.State.phase.Day,
+                phase = (int)phase,
+                action = action.ToString(),
+            });
             switch (action)
             {
                 case PhaseAction.Work:

@@ -11,6 +11,14 @@ namespace Game.Editor.Simulation.Events
         public override string ToJsonLine() => "{" + BaseFields("PhaseEnter") + "}";
     }
 
+    /// <summary>Afternoon/Evening/Night에서 정책이 결정한 액션 로그.</summary>
+    public sealed class PhaseActionEvent : SimEvent
+    {
+        public string action; // "Work" / "Shopping" / "Rest"
+        public override string ToJsonLine() =>
+            "{" + BaseFields("PhaseAction") + $",\"action\":{J(action)}" + "}";
+    }
+
     /// <summary>Preparation에서 도시락 3슬롯 선택.</summary>
     public sealed class MenuSelectedEvent : SimEvent
     {
