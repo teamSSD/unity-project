@@ -21,13 +21,14 @@ public class TextureDiagnostics : MonoBehaviour
     [SerializeField, Tooltip("씬 진입 직후 전체 개수/누락 요약 로그 남길지.")]
     private bool logOnSceneLoad = true;
 
-    [Header("Detection")]
-    [SerializeField, Tooltip("메인 카메라 frustum 안인데 SpriteRenderer.isVisible=false 인 것도 로그.")]
-    private bool detectInvisibleInFrustum = true;
+    // invisibleInFrustum 검사는 camera 이동에 따라 결과가 변동 → 지속 노이즈. 비활성.
+    // (원래 목적: 씬 설정 오류로 sprite가 안 보이는 경우 감지)
+    private const bool DetectInvisibleInFrustum = false;
 
     private float _timer;
     private bool _pendingFirstScan;
     private float _firstScanAt;
+    private string _lastAnomalySignature;
 
     private void OnEnable()
     {
@@ -97,30 +98,29 @@ public class TextureDiagnostics : MonoBehaviour
                 continue;
             }
 
-            if (detectInvisibleInFrustum && cam != null && IsInFrustum(cam, r) && !r.isVisible)
+            if (DetectInvisibleInFrustum && cam != null && IsInFrustum(cam, r) && !r.isVisible)
             {
                 invisibleInFrustum++;
                 anomalies.Add($"  INVISIBLE_IN_FRUSTUM {GetPath(r.gameObject)} sortLayer={r.sortingLayerName} order={r.sortingOrder}");
             }
         }
 
-        string sceneName = SceneManager.GetActiveScene().name;
-        if (initial || anomalies.Count > 0)
+        // Clean 스캔은 로그 안 남김. 이상 있을 때만 warning.
+        // 같은 씬에서 동일한 anomaly 조합이면 dedup (변경 시에만 재로그).
+        if (anomalies.Count > 0)
         {
+            string sceneName = SceneManager.GetActiveScene().name;
+            string signature = $"{sceneName}|{nullSprite}|{nullMaterial}|{disabledRenderer}|{invisibleInFrustum}";
+            if (signature == _lastAnomalySignature) return;
+            _lastAnomalySignature = signature;
+
             var sb = new StringBuilder();
             sb.AppendLine($"[TextureDiag] scene={sceneName} total={total} " +
                           $"nullSprite={nullSprite} nullMat={nullMaterial} " +
                           $"disabled={disabledRenderer} invisibleInFrustum={invisibleInFrustum}");
-            if (anomalies.Count > 0)
-            {
-                sb.AppendLine("이상 감지:");
-                foreach (var a in anomalies) sb.AppendLine(a);
-                Debug.LogWarning(sb.ToString());
-            }
-            else
-            {
-                Debug.Log(sb.ToString());
-            }
+            sb.AppendLine("이상 감지:");
+            foreach (var a in anomalies) sb.AppendLine(a);
+            Debug.LogWarning(sb.ToString());
         }
     }
 

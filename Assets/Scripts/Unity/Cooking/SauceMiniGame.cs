@@ -68,15 +68,10 @@ public class SauceMiniGame : MiniGameAbstract
             GameRandom.Normal(GameRandom.Variable, targetMean, targetStdDev),
             targetMin, targetMax);
         targetGauge = Mathf.Round(raw / decreasePerPress) * decreasePerPress;
-        Debug.Log($"[SauceMiniGame] target {targetGauge:F1}% (raw {raw:F1}, snapped to ×{decreasePerPress})");
         UpdateStopMarkerPosition();
     }
 
-    protected override void OnGameEnded()
-    {
-        float diff = Mathf.Abs(currentGauge - targetGauge);
-        Debug.Log($"[SauceMiniGame] finished — current {currentGauge:F1}% / target {targetGauge:F1}% / diff {diff:F1} / tolerance {tolerance}");
-    }
+    protected override void OnGameEnded() { }
 
     private void UpdateStopMarkerPosition()
     {

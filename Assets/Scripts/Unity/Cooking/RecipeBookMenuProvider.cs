@@ -21,12 +21,6 @@ public class RecipeBookMenuProvider : ISelectMenu
             return new List<MenuSchema>();
         }
 
-        var menuList = GameSessionRoot.Instance?.MenuSelection.GetAllMenusAsSchema();
-        foreach (var menu in menuList)
-        {
-            Debug.Log($"  - {menu}");
-        }
-
-        return menuList;
+        return GameSessionRoot.Instance?.MenuSelection.GetAllMenusAsSchema();
     }
 }

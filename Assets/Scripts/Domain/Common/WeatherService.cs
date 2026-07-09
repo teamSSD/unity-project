@@ -16,7 +16,6 @@ namespace Game.Domain.Common
         public void UpdateWeather(int day)
         {
             IsBadWeather = GameRandom.Value(GameRandom.Immutable) < BadWeatherChance;
-            Debug.Log($"[WeatherService] Day {day}: {(IsBadWeather ? "Bad" : "Good")} weather");
         }
     }
 }

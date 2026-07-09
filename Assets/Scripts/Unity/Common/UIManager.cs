@@ -25,10 +25,7 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
         }
     }
 
-    protected override void OnSingletonAwake()
-    {
-        Debug.Log("[UIManager] Awake completed");
-    }
+    protected override void OnSingletonAwake() { }
 
     private void EnsureInitialized()
     {
@@ -67,8 +64,6 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
 
         // GraphicRaycaster - UI 클릭 감지
         canvasObj.AddComponent<GraphicRaycaster>();
-
-        Debug.Log("[UIManager] GlobalCanvas created (WorldSpace)");
     }
 
     private void CreateGlobalTooltips()

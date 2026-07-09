@@ -42,7 +42,6 @@ public class CookingToolSchema
         }
         if (result != null && !result.foodData.availableTools.Contains(cookingToolData.id))
         {
-            Debug.Log(result.foodData.ingredientName + "\n" + String.Join(", ", result.foodData.availableTools) + "\n" + cookingToolData.id);
             return false;
         }
 

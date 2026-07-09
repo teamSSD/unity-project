@@ -42,8 +42,6 @@ public static class CasualDialogueProvider
                 npcLines[npcId] = new List<Line>();
             npcLines[npcId].Add(line);
         }
-
-        Debug.Log($"[CasualDialogue] Loaded {npcLines.Count} NPCs");
     }
 
     /// <summary>

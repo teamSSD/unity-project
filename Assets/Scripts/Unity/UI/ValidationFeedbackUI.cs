@@ -46,8 +46,8 @@ public class ValidationFeedbackUI : SingletonMonoBehaviour<ValidationFeedbackUI>
     {
         if (feedbackPanel == null)
         {
-            // Fallback to console if UI not set up
-            Debug.Log($"<color={GetGradeColor(grade)}>[Order Complete] Grade: {grade} | Score: {accuracyScore:F2} | Reward: {reward}원</color>");
+            // Fallback to console if UI not set up (feedbackPanel SerializeField 미할당 = 씬 설정 오류).
+            Debug.LogWarning($"[ValidationFeedbackUI] feedbackPanel 미할당 — grade={grade} score={accuracyScore:F2} reward={reward}");
             return;
         }
 

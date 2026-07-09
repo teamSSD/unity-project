@@ -51,17 +51,9 @@ namespace Game.Domain.Cooking
             foreach (var id in defaultSides) UnlockRecipe(id);
         }
 
-        public void UnlockRecipe(string foodId)
-        {
-            if (unlockedRecipeIds.Add(foodId))
-                Debug.Log($"[UnlockedFoodService] Unlocked recipe: {foodId}");
-        }
+        public void UnlockRecipe(string foodId) => unlockedRecipeIds.Add(foodId);
 
-        public void LockRecipe(string foodId)
-        {
-            if (unlockedRecipeIds.Remove(foodId))
-                Debug.Log($"[UnlockedFoodService] Locked recipe: {foodId}");
-        }
+        public void LockRecipe(string foodId) => unlockedRecipeIds.Remove(foodId);
 
         public void UnlockAll()
         {

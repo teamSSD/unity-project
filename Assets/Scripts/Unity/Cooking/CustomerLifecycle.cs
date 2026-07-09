@@ -107,16 +107,9 @@ public class CustomerLifecycle
         // Validate order
         MenuValidator.ValidationResult validation = MenuValidator.Validate(menuSchema, mainMenu, sideMenus);
 
-        // Log validation result
-        Debug.Log($"[CustomerLifecycle] Order #{menuSchema.orderNumber} - " +
-                  $"Score: {validation.AccuracyScore:F2} ({MenuValidator.GetGrade(validation.AccuracyScore)}) - " +
-                  $"{validation.FeedbackMessage}");
-
         // Calculate and award money (using actual food prices)
         int reward = MenuValidator.CalculateReward(menuSchema, mainMenu, sideMenus);
         GameSessionRoot.Instance?.Stats.AddMoney(reward);
-
-        Debug.Log($"[CustomerLifecycle] Reward: {reward}원 (Score: {validation.AccuracyScore:F2})");
 
         // Cleanup waiting customer
         if (waitingCustomer != null)

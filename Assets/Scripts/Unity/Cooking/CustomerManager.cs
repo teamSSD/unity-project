@@ -133,9 +133,6 @@ public class CustomerManager : MonoBehaviour
     {
         sessionStats.RecordOrderServed(validation.AccuracyScore, reward);
 
-        Debug.Log($"[CustomerManager] Order served - Grade: {MenuValidator.GetGrade(validation.AccuracyScore)} " +
-                  $"({validation.AccuracyScore:F2}) - Total Orders: {sessionStats.TotalOrders}");
-
         if (ValidationFeedbackUI.Instance != null)
         {
             ValidationFeedbackUI.Instance.ShowFeedback(

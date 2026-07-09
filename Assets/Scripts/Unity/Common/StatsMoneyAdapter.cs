@@ -14,11 +14,7 @@ public class StatsMoneyAdapter : IMoneyService
     {
         var s = Svc;
         if (s == null) return false;
-        if (s.GetMoney() < amount)
-        {
-            Debug.Log($"[StatsMoneyAdapter] 골드 부족 ({amount}G 필요)");
-            return false;
-        }
+        if (s.GetMoney() < amount) return false;
         s.SubMoney(amount);
         return true;
     }

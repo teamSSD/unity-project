@@ -291,14 +291,13 @@ public class TutorialCookingController : MonoBehaviour
     {
         if (!wasServed)
         {
-            // 화나서 나감 — 튜토리얼에선 사실상 없음 (타이머 정지). 방어 로그만.
-            Debug.Log("[Tutorial] Customer left angry — should not happen (timer stopped).");
+            // 화나서 나감 — 튜토리얼에선 사실상 없음 (타이머 정지). 실제 발생 시 튜토리얼 로직 오류.
+            Debug.LogWarning("[Tutorial] Customer left angry — should not happen (timer stopped).");
             return;
         }
         if (_customerResolved) return;
         _customerResolved = true;
         // "시간 안내" 파트 → "스킵 버튼 안내" 파트로 자동 진행. 스킵 파트는 dismissKey 없어서 유저가 실제 버튼 클릭해야 함.
-        Debug.Log("[Tutorial] Customer served — advancing to skip button hint.");
         TutorialController.Instance?.DismissActivePart();
     }
 

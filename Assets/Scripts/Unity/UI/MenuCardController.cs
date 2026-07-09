@@ -78,20 +78,7 @@ public class MenuCardController : SingletonMonoBehaviour<MenuCardController>
         else OpenRecipe();
         isMenuCardActive = true;
 
-        // === 진단 로그 ===
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
-        var rootRt = (RectTransform)transform;
-        var foodImgRt = transform.Find("FoodImage") as RectTransform;
-        var raiRt = transform.Find("RecipeAndIngredient") as RectTransform;
-        var recipeRt = transform.Find("RecipeAndIngredient/Recipe") as RectTransform;
-        var recipeVlg = recipeRt?.GetComponent<VerticalLayoutGroup>();
-        string lineHeights = "";
-        foreach (var line in spawnedLines)
-        {
-            var lrt = line.GetComponent<RectTransform>();
-            if (lrt != null) lineHeights += lrt.rect.height.ToString("F1") + ",";
-        }
-        Debug.Log($"[MenuCard runtime] id={foodId} chain={chain.Count} FoodImg={foodImgRt?.rect.size.y:F1} RAI={raiRt?.rect.size.y:F1} Recipe={recipeRt?.rect.size.y:F1} spacing={recipeVlg?.spacing:F1} lineHs=[{lineHeights}]");
     }
 
     private void ApplyHeaderImage(FoodData foodData, List<RecipeData> chain)
