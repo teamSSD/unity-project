@@ -52,10 +52,20 @@ namespace Game.Domain.Common
         {
             if (food == null || amount <= 0) return;
             int expDays = GetExpirationDays(food);
-            var batch = new InventoryBatch { quantity = amount, daysRemaining = expDays };
             if (!_inventory.ContainsKey(food)) _inventory[food] = new List<InventoryBatch>();
-            _inventory[food].Add(batch);
-            SortBatches(_inventory[food]);
+            var batches = _inventory[food];
+
+            // 같은 daysRemaining인 배치가 있으면 병합 (구매 시점 달라도 같은 유통기한이면 한 슬롯).
+            var existing = batches.Find(b => b.daysRemaining == expDays);
+            if (existing != null)
+            {
+                existing.quantity += amount;
+            }
+            else
+            {
+                batches.Add(new InventoryBatch { quantity = amount, daysRemaining = expDays });
+                SortBatches(batches);
+            }
         }
 
         public void ConsumeFood(FoodData food, int amount)

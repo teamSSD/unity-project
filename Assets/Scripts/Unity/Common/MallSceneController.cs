@@ -20,8 +20,6 @@ public class MallSceneController : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("[MallSceneController] Mall scene started");
-
         // 키보드 nav(Submit/Move)가 player 이동키와 충돌해 무심코 버튼이 selected 되면
         // Space로 goHomeButton 같은 게 트리거되어 의도치 않은 UI(메뉴 선택)가 뜸.
         // 마우스 클릭은 그대로 작동하므로 nav만 차단.
@@ -90,13 +88,14 @@ public class MallSceneController : MonoBehaviour
         // Mall 진입 시 UI 결정.
         // - Preparation: 자동 UI 없음 (첫 진입, 새 하루 모두 이 케이스).
         // - Morning: 어차피 실제로 도달 불가(Prep→Cooking 경로), 방어적으로 skip.
-        // - Shop 복귀: 유저가 Shopping 후 돌아온 것 → 다시 강요하지 않음.
+        // - Shop/Garden 복귀: 유저가 Shopping/Farming 후 돌아온 것 → 다시 강요하지 않음.
         // - 그 외 (Cooking→Mall 복귀 등): ActionSelector 자동 표시.
         // 주: SceneLoader.CurrentScene은 LoadSceneAdditive의 onComplete 이전엔
         // 이전 씬명을 유지하므로 Mall.Start 실행 중엔 "직전 씬"을 가리킴.
         var currentPhase = session?.Progress?.PhaseData?.Phase ?? PhaseType.Preparation;
-        bool cameFromShop = SceneLoader.CurrentScene == SceneNames.Shop;
-        if (currentPhase != PhaseType.Preparation && currentPhase != PhaseType.Morning && !cameFromShop)
+        bool cameFromSubScene = SceneLoader.CurrentScene == SceneNames.Shop
+                             || SceneLoader.CurrentScene == SceneNames.Garden;
+        if (currentPhase != PhaseType.Preparation && currentPhase != PhaseType.Morning && !cameFromSubScene)
             OpenActionSelection();
 
         TryStartWelcomeTutorial(currentPhase);

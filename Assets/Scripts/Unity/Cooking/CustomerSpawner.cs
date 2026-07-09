@@ -43,7 +43,7 @@ public class CustomerSpawner : MonoBehaviour
     private Vector3 waitingPositionVariance = new Vector3(0.3f, 0.5f, 0);
 
     // Taking customer positions
-    private Vector3 exitPosition = new Vector3(-11.63f, -0.85f, 0);
+    private Vector3 exitPosition = new Vector3(-9.89f, -0.85f, 0);
 
     public int AvailableWaitingSlots => availableWaitingPositions.Count;
     public int MaxWaitingCustomers => 3;
@@ -109,8 +109,9 @@ public class CustomerSpawner : MonoBehaviour
         GameObject customer = Instantiate(takingCustomerPrefab);
         TakingCustomer script = customer.GetComponent<TakingCustomer>();
 
-        // Taking 손님도 Ordering과 같은 y로 정렬 (caller가 넘긴 x/z만 사용).
-        position.y = orderingPosition.y;
+        // Taking(성공) 손님만 orderingPosition의 y로 정렬 (caller가 넘긴 x/z만 사용).
+        // Exit(실패) 손님은 exitPosition을 그대로 사용해 별도 나가는 라인 유지.
+        if (!isExit) position.y = orderingPosition.y;
         customer.transform.position = position;
         float scale = orderingTakingScale * (customerData != null ? customerData.displayScale : 1f);
         customer.transform.localScale = new Vector3(scale, scale, 1f);
