@@ -208,20 +208,23 @@ public partial class DialogueManager : MonoBehaviour
 
     void ApplyPortrait(DialogueLine line)
     {
+        // "플레이어"는 이름표 숨김 (닉네임 대신 공백) — CSV 원본은 유지, 렌더만 필터.
+        string displayName = line.speaker == "플레이어" ? " " : line.speaker;
+
         if (speakerPortraits != null && speakerPortraits.TryGetValue(line.speaker, out var sprite))
         {
-            nameText.text = line.speaker;
+            nameText.text = displayName;
             npcPortraitImage.sprite = sprite;
             npcPortraitImage.color = Color.white;
         }
         else if (speakerPortraits != null && speakerPortraits.Count > 0)
         {
-            nameText.text = line.speaker;
+            nameText.text = displayName;
             npcPortraitImage.color = new Color(0.5f, 0.5f, 0.5f, 1f);
         }
         else
         {
-            nameText.text = line.speaker;
+            nameText.text = displayName;
         }
     }
 
