@@ -23,6 +23,9 @@ if [ -z "${BUILD_SRC:-}" ] || [ ! -d "$BUILD_SRC" ]; then
   exit 1
 fi
 
+# 절대 경로로 변환 (worktree cd 이후에도 참조 가능하도록).
+BUILD_SRC="$(cd "$BUILD_SRC" && pwd)"
+
 # WebGL 산출물이 실제로 있는지 검증 (index.html + Build/ 하위)
 if [ ! -f "$BUILD_SRC/index.html" ] || [ ! -d "$BUILD_SRC/Build" ]; then
   echo "❌ WebGL 산출물이 아님: $BUILD_SRC (index.html 또는 Build/ 없음)"
