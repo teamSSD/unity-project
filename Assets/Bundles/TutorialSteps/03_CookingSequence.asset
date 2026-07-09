@@ -24,8 +24,13 @@ MonoBehaviour:
     tailHorizontalFraction: -0.5
     dismissKey: 32
     autoFlipByScreenSide: 1
-  - message: "\uCCA0\uD310: \uBCF4\uC5EC\uC9C0\uB294 \uBC29\uD5A5\uC5D0 \uB9DE\uCD94\uC5B4
-      \uBC29\uD5A5\uD0A4\uB97C \uC785\uB825\uD558\uC138\uC694!"
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 0
+    freeCamera: 0
+    forceRecipeBookOpen: 0
+    blockRecipeBookOpen: 1
+  - message: "\uBCF4\uC5EC\uC9C0\uB294 \uBC29\uD5A5\uC5D0 \uB9DE\uCD94\uC5B4 \uBC29\uD5A5\uD0A4\uB97C
+      \uC785\uB825\uD558\uC138\uC694!"
     optionalImage: {fileID: 0}
     targetKey: tool-T005
     tailDirection: 0
@@ -33,9 +38,14 @@ MonoBehaviour:
     tailHorizontalFraction: -0.5
     dismissKey: 32
     autoFlipByScreenSide: 1
-  - message: "\uB0C4\uBE44/\uD32C: \uC2A4\uD398\uC774\uC2A4\uBC14\uB85C \uD654\uB825\uC744
-      \uC870\uC808\uD558\uC138\uC694.\n\uC0BC\uAC01\uD615\uC774 \uCD08\uB85D \uAC8C\uC774\uC9C0\uC5D0
-      \uC720\uC9C0 \uB420\uC218\uB85D \uC810\uC218\uAC00 \uC62C\uB77C\uAC11\uB2C8\uB2E4!"
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 0
+    freeCamera: 0
+    forceRecipeBookOpen: 0
+    blockRecipeBookOpen: 1
+  - message: "\uC2A4\uD398\uC774\uC2A4\uBC14\uB85C \uD654\uB825\uC744 \uC870\uC808\uD558\uC138\uC694.\n\uC0BC\uAC01\uD615\uC774
+      \uCD08\uB85D \uAC8C\uC774\uC9C0\uC5D0 \uC720\uC9C0 \uB420\uC218\uB85D \uC810\uC218\uAC00
+      \uC62C\uB77C\uAC11\uB2C8\uB2E4!"
     optionalImage: {fileID: 0}
     targetKey: tool-T001
     tailDirection: 0
@@ -43,8 +53,14 @@ MonoBehaviour:
     tailHorizontalFraction: -0.5
     dismissKey: 32
     autoFlipByScreenSide: 1
-  - message: "\uC18C\uC2A4: \uC704 \uC544\uB798 \uBC29\uD5A5\uD0A4\uB97C \uC5F0\uD0C0\uD574
-      \uC815\uD655\uD55C \uC591\uC758 \uC18C\uC2A4\uB97C \uB123\uC73C\uC138\uC694!"
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 0
+    freeCamera: 0
+    forceRecipeBookOpen: 0
+    blockRecipeBookOpen: 1
+  - message: "\uC2A4\uD398\uC774\uC2A4\uBC14\uB85C \uD654\uB825\uC744 \uC870\uC808\uD558\uC138\uC694.\n\uC0BC\uAC01\uD615\uC774
+      \uCD08\uB85D \uAC8C\uC774\uC9C0\uC5D0 \uC720\uC9C0 \uB420\uC218\uB85D \uC810\uC218\uAC00
+      \uC62C\uB77C\uAC11\uB2C8\uB2E4!"
     optionalImage: {fileID: 0}
     targetKey: tool-T002
     tailDirection: 0
@@ -52,7 +68,14 @@ MonoBehaviour:
     tailHorizontalFraction: -0.5
     dismissKey: 32
     autoFlipByScreenSide: 1
-  - message: "\uBCFC: \uC2A4\uD398\uC774\uC2A4\uBC14\uB97C \uC5F0\uD0C0\uD574 \uC7AC\uB8CC\uB4E4\uC744
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 0
+    freeCamera: 0
+    forceRecipeBookOpen: 0
+    blockRecipeBookOpen: 1
+  - message: "\uC18C\uC2A4 \uBFCC\uB9AC\uAE30: \uC704 \uC544\uB798 \uBC29\uD5A5\uD0A4\uB97C
+      \uC5F0\uD0C0\uD574 \uC815\uD655\uD55C \uC591\uC758 \uC18C\uC2A4\uB97C \uB123\uC73C\uC138\uC694!\n\uC11E\uAE30:
+      \uC2A4\uD398\uC774\uC2A4\uBC14\uB97C \uC5F0\uD0C0\uD574 \uC7AC\uB8CC\uB4E4\uC744
       \uC11E\uC73C\uC138\uC694!"
     optionalImage: {fileID: 0}
     targetKey: tool-T003
@@ -61,8 +84,13 @@ MonoBehaviour:
     tailHorizontalFraction: -0.5
     dismissKey: 32
     autoFlipByScreenSide: 1
-  - message: "\uB3C4\uB9C8: \uC548\uB0B4\uC120\uC744 \uB530\uB77C \uC7AC\uB8CC\uB97C
-      \uC815\uD655\uD558\uAC8C \uC790\uB974\uC138\uC694!"
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 0
+    freeCamera: 0
+    forceRecipeBookOpen: 0
+    blockRecipeBookOpen: 1
+  - message: "\uC548\uB0B4\uC120\uC744 \uB530\uB77C \uC7AC\uB8CC\uB97C \uC815\uD655\uD558\uAC8C
+      \uC790\uB974\uC138\uC694!"
     optionalImage: {fileID: 0}
     targetKey: tool-T004
     tailDirection: 0
@@ -70,6 +98,11 @@ MonoBehaviour:
     tailHorizontalFraction: -0.5
     dismissKey: 32
     autoFlipByScreenSide: 1
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 0
+    freeCamera: 0
+    forceRecipeBookOpen: 0
+    blockRecipeBookOpen: 1
   - message: "\uD0ED(Tab)\uC744 \uB20C\uB7EC \uB808\uC2DC\uD53C\uBD81\uC744 \uC5F4\uC5B4\uBCF4\uC138\uC694."
     optionalImage: {fileID: 0}
     targetKey: tool-T004
@@ -78,3 +111,119 @@ MonoBehaviour:
     tailHorizontalFraction: -0.5
     dismissKey: 9
     autoFlipByScreenSide: 1
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 0
+    freeCamera: 0
+    forceRecipeBookOpen: 0
+    blockRecipeBookOpen: 0
+  - message: "\uBA54\uB274\uB97C \uD074\uB9AD\uD558\uC5EC \uC0C1\uC138 \uB808\uC2DC\uD53C\uB97C
+      \uD655\uC778 \uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+    optionalImage: {fileID: 0}
+    targetKey: 
+    tailDirection: 0
+    screenOffset: {x: -406.5, y: 316.2}
+    tailHorizontalFraction: -0.5
+    dismissKey: 32
+    autoFlipByScreenSide: 0
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 0
+    freeCamera: 0
+    forceRecipeBookOpen: 1
+    blockRecipeBookOpen: 1
+  - message: "ESC\uB098 X \uBC84\uD2BC\uC73C\uB85C \uB808\uC2DC\uD53C\uBD81\uC744
+      \uB2EB\uC744 \uC218 \uC788\uC5B4\uC694."
+    optionalImage: {fileID: 0}
+    targetKey: 
+    tailDirection: 1
+    screenOffset: {x: 590.7, y: 315}
+    tailHorizontalFraction: 0.5
+    dismissKey: 27
+    autoFlipByScreenSide: 0
+    dismissOnRecipeBookClose: 1
+    allowSceneInteraction: 0
+    freeCamera: 0
+    forceRecipeBookOpen: 0
+    blockRecipeBookOpen: 1
+  - message: "\uC190\uB2D8\uC774 \uC624\uBA74 \uD074\uB9AD\uD574\uC11C \uC8FC\uBB38\uC744
+      \uBC1B\uC544\uC694."
+    optionalImage: {fileID: 0}
+    targetKey: customer
+    tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: -0.5
+    dismissKey: 0
+    autoFlipByScreenSide: 1
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 1
+    freeCamera: 0
+    forceRecipeBookOpen: 0
+    blockRecipeBookOpen: 1
+  - message: "\uB3C4\uC2DC\uB77D\uC744 \uC6D0\uD558\uB294 \uC790\uB9AC\uC5D0 \uB193\uC544\uC8FC\uC138\uC694."
+    optionalImage: {fileID: 0}
+    targetKey: bento-pile
+    tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: -0.5
+    dismissKey: 0
+    autoFlipByScreenSide: 0
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 1
+    freeCamera: 1
+    forceRecipeBookOpen: 0
+    blockRecipeBookOpen: 1
+  - message: "\uC644\uC131\uD55C \uC694\uB9AC\uB97C \uB3C4\uC2DC\uB77D\uC5D0 \uB2F4\uC544\uC8FC\uC138\uC694."
+    optionalImage: {fileID: 0}
+    targetKey: placed-bento
+    tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: -0.5
+    dismissKey: 0
+    autoFlipByScreenSide: 0
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 1
+    freeCamera: 1
+    forceRecipeBookOpen: 0
+    blockRecipeBookOpen: 1
+  - message: "\uC601\uC218\uC99D\uC744 \uB3C4\uC2DC\uB77D\uC5D0 \uBD99\uC774\uBA74
+      \uC190\uB2D8\uC774 \uAC00\uC838\uAC11\uB2C8\uB2E4."
+    optionalImage: {fileID: 0}
+    targetKey: receipt
+    tailDirection: 1
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: -0.5
+    dismissKey: 0
+    autoFlipByScreenSide: 1
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 1
+    freeCamera: 1
+    forceRecipeBookOpen: 0
+    blockRecipeBookOpen: 1
+  - message: "\uC2DC\uAC04 \uC548\uC5D0 \uCC98\uB9AC\uD558\uC9C0 \uBABB\uD558\uBA74
+      \uC190\uB2D8\uC774 \uADF8\uB0E5 \uB098\uAC08 \uC218 \uC788\uC5B4\uC694."
+    optionalImage: {fileID: 0}
+    targetKey: taking-customer
+    tailDirection: 0
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: -0.5
+    dismissKey: 0
+    autoFlipByScreenSide: 0
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 1
+    freeCamera: 1
+    forceRecipeBookOpen: 0
+    blockRecipeBookOpen: 1
+  - message: "\uC624\uB298\uC740 \uC190\uB2D8\uC774 \uB354 \uC624\uC9C0 \uC54A\uC744
+      \uAC83 \uAC19\uB124\uC694.\n\uC774 \uBC84\uD2BC\uC744 \uB20C\uB7EC \uB2E4\uC74C\uC73C\uB85C
+      \uB118\uC5B4\uAC00\uC694."
+    optionalImage: {fileID: 0}
+    targetKey: skip
+    tailDirection: 1
+    screenOffset: {x: 0, y: 0}
+    tailHorizontalFraction: 0.5
+    dismissKey: 0
+    autoFlipByScreenSide: 0
+    dismissOnRecipeBookClose: 0
+    allowSceneInteraction: 1
+    freeCamera: 1
+    forceRecipeBookOpen: 0
+    blockRecipeBookOpen: 1
