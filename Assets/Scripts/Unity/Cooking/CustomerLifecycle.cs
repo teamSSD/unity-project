@@ -20,6 +20,14 @@ public class CustomerLifecycle
     // sender(this) 인자 포함 — 구독자가 람다 없이 명명된 메서드로 구독 가능 (이벤트 누수 방지)
     public event Action<CustomerLifecycle, MenuValidator.ValidationResult, int> OnCustomerServed;
     public event Action<CustomerLifecycle> OnCustomerLeft;
+    /// <summary>튜토리얼 mock용. Ordering→Waiting 전환 완료 (ticket까지 생성) 시 발화. Ticket ref 전달.</summary>
+    public event Action<OrderTicketModel> OnTutorialOrderPlaced;
+
+    /// <summary>튜토리얼 mock용. Taking customer 스폰 직후 발화 (배송 애니 3초 동안 유효). GO ref 전달.</summary>
+    public event Action<GameObject> OnTutorialTakingSpawned;
+
+    /// <summary>튜토리얼에서 waiting customer 타이머 정지 등 조작용.</summary>
+    public WaitingCustomer GetWaitingCustomer() => waitingCustomer;
 
     public CustomerLifecycle(
         MenuSchema menuSchema,
@@ -72,6 +80,8 @@ public class CustomerLifecycle
         // Setup ticket events (명명 메서드 — Cleanup에서 정상 해제 가능)
         orderTicket.OnAttached += OnTicketAttached;
         orderTicket.onTake += OnOrderDelivered;
+
+        OnTutorialOrderPlaced?.Invoke(orderTicket);
     }
 
     private void OnTicketAttached()
@@ -130,7 +140,7 @@ public class CustomerLifecycle
         }
 
         // Spawn taking customer (with food)
-        spawner.SpawnTakingCustomer(
+        var takingGo = spawner.SpawnTakingCustomer(
             customerData,
             position,
             menuSchema,
@@ -142,6 +152,7 @@ public class CustomerLifecycle
                 OnCustomerServed?.Invoke(this, validation, reward);
             }
         );
+        OnTutorialTakingSpawned?.Invoke(takingGo);
     }
 
     /// <summary>

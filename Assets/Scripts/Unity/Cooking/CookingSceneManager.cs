@@ -93,7 +93,8 @@ public class CookingSceneManager : MonoBehaviour
         return foodModel;
     }
 
-    /// <summary>튜토리얼 mock refill. 지정 storage에 FoodData로 신규 인스턴스 spawn (price=0).</summary>
+    /// <summary>튜토리얼 mock refill. 지정 storage에 FoodData로 신규 인스턴스 spawn (price=0)
+    /// + 인벤토리 재고 1개 복구 (없으면 다음 드롭에서 CheckStockAmount=0으로 즉시 destroy됨).</summary>
     public bool TryTutorialRefill(BaseStorage storage, FoodData food)
     {
         if (storage == null || food == null || foodPrefab == null || loadInventoryUsecase == null) return false;
@@ -102,6 +103,9 @@ public class CookingSceneManager : MonoBehaviour
         else if (storage == upperShelf) parent = upperShelfGameObject;
         else if (storage == lowerShelf) parent = lowerShelfGameObject;
         if (parent == null) return false;
+
+        // 인벤토리 복구 — 시각과 데이터 동기화.
+        GameSessionRoot.Instance?.Inventory?.AddFood(food, 1);
 
         GameObject instance = Instantiate(foodPrefab, parent.transform);
         instance.name = food.ingredientName;

@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
@@ -49,6 +50,11 @@ public class MenuCardOverlay : MonoBehaviour
 
         cardGO.GetComponent<MenuCardController>().InitSlot(foodId);
         CreateCloseButton(overlay.transform, cardRect);
+
+        // EventSystem 선택 해제 — 유저가 방금 클릭한 메뉴 슬롯이 selected 상태로 남아있으면
+        // Space(Submit)로 재클릭되어 카드 재생성/토글 버그가 발생. 여기서 선택 초기화.
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void Close()

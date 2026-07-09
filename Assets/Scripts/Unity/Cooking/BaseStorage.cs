@@ -34,7 +34,10 @@ public abstract class BaseStorage : MonoBehaviour
         if (ingredient == null || foodModels.Contains(ingredient)) return false;
         if (IsFull) return false;
 
-        ingredient.SetDefaultPosition(transform.position + CalculatePositionForIndex(foodModels.Count));
+        Vector3 targetPos = transform.position + CalculatePositionForIndex(foodModels.Count);
+        ingredient.SetDefaultPosition(targetPos);
+        // 초기 teleport — 없으면 FoodBehavior가 (0,0,0)에서 slot으로 Lerp 하며 "중앙에서 미끄러져 오는" 시각 버그 발생.
+        ingredient.transform.position = targetPos;
         foodModels.Add(ingredient);
         ingredient.onDestroy += HandleFoodDestroyed;
         return true;

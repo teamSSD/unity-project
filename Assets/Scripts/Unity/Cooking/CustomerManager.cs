@@ -45,9 +45,12 @@ public class CustomerManager : MonoBehaviour
     private float nextSpawnTime;
     private GameObject currentOrderingCustomer;
 
+    /// <summary>튜토리얼 mock에서 자동 spawn 완전 차단용. TutorialSpawnOne이 자동으로 false 세팅.</summary>
+    public bool AutoSpawnEnabled { get; set; } = true;
+
     public event Action OnGameEnd;
-    /// <summary>튜토리얼 mock 종료 트리거용. 손님 완료(성공/실패) 시 발화.</summary>
-    public event Action OnCustomerResolved;
+    /// <summary>튜토리얼 mock 종료 트리거용. bool: 성공적으로 대접했나 (true=served, false=화나서 나감).</summary>
+    public event Action<bool> OnCustomerResolved;
 
     void Awake()
     {
@@ -87,7 +90,7 @@ public class CustomerManager : MonoBehaviour
         var phase = GameSessionRoot.Instance?.Progress?.PhaseData?.Phase ?? PhaseType.Morning;
         switch (phase)
         {
-            case PhaseType.Morning:   baseSpawnInterval = 1f; spawnIntervalVariance = 1f; break;
+            case PhaseType.Morning:   baseSpawnInterval = 35f; spawnIntervalVariance = 8f;  break; // 아침 = 손님 적음
             case PhaseType.Afternoon: baseSpawnInterval = 30f; spawnIntervalVariance = 8f;  break;
             case PhaseType.Evening:   baseSpawnInterval = 22f; spawnIntervalVariance = 5f;  break;
             case PhaseType.Night:     baseSpawnInterval = 15f; spawnIntervalVariance = 4f;  break;
@@ -96,7 +99,7 @@ public class CustomerManager : MonoBehaviour
 
     void Update()
     {
-        if (!isOpen) return;
+        if (!isOpen || !AutoSpawnEnabled) return;
         HandleCustomerSpawning();
     }
 
@@ -143,13 +146,13 @@ public class CustomerManager : MonoBehaviour
             );
         }
 
-        OnCustomerCompleted(lifecycle);
+        OnCustomerCompleted(lifecycle, wasServed: true);
     }
 
-    private void OnCustomerLeft(CustomerLifecycle lifecycle) => OnCustomerCompleted(lifecycle);
+    private void OnCustomerLeft(CustomerLifecycle lifecycle) => OnCustomerCompleted(lifecycle, wasServed: false);
 
     /// <summary>매니저가 lifecycle에 구독한 이벤트 해제 + Cleanup. 누수 방지.</summary>
-    private void OnCustomerCompleted(CustomerLifecycle lifecycle)
+    private void OnCustomerCompleted(CustomerLifecycle lifecycle, bool wasServed)
     {
         lifecycle.OnCustomerServed -= OnCustomerServed;
         lifecycle.OnCustomerLeft -= OnCustomerLeft;
@@ -161,7 +164,7 @@ public class CustomerManager : MonoBehaviour
         // 이라 이미 다음 손님이 ordering 슬롯을 차지했을 수 있음. Ordering 손님은
         // OnOrderPlaced에서 destroy되므로 Unity의 destroyed==null 매직으로 자연 해제됨.
 
-        OnCustomerResolved?.Invoke();
+        OnCustomerResolved?.Invoke(wasServed);
         CheckGameEnd();
     }
 
@@ -267,6 +270,31 @@ public class CustomerManager : MonoBehaviour
             OnGameEnd?.Invoke();
         }
     }
+
+    /// <summary>튜토리얼 mock 전용. 자동 spawn 로직을 우회하고 손님 하나 강제 생성.
+    /// enabled=false 상태에서도 사용 가능. 자동으로 AutoSpawnEnabled=false 세팅 (추가 손님 차단).
+    /// 반환된 lifecycle에서 OnTutorialOrderPlaced 등 구독.</summary>
+    public CustomerLifecycle TutorialSpawnOne()
+    {
+        AutoSpawnEnabled = false;
+        MenuSchema menu = PickRandomMenu();
+        if (menu == null) return null;
+        CustomerData data = PickRandomCustomerData();
+        if (data == null) return null;
+
+        var lifecycle = new CustomerLifecycle(menu, data, spawner, ticketController);
+        lifecycle.OnCustomerServed += OnCustomerServed;
+        lifecycle.OnCustomerLeft += OnCustomerLeft;
+
+        currentOrderingCustomer = lifecycle.StartOrder();
+        activeCustomers.Add(lifecycle);
+
+        if (doorSfx != null) SoundManager.Instance?.Play2DSFX(doorSfx, 0.7f);
+        return lifecycle;
+    }
+
+    /// <summary>튜토리얼용. 현재 spawn된 ordering customer GameObject (스폰 직후 유효, 클릭 완료 후 destroy됨).</summary>
+    public GameObject GetCurrentOrderingCustomer() => currentOrderingCustomer;
 
     /// <summary>영업 조기 종료 — 모든 손님/티켓 즉시 파괴 후 페이즈 넘김.
     /// 스킵 버튼용. 정산은 지금까지 벌어들인 금액 그대로 반영.</summary>

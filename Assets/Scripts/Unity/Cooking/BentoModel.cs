@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,12 @@ using UnityEngine;
 public class BentoModel : MonoBehaviour
 {
     public BentoBehavior BehaviorInstance { get; private set; }
+
+    /// <summary>튜토리얼 mock용 static event. AddIngredient 성공 시 발화. sender + food 전달.</summary>
+    public static event Action<BentoModel, FoodSchema> OnFoodAddedForTutorial;
+
+    /// <summary>튜토리얼 mock용 static event. BentoModel이 처음 BentoPositionModel에 안착할 때 발화.</summary>
+    public static event Action<BentoModel> OnBentoPlacedForTutorial;
 
     [Header("Bento Settings")]
     [SerializeField] private int maxFoodSlots = 4;
@@ -86,6 +93,7 @@ public class BentoModel : MonoBehaviour
         }
         BehaviorInstance.AddTexture(displaySprite, Vector2.zero);
         foodList.Add(food);
+        OnFoodAddedForTutorial?.Invoke(this, food);
         return true;
     }
 
@@ -107,6 +115,7 @@ public class BentoModel : MonoBehaviour
                 BehaviorInstance.defaultPosition = bentoPositionModel.transform.position;
                 bentoPositionModel.isSet = true;
                 SoundManager.Instance.Play2DSFX(bentoPutSfx, 0.4f);
+                OnBentoPlacedForTutorial?.Invoke(this);
             }
             else
             {
