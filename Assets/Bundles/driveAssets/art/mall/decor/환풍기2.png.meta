@@ -1,10 +1,16 @@
 fileFormatVersion: 2
-guid: bc32a9e920b4142269ed8b2582e9007d
+guid: 2aab90ff7c14f45b99117e3eb4f47d5e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7633749429076537660
-    second: bg_mall_store1_0
+      213: 7088884239604000996
+    second: "\uD658\uD48D\uAE302_0"
+  - first:
+      213: -6939407782007081485
+    second: "\uD658\uD48D\uAE302_1"
+  - first:
+      213: -8705469904365902008
+    second: "\uD658\uD48D\uAE302_2"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -49,8 +55,8 @@ TextureImporter:
   spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 0
-  alignment: 9
-  spritePivot: {x: 0.5, y: 0.8662037}
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 435
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
@@ -77,7 +83,7 @@ TextureImporter:
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
-    crunchedCompression: 1
+    crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
     ignorePlatformSupport: 0
@@ -90,7 +96,20 @@ TextureImporter:
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
-    crunchedCompression: 1
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
     ignorePlatformSupport: 0
@@ -100,13 +119,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: bg_mall_store1_0
+      name: "\uD658\uD48D\uAE302_0"
       rect:
         serializedVersion: 2
-        x: 447
-        y: 285
-        width: 3110
-        height: 1875
+        x: 428
+        y: 1839
+        width: 7
+        height: 6
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +134,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c31b27019a680f960800000000000000
-      internalID: 7633749429076537660
+      spriteID: 4e8267b48a6c06260800000000000000
+      internalID: 7088884239604000996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\uD658\uD48D\uAE302_1"
+      rect:
+        serializedVersion: 2
+        x: 443
+        y: 1839
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f5f2e9836542bf90800000000000000
+      internalID: -6939407782007081485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\uD658\uD48D\uAE302_2"
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 1841
+        width: 2453
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 847aa6bde35ff2780800000000000000
+      internalID: -8705469904365902008
       vertices: []
       indices: 
       edges: []
@@ -135,7 +198,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      bg_mall_store1_0: 7633749429076537660
+      "\uD658\uD48D\uAE302_0": 7088884239604000996
+      "\uD658\uD48D\uAE302_1": -6939407782007081485
+      "\uD658\uD48D\uAE302_2": -8705469904365902008
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
