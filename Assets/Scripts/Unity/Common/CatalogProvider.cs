@@ -42,6 +42,7 @@ public class CatalogProvider : SingletonMonoBehaviour<CatalogProvider>
     [SerializeField] private AudioClip bgmMall;
     [SerializeField] private AudioClip bgmCooking;
     [SerializeField] private AudioClip bgmNight;
+    [SerializeField] private AudioClip bgmGarden;
 
     public static FoodCatalogSO Food                     => Instance != null ? Instance.food                : null;
     public static RecipeCatalogSO Recipe                 => Instance != null ? Instance.recipe              : null;
@@ -57,6 +58,7 @@ public class CatalogProvider : SingletonMonoBehaviour<CatalogProvider>
     public static AudioClip BgmMall                      => Instance != null ? Instance.bgmMall             : null;
     public static AudioClip BgmCooking                   => Instance != null ? Instance.bgmCooking          : null;
     public static AudioClip BgmNight                     => Instance != null ? Instance.bgmNight            : null;
+    public static AudioClip BgmGarden                    => Instance != null ? Instance.bgmGarden           : null;
 
 #if UNITY_EDITOR
     private void OnValidate()

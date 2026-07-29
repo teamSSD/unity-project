@@ -150,6 +150,8 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     {
         string scene = SceneManager.GetActiveScene().name;
         if (scene == "Boot" || scene == "GameStart") return null;
+        // Garden은 페이즈 무관 항상 dawn BGM 유지.
+        if (scene == "Garden") return CatalogProvider.BgmGarden ?? CatalogProvider.BgmMall;
         if (GameSessionRoot.Instance?.Progress?.PhaseData?.Phase == PhaseType.Night) return CatalogProvider.BgmNight;
         return scene == "Cooking" ? CatalogProvider.BgmCooking : CatalogProvider.BgmMall;
     }

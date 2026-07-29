@@ -398,6 +398,7 @@ MonoBehaviour:
   bgmMall: {fileID: 8300000, guid: f2e88d222179644bf9522dbbf0974fe4, type: 3}
   bgmCooking: {fileID: 8300000, guid: 1d30f6b7b33c14d0face99950d6bf5ee, type: 3}
   bgmNight: {fileID: 8300000, guid: e5bfc24d070ff461dbce1867c04df9aa, type: 3}
+  bgmGarden: {fileID: 8300000, guid: 88a88a01be4d146c7b57005d486878e7, type: 3}
 --- !u!4 &1503211006
 Transform:
   m_ObjectHideFlags: 0
@@ -445,7 +446,6 @@ MonoBehaviour:
   scanIntervalSec: 3
   sceneLoadDelaySec: 1
   logOnSceneLoad: 1
-  detectInvisibleInFrustum: 1
 --- !u!4 &1642477106
 Transform:
   m_ObjectHideFlags: 0
