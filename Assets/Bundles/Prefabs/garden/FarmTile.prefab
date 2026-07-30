@@ -327,7 +327,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::Farm
   actionPrompt: {fileID: 6727544678558968937}
   cropSpriteRenderer: {fileID: 8902883799851120429}
-  uiOffsetY: 0.5
+  uiOffsetY: 0.65
   growthGauge: {fileID: 2011731236556914326}
   gaugeCanvas: {fileID: 2136378795540798559}
   cropNameCanvas: {fileID: 5275240588914532642}
@@ -937,7 +937,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9009058711819973355, guid: 7dc98fbbd91294b7397a6874121d3cbb, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -538
+      value: -424
       objectReference: {fileID: 0}
     - target: {fileID: 9009058711819973355, guid: 7dc98fbbd91294b7397a6874121d3cbb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

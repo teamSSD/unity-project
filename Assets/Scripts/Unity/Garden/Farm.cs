@@ -164,7 +164,10 @@ public class Farm : MonoBehaviour
             cropNameLabel.text = food?.ingredientName ?? currentCrop.cropId;
         }
 
-        AdjustUIPosition();
+        // 이전엔 AdjustUIPosition으로 gauge/name을 sprite bounds 기준 이동시켰지만,
+        // 크롭 sprite가 3840x2160 @ PPU 217로 매우 크고 custom pivot이라 bounds.max.y가
+        // 예측 불가 (천장에 매달림 이슈). 지금은 prefab에서 잡은 anchoredPosition 그대로 사용.
+        // 위치 튜닝은 Editor Inspector에서 Canvas/GrowthGauge RectTransform 직접 조작.
     }
 
     private void UpdatePrompt()
@@ -178,27 +181,14 @@ public class Farm : MonoBehaviour
         else if (tile.IsEmpty())
             actionPrompt.text = "(스페이스바로 심기)";
         else
-            actionPrompt.text = "성장 중...";
-    }
-
-    private void AdjustUIPosition()
-    {
-        if (cropSpriteRenderer.sprite == null) return;
-
-        Bounds bounds = cropSpriteRenderer.bounds;
-        if (gaugeCanvas != null)
         {
-            Vector3 newPos = gaugeCanvas.transform.position;
-            newPos.y = bounds.max.y + uiOffsetY;
-            gaugeCanvas.transform.position = newPos;
-        }
-        if (cropNameCanvas != null)
-        {
-            Vector3 namePos = cropNameCanvas.transform.position;
-            namePos.y = bounds.min.y - nameOffsetY;
-            cropNameCanvas.transform.position = namePos;
+            // "성장 중..." 대신 실제 작물 이름 표시.
+            var food = SearchDataUtil.GetFoodDataById(tile.GetCurrentCrop()?.cropId);
+            actionPrompt.text = food?.ingredientName ?? "";
         }
     }
+
+    // AdjustUIPosition 삭제: prefab의 anchoredPosition만 사용.
 
     private void OnTimePassed()
     {

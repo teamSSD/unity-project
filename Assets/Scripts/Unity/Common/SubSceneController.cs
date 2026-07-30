@@ -17,8 +17,14 @@ public class SubSceneController : MonoBehaviour
         // PassPhase가 Night case에서 자동으로 Settlement 씬 로드 후 true 반환 → return-scene 로드 skip.
         // 그 외에는 PassPhase 후 지정된 return 씬(Mall)으로. Mall이 자체적으로 phase 보고 UI 결정.
         var ps = GameSessionRoot.Instance?.Progress;
-        if (ps == null || !ps.PassPhase())
-            SceneLoader.LoadScene(returnSceneName);
+        if (ps == null) { SceneLoader.LoadScene(returnSceneName); return; }
+
+        // Night: PassPhase가 자체적으로 Settlement 씬 로드 (fade 처리 포함).
+        if (ps.PhaseData?.Phase == PhaseType.Night) { ps.PassPhase(); return; }
+
+        // 그 외: fade-in 완료 후 PassPhase 실행 → OnPhaseChanged 로 인한 배경 sprite 교체가
+        // 검정 화면 뒤에서 일어나서 유저에게 안 보임 (Cooking/Garden BackgroundController 대응).
+        SceneLoader.LoadSceneWithInit(returnSceneName, () => ps.PassPhase());
     }
 
 #if UNITY_EDITOR
