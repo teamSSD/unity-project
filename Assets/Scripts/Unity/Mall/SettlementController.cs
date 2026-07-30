@@ -47,9 +47,22 @@ public class SettlementController : MonoBehaviour
     {
         if (saveStatusText != null) saveStatusText.text = "저장 중...";
         await UniTask.Yield(cancellationToken: this.GetCancellationTokenOnDestroy());
-        GameSessionRoot.Instance?.Progress.PassDay();
-        if (saveStatusText != null) saveStatusText.text = "아무 키나 눌러서 계속";
-        waitingForInput = true;
+
+        // PassDay 내부 예외가 UniTaskVoid에 삼켜져 waitingForInput이 세팅 안 되던 이슈 (버그 9).
+        // try/finally로 정산 화면에서 항상 다음으로 넘어갈 수 있게 보장 + 예외는 로그로 노출.
+        try
+        {
+            GameSessionRoot.Instance?.Progress.PassDay();
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"[SettlementController] PassDay 실패 (day={GameSessionRoot.Instance?.Progress?.PhaseData?.Day}): {ex}");
+        }
+        finally
+        {
+            if (saveStatusText != null) saveStatusText.text = "아무 키나 눌러서 계속";
+            waitingForInput = true;
+        }
     }
 
     private void BuildUI()
