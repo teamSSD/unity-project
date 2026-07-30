@@ -142,12 +142,15 @@ public class TutorialBubble : MonoBehaviour
 
     private void Update()
     {
-        // Settings/Shop 등 다른 UI 열림 시 bubble 숨김 (버그 4: 설정 위로 둥둥 떠다니는 문제).
-        // Tutorial owner 잠금은 자기 자신이라 예외 — 다른 owner의 잠금만 hide 조건.
-        bool blockedByOtherUI = UILockManager.IsLockedByAnyExcept(UILockManager.Owner.Tutorial);
-        if (body != null && body.gameObject.activeSelf == blockedByOtherUI) body.gameObject.SetActive(!blockedByOtherUI);
-        if (tail != null && tail.gameObject.activeSelf == blockedByOtherUI) tail.gameObject.SetActive(!blockedByOtherUI);
-        if (blockedByOtherUI) return; // 위치 재계산도 스킵.
+        // Settings/Shop 등 모달 UI 열림 시 bubble 숨김 (버그 4: 설정 위로 둥둥 떠다니는 문제).
+        // BentoSelection/PhaseSelection 등은 튜토리얼과 공존하는 UI (튜토리얼이 이 UI 사용법을 안내) — 제외.
+        bool blockedByModal =
+            UILockManager.IsLockedBy(UILockManager.Owner.Settings) ||
+            UILockManager.IsLockedBy(UILockManager.Owner.Shop) ||
+            UILockManager.IsLockedBy(UILockManager.Owner.Loading);
+        if (body != null && body.gameObject.activeSelf == blockedByModal) body.gameObject.SetActive(!blockedByModal);
+        if (tail != null && tail.gameObject.activeSelf == blockedByModal) tail.gameObject.SetActive(!blockedByModal);
+        if (blockedByModal) return; // 위치 재계산도 스킵.
 
         // Dynamic follow — 카메라 이동/target 이동 대응. dismiss와 무관.
         if (_screenPosGetter != null)
