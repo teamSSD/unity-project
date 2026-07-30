@@ -53,6 +53,9 @@ public static class UILockManager
         return false;
     }
 
+    /// <summary>self 이외의 다른 owner가 잠그면 true. (튜토리얼 bubble이 Settings/Shop 뜰 때 자기 숨김용)</summary>
+    public static bool IsLockedByAnyExcept(Owner self) => !CanOpen(self);
+
     /// <summary>씬 전환 시 모든 잠금 초기화</summary>
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void Reset()

@@ -9,6 +9,7 @@ public class WaitingCustomer : MonoBehaviour
     [SerializeField] private GameObject gaugePrefab;
     public event Action onExit = () => {};
     private int managerTimerId = -1;
+    private bool _stopRequested;  // Start()가 실행되기 전 StopTimer 호출된 경우 (튜토리얼 mock에서 발생) 타이머 스킵.
     private GameObject gaugeUI;
     private GaugeUI guageScript;
 
@@ -59,6 +60,9 @@ public class WaitingCustomer : MonoBehaviour
 
     void Start()
     {
+        // 튜토리얼 등에서 Start 이전에 StopTimer 호출된 케이스 방어 (버그 5).
+        if (_stopRequested) return;
+
         var time = TimeManager.Instance;
         if (time != null)
         {
@@ -76,6 +80,7 @@ public class WaitingCustomer : MonoBehaviour
 
     public void StopTimer()
     {
+        _stopRequested = true;  // Start()가 아직 안 뛰었으면 타이머 시작 자체를 스킵.
         if (managerTimerId != -1 && TimeManager.Instance != null)
         {
             TimeManager.Instance.CancelTimer(managerTimerId);
