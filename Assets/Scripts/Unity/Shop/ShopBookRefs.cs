@@ -26,11 +26,19 @@ public class ShopBookRefs : MonoBehaviour
     [Tooltip("탭 전환 북마크 버튼 배열. ShopUIAdapter.Tab enum 순서와 맞춰야 함.")]
     [SerializeField] private Button[] bookmarkButtons;
 
+    [Header("Refresh (Item 탭 전용)")]
+    [Tooltip("상점 새로고침 버튼. 헤더 우측.")]
+    [SerializeField] private Button refreshButton;
+    [Tooltip("새로고침 비용 라벨.")]
+    [SerializeField] private TextMeshProUGUI refreshCostLabel;
+
     public Transform ListContent           => listContent;
     public TextMeshProUGUI HeaderLabel     => headerLabel;
     public ShopDetailPanel DetailPanel     => detailPanel;
     public Button CloseButton              => closeButton;
     public Button[] BookmarkButtons        => bookmarkButtons;
+    public Button RefreshButton            => refreshButton;
+    public TextMeshProUGUI RefreshCostLabel => refreshCostLabel;
 
 #if UNITY_EDITOR
     private void OnValidate() => RequiredFieldValidator.Validate(this);

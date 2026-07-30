@@ -50,6 +50,13 @@ public static class GameRandom
         return new System.Random(MixSeed(day * 8 + phaseIndex, ImmutableSeed));
     }
 
+    /// <summary>PhaseRandom + variant 축(예: 상점 새로고침 횟수). 같은 (day, phase) 내에서
+    /// variant 바뀌면 완전히 다른 시퀀스 생성.</summary>
+    public static System.Random PhaseRandom(int day, int phaseIndex, int variant)
+    {
+        return new System.Random(MixSeed((day * 8 + phaseIndex) * 1024 + variant, ImmutableSeed));
+    }
+
     /// <summary>
     /// splitmix32 변형 — 인접 입력 (day=0,1,... / seed=now,now+1)이 만들어내는
     /// 약한 상관관계를 흩뜨려 System.Random 첫 몇 개 출력의 편향을 줄인다.

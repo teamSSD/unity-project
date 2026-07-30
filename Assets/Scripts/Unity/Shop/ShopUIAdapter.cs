@@ -22,6 +22,8 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
     private ShopDetailPanel detailPanel;
     private Button closeButton;
     private Button[] bookmarkButtons = new Button[4];
+    private Button refreshButton;
+    private TextMeshProUGUI refreshCostLabel;
 
     private GameObject cachedRowPrefab;
     private readonly List<ShopListRow> currentRows = new();
@@ -88,6 +90,10 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
             bookmarkButtons[i].onClick.AddListener(() => SwitchTab((Tab)idx));
         }
 
+        refreshButton = refs.RefreshButton;
+        refreshCostLabel = refs.RefreshCostLabel;
+        if (refreshButton != null) refreshButton.onClick.AddListener(OnRefreshClicked);
+
         bookInstance.SetActive(false);
     }
 
@@ -136,6 +142,7 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
         detailPanel?.ShowEmpty();
         if (headerLabel != null) headerLabel.text = TabName(tab);
         UpdateBookmarkSelection(tab);
+        UpdateRefreshButton();
 
         switch (tab)
         {
@@ -237,6 +244,28 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
                 }
             );
         }
+    }
+
+    private void OnRefreshClicked()
+    {
+        if (purchase == null || currentTab != Tab.Item) return;
+        int day = progress?.PhaseData?.Day ?? 0;
+        int phaseIndex = (int)(progress?.PhaseData?.Phase ?? PhaseType.Preparation);
+        if (!purchase.TryRefresh(day, phaseIndex)) return;
+        SoundManager.Instance?.PlayButtonClick();
+        SwitchTab(currentTab); // 새 라인업 재populate
+    }
+
+    /// <summary>Item 탭일 때만 보이고, cost/가용성 라벨 업데이트.</summary>
+    private void UpdateRefreshButton()
+    {
+        bool showRefresh = currentTab == Tab.Item;
+        if (refreshButton != null) refreshButton.gameObject.SetActive(showRefresh);
+        if (!showRefresh || purchase == null) return;
+
+        int cost = purchase.GetRefreshCost();
+        if (refreshCostLabel != null) refreshCostLabel.text = $"{cost}G";
+        if (refreshButton != null) refreshButton.interactable = purchase.CanRefresh();
     }
 
     public void NotifyItemPurchased(FoodData item, int qty)
