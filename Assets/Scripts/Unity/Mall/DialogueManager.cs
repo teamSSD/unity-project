@@ -210,21 +210,19 @@ public partial class DialogueManager : MonoBehaviour
     {
         // "플레이어"는 이름표 숨김 (닉네임 대신 공백) — CSV 원본은 유지, 렌더만 필터.
         string displayName = line.speaker == "플레이어" ? " " : line.speaker;
+        nameText.text = displayName;
 
+        // dict에 해당 speaker sprite가 있으면 표시, 없으면(내레이션/플레이어 등) 이미지 자체를 숨김.
+        // 이전 코드는 dict miss 시 gray tint로 회색 사각형(빈 sprite) 표시하던 버그 (버그 8).
         if (speakerPortraits != null && speakerPortraits.TryGetValue(line.speaker, out var sprite))
         {
-            nameText.text = displayName;
+            npcPortraitImage.enabled = true;
             npcPortraitImage.sprite = sprite;
             npcPortraitImage.color = Color.white;
         }
-        else if (speakerPortraits != null && speakerPortraits.Count > 0)
-        {
-            nameText.text = displayName;
-            npcPortraitImage.color = new Color(0.5f, 0.5f, 0.5f, 1f);
-        }
         else
         {
-            nameText.text = displayName;
+            npcPortraitImage.enabled = false;
         }
     }
 
