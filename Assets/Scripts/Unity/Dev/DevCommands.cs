@@ -94,4 +94,26 @@ public static class DevCommands
         var pd = GameSessionRoot.Instance?.Progress?.PhaseData;
         Debug.Log($"[DevCommands] scene={scene} day={pd?.Day} phase={pd?.Phase} money={GameSessionRoot.Instance?.Stats?.GetMoney()}");
     }
+
+    [ConsoleMethod("inv.add", "인벤토리에 재료 추가 (foodId, count). 예: inv.add I070 5")]
+    public static void AddInventory(string foodId, int count)
+    {
+        var food = SearchDataUtil.GetFoodDataById(foodId);
+        if (food == null) { Debug.LogWarning($"[DevCommands] foodId '{foodId}' not found"); return; }
+        GameSessionRoot.Instance?.Inventory?.AddFood(food, count);
+        Debug.Log($"[DevCommands] +{count} {food.ingredientName} ({foodId})");
+    }
+
+    [ConsoleMethod("inv.dawnSoup", "새벽국 재료 세트 지급: 절인 해초, 절연 버섯, 물, 새벽풀, 두부 각 5개")]
+    public static void AddDawnSoupIngredients()
+    {
+        string[] ids = { "I070", "I012", "I069", "I013", "I003" };
+        foreach (var id in ids)
+        {
+            var food = SearchDataUtil.GetFoodDataById(id);
+            if (food == null) { Debug.LogWarning($"[DevCommands] {id} not found"); continue; }
+            GameSessionRoot.Instance?.Inventory?.AddFood(food, 5);
+            Debug.Log($"[DevCommands] +5 {food.ingredientName}");
+        }
+    }
 }
