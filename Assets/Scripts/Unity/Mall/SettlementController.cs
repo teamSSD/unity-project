@@ -29,6 +29,11 @@ public class SettlementController : MonoBehaviour
 
     void Start()
     {
+        // 이전 씬에서 InputField(도시락 이름 등) 사용 시 브라우저 IME가 켜져있으면
+        // 정산 화면의 Input.anyKeyDown이 keystroke을 못 잡는다 (WebGL 한글 IME 이슈).
+        // 명시적으로 IME off. (버그 9 재현 케이스)
+        Input.imeCompositionMode = IMECompositionMode.Off;
+
         BuildUI();
         if (saveStatusText != null) saveStatusText.text = "";
         SaveRoutineAsync().Forget();
@@ -36,7 +41,9 @@ public class SettlementController : MonoBehaviour
 
     void Update()
     {
-        if (waitingForInput && Input.anyKeyDown)
+        // IME/포커스 상관없이 진행 가능하도록 anyKey + 마우스 클릭 모두 인정.
+        // Input.anyKeyDown은 이미 마우스 버튼 포함하지만, WebGL IME 활성 시 keystroke 유실 방어용.
+        if (waitingForInput && (Input.anyKeyDown || Input.GetMouseButtonDown(0)))
         {
             waitingForInput = false;
             SceneLoader.LoadScene(SceneNames.Mall);
@@ -60,7 +67,7 @@ public class SettlementController : MonoBehaviour
         }
         finally
         {
-            if (saveStatusText != null) saveStatusText.text = "아무 키나 눌러서 계속";
+            if (saveStatusText != null) saveStatusText.text = "아무 키/클릭으로 계속";
             waitingForInput = true;
         }
     }
