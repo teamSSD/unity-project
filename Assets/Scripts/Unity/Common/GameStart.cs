@@ -68,6 +68,23 @@ public class GameStart : MonoBehaviour
 
     private void NewGame()
     {
+        // 세이브 있으면 덮어쓰기 confirm — 실수 방지.
+        if (SaveManager.HasSaveData())
+        {
+            ConfirmModal.Show(
+                title: "새로 시작하시겠습니까?",
+                message: "기존 세이브 데이터가 삭제됩니다.",
+                onConfirm: StartNewGame,
+                yesText: "새로 시작",
+                noText: "취소"
+            );
+            return;
+        }
+        StartNewGame();
+    }
+
+    private void StartNewGame()
+    {
         UILockManager.Unlock(UILockManager.Owner.GameStart);
         SceneLoader.LoadSceneWithInit(SceneNames.Mall, () =>
         {

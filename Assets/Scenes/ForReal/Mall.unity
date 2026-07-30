@@ -9832,7 +9832,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::SceneTransitionInteraction
   targetScene: Shop
   promptMessage: (press spacebar to enter shop)
-  spawnX: -18.38
+  spawnX: -23.6
 --- !u!1 &1749246556
 GameObject:
   m_ObjectHideFlags: 0
