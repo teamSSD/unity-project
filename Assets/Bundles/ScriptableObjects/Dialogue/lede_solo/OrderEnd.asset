@@ -45,7 +45,7 @@ MonoBehaviour:
     - label: "\uD3EC\uC77C \uB0C4\uC0C8\uC694?\n\uC778\uC1C4\uC18C\uB97C \uC790\uC8FC \uAC14\uC5B4\uC694?"
       responses:
       - speaker: "\uB808\uB370"
-        text: "\uBB50\u2014 \uADF8\uB0E5. \uC608\uC804\uC5D0. \uADF8\uB0E5 \uC790\uC8FC \uAC14\uC5B4."
+        text: "\uBB50\u2026 \uADF8\uB0E5. \uC608\uC804\uC5D0. \uADF8\uB0E5 \uC790\uC8FC \uAC14\uC5B4."
       - speaker: "\uD50C\uB808\uC774\uC5B4"
         text: "\uC65C\uC694?"
       - speaker: "\uB808\uB370"

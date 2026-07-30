@@ -14,7 +14,7 @@ public class SpriteFallbackAutoRegister
         var main = Selection.activeObject as TMP_SpriteAsset;
         if (main == null)
         {
-            Debug.LogError("��ǥ TMP Sprite Asset�� �����ϼ���.");
+            Debug.LogError("대표 TMP Sprite Asset을 선택하세요.");
             return;
         }
 
@@ -32,7 +32,7 @@ public class SpriteFallbackAutoRegister
 
         if (allSpriteAssets.Count == 0)
         {
-            Debug.LogWarning("����� TMP Sprite Asset�� �����ϴ�.");
+            Debug.LogWarning("등록할 TMP Sprite Asset이 없습니다.");
             return;
         }
 
@@ -49,7 +49,7 @@ public class SpriteFallbackAutoRegister
         EditorUtility.SetDirty(main);
         AssetDatabase.SaveAssets();
 
-        Debug.Log($"��� �Ϸ�: {allSpriteAssets.Count}�� Sprite Asset");
+        Debug.Log($"등록 완료: {allSpriteAssets.Count}개 Sprite Asset");
     }
 }
 #endif
