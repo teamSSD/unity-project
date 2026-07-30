@@ -51,7 +51,13 @@ public static class CasualDialogueProvider
     public static DialogueSO GetRandomDialogue(string npcId)
     {
         if (npcLines == null) Load();
-        if (!npcLines.TryGetValue(npcId, out var lines)) return null;
+        if (!npcLines.TryGetValue(npcId, out var lines))
+        {
+            // CSV에 엔트리 없음 → CasualNpcInteraction.Interact가 조용히 return되어
+            // 유저 관점에서 "상호작용 안 됨" 리포트로 나옴 (버그 1 npc_lin/npc_seraph 케이스).
+            Debug.LogWarning($"[CasualDialogue] npcId '{npcId}' not in CSV — 상호작용 무반응. csv에 엔트리 추가 필요.");
+            return null;
+        }
 
         bool badWeather = GameSessionRoot.Instance?.Weather?.IsBadWeather ?? false;
 
@@ -62,7 +68,11 @@ public static class CasualDialogueProvider
             (!badWeather && l.condition == "Good")
         ).ToList();
 
-        if (candidates.Count == 0) return null;
+        if (candidates.Count == 0)
+        {
+            Debug.LogWarning($"[CasualDialogue] npcId '{npcId}' has lines but 0 match current weather (bad={badWeather}). Any 조건 라인 추가 권장.");
+            return null;
+        }
 
         var picked = candidates[GameRandom.Range(GameRandom.Variable, 0, candidates.Count)];
 
