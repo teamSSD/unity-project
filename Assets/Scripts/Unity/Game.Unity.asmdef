@@ -5,7 +5,8 @@
         "Game.Schema",
         "Game.Domain",
         "Unity.TextMeshPro",
-        "UniTask"
+        "UniTask",
+        "IngameDebugConsole.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

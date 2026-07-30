@@ -3,6 +3,7 @@
     "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#main",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     "com.nobi.roundedcorners": "https://github.com/kirevdokimov/Unity-UI-Rounded-Corners.git",
+    "com.yasirkula.ingamedebugconsole": "https://github.com/yasirkula/UnityIngameDebugConsole.git",
     "com.unity.modules.screencapture": "1.0.0",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.2d.tilemap": "1.0.0",
