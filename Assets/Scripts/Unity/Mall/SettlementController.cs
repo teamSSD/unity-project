@@ -39,6 +39,13 @@ public class SettlementController : MonoBehaviour
         SaveRoutineAsync().Forget();
     }
 
+    void OnDestroy()
+    {
+        // IME 원상복구 — Start에서 Off 세팅한 게 static 프로퍼티라 씬 넘어가도 유지되어
+        // 이후 InputField(도시락 이름 등)에서 한글 입력 안 되는 이슈 방지.
+        Input.imeCompositionMode = IMECompositionMode.Auto;
+    }
+
     void Update()
     {
         // IME/포커스 상관없이 진행 가능하도록 anyKey + 마우스 클릭 모두 인정.
