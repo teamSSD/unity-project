@@ -58,6 +58,20 @@ public class TimeManager : SingletonMonoBehaviour<TimeManager>
     {
         IsPaused = false;
         breakAction = null;
+
+        // 현재 페이즈의 시작/종료 시각으로 override. Inspector 값은 페이즈 없을 때 fallback.
+        // 페이즈 무관하게 11:00~15:00 하드코딩되어 시계가 항상 같은 위치를 표시하던 이슈 fix.
+        var progress = GameSessionRoot.Instance?.Progress;
+        if (progress != null && progress.PhaseData != null)
+        {
+            int startMin = progress.PhaseStartMinutes;
+            int endMin   = progress.PhaseEndMinutes;
+            startHour   = startMin / 60;
+            startMinute = startMin % 60;
+            endHour     = endMin / 60;
+            endMinute   = endMin % 60;
+        }
+
         breakTargetTime = endHour * 60 + endMinute;
 
         var stats = GameSessionRoot.Instance?.Stats;
