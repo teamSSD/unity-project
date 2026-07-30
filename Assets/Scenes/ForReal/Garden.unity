@@ -801,7 +801,7 @@ Transform:
   m_GameObject: {fileID: 567848402}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: -0.33, z: 0}
+  m_LocalPosition: {x: 1.87, y: -0.33, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1191,6 +1191,7 @@ GameObject:
   - component: {fileID: 963256446}
   - component: {fileID: 963256445}
   - component: {fileID: 963256447}
+  - component: {fileID: 963256448}
   m_Layer: 0
   m_Name: background
   m_TagString: Background
@@ -1285,6 +1286,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.Unity::DynamicBoundaryWalls
   wallThickness: 0.5
+--- !u!114 &963256448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963256444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0866f9e0a8876432caccf25fa83cdb20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Unity::GardenBackgroundController
+  bgRenderer: {fileID: 0}
+  morningSprite: {fileID: 21300000, guid: 9e2fc2defed764b8ea088af630d1325c, type: 3}
+  eveningSprite: {fileID: 21300000, guid: e135802eaf32f42249fab8e16254444a, type: 3}
+  nightSprite: {fileID: 21300000, guid: 1e94e386acddb408b91623acadeda7d6, type: 3}
 --- !u!1 &1012710543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1349,7 +1366,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 11
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: c59d44945f3f14644a1a9d88127a2de4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1844,11 +1861,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3093472286701614652, guid: ebb29e65ccc6c4124873d01c34125361, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.7
+      value: -5.05
       objectReference: {fileID: 0}
     - target: {fileID: 3093472286701614652, guid: ebb29e65ccc6c4124873d01c34125361, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.27
+      value: -2.24
       objectReference: {fileID: 0}
     - target: {fileID: 3093472286701614652, guid: ebb29e65ccc6c4124873d01c34125361, type: 3}
       propertyPath: m_LocalPosition.z

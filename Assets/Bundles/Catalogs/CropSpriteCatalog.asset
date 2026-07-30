@@ -39,3 +39,43 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: 6ba2a56621d6c445694509c23c3356b7, type: 3}
   - key: driveAssets/art/item/cooking/food/item_onion_raw
     sprite: {fileID: 21300000, guid: b6756a62bcc074cf48b655cfb064ff99, type: 3}
+  - key: driveAssets/art/garden/crops/가지
+    sprite: {fileID: 21300000, guid: 0ad1e0cfca232425fbfe6e62493b5964, type: 3}
+  - key: driveAssets/art/garden/crops/꽃
+    sprite: {fileID: 21300000, guid: 5ae006f1d43a14d0e9fa45ee0aec926e, type: 3}
+  - key: driveAssets/art/garden/crops/버섯1
+    sprite: {fileID: 21300000, guid: 5247432e495da49ac9bf39b4a55a243a, type: 3}
+  - key: driveAssets/art/garden/crops/버섯2
+    sprite: {fileID: 21300000, guid: 333ba1f746d15414e8da2a076ff9d8f1, type: 3}
+  - key: driveAssets/art/garden/crops/버섯3
+    sprite: {fileID: 21300000, guid: 4b60a132b4e5d42e2a9236f42a619416, type: 3}
+  - key: driveAssets/art/garden/crops/뿌리식물1
+    sprite: {fileID: 21300000, guid: 37d62cd32b9d04e2ca357ba0ef64842a, type: 3}
+  - key: driveAssets/art/garden/crops/뿌리식물2
+    sprite: {fileID: 21300000, guid: 0c7e9af5ed5b340079cd6b92dcd8aacc, type: 3}
+  - key: driveAssets/art/garden/crops/뿌리식물3
+    sprite: {fileID: 21300000, guid: 2f1a2480f317e43ec99c79229105c489, type: 3}
+  - key: driveAssets/art/garden/crops/새벽풀1
+    sprite: {fileID: 21300000, guid: e99597b51695e4dd387a663ad34424d9, type: 3}
+  - key: driveAssets/art/garden/crops/새벽풀2
+    sprite: {fileID: 21300000, guid: 0d9f00aa41c6d4599b0c255c40f41ec4, type: 3}
+  - key: driveAssets/art/garden/crops/새벽풀3
+    sprite: {fileID: 21300000, guid: 78a43ed71e2324ff3892f5e7cad2825b, type: 3}
+  - key: driveAssets/art/garden/crops/식물1
+    sprite: {fileID: 21300000, guid: 1c90061446f0c4d41b90edab70e4ad9d, type: 3}
+  - key: driveAssets/art/garden/crops/식물2
+    sprite: {fileID: 21300000, guid: b5ab16028fb5044649d5b1a9548d9afc, type: 3}
+  - key: driveAssets/art/garden/crops/식물3
+    sprite: {fileID: 21300000, guid: 5848344836a4e4ee58cfe434bb82085b, type: 3}
+  - key: driveAssets/art/garden/crops/식물4
+    sprite: {fileID: 21300000, guid: 824bf83244dfb4fcc835bdc0c3374146, type: 3}
+  - key: driveAssets/art/garden/crops/콩
+    sprite: {fileID: 21300000, guid: 6aff82a570c784916ac5e19f98b1c043, type: 3}
+  - key: driveAssets/art/garden/crops/토마토
+    sprite: {fileID: 21300000, guid: 3ad8e8cb4288647a39f41c7790de6993, type: 3}
+  - key: driveAssets/art/garden/crops/파1
+    sprite: {fileID: 21300000, guid: bc6ba98a65ae443f9bed31b090b0b167, type: 3}
+  - key: driveAssets/art/garden/crops/파2
+    sprite: {fileID: 21300000, guid: 356f06e4bd778405991a03d83927c55e, type: 3}
+  - key: driveAssets/art/garden/crops/파3
+    sprite: {fileID: 21300000, guid: ee95cb17ba2b145d39fdf670ab812ccb, type: 3}

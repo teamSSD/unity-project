@@ -147,7 +147,7 @@ public class Farm : MonoBehaviour
 
         if (gaugeCanvas != null) gaugeCanvas.SetActive(true);
         if (cropNameCanvas != null) cropNameCanvas.SetActive(true);
-        cropSpriteRenderer.sprite = currentCrop.sprite;
+        cropSpriteRenderer.sprite = currentCrop.GetSpriteAt(tile.GetPassedPhases());
 
         if (growthGauge != null)
         {

@@ -70,8 +70,17 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     private void WireCatalogAndUpgrades(IMoneyService money, IExpenseLog expense)
     {
         var cropRows = CsvModelConverter.Parse<CropData>(CatalogProvider.Csvs?.cropData);
+        var cropSprites = CatalogProvider.CropSprites;
         foreach (var row in cropRows)
-            row.sprite = CatalogProvider.CropSprites?.Get(row.imagePath);
+        {
+            var sprites = new System.Collections.Generic.List<UnityEngine.Sprite>();
+            foreach (var p in row.imagePaths)
+            {
+                var s = cropSprites?.Get(p);
+                if (s != null) sprites.Add(s);
+            }
+            row.sprites = sprites.ToArray();
+        }
         CropCatalog = new CropCatalogService(cropRows);
 
         var farmRows = CsvModelConverter.Parse<FarmUpgradeData>(CatalogProvider.Csvs?.farmUpgrade);
