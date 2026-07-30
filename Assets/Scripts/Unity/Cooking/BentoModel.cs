@@ -108,10 +108,13 @@ public class BentoModel : MonoBehaviour
     {
         if (bentoPositionModel == null)
         {
-            // 첫 배치 — 빈 BentoPosition에만 안착
-            bentoPositionModel = scanColliderUtil.GetOverlappingWithComponent<BentoPositionModel>();
-            if (bentoPositionModel != null && !bentoPositionModel.isSet)
+            // 첫 배치 — 빈 BentoPosition에만 안착.
+            // bentoPositionModel은 성공 시에만 할당 — 실패 케이스에서 이미 점유된 슬롯을 참조로 남기면
+            // OnDestroy가 그 슬롯을 free시켜 다른 도시락이 그 자리 재점유 → 겹침 발생 (버그 6).
+            var candidate = scanColliderUtil.GetOverlappingWithComponent<BentoPositionModel>();
+            if (candidate != null && !candidate.isSet)
             {
+                bentoPositionModel = candidate;
                 BehaviorInstance.defaultPosition = bentoPositionModel.transform.position;
                 bentoPositionModel.isSet = true;
                 SoundManager.Instance.Play2DSFX(bentoPutSfx, 0.4f);
