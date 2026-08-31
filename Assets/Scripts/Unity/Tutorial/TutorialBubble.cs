@@ -43,6 +43,24 @@ public class TutorialBubble : MonoBehaviour
 
     public void SetDismissKey(KeyCode key) { _dismissKey = key; }
 
+    /// <summary>레시피북 안내 파트 (레시피북 조작 안내) 여부. true = RecipeBook(1100) 위에
+    /// 표시되도록 sub-canvas overrideSorting=1200 부여. false = 부모 TutorialOverlayCanvas(1000)
+    /// 상속 → RecipeBook 뒤로 밀림 (창 관통 문제 방어).</summary>
+    public void SetStayOnTopOfRecipeBook(bool value)
+    {
+        var canvas = GetComponent<Canvas>();
+        if (value)
+        {
+            if (canvas == null) canvas = gameObject.AddComponent<Canvas>();
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 1200;
+        }
+        else if (canvas != null)
+        {
+            canvas.overrideSorting = false;
+        }
+    }
+
     /// <summary>매 프레임 screenPosGetter/fractionGetter를 재호출해 위치+fraction 재계산.
     /// fractionGetter는 screen 좌표를 받아 상황별 fraction 반환 (autoFlip 등).</summary>
     public void EnableDynamicFollow(System.Func<Vector2> screenPosGetter, TailDirection dir, System.Func<Vector2, float> fractionGetter)

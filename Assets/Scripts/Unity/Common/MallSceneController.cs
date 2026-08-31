@@ -247,11 +247,14 @@ public class MallSceneController : MonoBehaviour
             TutorialController.Instance?.DismissActivePart();
     }
 
-    /// <summary>씬에 Canvas가 있으면 그것을, 없으면 새로 만들어 반환.</summary>
+    /// <summary>씬에 root Canvas가 있으면 그것을, 없으면 새로 만들어 반환.
+    /// isRootCanvas 필터 — sub-canvas(예: 튜토리얼 bubble overrideSorting)를 잡으면
+    /// 자식으로 붙는 UI가 그 sub-canvas order를 상속받아 위치·순서가 어긋남.</summary>
     private static Canvas FindOrCreateOverlayCanvas()
     {
-        var existing = Object.FindFirstObjectByType<Canvas>();
-        if (existing != null) return existing;
+        var canvases = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+        foreach (var c in canvases)
+            if (c != null && c.isRootCanvas) return c;
 
         var go = new GameObject("MallCanvas",
             typeof(Canvas), typeof(UnityEngine.UI.CanvasScaler), typeof(UnityEngine.UI.GraphicRaycaster));

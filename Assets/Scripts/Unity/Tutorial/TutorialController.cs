@@ -108,6 +108,10 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
         // dismissOnRecipeBookClose 파트는 dismissKey를 None으로 (키 입력으로 안 넘어감).
         _active.SetDismissKey(part.dismissOnRecipeBookClose ? KeyCode.None : part.dismissKey);
 
+        // 레시피북 안내 파트(강제 오픈 or 닫힘 감지)만 RecipeBook 창 위에 유지 (order 1200).
+        // 그 외 파트는 부모 상속(1000) → RecipeBook(1100) 뒤로 밀림.
+        _active.SetStayOnTopOfRecipeBook(part.forceRecipeBookOpen || part.dismissOnRecipeBookClose);
+
         // targetKey가 있으면 매 프레임 target 위치를 다시 계산 (카메라 이동/target 이동 대응).
         if (!string.IsNullOrEmpty(targetKey))
         {

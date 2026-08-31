@@ -77,7 +77,9 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
         var wrapper = new GameObject("RecipeBookCanvas");
         canvas = wrapper.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 100;
+        // TutorialOverlayCanvas(1000)보다 위 — 레시피북 열림 시 튜토리얼 말풍선이
+        // 창을 관통해 보이던 문제 fix. MenuCard 등 자식 UI도 자동 상속.
+        canvas.sortingOrder = 1100;
 
         var scaler = wrapper.AddComponent<UnityEngine.UI.CanvasScaler>();
         scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
