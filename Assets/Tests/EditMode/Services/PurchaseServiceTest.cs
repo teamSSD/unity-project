@@ -135,6 +135,55 @@ public class PurchaseServiceTest
     }
 
     [Test]
+    public void GetRefreshCost_PhaseChange_ResetsToBaseCost()
+    {
+        // Bug 회귀 앵커: 페이즈 넘어가도 UI에 이전 페이즈의 마지막 새로고침 비용이
+        // 그대로 표시되던 문제 방어. GetItemList가 phase 감지 후 _refreshCount 리셋.
+        var food = NewFood("F001");
+        var cfg = ScriptableObject.CreateInstance<FakeShopConfig>();
+        cfg.slots.Add(SpecialSlot(food, 5));
+        var money = new FakeMoneyService { Current = 999999 };
+        var svc = new PurchaseService(cfg, null, money, null);
+
+        svc.GetItemList(1, 0);
+        Assert.AreEqual(500, svc.GetRefreshCost()); // base
+
+        svc.TryRefresh(1, 0);
+        svc.TryRefresh(1, 0);
+        svc.TryRefresh(1, 0);
+        Assert.AreEqual(1688, svc.GetRefreshCost()); // 500 * 1.5^3 = 1687.5 → 1688
+
+        // 페이즈 넘어감 → GetItemList가 refreshCount 리셋
+        svc.GetItemList(1, 1);
+        Assert.AreEqual(500, svc.GetRefreshCost());
+
+        ScriptableObject.DestroyImmediate(cfg);
+        ScriptableObject.DestroyImmediate(food);
+    }
+
+    [Test]
+    public void TryBuy_IncrementsPurchasedExactlyOnce()
+    {
+        // Bug 회귀 앵커: UI Adapter가 TryBuy 성공 후 NotifyPurchased를 재호출해서
+        // 재고가 2배로 차감되던 문제 방어. TryBuy 자체는 정확히 qty만큼만 증가.
+        var food = NewFood("F001");
+        var cfg = ScriptableObject.CreateInstance<FakeShopConfig>();
+        cfg.slots.Add(SpecialSlot(food, 10));
+        var money = new FakeMoneyService { Current = 999999 };
+        var svc = new PurchaseService(cfg, null, money, null);
+
+        svc.GetItemList(1, 0);
+        bool ok = svc.TryBuy(food, 4, 100);
+
+        Assert.IsTrue(ok);
+        Assert.AreEqual(4, svc.GetPurchasedThisPhase(food));
+        Assert.AreEqual(6, svc.GetRemaining(cfg.slots[0]));
+
+        ScriptableObject.DestroyImmediate(cfg);
+        ScriptableObject.DestroyImmediate(food);
+    }
+
+    [Test]
     public void GetRemaining_UnlimitedGeneral_ReturnsMaxValue()
     {
         var food = NewFood("F001");

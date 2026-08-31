@@ -142,7 +142,6 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
         detailPanel?.ShowEmpty();
         if (headerLabel != null) headerLabel.text = TabName(tab);
         UpdateBookmarkSelection(tab);
-        UpdateRefreshButton();
 
         switch (tab)
         {
@@ -151,6 +150,10 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
             case Tab.Storage: PopulateStorageList(); break;
             case Tab.Farm:    PopulateFarmList();    break;
         }
+
+        // Populate 이후에 갱신 — GetItemList가 phase 감지하여 _refreshCount를
+        // 리셋한 뒤 GetRefreshCost가 호출되게. 이전 페이즈 stale 비용 표시 방지.
+        UpdateRefreshButton();
     }
 
     private void UpdateBookmarkSelection(Tab selected)
@@ -270,8 +273,8 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
 
     public void NotifyItemPurchased(FoodData item, int qty)
     {
-        purchase?.NotifyPurchased(item, qty);
-
+        // NotifyPurchased는 PurchaseService.TryBuy에서 이미 호출됨.
+        // 여기는 순수 UI 갱신 — 중복 호출 시 재고 2배 차감 버그 재발.
         foreach (var row in currentRows)
         {
             if (row.UserData is ItemRowData d && d.Food == item)

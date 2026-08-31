@@ -88,6 +88,23 @@ namespace Game.Domain.Shop
         }
 
         /// <summary>
+        /// 구매 거절 사유. null = 구매 가능. UI가 사유별 안내 팝업에 사용.
+        /// </summary>
+        public PurchaseRefusal? GetRefusalReason(FoodData food, int totalPrice)
+        {
+            if (food == null) return null;
+            if (_money != null && _money.Current < totalPrice)
+                return new PurchaseRefusal(PurchaseRefusalKind.Money, IngredientDisplayCategory.NONE, 0, 0);
+            if (_inventory == null || _inventory.CanAcceptType(food)) return null;
+
+            var usage = _inventory.GetCategoryUsage(food);
+            var cat = food.ingredient?.display ?? IngredientDisplayCategory.NONE;
+            int used = usage?.used ?? 0;
+            int max = usage?.max ?? 0;
+            return new PurchaseRefusal(PurchaseRefusalKind.Storage, cat, used, max);
+        }
+
+        /// <summary>
         /// 구매 트랜잭션: 잔액 차감 → 지출 기록 → 인벤토리 추가 → 페이즈별 구매수 누적.
         /// </summary>
         public bool TryBuy(FoodData food, int qty, int unitPrice)

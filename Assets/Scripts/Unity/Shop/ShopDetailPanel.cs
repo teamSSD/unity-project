@@ -139,20 +139,41 @@ public class ShopDetailPanel : MonoBehaviour
     private void OnBuyClicked()
     {
         if (purchase == null) return;
+        int total = itemQty * itemUnitPrice;
+        // 실패 사유는 disabled 대신 클릭 후 모달로 안내 — 유저가 왜 안 되는지 알 수 있게.
+        var refusal = purchase.GetRefusalReason(itemFood, total);
+        if (refusal.HasValue)
+        {
+            ShowRefusalModal(refusal.Value);
+            return;
+        }
         if (purchase.TryBuy(itemFood, itemQty, itemUnitPrice))
             ShopUIAdapter.Instance?.NotifyItemPurchased(itemFood, itemQty);
     }
+
+    private static void ShowRefusalModal(PurchaseRefusal r)
+    {
+        string message = r.Kind == PurchaseRefusalKind.Money
+            ? "골드가 부족합니다."
+            : $"{StorageLabelWithSubject(r.Category)} 가득 찼습니다. ({r.Used}/{r.Max})\n창고 탭에서 확장할 수 있습니다.";
+        ConfirmModal.Alert(title: "구매 불가", message: message);
+    }
+
+    private static string StorageLabelWithSubject(IngredientDisplayCategory c) => c switch
+    {
+        IngredientDisplayCategory.Refrigerator => "냉장고가",
+        IngredientDisplayCategory.UpperShelf   => "윗 찬장이",
+        IngredientDisplayCategory.LowerShelf   => "아랫 찬장이",
+        _                                      => "저장 공간이",
+    };
 
     private void UpdateQtyDisplay()
     {
         if (qtyLabel != null) qtyLabel.text = itemQty.ToString();
         int total = itemQty * itemUnitPrice;
         if (priceLabel != null) priceLabel.text = $"{total}G";
-        if (buyBtn != null)
-        {
-            bool canBuy = purchase?.CanBuy(itemFood, total) ?? false;
-            buyBtn.interactable = itemQty > 0 && canBuy;
-        }
+        // 실패 사유(잔액/저장 부족)는 클릭 후 모달로 안내 — 버튼은 qty>0이면 항상 활성.
+        if (buyBtn != null) buyBtn.interactable = itemQty > 0;
     }
 
     // ─── 업그레이드 액션 ──────────────────────────────────────────────

@@ -133,6 +133,20 @@ namespace Game.Domain.Common
             return unique < max;
         }
 
+        /// <summary>
+        /// 저장 카테고리 사용량. null = 카테고리 개념 없음 (제한 없음).
+        /// UI에서 "냉장고 (n/n)" 같은 사유 표시에 사용.
+        /// </summary>
+        public (int used, int max)? GetCategoryUsage(FoodData food)
+        {
+            if (food?.ingredient == null) return null;
+            string type = UpgradeTypeFromCategory(food.ingredient.display);
+            if (string.IsNullOrEmpty(type)) return null;
+            int max = _storage?.GetCurrentData(type)?.value ?? int.MaxValue;
+            int used = LoadIngredientsByCategory(food.ingredient.display).Count;
+            return (used, max);
+        }
+
         public void AddHarvestedCrop(string cropId, int amount)
         {
             FoodData food = _allFoodData?.Find(f => f.id == cropId);
