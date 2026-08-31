@@ -62,24 +62,22 @@ namespace Game.Domain.Common
         public int GetHour()   => (Stats?.time ?? 0) / 60;
         public int GetMinute() => (Stats?.time ?? 0) % 60;
 
+        // Night 페이즈가 22:00~익일 03:00(=27:00=1620분)까지 이어져 하루 경계를 넘음.
+        // 상한 1740(=29:00)은 이전 Night endTime 여유 마진 겸 미래 페이즈 확장 대비.
+        // Day 카운터는 PhaseData.Day가 SSOT — Day 전환은 ProgressService.PassDay 경로로.
+        private const int TimeUpperBound = 1740;
+
         public void SetTime(int hour, int minute)
         {
             var s = Stats; if (s == null) return;
-            s.time = Mathf.Clamp(hour * 60 + minute, 0, 1439);
+            s.time = Mathf.Clamp(hour * 60 + minute, 0, TimeUpperBound);
             OnTimeChanged?.Invoke(GetHour(), GetMinute());
         }
 
         public void AddTime(int hour, int minute)
         {
             var s = Stats; if (s == null) return;
-            s.time += hour * 60 + minute;
-            // Day 카운터는 PhaseData.Day가 SSOT — Day 전환은 ProgressService.PassDay 경로로.
-            // 정상 플레이 흐름은 SetPhaseTime(SetTime) 만 사용 → 여기 오버플로우는 실질 미도달.
-            if (s.time >= 1440)
-            {
-                s.time %= 1440;
-                Debug.LogError("[StatsService] AddTime overflow crossed a day boundary; use ProgressService.PassDay for day transitions.");
-            }
+            s.time = Mathf.Min(s.time + hour * 60 + minute, TimeUpperBound);
             OnTimeChanged?.Invoke(GetHour(), GetMinute());
         }
 

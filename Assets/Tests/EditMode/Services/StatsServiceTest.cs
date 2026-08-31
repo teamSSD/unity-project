@@ -50,17 +50,33 @@ public class StatsServiceTest
     }
 
     [Test]
-    public void Time_AddOverflow_WrapsAndLogsError()
+    public void Time_AddPastDayBoundary_NoWrap()
     {
-        // Day SSOT = PhaseData.Day → AddTime overflow는 로그 후 wrap만.
-        // Day 증가는 ProgressService.PassDay 경로에서만.
-        UnityEngine.TestTools.LogAssert.Expect(
-            UnityEngine.LogType.Error,
-            new System.Text.RegularExpressions.Regex(".*AddTime overflow.*"));
+        // Night 페이즈(22:00~익일 03:00)가 하루 경계를 넘어감. wrap 발생 시
+        // TimeManager.CheckBreakPoint(endTime)가 영원히 미도달 → 영업 종료 실패.
+        // 따라서 AddTime은 wrap 없이 그대로 누적해야 함.
         svc.SetTime(23, 30);
-        svc.AddTime(1, 0); // 24:30 → 00:30 (log error, no day change)
-        Assert.AreEqual(0, svc.GetHour());
+        svc.AddTime(1, 0); // 24:30
+        Assert.AreEqual(24, svc.GetHour());
         Assert.AreEqual(30, svc.GetMinute());
+    }
+
+    [Test]
+    public void Time_SetPastDayBoundary_Accepted()
+    {
+        // Night endTime(익일 03:00 = 1620)까지 저장 가능해야 CheckBreakPoint 통과.
+        svc.SetTime(27, 0);
+        Assert.AreEqual(27, svc.GetHour());
+        Assert.AreEqual(0, svc.GetMinute());
+    }
+
+    [Test]
+    public void Time_ClampedAtUpperBound()
+    {
+        // 상한(1740=29:00) 초과분은 clamp — GetHour 무한 증가 방지.
+        svc.SetTime(30, 0); // 1800 → 1740
+        Assert.AreEqual(29, svc.GetHour());
+        Assert.AreEqual(0, svc.GetMinute());
     }
 
     [Test]

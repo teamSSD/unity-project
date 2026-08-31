@@ -123,7 +123,7 @@ public class ProgressService : TimePhaseProvider
         PhaseType.Morning     => 720,
         PhaseType.Afternoon   => 1020,
         PhaseType.Evening     => 1320,
-        PhaseType.Night       => 1740,
+        PhaseType.Night       => 1620,
         _                     => 1440
     };
 }
