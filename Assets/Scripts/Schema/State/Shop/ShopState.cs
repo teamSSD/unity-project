@@ -6,5 +6,6 @@ namespace Game.Schema.State.Shop
     public class ShopState
     {
         public ShopPersistent persistent = new ShopPersistent();
+        public ShopSessionState session = new ShopSessionState();
     }
 }

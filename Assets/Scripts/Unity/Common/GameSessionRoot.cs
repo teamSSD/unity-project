@@ -97,7 +97,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     private void WireInventoryAndPurchase(IMoneyService money, IExpenseLog expense, System.Collections.Generic.IEnumerable<FoodData> foodCatalog)
     {
         Inventory = new InventoryService(State.inventory, foodCatalog, StorageUpgrade);
-        Purchase = new PurchaseService(CatalogProvider.FoodShopConfig, Inventory, money, expense);
+        Purchase = new PurchaseService(State.shop.session, CatalogProvider.FoodShopConfig, Inventory, money, expense);
     }
 
     private void WireMallDomain(IMoneyService money)

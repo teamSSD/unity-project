@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.Domain.Common;
+using Game.Schema.State.Shop;
 
 namespace Game.Domain.Shop
 {
@@ -23,18 +24,19 @@ namespace Game.Domain.Shop
         private readonly IMoneyService _money;
         private readonly IExpenseLog _expense;
 
-        private readonly Dictionary<FoodData, int> _phasePurchased = new();
-        private long _cachedKey = long.MinValue;
-        private List<ItemShopSlotInfo> _cachedItemList;
-        private int _refreshCount; // 현재 (day, phase)에서 새로고침한 횟수. 페이즈 넘어가면 0.
+        private readonly ShopSessionState _state;
+        private Dictionary<FoodData, int> PhasePurchased => _state.PurchasedByFood;
 
-        public PurchaseService(ShopConfigSO config, InventoryService inventory, IMoneyService money, IExpenseLog expense)
+        public PurchaseService(ShopSessionState state, ShopConfigSO config, InventoryService inventory, IMoneyService money, IExpenseLog expense)
         {
+            _state = state ?? throw new ArgumentNullException(nameof(state));
             _config = config;
             _inventory = inventory;
             _money = money;
             _expense = expense;
         }
+        public PurchaseService(ShopConfigSO config, InventoryService inventory, IMoneyService money, IExpenseLog expense)
+            : this(new ShopSessionState(), config, inventory, money, expense) { }
 
         private static long MakeKey(int day, int phaseIndex) => ((long)day << 8) | (uint)phaseIndex;
 
@@ -46,23 +48,20 @@ namespace Game.Domain.Shop
         {
             if (_config == null) return Array.Empty<ItemShopSlotInfo>();
             long key = MakeKey(day, phaseIndex);
-            if (_cachedKey != key)
+            if (_state.CachedKey != key)
             {
-                _cachedKey = key;
-                _phasePurchased.Clear();
-                _refreshCount = 0;
-                _cachedItemList = null;
+                _state.CachedKey = key; PhasePurchased.Clear(); _state.RefreshCount = 0; _state.CachedItemList = null;
             }
-            if (_cachedItemList == null)
+            if (_state.CachedItemList == null)
             {
-                var rng = GameRandom.PhaseRandom(day, phaseIndex, _refreshCount);
-                _cachedItemList = _config.BuildSlotList(rng);
+                var rng = GameRandom.PhaseRandom(day, phaseIndex, _state.RefreshCount);
+                _state.CachedItemList = _config.BuildSlotList(rng);
             }
-            return _cachedItemList;
+            return _state.CachedItemList;
         }
 
         public int GetPurchasedThisPhase(FoodData item)
-            => _phasePurchased.TryGetValue(item, out var v) ? v : 0;
+            => PhasePurchased.TryGetValue(item, out var v) ? v : 0;
 
         public int GetRemaining(ItemShopSlotInfo info)
         {
@@ -73,7 +72,7 @@ namespace Game.Domain.Shop
 
         public void NotifyPurchased(FoodData item, int qty)
         {
-            _phasePurchased[item] = GetPurchasedThisPhase(item) + qty;
+            PhasePurchased[item] = GetPurchasedThisPhase(item) + qty;
         }
 
         /// <summary>
@@ -125,7 +124,7 @@ namespace Game.Domain.Shop
         /// </summary>
         public int GetRefreshCost()
         {
-            return UnityEngine.Mathf.RoundToInt(RefreshBaseCost * UnityEngine.Mathf.Pow(RefreshCostMultiplier, _refreshCount));
+            return UnityEngine.Mathf.RoundToInt(RefreshBaseCost * UnityEngine.Mathf.Pow(RefreshCostMultiplier, _state.RefreshCount));
         }
 
         public bool CanRefresh() => _money != null && _money.Current >= GetRefreshCost();
@@ -141,9 +140,7 @@ namespace Game.Domain.Shop
             if (!CanRefresh()) return false;
             if (!_money.TrySpend(cost)) return false;
             _expense?.Add("상점 새로고침", cost);
-            _refreshCount++;
-            _cachedItemList = null; // 다음 GetItemList에서 재빌드
-            _cachedKey = MakeKey(day, phaseIndex); // 키 유지 (phase reset 아님)
+            _state.RefreshCount++; _state.CachedItemList = null; _state.CachedKey = MakeKey(day, phaseIndex);
             return true;
         }
     }
