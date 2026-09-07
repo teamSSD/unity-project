@@ -18,8 +18,8 @@ public class Farm : MonoBehaviour
     [Header("작물 이름 UI")]
     public GameObject cropNameCanvas;
     public TextMeshProUGUI cropNameLabel;
-    [Tooltip("crop sprite 하단에서 이름 라벨까지의 offset (양수 = 더 아래).")]
-    public float nameOffsetY = 0.3f;
+    [Tooltip("작물 스프라이트 상단과 작물명 사이의 월드 좌표 여백.")]
+    [Min(0f)] public float cropNameClearance = 0.1f;
 
     public int farmIndex;
     private FarmTile tile;
@@ -164,10 +164,7 @@ public class Farm : MonoBehaviour
             cropNameLabel.text = food?.ingredientName ?? currentCrop.cropId;
         }
 
-        // 이전엔 AdjustUIPosition으로 gauge/name을 sprite bounds 기준 이동시켰지만,
-        // 크롭 sprite가 3840x2160 @ PPU 217로 매우 크고 custom pivot이라 bounds.max.y가
-        // 예측 불가 (천장에 매달림 이슈). 지금은 prefab에서 잡은 anchoredPosition 그대로 사용.
-        // 위치 튜닝은 Editor Inspector에서 Canvas/GrowthGauge RectTransform 직접 조작.
+        PositionCropNameAboveCrop();
     }
 
     private void UpdatePrompt()
@@ -188,7 +185,24 @@ public class Farm : MonoBehaviour
         }
     }
 
-    // AdjustUIPosition 삭제: prefab의 anchoredPosition만 사용.
+    private void PositionCropNameAboveCrop()
+    {
+        if (cropSpriteRenderer == null || cropNameCanvas == null) return;
+        if (cropNameCanvas.transform is not RectTransform nameRect) return;
+
+        // 작물 종류/성장 단계별 실제 렌더 경계와 라벨의 월드 높이를 사용한다.
+        // 따라서 스프라이트 pivot이나 크기가 달라도 라벨 하단이 작물 상단보다 항상 위에 놓인다.
+        Canvas.ForceUpdateCanvases();
+        var corners = new Vector3[4];
+        nameRect.GetWorldCorners(corners);
+        float halfLabelHeight = Vector3.Distance(corners[0], corners[1]) * 0.5f;
+        Bounds cropBounds = cropSpriteRenderer.bounds;
+
+        var position = nameRect.position;
+        position.x = cropBounds.center.x;
+        position.y = cropBounds.max.y + halfLabelHeight + cropNameClearance;
+        nameRect.position = position;
+    }
 
     private void OnTimePassed()
     {
