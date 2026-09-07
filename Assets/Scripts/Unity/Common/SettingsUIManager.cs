@@ -68,6 +68,8 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
         rt.anchoredPosition = Vector2.zero;
     }
 
+    private bool prevLocked;
+
     void Update()
     {
         // 직전 프레임 lock 상태를 매 프레임 캡처. ESC로 다른 modal이 같은 프레임에 닫혀
