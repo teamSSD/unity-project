@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 const baseUrl = process.env.E2E_WEBGL_URL;
+const holdOpenMs = Number(process.env.E2E_HOLD_OPEN_MS ?? 0);
 
 function assertIsolatedLocalE2EOrigin(url) {
   if (!url) throw new Error('E2E_WEBGL_URL is required; never run this against a general development origin.');
@@ -68,4 +69,7 @@ test('fresh WebGL build boots, emits E2E events, and accepts real tutorial input
   expect(afterClickScreenshot.equals(bootScreenshot), 'New Game canvas click must change the rendered game state').toBeFalsy();
   expect(afterSpaceScreenshot.equals(afterClickScreenshot), 'Space must advance the tutorial after the canvas is focused').toBeFalsy();
   expect(errors, JSON.stringify(errors, null, 2)).toEqual([]);
+
+  // 사람이 실제 실행 장면을 보려는 경우에만 열린 창을 잠시 유지한다.
+  if (holdOpenMs > 0) await page.waitForTimeout(holdOpenMs);
 });

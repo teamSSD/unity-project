@@ -45,6 +45,12 @@ E2E 전용 빌드를 위의 별도 포트로 제공한 뒤 실행한다. runner�
 E2E_WEBGL_URL=http://localhost:8100/ npm run test:e2e:webgl
 ```
 
+사람이 실제 입력 과정을 보려면 `--headed`와 유지 시간을 준다.
+
+```sh
+E2E_WEBGL_URL=http://localhost:8100/ E2E_HOLD_OPEN_MS=20000 npm run test:e2e:webgl -- --headed
+```
+
 Playwright report의 test output에는 `01-boot.png`, `02-new-game-click.png`, `03-space-input.png`, `e2e-events.json`, `browser-console.json`이 남는다. 통과 기준은 부팅 snapshot이 하나 이상 있고 브라우저 오류가 없으며, 실제 클릭과 `Space` 입력 직후의 구조화 snapshot이 순서대로 남고 Canvas 화면이 각각 이전 화면과 달라지는 것이다.
 
 ## 수동 smoke journey
