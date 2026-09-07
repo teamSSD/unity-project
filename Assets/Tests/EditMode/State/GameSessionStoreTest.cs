@@ -16,11 +16,13 @@ public class GameSessionStoreTest
         Assert.IsNotNull(first.garden);
         Assert.IsNotNull(first.shop);
         Assert.IsNotNull(first.mall);
+        Assert.IsNotNull(first.mall.session);
         Assert.IsNotNull(first.inventory);
         Assert.IsNotNull(first.menuSelection);
         Assert.IsNotNull(first.unlockedFood);
         Assert.AreNotSame(first, second);
         Assert.AreNotSame(first.inventory, second.inventory);
+        Assert.AreNotSame(first.mall.session, second.mall.session);
         Assert.AreNotSame(first.menuSelection, second.menuSelection);
         Assert.AreNotSame(first.unlockedFood, second.unlockedFood);
     }

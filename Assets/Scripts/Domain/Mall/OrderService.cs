@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Game.Domain.Common;
+using Game.Schema.State.Mall;
 
 namespace Game.Domain.Mall
 {
@@ -11,22 +12,24 @@ namespace Game.Domain.Mall
     /// </summary>
     public class OrderService : IOrderReader, IOrderCommand
     {
-        private readonly List<DeliveryOrderData> _orders = new();
+        private readonly MallSessionState _state;
+        private List<DeliveryOrderData> Orders => _state.Orders;
         private readonly IMoneyService _money;
 
-        public OrderService(IMoneyService money)
+        public OrderService(MallSessionState state, IMoneyService money)
         {
+            _state = state ?? throw new System.ArgumentNullException(nameof(state));
             _money = money;
         }
 
-        public IReadOnlyList<DeliveryOrderData> GetOrders() => _orders;
+        public IReadOnlyList<DeliveryOrderData> GetOrders() => Orders;
 
         public DeliveryOrderData GetOrder(string questId)
-            => _orders.Find(o => o.questId == questId);
+            => Orders.Find(o => o.questId == questId);
 
         public void GenerateOrder(MenuSchema menu, string questId, string npcId)
         {
-            _orders.Add(new DeliveryOrderData
+            Orders.Add(new DeliveryOrderData
             {
                 questId = questId,
                 orderNumber = menu.orderNumber,
@@ -58,15 +61,15 @@ namespace Game.Domain.Mall
             return reward;
         }
 
-        public void Clear() => _orders.Clear();
+        public void Clear() => Orders.Clear();
 
         /// <summary>
         /// SaveManager 전용: 직렬화된 주문 데이터를 통째로 주입 (load 경로).
         /// </summary>
         public void SetOrders(IEnumerable<DeliveryOrderData> orders)
         {
-            _orders.Clear();
-            _orders.AddRange(orders);
+            Orders.Clear();
+            if (orders != null) Orders.AddRange(orders);
         }
     }
 }

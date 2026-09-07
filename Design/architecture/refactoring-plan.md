@@ -78,7 +78,7 @@ flowchart LR
 
 ### Phase 1 — GameSessionStore와 안전한 저장
 
-현재 진행: `SaveRepository`가 schema version, 임시 파일 검증, backup, 원자적 교체, backup 복구와 명시적 성공/실패를 담당한다. 마이그레이션은 신규 저장 성공 후에만 구파일을 삭제한다. `GameSessionStore`와 `NewGameStateFactory`를 도입했고 Inventory·도시락 선택·레시피 해금 런타임 상태를 Store 소유로 이전했다.
+현재 진행: `SaveRepository`가 schema version, 임시 파일 검증, backup, 원자적 교체, backup 복구와 명시적 성공/실패를 담당한다. 마이그레이션은 신규 저장 성공 후에만 구파일을 삭제한다. `GameSessionStore`와 `NewGameStateFactory`를 도입했고 Inventory·도시락 선택·레시피 해금·배달 주문 런타임 상태를 Store 소유로 이전했다.
 
 - `NewGameStateFactory`와 완전한 `GameSessionState`를 만든다.
 - `GameSessionStore`를 유일한 저장 상태 소유자로 둔다.

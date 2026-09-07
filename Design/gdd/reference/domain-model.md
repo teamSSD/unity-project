@@ -23,6 +23,7 @@ ADR-001 Option B에 따라 순수 POCO 서비스 + GameSessionRoot(Composition R
 | **InventoryState** | `Common/InventoryState.cs` | `FoodData → List<InventoryBatch>` 런타임 재고. `GameSessionStore` 소유 |
 | **MenuSelectionState** | `Cooking/CookingSessionState.cs` | 도시락 3슬롯의 `MenuSelection[]`. `GameSessionStore` 소유 |
 | **UnlockedFoodState** | `Cooking/CookingSessionState.cs` | 해금된 레시피 ID의 `HashSet<string>`. `GameSessionStore` 소유 |
+| **MallSessionState** | `Mall/MallSessionState.cs` | 배달 주문의 `List<DeliveryOrderData>`. `GameSessionStore` 소유 |
 | **BasicStats** | `Common/BasicStats.cs` | `int stamina/time/money`, `int immutableSeed / sessionSeed` |
 | **PhaseData** | `Common/PhaseData.cs` | `int Day=1`, `PhaseType Phase=Preparation`, `List<string> UnlockedRecipes` (legacy), `List<string> SelectedMenus` (legacy) |
 | **TutorialState** | `Common/TutorialState.cs` | `List<int> shownSteps`, `bool completed` |
@@ -152,6 +153,11 @@ Namespace 노트: `TutorialState`만 `Game.Schema.State`. 나머지 State POCO�
 - State: 생성자로 주입받은 `GameSessionStore.State.unlockedFood`; 서비스 내부에 별도 해금 Set을 만들지 않음
 - 기본 해금: I044 / I060 / I046 / I062
 - 주 API: `IsUnlocked`, `Unlock`, `Save/Load`
+
+#### OrderService
+- 경로: `Assets/Scripts/Domain/Mall/OrderService.cs`
+- 책임: Store의 `MallSessionState`를 변경하는 배달 주문 상태 전이와 배달 보상 지급
+- State: 생성자로 주입받은 `GameSessionStore.State.mall.session`; 서비스 내부에 별도 주문 목록을 만들지 않음
 - 저장: `UnlockedRecipesSaveData`
 
 #### RecipeLookupService

@@ -120,7 +120,7 @@ namespace Game.Editor.Simulation
             ctx.UnlockedFood = new UnlockedFoodService(new Game.Schema.State.UnlockedFoodState(), cats.food.All);
             ctx.RecipeLookup = new RecipeLookupService(cats.recipe.All);
 
-            ctx.Order = new OrderService(ctx.Money);
+            ctx.Order = new OrderService(new Game.Schema.State.Mall.MallSessionState(), ctx.Money);
 
             // HeadlessProgress
             ctx.Progress = new HeadlessProgress(ctx.State.phase, ctx.Stats, ctx.Inventory, ctx.Weather, ctx.Settlement);

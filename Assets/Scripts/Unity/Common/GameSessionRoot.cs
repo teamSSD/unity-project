@@ -104,7 +104,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
     {
         DeliveryQuest = new DeliveryQuestService(State.mall.persistent);
         NpcNormalDialogue = new NpcNormalDialogueService(State.mall.persistent);
-        Order = new OrderService(money);
+        Order = new OrderService(State.mall.session, money);
         QuestMenus = new QuestMenuCatalog(ParseQuestMenus());
     }
 
