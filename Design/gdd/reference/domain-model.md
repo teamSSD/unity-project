@@ -19,8 +19,10 @@ ADR-001 Option B에 따라 순수 POCO 서비스 + GameSessionRoot(Composition R
 
 | Class | 파일 | 필드 |
 |---|---|---|
-| **GameState** | `GameState.cs` | `GardenState garden`, `ShopState shop`, `MallState mall`, `InventoryState inventory`, `BasicStats stats`, `PhaseData phase`, `TutorialState tutorial` |
+| **GameState** | `GameState.cs` | `GardenState garden`, `ShopState shop`, `MallState mall`, `InventoryState inventory`, `MenuSelectionState menuSelection`, `UnlockedFoodState unlockedFood`, `BasicStats stats`, `PhaseData phase`, `TutorialState tutorial` |
 | **InventoryState** | `Common/InventoryState.cs` | `FoodData → List<InventoryBatch>` 런타임 재고. `GameSessionStore` 소유 |
+| **MenuSelectionState** | `Cooking/CookingSessionState.cs` | 도시락 3슬롯의 `MenuSelection[]`. `GameSessionStore` 소유 |
+| **UnlockedFoodState** | `Cooking/CookingSessionState.cs` | 해금된 레시피 ID의 `HashSet<string>`. `GameSessionStore` 소유 |
 | **BasicStats** | `Common/BasicStats.cs` | `int stamina/time/money`, `int immutableSeed / sessionSeed` |
 | **PhaseData** | `Common/PhaseData.cs` | `int Day=1`, `PhaseType Phase=Preparation`, `List<string> UnlockedRecipes` (legacy), `List<string> SelectedMenus` (legacy) |
 | **TutorialState** | `Common/TutorialState.cs` | `List<int> shownSteps`, `bool completed` |
@@ -139,13 +141,15 @@ Namespace 노트: `TutorialState`만 `Game.Schema.State`. 나머지 State POCO�
 
 #### MenuSelectionService
 - 경로: `Assets/Scripts/Domain/Cooking/MenuSelectionService.cs`
-- 책임: 도시락 3슬롯 상태
+- 책임: Store의 `MenuSelectionState`를 변경하는 도시락 3슬롯 규칙
+- State: 생성자로 주입받은 `GameSessionStore.State.menuSelection`; 서비스 내부에 별도 슬롯 배열을 만들지 않음
 - 주 API: `SetMenu(slot, food)`, `ClearMenu(slot)`, `GetMenu(slot)`, `Save/Load`
 - 저장: `RecipeBookSaveData` + `PhaseData.SelectedMenus` legacy fallback
 
 #### UnlockedFoodService
 - 경로: `Assets/Scripts/Domain/Cooking/UnlockedFoodService.cs`
-- 책임: 레시피 해금 Set. `IUnlockedFoodProvider` 구현.
+- 책임: Store의 `UnlockedFoodState`를 변경하는 레시피 해금 Set. `IUnlockedFoodProvider` 구현.
+- State: 생성자로 주입받은 `GameSessionStore.State.unlockedFood`; 서비스 내부에 별도 해금 Set을 만들지 않음
 - 기본 해금: I044 / I060 / I046 / I062
 - 주 API: `IsUnlocked`, `Unlock`, `Save/Load`
 - 저장: `UnlockedRecipesSaveData`

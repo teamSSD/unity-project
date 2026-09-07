@@ -1,4 +1,5 @@
 using Game.Domain.Cooking;
+using Game.Schema.State;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -29,7 +30,19 @@ public class UnlockedFoodServiceTest
     }
 
     private UnlockedFoodService BuildSvc()
-        => new UnlockedFoodService(new[] { main1, main2, side1, side2 });
+        => new UnlockedFoodService(new UnlockedFoodState(), new[] { main1, main2, side1, side2 });
+
+    [Test]
+    public void ServicesUsingSameState_ObserveTheSameUnlocks()
+    {
+        var state = new UnlockedFoodState();
+        var writer = new UnlockedFoodService(state, new[] { main1 });
+        var reader = new UnlockedFoodService(state, new[] { main1 });
+
+        writer.UnlockRecipe("I044");
+
+        Assert.IsTrue(reader.IsUnlocked("I044"));
+    }
 
     [Test]
     public void Initial_NothingUnlocked()

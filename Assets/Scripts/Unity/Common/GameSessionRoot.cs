@@ -110,8 +110,8 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
 
     private void WireCookingDomain(System.Collections.Generic.IEnumerable<FoodData> foodCatalog)
     {
-        MenuSelection = new MenuSelectionService(foodCatalog);
-        UnlockedFood = new UnlockedFoodService(foodCatalog);
+        MenuSelection = new MenuSelectionService(State.menuSelection, foodCatalog);
+        UnlockedFood = new UnlockedFoodService(State.unlockedFood, foodCatalog);
         RecipeLookup = new RecipeLookupService(CatalogProvider.Recipe?.All);
     }
 

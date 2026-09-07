@@ -116,8 +116,8 @@ namespace Game.Editor.Simulation
             ctx.Inventory = new InventoryService(new Game.Schema.State.InventoryState(), cats.food.All, ctx.StorageUpgrade);
             ctx.Purchase = new PurchaseService(cats.foodShopConfig, ctx.Inventory, ctx.Money, ctx.Expense);
 
-            ctx.MenuSelection = new MenuSelectionService(cats.food.All);
-            ctx.UnlockedFood = new UnlockedFoodService(cats.food.All);
+            ctx.MenuSelection = new MenuSelectionService(new Game.Schema.State.MenuSelectionState(), cats.food.All);
+            ctx.UnlockedFood = new UnlockedFoodService(new Game.Schema.State.UnlockedFoodState(), cats.food.All);
             ctx.RecipeLookup = new RecipeLookupService(cats.recipe.All);
 
             ctx.Order = new OrderService(ctx.Money);

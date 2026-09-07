@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Game.Schema.State;
 using UnityEngine;
 
 namespace Game.Domain.Cooking
@@ -9,42 +10,43 @@ namespace Game.Domain.Cooking
     /// </summary>
     public class MenuSelectionService
     {
-        private MenuSelection[] menuSelections;
+        private readonly MenuSelectionState _state;
+        private MenuSelection[] Menus => _state.Menus;
         private readonly List<FoodData> _allFoodData;
 
-        public MenuSelectionService(IEnumerable<FoodData> catalog)
+        public MenuSelectionService(MenuSelectionState state, IEnumerable<FoodData> catalog)
         {
+            _state = state ?? throw new System.ArgumentNullException(nameof(state));
             _allFoodData = catalog != null ? new List<FoodData>(catalog) : new List<FoodData>();
-            InitializeMenus();
+            if (Menus == null || Menus.Length != 3) InitializeMenus();
         }
 
         private FoodData FoodById(string id) => _allFoodData.Find(f => f.id == id);
 
         private void InitializeMenus()
         {
-            menuSelections = new MenuSelection[3];
-            menuSelections[0] = new MenuSelection("도시락 1");
-            menuSelections[1] = new MenuSelection("도시락 2");
-            menuSelections[2] = new MenuSelection("도시락 3");
+            _state.Menus = new MenuSelection[3];
+            Menus[0] = new MenuSelection("도시락 1");
+            Menus[1] = new MenuSelection("도시락 2");
+            Menus[2] = new MenuSelection("도시락 3");
         }
 
         public MenuSelection GetMenu(int index)
         {
-            if (menuSelections == null) InitializeMenus();
-            if (index < 0 || index >= menuSelections.Length)
+            if (index < 0 || index >= Menus.Length)
             {
                 Debug.LogError($"[MenuSelectionService] Invalid menu index: {index}");
                 return null;
             }
-            return menuSelections[index];
+            return Menus[index];
         }
 
         public List<MenuSchema> GetAllMenusAsSchema()
         {
             var menuList = new List<MenuSchema>();
-            for (int i = 0; i < menuSelections.Length; i++)
+            for (int i = 0; i < Menus.Length; i++)
             {
-                var menu = menuSelections[i];
+                var menu = Menus[i];
                 if (menu.HasSelection())
                 {
                     menuList.Add(new MenuSchema(
@@ -60,17 +62,12 @@ namespace Game.Domain.Cooking
 
         public void ClearAllMenus()
         {
-            foreach (var menu in menuSelections) menu.Clear();
+            foreach (var menu in Menus) menu.Clear();
         }
 
         public bool HasAnySelection()
         {
-            if (menuSelections == null)
-            {
-                InitializeMenus();
-                return false;
-            }
-            foreach (var menu in menuSelections)
+            foreach (var menu in Menus)
                 if (menu.HasSelection()) return true;
             return false;
         }
@@ -79,10 +76,9 @@ namespace Game.Domain.Cooking
         public List<int> GetInvalidSlotIndices()
         {
             var invalid = new List<int>();
-            if (menuSelections == null) return invalid;
-            for (int i = 0; i < menuSelections.Length; i++)
+            for (int i = 0; i < Menus.Length; i++)
             {
-                if (menuSelections[i] != null && menuSelections[i].HasSideOnly())
+                if (Menus[i] != null && Menus[i].HasSideOnly())
                     invalid.Add(i);
             }
             return invalid;
@@ -91,9 +87,9 @@ namespace Game.Domain.Cooking
         public RecipeBookSaveData GetSaveData()
         {
             var data = new RecipeBookSaveData();
-            for (int i = 0; i < menuSelections.Length; i++)
+            for (int i = 0; i < Menus.Length; i++)
             {
-                var menu = menuSelections[i];
+                var menu = Menus[i];
                 if (menu.HasSelection())
                 {
                     string mainId = menu.MainMenu?.id ?? "";
@@ -123,7 +119,8 @@ namespace Game.Domain.Cooking
 
         private void ApplyMenuList(List<string> savedMenus)
         {
-            for (int i = 0; i < Mathf.Min(savedMenus.Count, menuSelections.Length); i++)
+            InitializeMenus();
+            for (int i = 0; i < Mathf.Min(savedMenus.Count, Menus.Length); i++)
             {
                 string menuData = savedMenus[i];
                 if (string.IsNullOrEmpty(menuData)) continue;
@@ -137,13 +134,13 @@ namespace Game.Domain.Cooking
                 if (!string.IsNullOrEmpty(mainId))
                 {
                     FoodData mainFood = FoodById(mainId);
-                    if (mainFood != null) menuSelections[i].SetMain(mainFood);
+                    if (mainFood != null) Menus[i].SetMain(mainFood);
                 }
 
                 foreach (string sideId in sideIds)
                 {
                     FoodData sideFood = FoodById(sideId);
-                    if (sideFood != null) menuSelections[i].AddSide(sideFood);
+                    if (sideFood != null) Menus[i].AddSide(sideFood);
                 }
             }
         }

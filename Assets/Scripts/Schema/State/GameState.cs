@@ -15,6 +15,8 @@ namespace Game.Schema.State
         public ShopState shop = new ShopState();
         public MallState mall = new MallState();
         public InventoryState inventory = new InventoryState();
+        public MenuSelectionState menuSelection = new MenuSelectionState();
+        public UnlockedFoodState unlockedFood = new UnlockedFoodState();
 
         // 글로벌 게임 상태 (System 카테고리 매니저들이 facade로 접근)
         public BasicStats stats = new BasicStats();

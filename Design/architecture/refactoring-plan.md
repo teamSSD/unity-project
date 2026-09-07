@@ -53,7 +53,7 @@ flowchart LR
 
 ## 3. 현재 배포 차단 조건
 
-- EditMode 테스트 193개는 통과하지만 현재 보호 범위가 주로 단위·도메인 로직에 한정된다.
+- EditMode 테스트는 196개가 발견되며, Test Runner 기준 193개 통과·실패 0건이다. 보호 범위는 주로 단위·도메인 로직에 한정된다.
 - PlayMode 테스트 파일이 없어 씬 전환, UI 중첩, binding, 저장 왕복을 보호하지 못한다.
 - 게임 세이브 I/O는 안전한 경계로 옮겼지만 상태 캡처와 적용 책임은 아직 여러 서비스에 분산돼 있다.
 - Release 빌드 과정이 테스트와 scene/prefab validation을 강제하지 않는다.
@@ -63,7 +63,7 @@ flowchart LR
 
 ### Phase 0 — 기준선과 회귀 방지
 
-현재 진행: EditMode 193/193 통과. 기존 실패 8건의 명세 동기화와 중복 사이드 집계 결함 수정 완료. 레거시 의존성 증가를 막는 architecture budget 5종 적용.
+현재 진행: EditMode 196개 발견, 193개 통과·실패 0건. 기존 실패 8건의 명세 동기화와 중복 사이드 집계 결함 수정 완료. 레거시 의존성 증가를 막는 architecture budget 5종 적용.
 
 - 완료: 기존 실패 8개의 기준을 GDD와 동기화한다.
 - 기존 주요 버그를 재현 가능한 테스트 또는 Scenario로 기록한다.
@@ -78,7 +78,7 @@ flowchart LR
 
 ### Phase 1 — GameSessionStore와 안전한 저장
 
-현재 진행: `SaveRepository`가 schema version, 임시 파일 검증, backup, 원자적 교체, backup 복구와 명시적 성공/실패를 담당한다. 마이그레이션은 신규 저장 성공 후에만 구파일을 삭제한다. `GameSessionStore`와 `NewGameStateFactory`를 도입했고 Inventory 런타임 상태를 Store 소유로 이전했다.
+현재 진행: `SaveRepository`가 schema version, 임시 파일 검증, backup, 원자적 교체, backup 복구와 명시적 성공/실패를 담당한다. 마이그레이션은 신규 저장 성공 후에만 구파일을 삭제한다. `GameSessionStore`와 `NewGameStateFactory`를 도입했고 Inventory·도시락 선택·레시피 해금 런타임 상태를 Store 소유로 이전했다.
 
 - `NewGameStateFactory`와 완전한 `GameSessionState`를 만든다.
 - `GameSessionStore`를 유일한 저장 상태 소유자로 둔다.
