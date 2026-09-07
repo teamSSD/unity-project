@@ -113,7 +113,7 @@ namespace Game.Editor.Simulation
             ctx.StorageUpgrade = new StorageUpgradeService(ctx.State.shop.persistent, storageRows, ctx.Money, ctx.Expense);
             ctx.ToolUpgrade = new ToolUpgradeService(ctx.State.shop.persistent, toolRows, ctx.Money, ctx.Expense);
 
-            ctx.Inventory = new InventoryService(cats.food.All, ctx.StorageUpgrade);
+            ctx.Inventory = new InventoryService(new Game.Schema.State.InventoryState(), cats.food.All, ctx.StorageUpgrade);
             ctx.Purchase = new PurchaseService(cats.foodShopConfig, ctx.Inventory, ctx.Money, ctx.Expense);
 
             ctx.MenuSelection = new MenuSelectionService(cats.food.All);

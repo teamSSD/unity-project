@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Game.Domain.Common;
+using Game.Schema.State;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -36,7 +37,19 @@ public class InventoryServiceTest
     }
 
     private InventoryService BuildSvc(params FoodData[] catalog)
-        => new InventoryService(catalog, null);
+        => new InventoryService(new InventoryState(), catalog, null);
+
+    [Test]
+    public void ServicesUsingSameState_ObserveTheSameInventory()
+    {
+        var state = new InventoryState();
+        var writer = new InventoryService(state, new[] { foodA }, null);
+        var reader = new InventoryService(state, new[] { foodA }, null);
+
+        writer.AddFood(foodA, 4);
+
+        Assert.AreEqual(4, reader.CheckStockAmount(foodA));
+    }
 
     [Test]
     public void AddFood_NewItem_AddsBatch()

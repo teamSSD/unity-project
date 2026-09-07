@@ -20,7 +20,8 @@ using UnityEngine;
 [DefaultExecutionOrder(-999)]
 public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
 {
-    public GameState State { get; private set; }
+    public GameSessionStore Store { get; private set; }
+    public GameState State => Store?.State;
 
     public StatsService Stats { get; private set; }
     public ProgressService Progress { get; private set; }
@@ -43,7 +44,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
 
     protected override void OnSingletonAwake()
     {
-        State = new GameState();
+        Store = new GameSessionStore(NewGameStateFactory.Create());
         WireServices();
     }
 
@@ -95,7 +96,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
 
     private void WireInventoryAndPurchase(IMoneyService money, IExpenseLog expense, System.Collections.Generic.IEnumerable<FoodData> foodCatalog)
     {
-        Inventory = new InventoryService(foodCatalog, StorageUpgrade);
+        Inventory = new InventoryService(State.inventory, foodCatalog, StorageUpgrade);
         Purchase = new PurchaseService(CatalogProvider.FoodShopConfig, Inventory, money, expense);
     }
 

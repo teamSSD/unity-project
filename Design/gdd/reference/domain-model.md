@@ -1,6 +1,6 @@
 # Aftertaste — Domain Model (POCO Service 계층)
 
-ADR-001 Option B에 따라 순수 POCO 서비스 + GameSessionRoot(Composition Root) 구조. `GameSessionRoot.WireServices()`(`Assets/Scripts/Unity/Common/GameSessionRoot.cs:50`)에서 State 인스턴스화 + 18개 서비스 wiring.
+ADR-001 Option B에 따라 순수 POCO 서비스 + GameSessionRoot(Composition Root) 구조. `GameSessionRoot`는 `GameSessionStore`를 만들고 18개 서비스를 wiring하며, Store가 `GameState`의 소유권을 가진다.
 
 ## 1. Composition Root
 
@@ -10,7 +10,7 @@ ADR-001 Option B에 따라 순수 POCO 서비스 + GameSessionRoot(Composition R
 |---|---|
 | 배치 | Managers 씬에 단 1개 (SingletonMonoBehaviour) |
 | `[DefaultExecutionOrder]` | **-999** (CatalogProvider -1000 다음) |
-| 노출 | `State`, `Stats`, `Progress`, `CropCatalog`, `FarmUpgrade`, `StorageUpgrade`, `ToolUpgrade`, `Purchase`, `DeliveryQuest`, `NpcNormalDialogue`, `Order`, `QuestMenus`, `Inventory`, `MenuSelection`, `UnlockedFood`, `RecipeLookup`, `Weather`, `Settlement`, `Tutorial` |
+| 노출 | `Store`, 호환용 `State`, `Stats`, `Progress`, `CropCatalog`, `FarmUpgrade`, `StorageUpgrade`, `ToolUpgrade`, `Purchase`, `DeliveryQuest`, `NpcNormalDialogue`, `Order`, `QuestMenus`, `Inventory`, `MenuSelection`, `UnlockedFood`, `RecipeLookup`, `Weather`, `Settlement`, `Tutorial` |
 | Wiring 분리 | `WireCatalogAndUpgrades` / `WireInventoryAndPurchase` / `WireMallDomain` / `WireCookingDomain` |
 
 ## 2. GameState 트리
@@ -19,7 +19,8 @@ ADR-001 Option B에 따라 순수 POCO 서비스 + GameSessionRoot(Composition R
 
 | Class | 파일 | 필드 |
 |---|---|---|
-| **GameState** | `GameState.cs` | `GardenState garden`, `ShopState shop`, `MallState mall`, `BasicStats stats`, `PhaseData phase`, `TutorialState tutorial` |
+| **GameState** | `GameState.cs` | `GardenState garden`, `ShopState shop`, `MallState mall`, `InventoryState inventory`, `BasicStats stats`, `PhaseData phase`, `TutorialState tutorial` |
+| **InventoryState** | `Common/InventoryState.cs` | `FoodData → List<InventoryBatch>` 런타임 재고. `GameSessionStore` 소유 |
 | **BasicStats** | `Common/BasicStats.cs` | `int stamina/time/money`, `int immutableSeed / sessionSeed` |
 | **PhaseData** | `Common/PhaseData.cs` | `int Day=1`, `PhaseType Phase=Preparation`, `List<string> UnlockedRecipes` (legacy), `List<string> SelectedMenus` (legacy) |
 | **TutorialState** | `Common/TutorialState.cs` | `List<int> shownSteps`, `bool completed` |
@@ -129,7 +130,8 @@ Namespace 노트: `TutorialState`만 `Game.Schema.State`. 나머지 State POCO�
 
 #### InventoryService
 - 경로: `Assets/Scripts/Domain/Common/InventoryService.cs`
-- 책임: 배치 기반 인벤토리 (batch = quantity + daysRemaining), `LoadInventoryUsecase` 구현
+- 책임: Store의 `InventoryState`를 변경하는 배치 기반 인벤토리 규칙 (batch = quantity + daysRemaining), `LoadInventoryUsecase` 구현
+- State: 생성자로 주입받은 `GameSessionStore.State.inventory`; 서비스 내부에 별도 재고 컬렉션을 만들지 않음
 - 주 API: `Add`, `Remove`, `Count`, `AdvanceDay` (일별 유통기한 감소), `CanAcceptType`, `Save/Load`
 - 저장: `InventorySaveData` (legacy `foodIds/amounts` fallback 포함)
 - 의존: `StorageUpgradeService` (capacity 조회), `IEnumerable<FoodData>` 카탈로그
