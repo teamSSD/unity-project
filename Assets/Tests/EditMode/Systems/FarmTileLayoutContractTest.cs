@@ -24,7 +24,8 @@ public class FarmTileLayoutContractTest
 
         var farmScriptPath = Path.Combine(Application.dataPath, "Scripts", "Unity", "Garden", "Farm.cs");
         var farmScript = File.ReadAllText(farmScriptPath);
-        StringAssert.Contains("cropSpriteRenderer.bounds", farmScript);
-        StringAssert.Contains("cropBounds.max.y + halfLabelHeight + cropNameClearance", farmScript);
+        StringAssert.Contains("FarmLabelLayout.VisibleBounds(sprite.vertices, sprite.bounds)", farmScript);
+        StringAssert.Contains("FarmLabelLayout.AboveCrop", farmScript);
+        StringAssert.Contains("actionPrompt.text = \"\";", farmScript);
     }
 }

@@ -18,7 +18,7 @@ public class Farm : MonoBehaviour
     [Header("작물 이름 UI")]
     public GameObject cropNameCanvas;
     public TextMeshProUGUI cropNameLabel;
-    [Tooltip("작물 스프라이트 상단과 작물명 사이의 월드 좌표 여백.")]
+    [Tooltip("작물 스프라이트 상단과 작물명 사이의 FarmTile 로컬 좌표 여백.")]
     [Min(0f)] public float cropNameClearance = 0.1f;
 
     public int farmIndex;
@@ -179,9 +179,8 @@ public class Farm : MonoBehaviour
             actionPrompt.text = "(press spacebar to plant)";
         else
         {
-            // "성장 중..." 대신 실제 작물 이름 표시.
-            var food = SearchDataUtil.GetFoodDataById(tile.GetCurrentCrop()?.cropId);
-            actionPrompt.text = food?.ingredientName ?? "";
+            // 성장 중 작물명은 상시 라벨이 담당한다. 근접 안내문에서 중복 표시하지 않는다.
+            actionPrompt.text = "";
         }
     }
 
@@ -190,18 +189,19 @@ public class Farm : MonoBehaviour
         if (cropSpriteRenderer == null || cropNameCanvas == null) return;
         if (cropNameCanvas.transform is not RectTransform nameRect) return;
 
-        // 작물 종류/성장 단계별 실제 렌더 경계와 라벨의 월드 높이를 사용한다.
-        // 따라서 스프라이트 pivot이나 크기가 달라도 라벨 하단이 작물 상단보다 항상 위에 놓인다.
-        Canvas.ForceUpdateCanvases();
-        var corners = new Vector3[4];
-        nameRect.GetWorldCorners(corners);
-        float halfLabelHeight = Vector3.Distance(corners[0], corners[1]) * 0.5f;
-        Bounds cropBounds = cropSpriteRenderer.bounds;
+        Sprite sprite = cropSpriteRenderer.sprite;
+        if (sprite == null) return;
 
-        var position = nameRect.position;
-        position.x = cropBounds.center.x;
-        position.y = cropBounds.max.y + halfLabelHeight + cropNameClearance;
-        nameRect.position = position;
+        // Tight mesh 꼭짓점은 투명 여백을 제외한 실제 그려지는 작물 윤곽이다.
+        // 원본 rect 또는 Renderer.bounds를 쓰면 새싹이 작을 때 라벨이 하늘로 올라간다.
+        Bounds visibleSpriteBounds = FarmLabelLayout.VisibleBounds(sprite.vertices, sprite.bounds);
+        float labelHalfHeight = nameRect.rect.height * nameRect.localScale.y * 0.5f;
+        nameRect.localPosition = FarmLabelLayout.AboveCrop(
+            cropSpriteRenderer.transform.localPosition,
+            cropSpriteRenderer.transform.localScale,
+            visibleSpriteBounds,
+            labelHalfHeight,
+            cropNameClearance);
     }
 
     private void OnTimePassed()
