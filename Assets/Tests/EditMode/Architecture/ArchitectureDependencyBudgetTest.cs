@@ -7,8 +7,8 @@ using UnityEngine;
 public class ArchitectureDependencyBudgetTest
 {
     // Legacy budgets are ceilings, not targets. Lower each value whenever usages are removed.
-    private const int SingletonAccessBudget = 278;
-    private const int GameSessionRootAccessBudget = 177;
+    private const int SingletonAccessBudget = 266;
+    private const int GameSessionRootAccessBudget = 165;
     private const int SingletonTypeBudget = 15;
     private const int SceneSearchBudget = 27;
     private const int UiStaticBoolBudget = 3;

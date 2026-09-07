@@ -4,7 +4,8 @@ Aftertaste의 게임 저장/로드 파이프라인. 단일 파일 `gamedata.json
 
 관련 코드:
 - `SaveManager` — 저장/로드 진입점 (`Assets/Scripts/Unity/Common/SaveManager.cs`).
-- `DataSaveUtil` — JSON I/O 저수준 유틸 (`Assets/Scripts/Domain/Common/DataSaveUtil.cs`).
+- `SaveRepository` — 게임 세이브의 검증·백업·원자적 교체 (`Assets/Scripts/Unity/Common/Persistence/SaveRepository.cs`).
+- `DataSaveUtil` — 설정과 legacy 파일을 읽기 위한 호환 유틸 (`Assets/Scripts/Domain/Common/DataSaveUtil.cs`).
 - `GameSaveData` — 최상위 wrapper (`Assets/Scripts/Unity/Common/SaveManager.cs:8`).
 - Save Adapters — 도메인별 슬롯 변환 (`Assets/Scripts/Unity/Common/SaveAdapters/`).
 
@@ -14,7 +15,7 @@ Aftertaste의 게임 저장/로드 파이프라인. 단일 파일 `gamedata.json
 
 ```csharp
 private static string Dir => Application.persistentDataPath + "/saves";
-private static string SavePath => Dir + "/gamedata";
+private static string SavePath => Dir + "/gamedata.json";
 ```
 
 실경로:
@@ -22,10 +23,7 @@ private static string SavePath => Dir + "/gamedata";
 - macOS: `~/Library/Application Support/<company>/<product>/saves/gamedata.json`
 - WebGL: IndexedDB (IDBFS) 하위 `/idbfs/<hash>/saves/gamedata.json`
 
-`DataSaveUtil` — `Assets/Scripts/Domain/Common/DataSaveUtil.cs`.
-- `SaveData<T>`: `File.WriteAllText(path + ".json", JsonUtility.ToJson(data))`.
-- `LoadData<T>`: 파일 없으면 default 반환.
-- `HasFile<T>`: 존재 여부.
+`SaveRepository`는 `gamedata.json.tmp`에 먼저 기록하고 역직렬화 검증 후 기존 파일을 교체한다. 정상인 이전 파일은 `gamedata.json.bak`으로 보존하며 primary가 손상되면 backup을 읽는다.
 
 ## 2. GameSaveData 구조
 
@@ -35,6 +33,7 @@ private static string SavePath => Dir + "/gamedata";
 [System.Serializable]
 public class GameSaveData
 {
+    public int schemaVersion = 1;
     public PhaseData phase = new();
     public BasicStats stats = new();
     public InventorySaveData inventory = new();
@@ -157,10 +156,11 @@ save.recipeBook       = GameSessionRoot.Instance.MenuSelection.GetSaveData();
 save.unlockedRecipes  = GameSessionRoot.Instance.UnlockedFood.GetSaveData();
 save.tutorial         = GameSessionRoot.Instance.Tutorial.GetSaveData();
 
-DataSaveUtil.SaveData(save, SavePath);
+SaveWriteResult result = Repository.Save(save);
+if (!result.Succeeded) return false;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-    SyncFiles();  // FS.syncfs → IndexedDB flush
+    SyncFiles();  // 저장 성공 후에만 FS.syncfs → IndexedDB flush
 #endif
 ```
 
@@ -232,8 +232,8 @@ session.Tutorial.ApplySaveData(save.tutorial);
 **로직**:
 1. 신규 `gamedata.json` 있으면 skip.
 2. 없고 `progress.json` 이 존재하면 (구버전 유저) — 5개 파일 각각 로드.
-3. `GameSaveData` 조합 후 `gamedata.json` 저장.
-4. 5개 legacy 파일 delete (`DeleteLegacyFile`).
+3. `GameSaveData` 조합 후 `SaveRepository`로 기록·재검증·교체.
+4. 신규 저장 성공이 확인된 경우에만 5개 legacy 파일 delete (`DeleteLegacyFile`).
 5. WebGL: `SyncFiles()` 호출.
 
 호출 지점:
@@ -262,10 +262,11 @@ private static extern void SyncFiles();
 `SaveManager.HasSaveData()` — `Assets/Scripts/Unity/Common/SaveManager.cs:87`.
 ```csharp
 MigrateLegacyIfNeeded();
-return DataSaveUtil.HasFile<GameSaveData>(SavePath);
+SaveReadResult result = Repository.Load();
+return result.Succeeded && result.Found;
 ```
 
-`GameStart.Start()` 에서 `ContinueButton.interactable = hasSaveData` 로 사용.
+`GameStart.Start()` 에서 `ContinueButton.interactable = hasSaveData` 로 사용한다. primary 또는 backup 어느 쪽도 검증되지 않으면 Continue를 활성화하지 않는다.
 
 ## 9. `Piggyback` 분리 (진단 항목 H)
 
@@ -277,8 +278,8 @@ return DataSaveUtil.HasFile<GameSaveData>(SavePath);
 
 ## 10. 에러 처리
 
-`DataSaveUtil` — `Assets/Scripts/Domain/Common/DataSaveUtil.cs`.
-- 저장 실패 (`IOException`) 시 `Debug.LogError`, 게임 계속.
-- 로드 실패 시 `Debug.LogError` + default `T` 인스턴스 반환.
-
-파일 corrupt 시 `JsonUtility.FromJson` 이 default 인스턴스를 만들면서 필드가 초기값으로 회복. Migration은 skip (신규 파일이 이미 있다고 판단).
+`SaveRepository`는 저장·로드 결과를 명시적으로 반환한다.
+- 저장 실패 시 기존 primary와 backup을 보존하고 `SaveAll()`이 `false`를 반환한다.
+- 로드 전 필수 상태, schema version, parallel list 길이를 검증한다.
+- primary가 손상됐지만 backup이 정상이면 backup을 반환하고 경고한다.
+- primary와 backup 모두 손상됐으면 상태를 적용하지 않고 `LoadAll()`이 `false`를 반환한다.

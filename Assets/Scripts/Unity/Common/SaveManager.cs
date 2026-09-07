@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using Game.Domain.Common;
+using Game.Unity.Persistence;
 using UnityEngine;
 
 [System.Serializable]
 public class GameSaveData
 {
+    public int schemaVersion = SaveRepository.CurrentSchemaVersion;
     public PhaseData phase = new();
     public BasicStats stats = new();
     public InventorySaveData inventory = new();
@@ -72,7 +74,8 @@ public class DeliveryQuestSaveData
 public static class SaveManager
 {
     private static string Dir => Application.persistentDataPath + "/saves";
-    private static string SavePath => Dir + "/gamedata";
+    private static string SavePath => Dir + "/gamedata.json";
+    private static SaveRepository Repository => new(SavePath);
 
 #if UNITY_WEBGL && !UNITY_EDITOR
     // Assets/Plugins/WebGL/SaveSync.jslib — IDBFS in-memory 캐시를 IndexedDB에 flush.
@@ -87,21 +90,29 @@ public static class SaveManager
     public static bool HasSaveData()
     {
         MigrateLegacyIfNeeded();
-        return DataSaveUtil.HasFile<GameSaveData>(SavePath);
+        var result = Repository.Load();
+        return result.Succeeded && result.Found;
     }
 
     /// <summary>
     /// 모든 게임 데이터를 디스크에 저장. PassDay/NewGame에서만 호출.
     /// 도메인별 Adapter가 GameSaveData 슬롯 채움.
     /// </summary>
-    public static void SaveAll()
+    public static bool SaveAll()
     {
+        var session = GameSessionRoot.Instance;
+        if (session == null)
+        {
+            Debug.LogError("[SaveManager] Save failed: GameSessionRoot is missing.");
+            return false;
+        }
+
         var save = new GameSaveData();
 
         // 글로벌 facade 매니저
-        if (GameSessionRoot.Instance?.Progress != null) save.phase = GameSessionRoot.Instance?.Progress.PhaseData;
-        save.stats = GameSessionRoot.Instance?.Stats.GetSaveData();
-        if (GameSessionRoot.Instance?.Inventory != null) save.inventory = GameSessionRoot.Instance?.Inventory.GetSaveData();
+        if (session.Progress != null) save.phase = session.Progress.PhaseData;
+        if (session.Stats != null) save.stats = session.Stats.GetSaveData();
+        if (session.Inventory != null) save.inventory = session.Inventory.GetSaveData();
 
         // 도메인 Adapter
         GardenSaveAdapter.Capture(save);
@@ -109,31 +120,53 @@ public static class SaveManager
         MallSaveAdapter.Capture(save);
 
         // Self-contained 매니저 (piggyback 분리 후, H 해결)
-        if (GameSessionRoot.Instance?.MenuSelection != null) save.recipeBook = GameSessionRoot.Instance?.MenuSelection.GetSaveData();
-        if (GameSessionRoot.Instance?.UnlockedFood != null) save.unlockedRecipes = GameSessionRoot.Instance?.UnlockedFood.GetSaveData();
-        if (GameSessionRoot.Instance?.Tutorial != null) save.tutorial = GameSessionRoot.Instance?.Tutorial.GetSaveData();
+        if (session.MenuSelection != null) save.recipeBook = session.MenuSelection.GetSaveData();
+        if (session.UnlockedFood != null) save.unlockedRecipes = session.UnlockedFood.GetSaveData();
+        if (session.Tutorial != null) save.tutorial = session.Tutorial.GetSaveData();
 
-        DataSaveUtil.SaveData(save, SavePath);
+        var result = Repository.Save(save);
+        if (!result.Succeeded)
+        {
+            Debug.LogError($"[SaveManager] Save failed: {result.Error}");
+            return false;
+        }
 
 #if UNITY_WEBGL && !UNITY_EDITOR
         SyncFiles();
 #endif
+        return true;
     }
 
     /// <summary>
     /// 모든 게임 데이터를 디스크에서 로드. ProcessContinue에서만 호출.
     /// 도메인별 Adapter가 GameSaveData 슬롯을 GameState 트리에 적용.
     /// </summary>
-    public static void LoadAll()
+    public static bool LoadAll()
     {
         MigrateLegacyIfNeeded();
-        var save = DataSaveUtil.LoadData(new GameSaveData(), SavePath);
+        var session = GameSessionRoot.Instance;
+        if (session == null)
+        {
+            Debug.LogError("[SaveManager] Load failed: GameSessionRoot is missing.");
+            return false;
+        }
+
+        var result = Repository.Load();
+        if (!result.Succeeded || !result.Found)
+        {
+            Debug.LogError($"[SaveManager] Load failed: {result.Error ?? "save not found"}");
+            return false;
+        }
+
+        if (result.RecoveredFromBackup)
+            Debug.LogWarning("[SaveManager] Primary save was invalid; loaded backup.");
+
+        var save = result.Data;
 
         // 글로벌 서비스 (GameSessionRoot 경유)
-        var session = GameSessionRoot.Instance;
         session?.Progress?.ApplySaveData(save.phase);
         session?.Stats?.ApplySaveData(save.stats);
-        if (GameSessionRoot.Instance?.Inventory != null) GameSessionRoot.Instance?.Inventory.ApplySaveData(save.inventory);
+        session.Inventory?.ApplySaveData(save.inventory);
 
         // 도메인 Adapter
         GardenSaveAdapter.Apply(save);
@@ -156,6 +189,7 @@ public static class SaveManager
                 session.MenuSelection.LoadMenusFromProgressLegacy(save.phase);
         }
         session?.Tutorial?.ApplySaveData(save.tutorial);
+        return true;
     }
 
     /// <summary>
@@ -163,7 +197,8 @@ public static class SaveManager
     /// </summary>
     private static void MigrateLegacyIfNeeded()
     {
-        if (DataSaveUtil.HasFile<GameSaveData>(SavePath)) return;
+        var current = Repository.Load();
+        if (current.Succeeded && current.Found) return;
 
         string oldProgress = Dir + "/progress";
         if (!DataSaveUtil.HasFile<PhaseData>(oldProgress)) return;
@@ -175,7 +210,12 @@ public static class SaveManager
         save.orders = DataSaveUtil.LoadData(new OrderSaveData(), Dir + "/orders");
         save.deliveryQuest = DataSaveUtil.LoadData(new DeliveryQuestSaveData(), Dir + "/deliveryQuest");
 
-        DataSaveUtil.SaveData(save, SavePath);
+        var result = Repository.Save(save);
+        if (!result.Succeeded)
+        {
+            Debug.LogError($"[SaveManager] Legacy migration failed: {result.Error}");
+            return;
+        }
 
         DeleteLegacyFile(Dir + "/progress");
         DeleteLegacyFile(Dir + "/stats");
