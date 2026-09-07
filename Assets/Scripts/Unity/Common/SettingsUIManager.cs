@@ -68,6 +68,7 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
         rt.anchoredPosition = Vector2.zero;
     }
 
+    // Tracks the prior UI-lock state so one Escape cannot immediately reopen Settings after closing a modal.
     private bool prevLocked;
 
     void Update()
