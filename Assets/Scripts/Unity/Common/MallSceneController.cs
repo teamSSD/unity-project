@@ -173,7 +173,7 @@ public class MallSceneController : MonoBehaviour
             return;
         }
 
-        bentoSelectionController.Show(() =>
+        UIFlowController.TryOpenBentoSelection(bentoSelectionController, () =>
         {
             // Preparation → Morning 후 자동으로 Cooking 씬 진입.
             // 튜토리얼 활성 시엔 격리된 CookingTutorial 씬 (Mock).

@@ -131,7 +131,7 @@ public class GameStart : MonoBehaviour
     }
     private void OpenSetting()
     {
-        SettingsUIManager.Instance?.Open();
+        UIFlowController.TryOpenSettings();
     }
 
 #if UNITY_EDITOR
