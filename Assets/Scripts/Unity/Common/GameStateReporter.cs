@@ -8,6 +8,30 @@ using UnityEngine.SceneManagement;
 /// 무한 재귀 방지 + 30초 dedup으로 스팸 방지.</summary>
 public static class GameStateReporter
 {
+    public readonly struct RuntimeState
+    {
+        public readonly bool HasSession;
+        public readonly string Phase;
+        public readonly int Day;
+        public readonly int Hour;
+        public readonly int Minute;
+        public readonly int Money;
+        public readonly int Stamina;
+        public readonly int InventoryItemCount;
+
+        public RuntimeState(bool hasSession, string phase, int day, int hour, int minute, int money, int stamina, int inventoryItemCount)
+        {
+            HasSession = hasSession;
+            Phase = phase;
+            Day = day;
+            Hour = hour;
+            Minute = minute;
+            Money = money;
+            Stamina = stamina;
+            InventoryItemCount = inventoryItemCount;
+        }
+    }
+
     private static bool _dumping;
     private static float _lastDumpAt;
     private static string _lastDumpKey;
@@ -76,19 +100,15 @@ public static class GameStateReporter
         sb.AppendLine($"  Scene: active={SceneManager.GetActiveScene().name}, recent=[{string.Join("→", _recentScenes)}]");
         sb.AppendLine($"  Time: realtime={Time.realtimeSinceStartup:F1}s, frame={Time.frameCount}, timeScale={Time.timeScale}");
 
-        var session = GameSessionRoot.Instance;
-        if (session == null) { sb.AppendLine("  Session: null"); return sb.ToString().TrimEnd(); }
+        var state = CaptureRuntimeState();
+        if (!state.HasSession) { sb.AppendLine("  Session: null"); return sb.ToString().TrimEnd(); }
 
-        var ps = session.Progress;
-        var pd = ps?.PhaseData;
-        if (pd != null)
-            sb.AppendLine($"  Progress: Day={pd.Day}, Phase={pd.Phase}");
+        if (!string.IsNullOrEmpty(state.Phase))
+            sb.AppendLine($"  Progress: Day={state.Day}, Phase={state.Phase}");
         else
             sb.AppendLine("  Progress: null");
 
-        var ss = session.Stats;
-        if (ss != null)
-            sb.AppendLine($"  Stats: money={ss.GetMoney()}, stamina={ss.GetStamina()}, time={ss.GetHour():D2}:{ss.GetMinute():D2}");
+        sb.AppendLine($"  Stats: money={state.Money}, stamina={state.Stamina}, time={state.Hour:D2}:{state.Minute:D2}");
 
         sb.AppendLine($"  UILocked: {UILockManager.IsLocked}");
 
@@ -99,15 +119,33 @@ public static class GameStateReporter
             if (src.isPlaying) enabledSources.Add($"{src.gameObject.name}(clip={src.clip?.name ?? "null"})");
         sb.AppendLine($"  Audio: listeners={listenerCount}, playing=[{string.Join(",", enabledSources)}]");
 
-        try
-        {
-            var inv = session.Inventory?.GetSaveData();
-            if (inv != null)
-                sb.AppendLine($"  Inventory: items={inv.items.Count}");
-        }
-        catch { /* Inventory 접근 실패 시 무시 */ }
+        if (state.InventoryItemCount >= 0)
+            sb.AppendLine($"  Inventory: items={state.InventoryItemCount}");
 
         return sb.ToString().TrimEnd();
+    }
+
+    /// <summary>진단/개발용 상태를 단일 관측 지점에서 제공한다. 게임 상태를 변경하지 않는다.</summary>
+    public static RuntimeState CaptureRuntimeState()
+    {
+        var session = GameSessionRoot.Instance;
+        if (session == null) return new RuntimeState(false, null, 0, 0, 0, 0, 0, -1);
+
+        var phase = session.Progress?.PhaseData;
+        var stats = session.Stats;
+        var inventoryCount = -1;
+        try { inventoryCount = session.Inventory?.GetSaveData()?.items?.Count ?? -1; }
+        catch { /* 진단이 게임 실행을 방해하지 않아야 한다. */ }
+
+        return new RuntimeState(
+            true,
+            phase?.Phase.ToString(),
+            phase?.Day ?? 0,
+            stats?.GetHour() ?? 0,
+            stats?.GetMinute() ?? 0,
+            stats?.GetMoney() ?? 0,
+            stats?.GetStamina() ?? 0,
+            inventoryCount);
     }
 
     private static string Trim(string s, int max)

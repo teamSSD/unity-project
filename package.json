@@ -1,0 +1,10 @@
+{
+  "name": "aftertaste-e2e",
+  "private": true,
+  "scripts": {
+    "test:e2e:webgl": "playwright test Tools/e2e/webgl-smoke.spec.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.0"
+  }
+}

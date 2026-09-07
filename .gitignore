@@ -115,6 +115,10 @@ SSD_*/
 *.stacktrace
 *.dmp
 
+# WebGL E2E local runtime and generated evidence
+node_modules/
+test-results/
+
 # Rider personal settings
 .idea/
 
