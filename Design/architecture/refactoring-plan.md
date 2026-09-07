@@ -1,6 +1,6 @@
 # Aftertaste 아키텍처 리팩터링 플랜
 
-상태: 계획 수립 · 배포 보류
+상태: Phase 0 진행 중 · 배포 보류
 
 대상: Unity 6000.3.2f1 / WebGL
 
@@ -53,7 +53,7 @@ flowchart LR
 
 ## 3. 현재 배포 차단 조건
 
-- EditMode 테스트 172개 중 8개 실패: 코드·기획·테스트 기준이 불일치한다.
+- EditMode 테스트 178개는 통과하지만 현재 보호 범위가 주로 단위·도메인 로직에 한정된다.
 - PlayMode 테스트 파일이 없어 씬 전환, UI 중첩, binding, 저장 왕복을 보호하지 못한다.
 - 저장이 직접 덮어쓰기이며 성공 확인, schema version, backup, rollback이 없다.
 - 레거시 마이그레이션이 신규 저장 성공을 확인하기 전에 구파일을 삭제할 수 있다.
@@ -64,10 +64,12 @@ flowchart LR
 
 ### Phase 0 — 기준선과 회귀 방지
 
-- 기능 추가를 동결하고 현재 8개 테스트의 기준을 GDD와 합의한다.
+현재 진행: EditMode 178/178 통과. 기존 실패 8건의 명세 동기화와 중복 사이드 집계 결함 수정 완료. 레거시 의존성 증가를 막는 architecture budget 5종 적용.
+
+- 완료: 기존 실패 8개의 기준을 GDD와 동기화한다.
 - 기존 주요 버그를 재현 가능한 테스트 또는 Scenario로 기록한다.
 - 빌드와 무관하게 EditMode 테스트를 항상 녹색으로 만든다.
-- `.Instance`, `Find*`, static UI state 증가를 감지하는 architecture check를 추가한다.
+- 완료: `.Instance`, `Find*`, static UI state 증가를 감지하는 architecture check를 추가한다.
 
 완료 조건:
 
