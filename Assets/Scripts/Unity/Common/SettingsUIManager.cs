@@ -68,17 +68,37 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
         rt.anchoredPosition = Vector2.zero;
     }
 
+    private bool prevLocked;
+
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && ShouldHandleEscape(settingsPanel.activeSelf))
+        // 같은 Escape로 다른 UI가 닫힌 직후 설정 창이 열리지 않도록 이전 lock 상태를 보관한다.
+        bool wasLocked = prevLocked;
+        prevLocked = UILockManager.IsLocked;
+
+        if (!Input.GetKeyDown(KeyCode.Escape)) return;
+
+        if (settingsPanel.activeSelf)
+        {
             Close();
+            return;
+        }
+
+        if (ShouldOpenOnEscape(
+                isAnyUiLocked: UILockManager.IsLocked,
+                wasUiLocked: wasLocked,
+                isGameStart: SceneManager.GetActiveScene().name == SceneNames.GameStart,
+                isBrowserFullscreen: WebGLFullscreen.IsActive))
+            Open();
     }
 
     /// <summary>
-    /// Escape는 열린 설정 창만 닫는다. 아무 UI도 열려 있지 않다면 Unity가 입력을
-    /// 소비하지 않아 WebGL 브라우저의 전체화면 해제에 사용할 수 있다.
+    /// Escape는 일반 화면의 idle 상태에서만 설정 창을 연다. WebGL 전체화면에서는
+    /// 브라우저가 Escape를 전체화면 해제에 사용하도록 설정 창을 열지 않는다.
     /// </summary>
-    public static bool ShouldHandleEscape(bool isSettingsOpen) => isSettingsOpen;
+    public static bool ShouldOpenOnEscape(
+        bool isAnyUiLocked, bool wasUiLocked, bool isGameStart, bool isBrowserFullscreen) =>
+        !isAnyUiLocked && !wasUiLocked && !isGameStart && !isBrowserFullscreen;
 
     public void Open()
     {

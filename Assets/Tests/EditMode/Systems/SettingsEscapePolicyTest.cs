@@ -3,14 +3,32 @@ using NUnit.Framework;
 public class SettingsEscapePolicyTest
 {
     [Test]
-    public void Escape_IsNotHandledWhenSettingsAreClosed()
+    public void Escape_OpensSettingsWhenNoUiIsOpenAndBrowserIsNotFullscreen()
     {
-        Assert.IsFalse(SettingsUIManager.ShouldHandleEscape(isSettingsOpen: false));
+        Assert.IsTrue(SettingsUIManager.ShouldOpenOnEscape(
+            isAnyUiLocked: false,
+            wasUiLocked: false,
+            isGameStart: false,
+            isBrowserFullscreen: false));
     }
 
     [Test]
-    public void Escape_ClosesOpenSettings()
+    public void Escape_DoesNotOpenSettingsWhenBrowserIsFullscreen()
     {
-        Assert.IsTrue(SettingsUIManager.ShouldHandleEscape(isSettingsOpen: true));
+        Assert.IsFalse(SettingsUIManager.ShouldOpenOnEscape(
+            isAnyUiLocked: false,
+            wasUiLocked: false,
+            isGameStart: false,
+            isBrowserFullscreen: true));
+    }
+
+    [Test]
+    public void Escape_DoesNotOpenSettingsAfterAnotherUiConsumedIt()
+    {
+        Assert.IsFalse(SettingsUIManager.ShouldOpenOnEscape(
+            isAnyUiLocked: false,
+            wasUiLocked: true,
+            isGameStart: false,
+            isBrowserFullscreen: false));
     }
 }
