@@ -23,7 +23,8 @@ ADR-001 Option B에 따라 순수 POCO 서비스 + GameSessionRoot(Composition R
 | **InventoryState** | `Common/InventoryState.cs` | `FoodData → List<InventoryBatch>` 런타임 재고. `GameSessionStore` 소유 |
 | **MenuSelectionState** | `Cooking/CookingSessionState.cs` | 도시락 3슬롯의 `MenuSelection[]`. `GameSessionStore` 소유 |
 | **UnlockedFoodState** | `Cooking/CookingSessionState.cs` | 해금된 레시피 ID의 `HashSet<string>`. `GameSessionStore` 소유 |
-| **MallSessionState** | `Mall/MallSessionState.cs` | 배달 주문의 `List<DeliveryOrderData>`. `GameSessionStore` 소유 |
+| **MallSessionState** | `Mall/MallSessionState.cs` | 배달 주문, 일일 수입·지출·시작 잔액. `GameSessionStore` 소유 |
+| **ShopSessionState** | `Shop/ShopSessionState.cs` | 페이즈별 구매 수, 라인업 캐시, 새로고침 횟수. `GameSessionStore` 소유 |
 | **BasicStats** | `Common/BasicStats.cs` | `int stamina/time/money`, `int immutableSeed / sessionSeed` |
 | **PhaseData** | `Common/PhaseData.cs` | `int Day=1`, `PhaseType Phase=Preparation`, `List<string> UnlockedRecipes` (legacy), `List<string> SelectedMenus` (legacy) |
 | **TutorialState** | `Common/TutorialState.cs` | `List<int> shownSteps`, `bool completed` |
@@ -100,7 +101,7 @@ Namespace 노트: `TutorialState`만 `Game.Schema.State`. 나머지 State POCO�
 
 #### PurchaseService
 - 경로: `Assets/Scripts/Domain/Shop/PurchaseService.cs`
-- 책임: 재료 상점 구매, phase 캐시 (`day<<8 | phase`), Special 재고 트래킹
+- 책임: Store의 `ShopSessionState`를 변경하는 재료 상점 구매, phase 캐시 (`day<<8 | phase`), Special 재고 트래킹
 - 주 API: `GetPhaseItems(day, phase)`, `TryBuy(item)`, `GetSpecialStock(itemId)`
 - 상수: `specialPickCount=4` (페이즈당 랜덤 픽)
 - 의존: `ShopConfigSO`, `InventoryService`, `IMoneyService`, `IExpenseLog`, `GameRandom.PhaseRandom`
@@ -177,7 +178,7 @@ Namespace 노트: `TutorialState`만 `Game.Schema.State`. 나머지 State POCO�
 
 #### SettlementService
 - 경로: `Assets/Scripts/Domain/Mall/SettlementService.cs`
-- 책임: 일별 income/expense 누적, DayStartMoney 스냅샷
+- 책임: Store의 `MallSessionState`를 변경하는 일별 income/expense 누적, DayStartMoney 스냅샷
 - 상수: `ManagementFee = 1000`
 - API: `AddIncome(cat, amt)`, `AddExpense(cat, amt)`, `GetIncome/GetExpense`, `Reset`, `DayStartMoney`
 
