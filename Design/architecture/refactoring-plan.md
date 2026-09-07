@@ -76,6 +76,8 @@ flowchart LR
 - 주요 버그마다 재현 절차 또는 자동 테스트 존재.
 - 이후 리팩터링에서 비교할 baseline 확정.
 
+PlayMode 기준선: `ConfirmModalPlayModeTest` 1/1 통과. 실제 Canvas 모달 표시 상태를 검증하기 시작했다. 다음 시나리오는 레시피북·설정의 상호 배타성, 씬 전환 후 UI 잠금 해제, 저장 후 재진입이다.
+
 ### Phase 1 — GameSessionStore와 안전한 저장
 
 현재 진행: `SaveRepository`가 schema version, 임시 파일 검증, backup, 원자적 교체, backup 복구와 명시적 성공/실패를 담당한다. 마이그레이션은 신규 저장 성공 후에만 구파일을 삭제한다. `GameSessionStore`와 `NewGameStateFactory`를 도입했고 Inventory·도시락 선택·레시피 해금·배달 주문 런타임 상태를 Store 소유로 이전했다.
