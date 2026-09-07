@@ -68,28 +68,17 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
         rt.anchoredPosition = Vector2.zero;
     }
 
-    private bool prevLocked;
-
     void Update()
     {
-        // 직전 프레임 lock 상태를 매 프레임 캡처. ESC로 다른 modal이 같은 프레임에 닫혀
-        // Unlock해도, 이 캡처 덕에 "방금 닫힌 modal이 있던 상태"를 판별할 수 있다.
-        // (Update 순서가 modal보다 늦으면 IsLocked=false인데, 사실 그 ESC는 modal이 소비한 것)
-        bool wasLocked = prevLocked;
-        prevLocked = UILockManager.IsLocked;
-
-        if (!Input.GetKeyDown(KeyCode.Escape)) return;
-
-        if (settingsPanel.activeSelf)
-        {
+        if (Input.GetKeyDown(KeyCode.Escape) && ShouldHandleEscape(settingsPanel.activeSelf))
             Close();
-            return;
-        }
-        if (UILockManager.IsLocked) return;
-        if (wasLocked) return;
-        if (SceneManager.GetActiveScene().name == SceneNames.GameStart) return;
-        Open();
     }
+
+    /// <summary>
+    /// Escape는 열린 설정 창만 닫는다. 아무 UI도 열려 있지 않다면 Unity가 입력을
+    /// 소비하지 않아 WebGL 브라우저의 전체화면 해제에 사용할 수 있다.
+    /// </summary>
+    public static bool ShouldHandleEscape(bool isSettingsOpen) => isSettingsOpen;
 
     public void Open()
     {
