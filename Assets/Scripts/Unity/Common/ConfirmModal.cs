@@ -61,6 +61,16 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
         Instance.ShowInternal(title, message, onOk, null, okText, "", singleButton: true);
     }
 
+    /// <summary>씬 전환용 강제 종료. 콜백은 실행하지 않는다.</summary>
+    public static void Dismiss()
+    {
+        if (Instance == null || !IsOpen) return;
+        Instance.canvas.enabled = false;
+        Instance.currentOnConfirm = null;
+        Instance.currentOnCancel = null;
+        UILockManager.Unlock(UILockManager.Owner.ConfirmModal);
+    }
+
     private void ShowInternal(string title, string message,
         Action onConfirm, Action onCancel, string yesText, string noText, bool singleButton)
     {

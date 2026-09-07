@@ -44,6 +44,7 @@ public static class SceneLoader
 
     private static void LoadSceneInternal(string sceneName, System.Action initAction)
     {
+        UIFlowController.CloseAllForSceneTransition();
         if (LoadingManager.Instance != null)
         {
             LoadingManager.Instance.LoadSceneAdditive(

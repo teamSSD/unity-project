@@ -9,6 +9,7 @@ using UnityEngine.UI;
 /// </summary>
 public class BentoSelectionController : MonoBehaviour
 {
+    public static BentoSelectionController ActiveInstance { get; private set; }
     [Header("Bento Slots")]
     public BentoSlotUI[] bentoSlots; // 0: Bento 1, 1: Bento 2, 2: Bento 3
     
@@ -23,6 +24,9 @@ public class BentoSelectionController : MonoBehaviour
     private List<FoodData> allFoodData = new List<FoodData>();
     private IUnlockedFoodProvider unlockedProvider;
     private MenuSelectionService menuAccess;
+
+    private void Awake() => ActiveInstance = this;
+    private void OnDestroy() { if (ActiveInstance == this) ActiveInstance = null; }
 
     /// <summary>Composition Root에서 의존 명시 주입 — Start에서의 singleton 직접 조회 제거.</summary>
     public void Inject(IUnlockedFoodProvider unlocked, MenuSelectionService menu)

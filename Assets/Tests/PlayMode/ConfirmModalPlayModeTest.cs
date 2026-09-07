@@ -37,4 +37,17 @@ public class ConfirmModalPlayModeTest
         Assert.IsFalse(UILockManager.CanOpen(UILockManager.Owner.Settings));
         Assert.IsFalse(UILockManager.CanOpen(UILockManager.Owner.BentoSelection));
     }
+
+    [UnityTest]
+    public IEnumerator CloseAllForSceneTransition_DismissesModalAndReleasesLock()
+    {
+        ConfirmModal.Show("제목", "내용", null);
+        yield return null;
+
+        UIFlowController.CloseAllForSceneTransition();
+        yield return null;
+
+        Assert.IsFalse(ConfirmModal.IsOpen);
+        Assert.IsFalse(UILockManager.IsLockedBy(UILockManager.Owner.ConfirmModal));
+    }
 }
