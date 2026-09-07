@@ -33,5 +33,8 @@ public class ConfirmModalPlayModeTest
 
         Assert.IsTrue(ConfirmModal.IsOpen);
         Assert.IsTrue(UILockManager.IsLockedBy(UILockManager.Owner.ConfirmModal));
+        Assert.IsFalse(UILockManager.CanOpen(UILockManager.Owner.RecipeBook));
+        Assert.IsFalse(UILockManager.CanOpen(UILockManager.Owner.Settings));
+        Assert.IsFalse(UILockManager.CanOpen(UILockManager.Owner.BentoSelection));
     }
 }

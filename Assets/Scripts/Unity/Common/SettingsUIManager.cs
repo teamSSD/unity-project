@@ -93,6 +93,8 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
 
     public void Open()
     {
+        if (settingsPanel.activeSelf || !UILockManager.CanOpen(UILockManager.Owner.Settings)) return;
+
         ApplyBackdropStyle();
         backdropRoot.SetActive(true);
         settingsPanel.SetActive(true);

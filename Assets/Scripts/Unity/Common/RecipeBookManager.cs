@@ -135,6 +135,10 @@ public class RecipeBookManager : SingletonMonoBehaviour<RecipeBookManager>
 
     public void OpenRecipeBook(bool active)
     {
+        if (!UILockManager.CanOpen(UILockManager.Owner.RecipeBook) &&
+            !UILockManager.IsLockedBy(UILockManager.Owner.CookingTutorial))
+            return;
+
         if (closeButton != null)
         {
             closeButton.gameObject.SetActive(active);

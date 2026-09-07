@@ -175,6 +175,8 @@ public class BentoSelectionController : MonoBehaviour
 
     public void Show(System.Action onConfirm)
     {
+        if (!UILockManager.CanOpen(UILockManager.Owner.BentoSelection)) return;
+
         UILockManager.Lock(UILockManager.Owner.BentoSelection);
         onConfirmCallback = onConfirm;
         gameObject.SetActive(true);
