@@ -30,6 +30,12 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
         canvas.enabled = false;
     }
 
+    protected override void OnDestroy()
+    {
+        UILockManager.Unlock(UILockManager.Owner.ConfirmModal);
+        base.OnDestroy();
+    }
+
     private void Update()
     {
         if (!IsOpen) return;
@@ -66,11 +72,13 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
         currentOnCancel = onCancel;
         if (noButton != null) noButton.gameObject.SetActive(!singleButton);
         canvas.enabled = true;
+        UILockManager.Lock(UILockManager.Owner.ConfirmModal);
     }
 
     private void OnYes()
     {
         canvas.enabled = false;
+        UILockManager.Unlock(UILockManager.Owner.ConfirmModal);
         var cb = currentOnConfirm;
         currentOnConfirm = null; currentOnCancel = null;
         cb?.Invoke();
@@ -79,6 +87,7 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
     private void OnNo()
     {
         canvas.enabled = false;
+        UILockManager.Unlock(UILockManager.Owner.ConfirmModal);
         var cb = currentOnCancel;
         currentOnConfirm = null; currentOnCancel = null;
         cb?.Invoke();

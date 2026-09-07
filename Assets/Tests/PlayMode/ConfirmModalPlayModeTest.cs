@@ -20,6 +20,7 @@ public class ConfirmModalPlayModeTest
     {
         if (_host != null) Object.Destroy(_host);
         yield return null;
+        Assert.IsFalse(UILockManager.IsLockedBy(UILockManager.Owner.ConfirmModal));
     }
 
     [UnityTest]
@@ -31,5 +32,6 @@ public class ConfirmModalPlayModeTest
         yield return null;
 
         Assert.IsTrue(ConfirmModal.IsOpen);
+        Assert.IsTrue(UILockManager.IsLockedBy(UILockManager.Owner.ConfirmModal));
     }
 }
