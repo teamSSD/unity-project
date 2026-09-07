@@ -110,7 +110,7 @@ reward = round(totalPrice × mainMultiplier × sideMultiplier)
 ### 4.1 매칭 로직
 
 - **Main 매칭**: `order.mainMenu.id == providedMain.foodData.id`.
-- **Side 매칭**: `HashSet<string>(order.sideMenus.Select(id))` 기반 id 매칭 (순서 무관).
+- **Side 매칭**: id 기반 multiset 매칭 (순서 무관, 주문에 요구된 개수까지만 일치로 계산).
 
 ### 4.2 accuracyScore와 reward의 관계
 

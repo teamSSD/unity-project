@@ -47,13 +47,13 @@ public class InventoryServiceTest
     }
 
     [Test]
-    public void AddFood_SameItemTwice_TwoBatches()
+    public void AddFood_SameExpiration_MergesIntoOneBatch()
     {
         var svc = BuildSvc(foodA);
         svc.AddFood(foodA, 3);
         svc.AddFood(foodA, 2);
         Assert.AreEqual(5, svc.CheckStockAmount(foodA));
-        Assert.AreEqual(2, svc.GetBatches(foodA).Count);
+        Assert.AreEqual(1, svc.GetBatches(foodA).Count);
     }
 
     [Test]

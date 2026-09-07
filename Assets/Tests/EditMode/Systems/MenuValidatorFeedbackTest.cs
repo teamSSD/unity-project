@@ -67,6 +67,7 @@ public class MenuValidatorFeedbackTest
         var result = MenuValidator.Validate(order, Schema(mainExpected),
             new List<FoodSchema> { Schema(sideA), Schema(sideB), Schema(sideA) });
         StringAssert.Contains("더 들어있", result.FeedbackMessage);
+        Assert.AreEqual(2, result.CorrectSideCount);
     }
 
     [Test]

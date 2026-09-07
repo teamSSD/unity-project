@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Game.Domain.Cooking;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 public class MenuSelectionServiceTest
 {
@@ -44,7 +45,9 @@ public class MenuSelectionServiceTest
     public void GetMenu_InvalidIndex_ReturnsNull()
     {
         var svc = BuildSvc();
+        LogAssert.Expect(LogType.Error, "[MenuSelectionService] Invalid menu index: -1");
         Assert.IsNull(svc.GetMenu(-1));
+        LogAssert.Expect(LogType.Error, "[MenuSelectionService] Invalid menu index: 99");
         Assert.IsNull(svc.GetMenu(99));
     }
 

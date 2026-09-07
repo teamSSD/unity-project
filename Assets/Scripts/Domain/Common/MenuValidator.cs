@@ -100,17 +100,22 @@ public static class MenuValidator
         if (expectedSides == null || expectedSides.Count == 0) return 0;
         if (providedSides == null || providedSides.Count == 0) return 0;
 
-        // Get IDs of expected sides
-        var expectedIds = new HashSet<string>(expectedSides.Select(f => f.id));
+        // 주문에 포함된 개수까지만 정답으로 센다. 같은 사이드를 중복 제공해
+        // 정확도나 보상이 부풀려지는 것을 막기 위한 multiset 매칭이다.
+        var remainingById = expectedSides
+            .Where(food => food != null && !string.IsNullOrEmpty(food.id))
+            .GroupBy(food => food.id)
+            .ToDictionary(group => group.Key, group => group.Count());
 
-        // Count how many provided sides match expected
         int correctCount = 0;
         foreach (var provided in providedSides)
         {
-            if (provided?.foodData != null && expectedIds.Contains(provided.foodData.id))
-            {
-                correctCount++;
-            }
+            string id = provided?.foodData?.id;
+            if (string.IsNullOrEmpty(id) ||
+                !remainingById.TryGetValue(id, out int remaining) || remaining <= 0) continue;
+
+            correctCount++;
+            remainingById[id] = remaining - 1;
         }
 
         return correctCount;
@@ -213,15 +218,13 @@ public static class MenuValidator
         // 총 가격 = 메인 + 사이드 합 (개별 가격에 페널티 적용 X)
         float totalPrice = providedMain.Price;
 
-        int matchingSidesCount = 0;
-        var expectedSideIds = new HashSet<string>(order.sideMenus.Select(s => s.id));
+        int matchingSidesCount = CountCorrectSides(order.sideMenus, providedSides);
 
         if (providedSides != null)
         {
             foreach (var side in providedSides)
             {
                 if (side == null || side.foodData == null) continue;
-                if (expectedSideIds.Contains(side.foodData.id)) matchingSidesCount++;
                 totalPrice += side.Price;
             }
         }
