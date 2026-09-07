@@ -156,6 +156,17 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
         SaveManager.SaveAll();
     }
 
+#if AFTERTASTE_E2E
+    /// <summary>E2E campaign profile 전환 시 현재 표시 중인 튜토리얼 UI를 콜백 없이 제거한다.</summary>
+    public static void ClearActiveForE2E()
+    {
+        if (Instance == null) return;
+        Instance.DestroyActive();
+        RecipeBookManager.TutorialForceOpen = false;
+        RecipeBookManager.TutorialBlockOpen = false;
+    }
+#endif
+
     /// <summary>외부 조건으로 현재 활성 파트 강제 dismiss. mock 컨트롤러가 게임 이벤트 → 튜토리얼 진행 훅으로 사용.</summary>
     public void DismissActivePart()
     {

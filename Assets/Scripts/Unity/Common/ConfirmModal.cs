@@ -162,6 +162,10 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
 
         yesButton.onClick.AddListener(OnYes);
         noButton.onClick.AddListener(OnNo);
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("confirm.yes", yesButton);
+        E2EUiTargetRegistry.Register("confirm.no", noButton);
+#endif
     }
 
     private static TextMeshProUGUI AddText(Transform parent, int size, FontStyles style, Color color)

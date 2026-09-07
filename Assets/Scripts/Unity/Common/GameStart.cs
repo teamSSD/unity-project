@@ -41,6 +41,21 @@ public class GameStart : MonoBehaviour
 
         if (Settings != null)
             Settings.onClick.AddListener(OpenSetting);
+
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("start.new-game", NewGameButton);
+        E2EUiTargetRegistry.Register("start.continue", ContinueButton);
+        E2EUiTargetRegistry.Register("start.settings", Settings);
+#endif
+    }
+
+    private void OnDestroy()
+    {
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Unregister("start.new-game", NewGameButton);
+        E2EUiTargetRegistry.Unregister("start.continue", ContinueButton);
+        E2EUiTargetRegistry.Unregister("start.settings", Settings);
+#endif
     }
 
     private void ProcessContinue()

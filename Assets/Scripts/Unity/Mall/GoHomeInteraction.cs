@@ -16,6 +16,16 @@ public class GoHomeInteraction : MonoBehaviour
     private void Start()
     {
         mallController = Object.FindFirstObjectByType<MallSceneController>();
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.RegisterCollider("go-home", GetComponent<Collider2D>());
+#endif
+    }
+
+    private void OnDestroy()
+    {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.UnregisterCollider("go-home", GetComponent<Collider2D>());
+#endif
     }
 
     private void Update()

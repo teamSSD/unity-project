@@ -80,6 +80,10 @@ public class MallSceneController : MonoBehaviour
         if (goHomeButton != null)
             goHomeButton.onClick.AddListener(GoHome);
 
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("mall.go-home", goHomeButton);
+#endif
+
         // Mall 체류 중 페이즈 전환(Rest / GoHome confirm) 시 새 페이즈 UI 즉시 표시.
         progressService = session?.Progress;
         if (progressService != null)
@@ -113,6 +117,9 @@ public class MallSceneController : MonoBehaviour
 
     private void OnDestroy()
     {
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Unregister("mall.go-home", goHomeButton);
+#endif
         if (phaseSelector != null)
             phaseSelector.OnActionExecuted -= OnPhaseActionExecuted;
         if (progressService != null)

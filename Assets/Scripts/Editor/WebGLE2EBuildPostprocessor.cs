@@ -30,6 +30,10 @@ window.AftertasteE2E = window.AftertasteE2E || (function () {
     command: function (command) {
       if (!window.AftertasteUnityInstance) throw new Error('E2E bridge is not ready.');
       window.AftertasteUnityInstance.SendMessage('AftertasteE2ETestBridge', 'ReceiveCommand', JSON.stringify(command));
+    },
+    setup: function (request) {
+      if (!window.AftertasteUnityInstance) throw new Error('E2E setup is not ready.');
+      window.AftertasteUnityInstance.SendMessage('AftertasteE2EProfileSetup', 'ReceiveSetup', JSON.stringify(request));
     }
   };
 })();

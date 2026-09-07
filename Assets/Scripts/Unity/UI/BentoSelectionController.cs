@@ -25,8 +25,22 @@ public class BentoSelectionController : MonoBehaviour
     private IUnlockedFoodProvider unlockedProvider;
     private MenuSelectionService menuAccess;
 
-    private void Awake() => ActiveInstance = this;
-    private void OnDestroy() { if (ActiveInstance == this) ActiveInstance = null; }
+    private void Awake()
+    {
+        ActiveInstance = this;
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("bento.confirm", confirmButton);
+        E2EUiTargetRegistry.Register("bento.back", backButton);
+#endif
+    }
+    private void OnDestroy()
+    {
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Unregister("bento.confirm", confirmButton);
+        E2EUiTargetRegistry.Unregister("bento.back", backButton);
+#endif
+        if (ActiveInstance == this) ActiveInstance = null;
+    }
 
     /// <summary>Composition Root에서 의존 명시 주입 — Start에서의 singleton 직접 조회 제거.</summary>
     public void Inject(IUnlockedFoodProvider unlocked, MenuSelectionService menu)
@@ -91,11 +105,17 @@ public class BentoSelectionController : MonoBehaviour
         {
             if (food.type == FoodType.MAIN)
             {
-                slot.mainCategory.AddItem(itemPrefab, food, (item) => HandleItemSelection(bentoIndex, item, true));
+                var item = slot.mainCategory.AddItem(itemPrefab, food, (selected) => HandleItemSelection(bentoIndex, selected, true));
+#if AFTERTASTE_E2E
+                E2EUiTargetRegistry.Register($"bento.slot{bentoIndex}.main.{food.id}", item?.GetComponent<Button>());
+#endif
             }
             else if (food.type == FoodType.SIDE)
             {
-                slot.sideCategory.AddItem(itemPrefab, food, (item) => HandleItemSelection(bentoIndex, item, false));
+                var item = slot.sideCategory.AddItem(itemPrefab, food, (selected) => HandleItemSelection(bentoIndex, selected, false));
+#if AFTERTASTE_E2E
+                E2EUiTargetRegistry.Register($"bento.slot{bentoIndex}.side.{food.id}", item?.GetComponent<Button>());
+#endif
             }
         }
     }

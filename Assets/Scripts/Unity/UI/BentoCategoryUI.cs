@@ -54,9 +54,9 @@ public class BentoCategoryUI : MonoBehaviour
             Destroy(child.gameObject);
     }
 
-    public void AddItem(GameObject itemPrefab, FoodData data, System.Action<MenuSelectionItem> onClicked)
+    public MenuSelectionItem AddItem(GameObject itemPrefab, FoodData data, System.Action<MenuSelectionItem> onClicked)
     {
-        if (container == null || itemPrefab == null) return;
+        if (container == null || itemPrefab == null) return null;
 
         var go = Instantiate(itemPrefab, container);
         var item = go.GetComponent<MenuSelectionItem>();
@@ -66,5 +66,6 @@ public class BentoCategoryUI : MonoBehaviour
             items.Add(item);
             item.OnClicked += onClicked;
         }
+        return item;
     }
 }

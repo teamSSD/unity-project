@@ -18,7 +18,6 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
     {
         public string action;
         public string label;
-        public float value;
     }
 
     [Serializable]
@@ -33,10 +32,21 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
         public int minute;
         public int money;
         public int stamina;
+        public int selectedMenuCount;
+        public int questStageCount;
+        public int activeOrderCount;
+        public bool campaignProfile;
         public bool uiLocked;
         public float realtime;
         public int frame;
         public float timeScale;
+    }
+
+    [Serializable]
+    private sealed class TargetMap
+    {
+        public string type;
+        public E2EUiTargetRegistry.TargetState[] targets;
     }
 
     [Serializable]
@@ -91,9 +101,8 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
             case "mark":
                 EmitSnapshot(string.IsNullOrWhiteSpace(command.label) ? "marker" : command.label);
                 break;
-            case "timeScale":
-                Time.timeScale = Mathf.Clamp(command.value, 0f, 20f);
-                EmitSnapshot("time-scale-changed");
+            case "targets":
+                EmitTargetMap();
                 break;
             default:
                 EmitLog("warning", $"Unsupported E2E command: {command.action}");
@@ -131,6 +140,10 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
             minute = state.Minute,
             money = state.Money,
             stamina = state.Stamina,
+            selectedMenuCount = state.SelectedMenuCount,
+            questStageCount = state.QuestStageCount,
+            activeOrderCount = state.ActiveOrderCount,
+            campaignProfile = AftertasteE2EProfileSetup.IsCampaignProfile,
             uiLocked = UILockManager.IsLocked,
             realtime = Time.realtimeSinceStartup,
             frame = Time.frameCount,
@@ -149,6 +162,22 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
             realtime = Time.realtimeSinceStartup,
             frame = Time.frameCount,
         }));
+    }
+
+    private void EmitTargetMap()
+    {
+        EmitJson(JsonUtility.ToJson(new TargetMap
+        {
+            type = "target-map",
+            targets = CaptureTargets(),
+        }));
+    }
+
+    private static E2EUiTargetRegistry.TargetState[] CaptureTargets()
+    {
+        var targets = E2EUiTargetRegistry.Capture();
+        targets.AddRange(E2EWorldTargetRegistry.Capture());
+        return targets.ToArray();
     }
 
     private static void EmitJson(string json)

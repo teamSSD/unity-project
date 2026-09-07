@@ -36,9 +36,18 @@ public class PlayerMove : MonoBehaviour
         defaultMoveSpeed = moveSpeed;
         SceneManager.sceneLoaded += OnSceneLoaded;
         ApplySpeedForScene(SceneManager.GetActiveScene().name);
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.Register("player", transform);
+#endif
     }
 
-    void OnDestroy() => SceneManager.sceneLoaded -= OnSceneLoaded;
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.Unregister("player", transform);
+#endif
+    }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) => ApplySpeedForScene(scene.name);
 

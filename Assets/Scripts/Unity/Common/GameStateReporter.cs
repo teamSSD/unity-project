@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,8 +19,12 @@ public static class GameStateReporter
         public readonly int Money;
         public readonly int Stamina;
         public readonly int InventoryItemCount;
+        public readonly int SelectedMenuCount;
+        public readonly int QuestStageCount;
+        public readonly int ActiveOrderCount;
 
-        public RuntimeState(bool hasSession, string phase, int day, int hour, int minute, int money, int stamina, int inventoryItemCount)
+        public RuntimeState(bool hasSession, string phase, int day, int hour, int minute, int money, int stamina, int inventoryItemCount,
+            int selectedMenuCount, int questStageCount, int activeOrderCount)
         {
             HasSession = hasSession;
             Phase = phase;
@@ -29,6 +34,9 @@ public static class GameStateReporter
             Money = money;
             Stamina = stamina;
             InventoryItemCount = inventoryItemCount;
+            SelectedMenuCount = selectedMenuCount;
+            QuestStageCount = questStageCount;
+            ActiveOrderCount = activeOrderCount;
         }
     }
 
@@ -126,10 +134,12 @@ public static class GameStateReporter
     }
 
     /// <summary>진단/개발용 상태를 단일 관측 지점에서 제공한다. 게임 상태를 변경하지 않는다.</summary>
+    public static GameSessionRoot CurrentSession => GameSessionRoot.Instance;
+
     public static RuntimeState CaptureRuntimeState()
     {
-        var session = GameSessionRoot.Instance;
-        if (session == null) return new RuntimeState(false, null, 0, 0, 0, 0, 0, -1);
+        var session = CurrentSession;
+        if (session == null) return new RuntimeState(false, null, 0, 0, 0, 0, 0, -1, 0, 0, 0);
 
         var phase = session.Progress?.PhaseData;
         var stats = session.Stats;
@@ -145,7 +155,10 @@ public static class GameStateReporter
             stats?.GetMinute() ?? 0,
             stats?.GetMoney() ?? 0,
             stats?.GetStamina() ?? 0,
-            inventoryCount);
+            inventoryCount,
+            session.State.menuSelection?.Menus?.Count(menu => menu?.HasSelection() == true) ?? 0,
+            session.State.mall.persistent?.questStages?.Count ?? 0,
+            session.State.mall.session?.Orders?.Count ?? 0);
     }
 
     private static string Trim(string s, int max)

@@ -36,6 +36,20 @@ public class PhaseActionSelector : MonoBehaviour
     {
         InitializeActionExecutors();
         SetupButtons();
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("phase.work", workButton);
+        E2EUiTargetRegistry.Register("phase.rest", restButton);
+        E2EUiTargetRegistry.Register("phase.shopping", shoppingButton);
+#endif
+    }
+
+    private void OnDestroy()
+    {
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Unregister("phase.work", workButton);
+        E2EUiTargetRegistry.Unregister("phase.rest", restButton);
+        E2EUiTargetRegistry.Unregister("phase.shopping", shoppingButton);
+#endif
     }
 
     private void InitializeActionExecutors()
