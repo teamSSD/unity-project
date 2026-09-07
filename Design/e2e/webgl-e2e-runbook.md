@@ -4,7 +4,7 @@
 
 ## 빌드와 격리
 
-Unity에서 `Tools > Build > WebGL — E2E (Development)`를 실행한다. 출력은 `Builds/WebGL/{version}_e2e/{timestamp}`다.
+튜토리얼 실제 입력 smoke는 `Tools > Build > WebGL — E2E (Development)`를 사용한다. 장기 정책 운영은 `Tools > Build > WebGL — E2E Long-run (Development)`를 사용하며, 튜토리얼 완료·seed 42 상태로 시작한다.
 
 빌드 폴더는 일반 개발 서버와 다른 포트로 제공한다. 예를 들어 새 터미널에서 다음처럼 실행한다.
 

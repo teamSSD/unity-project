@@ -1,63 +1,27 @@
-using System;
-using UnityEngine;
-
 #if AFTERTASTE_E2E
 /// <summary>
-/// E2E 전용 테스트 프로필 준비 경계.
-/// 실제 플레이를 시작하기 전 한 번만 사용하며, 이후의 메뉴/구매/이동/요리는
-/// 브라우저 입력으로만 수행한다. 관측 bridge와 분리해 의도치 않은 상태 변경을 막는다.
+/// 정책 기반 장기 E2E가 항상 같은 시작 상태에서 출발하도록 만든 전용 프로필.
+/// fresh tutorial E2E와 구분되며, 런타임/브라우저에서 임의 호출할 수 없다.
 /// </summary>
-public sealed class AftertasteE2EProfileSetup : MonoBehaviour
+public static class AftertasteE2EProfileSetup
 {
-    private const string ObjectName = "AftertasteE2EProfileSetup";
     private const int CampaignSeed = 42;
-    private static bool _created;
 
     public static bool IsCampaignProfile { get; private set; }
 
-    [Serializable]
-    private sealed class SetupRequest
+    /// <summary>새 게임 기본값이 적용된 직후 long-run 빌드에서만 호출한다.</summary>
+#if AFTERTASTE_E2E_LONGRUN
+    public static void ApplyAtNewGame(GameSessionRoot session)
     {
-        public string profile;
-    }
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void Create()
-    {
-        if (_created) return;
-        _created = true;
-        DontDestroyOnLoad(new GameObject(ObjectName).AddComponent<AftertasteE2EProfileSetup>().gameObject);
-    }
-
-    /// <summary>window.AftertasteE2E.setup가 호출한다. profile=campaign만 허용한다.</summary>
-    public void ReceiveSetup(string json)
-    {
-        var request = JsonUtility.FromJson<SetupRequest>(json);
-        if (request?.profile != "campaign")
-        {
-            Debug.LogWarning("[AftertasteE2E] Unsupported test profile request.");
-            return;
-        }
-
-        var session = GameStateReporter.CurrentSession;
-        bool initialMallState = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == SceneNames.Mall
-                             && session?.Progress?.PhaseData?.Day == 0
-                             && session.Progress.PhaseData.Phase == PhaseType.Preparation;
-        if (IsCampaignProfile || !initialMallState || session?.Stats == null)
-        {
-            Debug.LogWarning("[AftertasteE2E] Campaign profile is allowed once from a Day 0 Mall New Game only.");
-            return;
-        }
+        if (IsCampaignProfile || session?.Stats == null || session.Progress?.PhaseData == null) return;
 
         session.Tutorial?.Complete();
-        TutorialController.ClearActiveForE2E();
         session.Stats.GetSaveData().immutableSeed = CampaignSeed;
         GameRandom.InitSession(CampaignSeed, CampaignSeed ^ 0x5F3759DF);
-        GameRandom.InitDay(session.Progress.PhaseData.Day);
-        session.Weather?.UpdateWeather(session.Progress.PhaseData.Day);
-        SaveManager.SaveAll();
+        GameRandom.InitDay(0);
+        session.Weather?.UpdateWeather(0);
         IsCampaignProfile = true;
-        Debug.Log("[AftertasteE2E] Campaign profile prepared (seed=42).");
     }
+#endif
 }
 #endif

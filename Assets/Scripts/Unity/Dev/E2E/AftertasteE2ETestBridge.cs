@@ -35,6 +35,7 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
         public int selectedMenuCount;
         public int questStageCount;
         public int activeOrderCount;
+        public int immutableSeed;
         public bool campaignProfile;
         public bool uiLocked;
         public float realtime;
@@ -143,6 +144,7 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
             selectedMenuCount = state.SelectedMenuCount,
             questStageCount = state.QuestStageCount,
             activeOrderCount = state.ActiveOrderCount,
+            immutableSeed = state.ImmutableSeed,
             campaignProfile = AftertasteE2EProfileSetup.IsCampaignProfile,
             uiLocked = UILockManager.IsLocked,
             realtime = Time.realtimeSinceStartup,

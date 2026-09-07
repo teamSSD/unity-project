@@ -30,10 +30,6 @@ window.AftertasteE2E = window.AftertasteE2E || (function () {
     command: function (command) {
       if (!window.AftertasteUnityInstance) throw new Error('E2E bridge is not ready.');
       window.AftertasteUnityInstance.SendMessage('AftertasteE2ETestBridge', 'ReceiveCommand', JSON.stringify(command));
-    },
-    setup: function (request) {
-      if (!window.AftertasteUnityInstance) throw new Error('E2E setup is not ready.');
-      window.AftertasteUnityInstance.SendMessage('AftertasteE2EProfileSetup', 'ReceiveSetup', JSON.stringify(request));
     }
   };
 })();
@@ -46,7 +42,8 @@ window.AftertasteE2E = window.AftertasteE2E || (function () {
             return;
 
         // 일반 Development 빌드는 사람의 수동 디버깅 용도다. E2E 전용 산출물만 브라우저 API를 가진다.
-        if (!report.summary.outputPath.Replace('\\', '/').Contains("_e2e/"))
+        var outputPath = report.summary.outputPath.Replace('\\', '/');
+        if (!outputPath.Contains("_e2e/") && !outputPath.Contains("_e2e_longrun/"))
             return;
 
         var indexPath = Path.Combine(report.summary.outputPath, "index.html");

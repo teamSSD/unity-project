@@ -24,9 +24,13 @@ public static class BuildAutomation
     [MenuItem("Tools/Build/WebGL — E2E (Development)")]
     public static void BuildWebGLE2E() => Build(development: true, outputTag: "e2e");
 
+    [MenuItem("Tools/Build/WebGL — E2E Long-run (Development)")]
+    public static void BuildWebGLE2ELongRun() => Build(development: true, outputTag: "e2e_longrun");
+
     private static void Build(bool development, string outputTag = null)
     {
-        bool e2e = outputTag == "e2e";
+        bool e2e = outputTag == "e2e" || outputTag == "e2e_longrun";
+        bool longRunE2E = outputTag == "e2e_longrun";
         // 씬 목록은 EditorBuildSettings에서 활성화된 것만
         var scenes = EditorBuildSettings.scenes
             .Where(s => s.enabled)
@@ -50,7 +54,9 @@ public static class BuildAutomation
             locationPathName = outDir,
             target = BuildTarget.WebGL,
             options = development ? BuildOptions.Development : BuildOptions.None,
-            extraScriptingDefines = e2e ? new[] { "AFTERTASTE_E2E" } : System.Array.Empty<string>(),
+            extraScriptingDefines = !e2e ? System.Array.Empty<string>()
+                : longRunE2E ? new[] { "AFTERTASTE_E2E", "AFTERTASTE_E2E_LONGRUN" }
+                : new[] { "AFTERTASTE_E2E" },
         };
 
         // 활성 타겟이 WebGL이 아니면 스위칭 (첫 빌드 시 시간 걸림)

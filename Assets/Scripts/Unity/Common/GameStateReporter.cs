@@ -22,9 +22,10 @@ public static class GameStateReporter
         public readonly int SelectedMenuCount;
         public readonly int QuestStageCount;
         public readonly int ActiveOrderCount;
+        public readonly int ImmutableSeed;
 
         public RuntimeState(bool hasSession, string phase, int day, int hour, int minute, int money, int stamina, int inventoryItemCount,
-            int selectedMenuCount, int questStageCount, int activeOrderCount)
+            int selectedMenuCount, int questStageCount, int activeOrderCount, int immutableSeed)
         {
             HasSession = hasSession;
             Phase = phase;
@@ -37,6 +38,7 @@ public static class GameStateReporter
             SelectedMenuCount = selectedMenuCount;
             QuestStageCount = questStageCount;
             ActiveOrderCount = activeOrderCount;
+            ImmutableSeed = immutableSeed;
         }
     }
 
@@ -139,7 +141,7 @@ public static class GameStateReporter
     public static RuntimeState CaptureRuntimeState()
     {
         var session = CurrentSession;
-        if (session == null) return new RuntimeState(false, null, 0, 0, 0, 0, 0, -1, 0, 0, 0);
+        if (session == null) return new RuntimeState(false, null, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0);
 
         var phase = session.Progress?.PhaseData;
         var stats = session.Stats;
@@ -158,7 +160,8 @@ public static class GameStateReporter
             inventoryCount,
             session.State.menuSelection?.Menus?.Count(menu => menu?.HasSelection() == true) ?? 0,
             session.State.mall.persistent?.questStages?.Count ?? 0,
-            session.State.mall.session?.Orders?.Count ?? 0);
+            session.State.mall.session?.Orders?.Count ?? 0,
+            stats?.GetSaveData()?.immutableSeed ?? 0);
     }
 
     private static string Trim(string s, int max)

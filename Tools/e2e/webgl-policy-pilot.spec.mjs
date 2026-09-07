@@ -82,12 +82,13 @@ test('BaselinePolicy menu decision is enacted through actual WebGL pointer input
     await expect(page.evaluate(() => typeof window.AftertasteE2E?.command)).resolves.toBe('function');
     await clickTarget(page, canvas, 'start.new-game');
 
-    // setup은 실행 전 프로필만 준비한다. 선택 자체는 아래 실제 pointer input이다.
+    // E2E New Game은 튜토리얼 완료·고정 시드 프로필로 시작한다.
+    // 메뉴 선택과 이동은 아래 실제 pointer/keyboard input이다.
     await expect.poll(async () => (await snapshot(page, 'policy-pilot')).scene,
-      { timeout: 15_000, message: 'New Game must finish loading Mall before profile setup' }).toBe('Mall');
-    await page.evaluate(() => window.AftertasteE2E.setup({ profile: 'campaign' }));
+      { timeout: 15_000, message: 'New Game must finish loading the campaign Mall' }).toBe('Mall');
     const profile = await snapshot(page, 'policy-pilot');
     expect(profile.campaignProfile).toBeTruthy();
+    expect(profile.immutableSeed, 'long-run policy plan seed must be applied to the actual game').toBe(42);
     expect(profile.scene).toBe('Mall');
 
     await walkToWorldTarget(page, 'world.go-home');
