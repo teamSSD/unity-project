@@ -8,5 +8,8 @@ namespace Game.Schema.State.Mall
     public sealed class MallSessionState
     {
         public List<DeliveryOrderData> Orders { get; } = new();
+        public Dictionary<string, int> SettlementIncome { get; } = new();
+        public Dictionary<string, int> SettlementExpense { get; } = new();
+        public int SettlementDayStartMoney { get; set; }
     }
 }

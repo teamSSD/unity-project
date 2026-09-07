@@ -89,7 +89,7 @@ namespace Game.Editor.Simulation
 
             // Weather + Settlement 먼저 (upgrade 서비스가 필요)
             ctx.Weather = new WeatherService();
-            ctx.Settlement = new SettlementService();
+            ctx.Settlement = new SettlementService(ctx.State.mall.session);
 
             // Adapters (Stats/Settlement 필요)
             ctx.Money = new DirectMoneyAdapter(ctx.Stats);

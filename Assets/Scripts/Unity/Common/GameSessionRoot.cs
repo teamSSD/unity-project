@@ -64,7 +64,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
         WireCookingDomain(foodCatalog);
 
         Weather = new WeatherService();
-        Settlement = new SettlementService();
+        Settlement = new SettlementService(State.mall.session);
         Tutorial = new TutorialService(() => State?.tutorial);
     }
 
