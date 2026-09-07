@@ -68,11 +68,11 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
         rt.anchoredPosition = Vector2.zero;
     }
 
-    private bool prevLocked;
-
     void Update()
     {
-        // 같은 Escape로 다른 UI가 닫힌 직후 설정 창이 열리지 않도록 이전 lock 상태를 보관한다.
+        // 직전 프레임 lock 상태를 매 프레임 캡처. ESC로 다른 modal이 같은 프레임에 닫혀
+        // Unlock해도, 이 캡처 덕에 "방금 닫힌 modal이 있던 상태"를 판별할 수 있다.
+        // (Update 순서가 modal보다 늦으면 IsLocked=false인데, 사실 그 ESC는 modal이 소비한 것)
         bool wasLocked = prevLocked;
         prevLocked = UILockManager.IsLocked;
 
@@ -83,22 +83,11 @@ public class SettingsUIManager : SingletonMonoBehaviour<SettingsUIManager>
             Close();
             return;
         }
-
-        if (ShouldOpenOnEscape(
-                isAnyUiLocked: UILockManager.IsLocked,
-                wasUiLocked: wasLocked,
-                isGameStart: SceneManager.GetActiveScene().name == SceneNames.GameStart,
-                isBrowserFullscreen: WebGLFullscreen.IsActive))
-            Open();
+        if (UILockManager.IsLocked) return;
+        if (wasLocked) return;
+        if (SceneManager.GetActiveScene().name == SceneNames.GameStart) return;
+        Open();
     }
-
-    /// <summary>
-    /// Escape는 일반 화면의 idle 상태에서만 설정 창을 연다. WebGL 전체화면에서는
-    /// 브라우저가 Escape를 전체화면 해제에 사용하도록 설정 창을 열지 않는다.
-    /// </summary>
-    public static bool ShouldOpenOnEscape(
-        bool isAnyUiLocked, bool wasUiLocked, bool isGameStart, bool isBrowserFullscreen) =>
-        !isAnyUiLocked && !wasUiLocked && !isGameStart && !isBrowserFullscreen;
 
     public void Open()
     {
