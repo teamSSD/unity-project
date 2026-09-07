@@ -54,12 +54,14 @@ public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
             isFinished = true;
         };
         UILockManager.Lock(UILockManager.Owner.Minigame);
-        currentGame.StartGame();
-
-        await UniTask.WaitUntil(() => isFinished, cancellationToken: ct);
-        await UniTask.WaitUntil(() => currentGame == null, cancellationToken: ct);
-
-        UILockManager.Unlock(UILockManager.Owner.Minigame);
+        try
+        {
+            currentGame.StartGame();
+            await UniTask.WaitUntil(() => isFinished, cancellationToken: ct);
+            await UniTask.WaitUntil(() => currentGame == null, cancellationToken: ct);
+        }
+        catch (System.Exception ex) { Debug.LogError($"[MiniGameManager] Minigame await failed: {ex}"); }
+        finally { UILockManager.Unlock(UILockManager.Owner.Minigame); }
         onCompleted?.Invoke(recipeData, finalScore);
     }
 

@@ -9,6 +9,7 @@ public class SettlementLineItemUI : MonoBehaviour
     public void Set(string label, int amount, bool isExpense)
     {
         labelText.text  = label;
+        labelText.color = UIColors.TextPrimary;
         amountText.text = isExpense ? $"-{amount:N0}G" : $"+{amount:N0}G";
         amountText.color = isExpense ? UIColors.Expense : UIColors.Income;
     }
@@ -16,8 +17,9 @@ public class SettlementLineItemUI : MonoBehaviour
     public void SetNeutral(string label, string valueText)
     {
         labelText.text   = label;
+        labelText.color  = UIColors.TextPrimary;
         amountText.text  = valueText;
-        amountText.color = Color.white;
+        amountText.color = UIColors.TextPrimary;
     }
 
 #if UNITY_EDITOR

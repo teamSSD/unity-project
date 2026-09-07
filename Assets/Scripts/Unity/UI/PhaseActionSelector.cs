@@ -93,6 +93,17 @@ public class PhaseActionSelector : MonoBehaviour
         if (workButton != null) workButton.interactable = true;
         if (restButton != null) restButton.interactable = true;
         if (shoppingButton != null) shoppingButton.interactable = true;
+        // 프리팹 세팅에 관계없이 부모 캔버스 중앙 강제 배치.
+        // (일부 화면비/해상도에서 root RectTransform anchor가 어긋나 화면 밖으로 밀리는 케이스 방어.)
+        var rt = transform as RectTransform;
+        if (rt != null)
+        {
+            rt.anchorMin = new Vector2(0.5f, 0.5f);
+            rt.anchorMax = new Vector2(0.5f, 0.5f);
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition = Vector2.zero;
+            rt.localScale = Vector3.one;
+        }
         gameObject.SetActive(true);
         UILockManager.Lock(UILockManager.Owner.PhaseSelection);
 
@@ -122,11 +133,8 @@ public class PhaseActionSelector : MonoBehaviour
         UILockManager.Unlock(UILockManager.Owner.PhaseSelection);
     }
 
-    private void Update()
-    {
-        if (gameObject.activeInHierarchy && Input.GetKeyDown(KeyCode.Escape))
-            Hide();
-    }
+    // ESC 닫기 제거: 페이즈 선택은 필수 액션이라 취소 없이 반드시 하나 골라야 함.
+    // (이전엔 ESC로 Hide 가능 → UILock만 풀리고 유저가 다음 행동 없이 진행 불가 상태로 인식.)
 
     private void UpdateUI()
     {

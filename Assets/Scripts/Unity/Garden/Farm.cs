@@ -175,11 +175,11 @@ public class Farm : MonoBehaviour
         if (!playerIn || actionPrompt == null || tile == null) return;
 
         if (IsLocked)
-            actionPrompt.text = "잠겨 있음";
+            actionPrompt.text = "*locked*";
         else if (tile.IsHarvestable())
-            actionPrompt.text = "(스페이스바로 수확)";
+            actionPrompt.text = "(press spacebar to harvest)";
         else if (tile.IsEmpty())
-            actionPrompt.text = "(스페이스바로 심기)";
+            actionPrompt.text = "(press spacebar to plant)";
         else
         {
             // "성장 중..." 대신 실제 작물 이름 표시.

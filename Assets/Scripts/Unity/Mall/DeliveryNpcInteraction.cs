@@ -28,7 +28,7 @@ public class DeliveryNpcInteraction : MonoBehaviour
 
         isPlayerNear = true;
         if (currentInteraction != null)
-            InteractPromptUI.Show("*press spacebar to interact*");
+            InteractPromptUI.Show("*press spacebar to talk*");
     }
 
     private void OnTriggerExit2D(Collider2D other)

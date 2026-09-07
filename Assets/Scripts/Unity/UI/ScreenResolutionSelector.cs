@@ -58,6 +58,25 @@ public class ScreenResolutionSelector : MonoBehaviour
         Screen.SetResolution(w, h, Screen.fullScreen);
         UpdateText();
         OnChanged?.Invoke();
+        // WebGL: SetResolution 후 canvas render target/DOM은 즉시 바뀌지만 EventSystem/GraphicRaycaster의
+        // 좌표 매핑 캐시가 다음 프레임까지 이전 값을 사용 → 클릭 좌표 어긋남. 강제 refresh.
+        StartCoroutine(RefreshInputAfterResize());
+    }
+
+    private System.Collections.IEnumerator RefreshInputAfterResize()
+    {
+        // WebGL은 canvas render target/DOM 크기 변경이 여러 프레임에 걸쳐 propagate됨.
+        // 한 프레임만 대기하면 EventSystem/GraphicRaycaster/Camera.pixelRect 갱신이 늦음.
+        for (int i = 0; i < 3; i++) yield return null;
+        Canvas.ForceUpdateCanvases();
+        // Camera pixelRect도 강제 갱신 (raycast 좌표 매핑 원천).
+        var cam = Camera.main;
+        if (cam != null) { cam.enabled = false; cam.enabled = true; }
+        var es = UnityEngine.EventSystems.EventSystem.current;
+        if (es != null) { es.enabled = false; es.enabled = true; }
+        // 갱신 후 한 프레임 더 대기해서 재초기화 반영 확인.
+        yield return null;
+        Canvas.ForceUpdateCanvases();
     }
 
 void UpdateText()

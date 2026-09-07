@@ -1561,7 +1561,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::SceneTransitionInteraction
   targetScene: Mall
-  promptMessage: "(\uC2A4\uD398\uC774\uC2A4\uBC14\uB85C \uC0C1\uAC00 \uBCF5\uADC0)"
+  promptMessage: (press spacebar to return to mall)
   spawnX: 0
 --- !u!212 &1507138904
 SpriteRenderer:
