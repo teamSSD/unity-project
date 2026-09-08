@@ -234,9 +234,14 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
 #if AFTERTASTE_E2E
         // 목록의 순서는 재고 갱신/refresh에 따라 바뀐다. 매크로가 row.0 같은
         // 화면 순번을 추측하지 않고 실제 상품 ID를 선택하도록 안정된 식별자를 제공한다.
-        string e2eRowId = data is ItemRowData item && item.Food != null
-            ? $"shop.item.{item.Food.id}"
-            : $"shop.row.{currentRows.Count - 1}";
+        string e2eRowId = data switch
+        {
+            ItemRowData item when item.Food != null => $"shop.item.{item.Food.id}",
+            ToolRowData tool => $"shop.tool.{tool.Id}",
+            StorageRowData storage => $"shop.storage.{storage.Type}",
+            FarmRowData farm => $"shop.farm.{farm.Type}",
+            _ => $"shop.row.{currentRows.Count - 1}",
+        };
         E2EUiTargetRegistry.Register(e2eRowId, row.GetComponent<Button>());
 #endif
         return row;
@@ -336,6 +341,48 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
     }
 
     public void NotifyUpgradeApplied() => SwitchTab(currentTab);
+
+#if AFTERTASTE_E2E
+    public sealed class E2EItemState
+    {
+        public FoodData Food;
+        public int UnitPrice;
+        public int RemainingStock;
+        public bool IsUnlimited;
+    }
+
+    /// <summary>현재 실제 상점 행만 읽는다. 라인업 생성/새로고침 상태를 변경하지 않는다.</summary>
+    public IReadOnlyList<E2EItemState> E2EGetCurrentItems()
+    {
+        var items = new List<E2EItemState>();
+        foreach (var row in currentRows)
+        {
+            if (row?.UserData is not ItemRowData data || data.Food == null) continue;
+            items.Add(new E2EItemState
+            {
+                Food = data.Food,
+                UnitPrice = data.UnitPrice,
+                RemainingStock = data.IsUnlimited ? int.MaxValue : data.RemainingStock,
+                IsUnlimited = data.IsUnlimited,
+            });
+        }
+        return items;
+    }
+
+    /// <summary>현재 실제 행의 1개 구매를 버튼과 동일한 도메인/UI 갱신 경로로 실행한다.</summary>
+    public bool E2EBuyOne(string foodId)
+    {
+        foreach (var row in currentRows)
+        {
+            if (row?.UserData is not ItemRowData data || data.Food?.id != foodId) continue;
+            if (!data.IsUnlimited && data.RemainingStock <= 0) return false;
+            if (purchase == null || !purchase.TryBuy(data.Food, 1, data.UnitPrice)) return false;
+            NotifyItemPurchased(data.Food, 1);
+            return true;
+        }
+        return false;
+    }
+#endif
 
     private class ItemRowData
     {

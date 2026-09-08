@@ -251,6 +251,22 @@ public class FoodModel : MonoBehaviour
         }
     }
 
+#if AFTERTASTE_E2E
+    /// <summary>
+    /// 좌표가 겹치는 재료를 안정적으로 지정하기 위한 테스트 전용 의미 기반 입력.
+    /// 실제 드롭과 같은 배치 규칙, 도구 수용, 재고 소비, 시각 갱신 경로를 그대로 탄다.
+    /// </summary>
+    public bool E2ETransferToTool(CookingToolModel tool)
+    {
+        if (!injected || tool == null || UILockManager.IsLocked) return false;
+        if (loadInventoryUsecase.CheckStockAmount(SchemaInstance.foodData) <= 0) return false;
+        if (!IngredientPlacementRules.CanFoodEnterTool(SchemaInstance.foodData, tool.GetToolId())) return false;
+        if (!tool.AddIngredient(SchemaInstance)) return false;
+        ConsumeAndReposition();
+        return true;
+    }
+#endif
+
     public void SetDefaultPosition(Vector3 position)
     {
         BehaviorInstance.defaultPosition = position;

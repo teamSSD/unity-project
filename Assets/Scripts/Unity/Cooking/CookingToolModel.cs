@@ -184,7 +184,7 @@ public class CookingToolModel : MonoBehaviour
     }
 
 #if AFTERTASTE_E2E
-    /// <summary>WebGL E2E의 읽기 전용 조리 상태 관측값. 입력이나 결과에는 개입하지 않는다.</summary>
+    /// <summary>WebGL E2E 조리 상태 관측값.</summary>
     public int E2EIngredientCount => SchemaInstance?.Ingredients?.Count ?? 0;
     public bool E2EIsCookable => SchemaInstance?.IsCookable() ?? false;
     public string E2EResultFoodId => SchemaInstance?.GetResult()?.foodData?.id ?? string.Empty;
@@ -192,6 +192,10 @@ public class CookingToolModel : MonoBehaviour
         .Where(food => food?.foodData != null)
         .Select(food => food.foodData.id)
         .ToArray() ?? System.Array.Empty<string>();
+
+    /// <summary>실제 도구 드롭과 동일한 전이 규칙/시각 갱신 경로를 호출한다.</summary>
+    public bool E2ETransferToTool(CookingToolModel target) =>
+        injected && target != null && !UILockManager.IsLocked && TryTransferToTool(target);
 #endif
 
     private void DetectTrashcan()

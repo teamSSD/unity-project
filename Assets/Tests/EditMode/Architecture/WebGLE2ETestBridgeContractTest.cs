@@ -5,7 +5,7 @@ using UnityEngine;
 public class WebGLE2ETestBridgeContractTest
 {
     [Test]
-    public void E2EBridge_IsDevelopmentOnly_AndDoesNotOfferGameInputCommands()
+    public void E2EBridge_IsDevelopmentOnly_AndLimitsSemanticGameplayCommands()
     {
         var path = Path.Combine(Application.dataPath, "Scripts", "Unity", "Dev", "E2E", "AftertasteE2ETestBridge.cs");
         var source = File.ReadAllText(path);
@@ -14,9 +14,46 @@ public class WebGLE2ETestBridgeContractTest
         Assert.That(source, Does.Contain("case \"snapshot\""));
         Assert.That(source, Does.Contain("case \"mark\""));
         Assert.That(source, Does.Contain("case \"campaign\""));
+        Assert.That(source, Does.Contain("case \"placeIngredient\""));
+        Assert.That(source, Does.Contain("case \"transferTool\""));
+        Assert.That(source, Does.Contain("case \"buyItem\""));
         Assert.That(source, Does.Not.Contain("case \"move\""));
         Assert.That(source, Does.Not.Contain("case \"click\""));
         Assert.That(source, Does.Not.Contain("case \"timeScale\""));
+        Assert.That(source, Does.Contain("E2ETransferToTool"));
+    }
+
+    [Test]
+    public void CampaignObservation_ExposesLiveQuestMetadataWithoutMutatingQuestState()
+    {
+        var path = Path.Combine(Application.dataPath, "Scripts", "Unity", "Dev", "E2E", "AftertasteE2ETestBridge.cs");
+        var source = File.ReadAllText(path);
+
+        Assert.That(source, Does.Contain("QuestNpcObservation"));
+        Assert.That(source, Does.Contain("prerequisiteGroupId"));
+        Assert.That(source, Does.Contain("questNpcs = questNpcs"));
+        Assert.That(source, Does.Not.Contain("case \"questStage\""));
+    }
+
+    [Test]
+    public void CampaignObservation_ExposesStorageCapacityForRealShopUpgradeDecisions()
+    {
+        var bridgePath = Path.Combine(Application.dataPath, "Scripts", "Unity", "Dev", "E2E", "AftertasteE2ETestBridge.cs");
+        var bridge = File.ReadAllText(bridgePath);
+        var shopPath = Path.Combine(Application.dataPath, "Scripts", "Unity", "Shop", "ShopUIAdapter.cs");
+        var shop = File.ReadAllText(shopPath);
+
+        Assert.That(bridge, Does.Contain("IngredientStorageObservation"));
+        Assert.That(bridge, Does.Contain("StorageObservation"));
+        Assert.That(bridge, Does.Contain("root.StorageUpgrade.GetCurrentData(type)"));
+        Assert.That(bridge, Does.Contain("root.Inventory?.LoadIngredientsByCategory"));
+        Assert.That(bridge, Does.Contain("quantityAfterDayAdvance"));
+        Assert.That(bridge, Does.Contain("batch.daysRemaining > 1"));
+        Assert.That(bridge, Does.Contain("ShopItemObservation"));
+        Assert.That(bridge, Does.Contain("canBuyOne"));
+        Assert.That(shop, Does.Contain("E2EGetCurrentItems"));
+        Assert.That(shop, Does.Contain("E2EBuyOne"));
+        Assert.That(shop, Does.Contain("shop.storage.{storage.Type}"));
     }
 
     [Test]
@@ -38,6 +75,10 @@ public class WebGLE2ETestBridgeContractTest
         Assert.That(postprocessor, Does.Contain("window.AftertasteUnityInstance.SendMessage"));
         Assert.That(postprocessor, Does.Contain("var events = []"));
         Assert.That(postprocessor, Does.Contain("events.length > 500"));
+        Assert.That(postprocessor, Does.Contain("event.browserSequence = ++sequence"));
+        Assert.That(postprocessor, Does.Contain("var errors = []"));
+        Assert.That(postprocessor, Does.Contain("errorCount += 1"));
+        Assert.That(postprocessor, Does.Contain("errorCount: function ()"));
     }
 
     [Test]

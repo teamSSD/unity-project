@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Development WebGL에서만 브라우저 E2E 실행기를 위한 관측/제어 경계.
-/// 게임 조작을 대신하지 않고, 상태 관측과 테스트 메타데이터만 제공한다.
+/// 상태 관측과 여행 단축, 실제 게임 규칙을 호출하는 의미 기반 조작만 제공한다.
 /// </summary>
 #if AFTERTASTE_E2E
 public sealed class AftertasteE2ETestBridge : MonoBehaviour
@@ -22,6 +22,9 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
         public string action;
         public string label;
         public string targetId;
+        public string foodId;
+        public string sourceToolId;
+        public string targetToolId;
     }
 
     [Serializable]
@@ -65,6 +68,35 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
     {
         public string foodId;
         public int quantity;
+        public int quantityAfterDayAdvance;
+    }
+
+    [Serializable]
+    private sealed class IngredientStorageObservation
+    {
+        public string foodId;
+        public string storageType;
+    }
+
+    [Serializable]
+    private sealed class StorageObservation
+    {
+        public string storageType;
+        public int used;
+        public int capacity;
+        public bool isMax;
+        public int nextCost;
+    }
+
+    [Serializable]
+    private sealed class ShopItemObservation
+    {
+        public string foodId;
+        public int unitPrice;
+        public int remainingStock;
+        public bool isUnlimited;
+        public bool canBuyOne;
+        public string refusalKind;
     }
 
     [Serializable]
@@ -113,6 +145,19 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
     }
 
     [Serializable]
+    private sealed class QuestNpcObservation
+    {
+        public string npcId;
+        public string targetId;
+        public string groupId;
+        public string prerequisiteGroupId;
+        public string stage;
+        public bool unlocked;
+        public string[] mainFoodIds;
+        public string[] sideFoodIds;
+    }
+
+    [Serializable]
     private sealed class CampaignObservation
     {
         public string type;
@@ -121,11 +166,15 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
         public string phase;
         public int day;
         public InventoryObservation[] inventory;
+        public IngredientStorageObservation[] ingredientStorage;
+        public StorageObservation[] storage;
+        public ShopItemObservation[] shopItems;
         public OrderObservation[] orders;
         public RecipeExecutionPlan[] cookingPlans;
         public CookingToolObservation[] tools;
         public BentoObservation[] bentos;
         public TicketObservation[] tickets;
+        public QuestNpcObservation[] questNpcs;
         public MinigameObservation minigame;
         public string[] unlockedMainFoodIds;
         public string[] unlockedSideFoodIds;
@@ -147,6 +196,16 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
         public string scene;
         public float realtime;
         public int frame;
+    }
+
+    [Serializable]
+    private sealed class ActionResult
+    {
+        public string type;
+        public string action;
+        public string label;
+        public bool success;
+        public string message;
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -199,14 +258,52 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
             case "teleport":
                 TeleportToRegisteredWorldTarget(command.targetId);
                 break;
+            case "placeIngredient":
+                EmitActionResult(command, PlaceIngredient(command.foodId, command.targetToolId));
+                break;
+            case "transferTool":
+                EmitActionResult(command, TransferTool(command.sourceToolId, command.targetToolId));
+                break;
+            case "buyItem":
+                EmitActionResult(command, ShopUIAdapter.Instance?.E2EBuyOne(command.foodId) ?? false);
+                break;
             default:
                 EmitLog("warning", $"Unsupported E2E command: {command.action}");
                 break;
         }
     }
 
-    // 장시간 이동만 생략한다. 돈·재료·퀘스트·시간 등 게임 상태는 절대 변경하지 않고,
-    // 도착 뒤의 Space/클릭 상호작용은 브라우저 입력으로 반드시 수행해야 한다.
+    private static bool PlaceIngredient(string foodId, string targetToolId)
+    {
+        var food = UnityEngine.Object.FindObjectsByType<FoodModel>(FindObjectsSortMode.None)
+            .FirstOrDefault(model => model.GetFoodData()?.id == foodId);
+        var tool = UnityEngine.Object.FindObjectsByType<CookingToolModel>(FindObjectsSortMode.None)
+            .FirstOrDefault(model => model.GetToolId() == targetToolId);
+        return food != null && food.E2ETransferToTool(tool);
+    }
+
+    private static bool TransferTool(string sourceToolId, string targetToolId)
+    {
+        var tools = UnityEngine.Object.FindObjectsByType<CookingToolModel>(FindObjectsSortMode.None);
+        var source = tools.FirstOrDefault(model => model.GetToolId() == sourceToolId);
+        var target = tools.FirstOrDefault(model => model.GetToolId() == targetToolId);
+        return source != null && source.E2ETransferToTool(target);
+    }
+
+    private void EmitActionResult(Command command, bool success)
+    {
+        EmitJson(JsonUtility.ToJson(new ActionResult
+        {
+            type = "action-result",
+            action = command.action,
+            label = command.label ?? string.Empty,
+            success = success,
+            message = success ? string.Empty : "Gameplay action was rejected by live rules.",
+        }));
+    }
+
+    // 장시간 이동만 생략한다. 돈·재료·퀘스트·시간은 직접 바꾸지 않고,
+    // 도착 뒤의 Space/클릭 상호작용은 브라우저 입력으로 반드시 수행한다.
     private void TeleportToRegisteredWorldTarget(string targetId)
     {
         if (!E2EWorldTargetRegistry.TryGetWorldPosition(targetId, out var position))
@@ -308,6 +405,30 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
                 .Where(food => food != null).Select(food => food.id).ToArray() ?? Array.Empty<string>(),
         }).ToArray();
 
+        var questNpcs = UnityEngine.Object.FindObjectsByType<DeliveryNpcView>(FindObjectsSortMode.None)
+            .Where(view => !string.IsNullOrWhiteSpace(view.NpcId) && !string.IsNullOrWhiteSpace(view.GroupId))
+            .OrderBy(view => view.GroupId)
+            .ThenBy(view => view.NpcId)
+            .Select(view =>
+            {
+                var menu = root?.QuestMenus?.GetByGroupId(view.GroupId);
+                var prerequisite = view.PrerequisiteGroupId ?? string.Empty;
+                return new QuestNpcObservation
+                {
+                    npcId = view.NpcId,
+                    targetId = $"npc.{view.NpcId}",
+                    groupId = view.GroupId,
+                    prerequisiteGroupId = prerequisite,
+                    stage = (root?.DeliveryQuest?.GetStage(view.GroupId) ?? DeliveryQuestStage.FirstMeet).ToString(),
+                    unlocked = string.IsNullOrEmpty(prerequisite)
+                        || root?.DeliveryQuest?.GetStage(prerequisite) == DeliveryQuestStage.Completed,
+                    mainFoodIds = menu?.mainMenus?
+                        .Where(food => food != null).Select(food => food.id).ToArray() ?? Array.Empty<string>(),
+                    sideFoodIds = menu?.sideMenus?
+                        .Where(food => food != null).Select(food => food.id).ToArray() ?? Array.Empty<string>(),
+                };
+            }).ToArray();
+
         var targetFoodIds = orders
             .Where(order => order.state == DeliveryOrderState.Ordered.ToString()
                 || order.state == DeliveryOrderState.Cooking.ToString())
@@ -316,6 +437,8 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
                 .Where(food => food != null).Select(food => food.id) ?? Enumerable.Empty<string>())
             .Concat(root?.UnlockedFood?.GetUnlockedSideFoods()
                 .Where(food => food != null).Select(food => food.id) ?? Enumerable.Empty<string>())
+            .Concat(questNpcs.Where(quest => quest.unlocked)
+                .SelectMany(quest => quest.mainFoodIds.Concat(quest.sideFoodIds)))
             .Where(id => !string.IsNullOrWhiteSpace(id))
             .Distinct()
             .ToArray();
@@ -325,10 +448,65 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
             {
                 foodId = item.foodId ?? string.Empty,
                 quantity = item.batches?.Sum(batch => batch.quantity) ?? 0,
+                quantityAfterDayAdvance = item.batches?
+                    .Where(batch => batch.daysRemaining > 1)
+                    .Sum(batch => batch.quantity) ?? 0,
             })
             .Where(item => item.quantity > 0)
             .OrderBy(item => item.foodId)
             .ToArray() ?? Array.Empty<InventoryObservation>();
+
+        var ingredientStorage = (CatalogProvider.Food?.All ?? Array.Empty<FoodData>())
+            .Where(food => food?.ingredient != null)
+            .Select(food => new IngredientStorageObservation
+            {
+                foodId = food.id,
+                storageType = StorageTypeFromCategory(food.ingredient.display),
+            })
+            .Where(item => !string.IsNullOrEmpty(item.storageType))
+            .OrderBy(item => item.foodId)
+            .ToArray();
+
+        var storage = (root?.StorageUpgrade?.GetAllTypes() ?? Enumerable.Empty<string>())
+            .OrderBy(type => type)
+            .Select(type =>
+            {
+                var category = CategoryFromStorageType(type);
+                var current = root.StorageUpgrade.GetCurrentData(type);
+                var next = root.StorageUpgrade.GetNextData(type);
+                return new StorageObservation
+                {
+                    storageType = type,
+                    used = category.HasValue
+                        ? root.Inventory?.LoadIngredientsByCategory(category.Value)?.Count ?? 0
+                        : 0,
+                    capacity = current?.value ?? int.MaxValue,
+                    isMax = next == null,
+                    nextCost = next?.cost ?? 0,
+                };
+            })
+            .ToArray();
+
+        var shopAdapter = ShopUIAdapter.Instance;
+        var liveShopItems = shopAdapter != null
+            ? shopAdapter.E2EGetCurrentItems()
+            : Array.Empty<ShopUIAdapter.E2EItemState>();
+        var shopItems = liveShopItems
+            .Select(item =>
+            {
+                var refusal = root?.Purchase?.GetRefusalReason(item.Food, item.UnitPrice);
+                return new ShopItemObservation
+                {
+                    foodId = item.Food.id,
+                    unitPrice = item.UnitPrice,
+                    remainingStock = item.RemainingStock,
+                    isUnlimited = item.IsUnlimited,
+                    canBuyOne = item.RemainingStock > 0 && !refusal.HasValue,
+                    refusalKind = refusal?.Kind.ToString() ?? string.Empty,
+                };
+            })
+            .OrderBy(item => item.foodId)
+            .ToArray();
 
         var tools = UnityEngine.Object.FindObjectsByType<CookingToolModel>(FindObjectsSortMode.None)
             .OrderBy(tool => tool.GetToolId())
@@ -367,11 +545,15 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
             phase = GameStateReporter.CaptureRuntimeState().Phase ?? string.Empty,
             day = GameStateReporter.CaptureRuntimeState().Day,
             inventory = inventory,
+            ingredientStorage = ingredientStorage,
+            storage = storage,
+            shopItems = shopItems,
             orders = orders,
             cookingPlans = targetFoodIds.Select(planner.Build).ToArray(),
             tools = tools,
             bentos = bentos,
             tickets = tickets,
+            questNpcs = questNpcs,
             minigame = new MinigameObservation
             {
                 name = minigameManager?.ActiveMinigame ?? string.Empty,
@@ -387,6 +569,22 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
                 ?? Array.Empty<string>(),
         }));
     }
+
+    private static string StorageTypeFromCategory(IngredientDisplayCategory category) => category switch
+    {
+        IngredientDisplayCategory.Refrigerator => "refrigerator",
+        IngredientDisplayCategory.UpperShelf => "upperShelf",
+        IngredientDisplayCategory.LowerShelf => "lowerShelf",
+        _ => string.Empty,
+    };
+
+    private static IngredientDisplayCategory? CategoryFromStorageType(string storageType) => storageType switch
+    {
+        "refrigerator" => IngredientDisplayCategory.Refrigerator,
+        "upperShelf" => IngredientDisplayCategory.UpperShelf,
+        "lowerShelf" => IngredientDisplayCategory.LowerShelf,
+        _ => null,
+    };
 
     private void EmitLog(string level, string message)
     {

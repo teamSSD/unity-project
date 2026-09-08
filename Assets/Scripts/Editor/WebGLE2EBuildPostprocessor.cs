@@ -39,18 +39,28 @@ body { min-height: 100vh; display: grid; place-items: center; overflow: hidden; 
     private const string BrowserApi = @"<script>
 window.AftertasteE2E = window.AftertasteE2E || (function () {
   var events = [];
+  var errors = [];
+  var errorCount = 0;
+  var sequence = 0;
   function receive(json) {
     var event = typeof json === 'string' ? JSON.parse(json) : json;
+    event.browserSequence = ++sequence;
     event.browserReceivedAt = performance.now();
     events.push(event);
     if (events.length > 500) events.splice(0, events.length - 500);
+    if (event.type === 'unity-log' && ['Error', 'Exception', 'Assert'].indexOf(event.level) >= 0) {
+      errorCount += 1;
+      if (errors.length < 500) errors.push(event);
+    }
     console.log('[AftertasteE2E]', event);
     return event;
   }
   return {
-    version: 1,
+    version: 3,
     events: events,
-    clear: function () { events.length = 0; },
+    errors: errors,
+    errorCount: function () { return errorCount; },
+    clear: function () { events.length = 0; errors.length = 0; errorCount = 0; },
     latest: function () { return events.length ? events[events.length - 1] : null; },
     receive: receive,
     command: function (command) {
