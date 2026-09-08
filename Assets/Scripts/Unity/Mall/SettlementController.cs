@@ -131,7 +131,7 @@ public class SettlementController : MonoBehaviour
         if (ss != null)
         {
             // ManagementFee는 PassDay에서 차감되므로 미리 반영
-            int finalMoney = ss.GetMoney() - SettlementService.ManagementFee;
+            int finalMoney = SettlementService.ProjectBalanceAfterManagementFee(ss.GetMoney());
             int netChange  = totalIncome - totalExpense;
             string sign    = netChange >= 0 ? "+" : "";
             balanceText.text = $"{finalMoney:N0}G  ({sign}{netChange:N0})";

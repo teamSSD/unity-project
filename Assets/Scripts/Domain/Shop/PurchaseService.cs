@@ -127,6 +127,8 @@ namespace Game.Domain.Shop
             return UnityEngine.Mathf.RoundToInt(RefreshBaseCost * UnityEngine.Mathf.Pow(RefreshCostMultiplier, _state.RefreshCount));
         }
 
+        public int RefreshCount => _state.RefreshCount;
+
         public bool CanRefresh() => _money != null && _money.Current >= GetRefreshCost();
 
         /// <summary>

@@ -5,6 +5,8 @@ const baseUrl = process.env.E2E_WEBGL_URL;
 const mealsToServe = Number(process.env.E2E_MEALS_TO_SERVE ?? 2);
 const stepDelayMs = Number(process.env.E2E_STEP_DELAY_MS ?? 0);
 const holdOpenMs = Number(process.env.E2E_HOLD_OPEN_MS ?? 0);
+const maxCampaignDays = Number(process.env.E2E_MAX_CAMPAIGN_DAYS ?? 60);
+const campaignTimeoutMs = Number(process.env.E2E_CAMPAIGN_TIMEOUT_MS ?? 3_600_000);
 
 // Headed runs are meant to be watched for hours; keep the real game rendering and
 // input path while preventing Chromium audio from disturbing the workspace.
@@ -17,6 +19,10 @@ function assertLocalE2EOrigin(url) {
     throw new Error('Dynamic campaign only accepts an isolated localhost port from 8100 through 8199.');
   if (!Number.isInteger(mealsToServe) || mealsToServe < 1 || mealsToServe > 3)
     throw new Error('E2E_MEALS_TO_SERVE must be an integer from 1 through 3.');
+  if (!Number.isInteger(maxCampaignDays) || maxCampaignDays < 1 || maxCampaignDays > 365)
+    throw new Error('E2E_MAX_CAMPAIGN_DAYS must be an integer from 1 through 365.');
+  if (!Number.isInteger(campaignTimeoutMs) || campaignTimeoutMs < 60_000)
+    throw new Error('E2E_CAMPAIGN_TIMEOUT_MS must be an integer of at least 60000.');
 }
 
 async function showStep(page, label, trace) {
@@ -101,6 +107,17 @@ async function clickTarget(page, canvas, id) {
   // Keep pointer down/up and the following action on separate Unity render frames.
   // Zero-duration browser clicks can otherwise collapse while WebGL is busy.
   await page.waitForTimeout(80);
+}
+
+async function choosePhaseAction(page, canvas, targetId, day, phase) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    await clickTarget(page, canvas, targetId);
+    await page.waitForTimeout(180);
+    const state = await snapshot(page, `day-${day}-${phase}-${targetId}-selected-${attempt}`);
+    if (!state.uiLocked) return state;
+  }
+  expect((await snapshot(page, `day-${day}-${phase}-${targetId}-selection-failed`)).uiLocked,
+    `${targetId} must close the phase selector through actual input`).toBe(false);
 }
 
 async function completeDialogue(page, canvas, preferredResultTag = '') {
@@ -357,19 +374,26 @@ async function executeRecipePlan(page, canvas, plan, trace) {
   return plan.steps.at(-1).toolId;
 }
 
-function chooseFeasibleMain(observation, quantity = 1) {
+function chooseFeasibleMain(observation, quantity = 1, reservedRequirements = new Map()) {
   const stock = new Map(observation.inventory.map(item => [item.foodId, item.quantity]));
   return observation.cookingPlans
     .filter(plan => plan.valid && observation.unlockedMainFoodIds.includes(plan.targetFoodId))
-    .filter(plan => plan.ingredients.every(item => (stock.get(item.foodId) ?? 0) >= item.quantity * quantity))
+    .filter(plan => plan.ingredients.every(item =>
+      (stock.get(item.foodId) ?? 0) - Math.min(
+        stock.get(item.foodId) ?? 0,
+        reservedRequirements.get(item.foodId) ?? 0,
+      ) >= item.quantity * quantity))
     .filter(plan => plan.steps.every(step => runtimeMinigameName[step.minigameId]))
     .sort((left, right) => right.steps.length - left.steps.length || left.targetFoodId.localeCompare(right.targetFoodId))[0];
 }
 
-function canCraftFromInventory(observation, plan, quantity = 1) {
+function canCraftFromInventory(observation, plan, quantity = 1, reservedRequirements = new Map()) {
   const stock = new Map(observation.inventory.map(item => [item.foodId, item.quantity]));
   return plan?.valid && plan.ingredients.every(item =>
-    (stock.get(item.foodId) ?? 0) >= item.quantity * quantity);
+    (stock.get(item.foodId) ?? 0) - Math.min(
+      stock.get(item.foodId) ?? 0,
+      reservedRequirements.get(item.foodId) ?? 0,
+    ) >= item.quantity * quantity);
 }
 
 function chooseSupportedQuest(observation) {
@@ -388,6 +412,52 @@ function chooseSupportedQuest(observation) {
       }
       return true;
     })[0];
+}
+
+function questGroupState(observation) {
+  const groups = new Map();
+  for (const quest of observation.questNpcs) {
+    if (!quest.groupId) continue;
+    const previous = groups.get(quest.groupId);
+    if (previous)
+      expect(quest.stage, `all live NPCs in ${quest.groupId} must share one quest stage`).toBe(previous.stage);
+    else
+      groups.set(quest.groupId, quest);
+  }
+  return groups;
+}
+
+function assertCompleteQuestGraph(observation) {
+  const configured = [...new Set(observation.configuredQuestGroupIds ?? [])].sort();
+  const live = [...questGroupState(observation).keys()].sort();
+  expect(configured.length, 'the live quest menu catalog must contain delivery quests').toBeGreaterThan(0);
+  expect(live, 'every configured delivery quest must have a live NPC in the Mall').toEqual(configured);
+  return configured;
+}
+
+function completedQuestGroups(observation, configuredQuestGroupIds) {
+  const groups = questGroupState(observation);
+  return configuredQuestGroupIds.filter(groupId => groups.get(groupId)?.stage === 'Completed');
+}
+
+function campaignBlocker(observation, configuredQuestGroupIds) {
+  const plans = new Map(observation.cookingPlans.map(plan => [plan.targetFoodId, plan]));
+  const groups = questGroupState(observation);
+  return configuredQuestGroupIds.map(groupId => {
+    const quest = groups.get(groupId);
+    const unsupportedFoods = [...(quest?.mainFoodIds ?? []), ...(quest?.sideFoodIds ?? [])]
+      .filter(foodId => {
+        const plan = plans.get(foodId);
+        return !plan?.valid || !plan.steps.every(step => runtimeMinigameName[step.minigameId]);
+      });
+    return {
+      groupId,
+      stage: quest?.stage ?? 'MissingNpc',
+      unlocked: quest?.unlocked ?? false,
+      prerequisiteGroupId: quest?.prerequisiteGroupId ?? '',
+      unsupportedFoods,
+    };
+  });
 }
 
 async function waitForQuestStage(page, groupId, stage, label) {
@@ -510,28 +580,6 @@ async function serveRegularMeal(page, canvas, plan, trace, label) {
     after,
     elapsedMinutes: (after.hour * 60 + after.minute) - (before.hour * 60 + before.minute),
   };
-}
-
-async function serveAcquisitionDay(page, canvas, day, preferredFoodId, trace) {
-  const plan = await enterCookingDay(page, canvas, day, preferredFoodId);
-  let servedMeals = 0;
-  let observedMealMinutes = 0;
-
-  for (let meal = 0; meal < 3; meal += 1) {
-    const live = await campaign(page, `day-${day}-acquisition-capacity-${meal}`);
-    const currentPlan = live.cookingPlans.find(candidate => candidate.targetFoodId === plan.targetFoodId);
-    if (!canCraftFromInventory(live, currentPlan)) break;
-    const clock = await snapshot(page, `day-${day}-acquisition-clock-${meal}`);
-    if (observedMealMinutes > 0 && clock.remainingPhaseMinutes <= observedMealMinutes + 15) break;
-    const served = await serveRegularMeal(
-      page, canvas, currentPlan, trace, `day ${day} acquisition sale ${meal + 1}`);
-    observedMealMinutes = Math.max(observedMealMinutes, served.elapsedMinutes);
-    servedMeals += 1;
-  }
-
-  expect(servedMeals, `day ${day} must produce at least one actual acquisition sale`).toBeGreaterThan(0);
-  await showStep(page, `served ${servedMeals} acquisition meal(s) on day ${day}`, trace);
-  return { plan, servedMeals };
 }
 
 async function waitForState(page, expected, label, timeout = 25_000) {
@@ -658,33 +706,50 @@ async function exerciseOffscreenShopPurchase(page, canvas) {
 }
 
 async function buyOne(page, canvas, foodId) {
-  for (let refresh = 0; refresh < 12; refresh += 1) {
-    const itemId = `shop.item.${foodId}`;
-    let item = (await targetMap(page)).find(candidate => candidate.id === itemId);
-    if (item) {
-      const offerState = await campaign(page, `offer-${foodId}`);
-      const offer = offerState.shopItems.find(candidate => candidate.foodId === foodId);
-      if (!offer?.canBuyOne || offer.remainingStock <= 0) return false;
-      // WebGL normalizes a wheel event before ScrollRect applies scrollSensitivity,
-      // so even a large browser delta only moves this list a few pixels. Dragging the
-      // real viewport is both user-equivalent and independent of list/content height.
-      const scrolled = await scrollShopItemIntoView(page, canvas, itemId);
-      item = scrolled.final;
-      expect(item?.visible && item?.interactable,
-        `${foodId} exists in the live lineup and must become visible through real scrolling`).toBeTruthy();
-      const before = inventoryQuantity(offerState, foodId);
-      await gameplayAction(page, { action: 'buyItem', foodId });
-      await expect.poll(async () => inventoryQuantity(
-        await campaign(page, `restock-after-${foodId}`), foodId),
-        { timeout: 3_000, message: `semantic shop purchase must add ${foodId}` }).toBe(before + 1);
-      return true;
-    }
-    const refreshTarget = (await targetMap(page)).find(candidate => candidate.id === 'shop.refresh');
-    if (!refreshTarget?.visible || !refreshTarget?.interactable) return false;
-    await clickTarget(page, canvas, refreshTarget.id);
-    await page.waitForTimeout(300);
-  }
-  return false;
+  const itemId = `shop.item.${foodId}`;
+  let item = (await targetMap(page)).find(candidate => candidate.id === itemId);
+  if (!item) return false;
+
+  const offerState = await campaign(page, `offer-${foodId}`);
+  const offer = offerState.shopItems.find(candidate => candidate.foodId === foodId);
+  const reserve = offerState.managementFee * 2;
+  if (!offer?.canBuyOne || offer.remainingStock <= 0 || offerState.money - offer.unitPrice < reserve)
+    return false;
+
+  // WebGL normalizes a wheel event before ScrollRect applies scrollSensitivity,
+  // so even a large browser delta only moves this list a few pixels. Dragging the
+  // real viewport is both user-equivalent and independent of list/content height.
+  const scrolled = await scrollShopItemIntoView(page, canvas, itemId);
+  item = scrolled.final;
+  expect(item?.visible && item?.interactable,
+    `${foodId} exists in the live lineup and must become visible through real scrolling`).toBeTruthy();
+  const before = inventoryQuantity(offerState, foodId);
+  await gameplayAction(page, { action: 'buyItem', foodId });
+  await expect.poll(async () => inventoryQuantity(
+    await campaign(page, `restock-after-${foodId}`), foodId),
+    { timeout: 3_000, message: `semantic shop purchase must add ${foodId}` }).toBe(before + 1);
+  return true;
+}
+
+async function refreshLineupOnceIfRational(page, canvas, requirements, trace) {
+  const state = await campaign(page, 'refresh-policy');
+  const unmet = unmetRequirements(state, requirements);
+  const reserve = state.managementFee * 2;
+  const refresh = (await targetMap(page)).find(candidate => candidate.id === 'shop.refresh');
+  const shouldRefresh = unmet.length > 0 && state.refreshCount === 0 && state.canRefresh &&
+    state.money - state.refreshCost >= reserve && refresh?.visible && refresh?.interactable;
+  if (!shouldRefresh) return false;
+
+  const beforeMoney = state.money;
+  await clickTarget(page, canvas, refresh.id);
+  await expect.poll(async () => (await campaign(page, 'refresh-policy-confirmed')).refreshCount,
+    { timeout: 5_000, message: 'one bounded real shop refresh must complete' }).toBe(1);
+  const after = await campaign(page, 'refresh-policy-after');
+  expect(after.money).toBe(beforeMoney - state.refreshCost);
+  await showStep(page,
+    `used one bounded refresh (${state.refreshCost}G); reserve ${reserve}G`,
+    trace);
+  return true;
 }
 
 function aggregateIngredientRequirements(observation, foodCraftCounts) {
@@ -722,7 +787,9 @@ async function ensureStorageCapacity(page, canvas, requirements, trace) {
     while (live.used + foodIds.size > live.capacity) {
       expect(live.isMax, `${storageType} must have an upgrade for ${live.used + foodIds.size} slots`).toBe(false);
       const beforeMoney = (await snapshot(page, `before-${storageType}-upgrade`)).money;
-      expect(beforeMoney, `${storageType} upgrade must be affordable`).toBeGreaterThanOrEqual(live.nextCost);
+      const reserve = observation.managementFee * 2;
+      expect(beforeMoney - live.nextCost,
+        `${storageType} upgrade must preserve the ${reserve}G operating reserve`).toBeGreaterThanOrEqual(reserve);
       await clickTarget(page, canvas, 'shop.tab.2');
       await clickTarget(page, canvas, `shop.storage.${storageType}`);
       const beforeCapacity = live.capacity;
@@ -773,18 +840,42 @@ async function buyAvailableRequirements(page, canvas, requirements) {
   return { state, unmet: unmetRequirements(state, requirements) };
 }
 
-async function enterCookingDay(page, canvas, day, preferredFoodId = '') {
+async function buyRequirementsWithBoundedRefresh(page, canvas, requirements, trace) {
+  let acquisition = await buyAvailableRequirements(page, canvas, requirements);
+  if (acquisition.unmet.length > 0 &&
+      await refreshLineupOnceIfRational(page, canvas, requirements, trace))
+    acquisition = await buyAvailableRequirements(page, canvas, requirements);
+  return acquisition;
+}
+
+async function enterCookingDay(page, canvas, day, preferredFoodId = '', reservedRequirements = new Map()) {
   const observation = await campaign(page, `day-${day}-choose-live-menu`);
   const preferred = observation.cookingPlans.find(candidate => candidate.targetFoodId === preferredFoodId);
   const stock = new Map(observation.inventory.map(item => [item.foodId, item.quantity]));
-  const preferredIsFeasible = preferred?.valid &&
-    observation.unlockedMainFoodIds.includes(preferred.targetFoodId) &&
-    preferred.ingredients.every(item => (stock.get(item.foodId) ?? 0) >= item.quantity) &&
-    preferred.steps.every(step => runtimeMinigameName[step.minigameId]);
-  const livePlan = preferredIsFeasible ? preferred : chooseFeasibleMain(observation, 1);
-  expect(livePlan, `day ${day} must have a live main menu supported by current inventory`).toBeTruthy();
+  const isSupportedMain = plan => plan?.valid &&
+    observation.unlockedMainFoodIds.includes(plan.targetFoodId) &&
+    plan.steps.every(step => runtimeMinigameName[step.minigameId]);
+  const preferredIsFeasible = isSupportedMain(preferred) &&
+    preferred.ingredients.every(item =>
+      (stock.get(item.foodId) ?? 0) - Math.min(
+        stock.get(item.foodId) ?? 0,
+        reservedRequirements.get(item.foodId) ?? 0,
+      ) >= item.quantity);
+  const fallback = observation.cookingPlans
+    .filter(plan => plan.valid && observation.unlockedMainFoodIds.includes(plan.targetFoodId))
+    .filter(plan => plan.steps.every(step => runtimeMinigameName[step.minigameId]))
+    .sort((left, right) => left.targetFoodId.localeCompare(right.targetFoodId))[0];
+  const livePlan = preferredIsFeasible ? preferred : chooseFeasibleMain(observation, 1, reservedRequirements) ??
+    (isSupportedMain(preferred) ? preferred : fallback);
+  expect(livePlan, `day ${day} must have a selectable main menu supported by the macro`).toBeTruthy();
   await teleportAndInteract(page, 'go-home');
-  await clickTarget(page, canvas, `bento.slot0.main.${livePlan.targetFoodId}`);
+  let selectedMenuCount = 0;
+  for (let attempt = 0; attempt < 3 && selectedMenuCount === 0; attempt += 1) {
+    await clickTarget(page, canvas, `bento.slot0.main.${livePlan.targetFoodId}`);
+    selectedMenuCount = (await snapshot(page, `day-${day}-menu-selected-${attempt}`)).selectedMenuCount;
+  }
+  expect(selectedMenuCount, `day ${day} must register the actual ${livePlan.targetFoodId} menu click`)
+    .toBeGreaterThan(0);
   await clickTarget(page, canvas, 'bento.confirm');
   await waitForState(page, { scene: 'Cooking', day }, `day-${day}-cooking-ready`);
   await expect.poll(async () => (await snapshot(page, `day-${day}-cooking-input-ready`)).uiLocked,
@@ -792,31 +883,60 @@ async function enterCookingDay(page, canvas, day, preferredFoodId = '') {
   return livePlan;
 }
 
-async function openAfternoonShop(page, canvas, day) {
-  await clickTarget(page, canvas, 'phase.shopping');
+async function openPhaseShop(page, canvas, day, phase) {
+  await choosePhaseAction(page, canvas, 'phase.shopping', day, phase);
   await teleportAndInteract(page, 'scene.Shop');
-  await waitForState(page, { scene: 'Shop', phase: 'Afternoon', day }, `day-${day}-shop-ready`);
-  await expect.poll(async () => (await snapshot(page, `day-${day}-shop-input-ready`)).uiLocked,
+  await waitForState(page, { scene: 'Shop', phase, day }, `day-${day}-${phase}-shop-ready`);
+  await expect.poll(async () => (await snapshot(page, `day-${day}-${phase}-shop-input-ready`)).uiLocked,
     { timeout: 10_000 }).toBe(false);
   await teleportAndInteract(page, 'shop.Item');
   await targetMatching(page, candidate => candidate.id.startsWith('shop.item.'), 'live shop item', true);
 }
 
-async function leaveShop(page, canvas, day) {
+async function leaveShop(page, canvas, day, phase) {
   await clickTarget(page, canvas, 'shop.close');
   await teleportAndInteract(page, 'scene.Mall');
-  await waitForState(page, { scene: 'Mall', phase: 'Afternoon', day }, `day-${day}-mall-after-shopping`);
+  await waitForState(page, { scene: 'Mall', phase, day }, `day-${day}-${phase}-mall-after-shopping`);
 }
 
-async function advanceAfternoonToNextDay(page, canvas, day) {
+async function visitAndHarvestFarm(page, day, phase, trace) {
+  await teleportAndInteract(page, 'farm-path');
+  await waitForState(page, { scene: 'Garden', phase, day }, `day-${day}-${phase}-garden-ready`);
+  await expect.poll(async () => (await snapshot(page, `day-${day}-${phase}-garden-input-ready`)).uiLocked,
+    { timeout: 10_000 }).toBe(false);
+
+  let garden = await campaign(page, `day-${day}-${phase}-farm-observation`);
+  expect(garden.farmTiles.length, 'Garden must expose its live farm tiles').toBeGreaterThan(0);
+  const harvested = [];
+  for (const tile of garden.farmTiles.filter(candidate => !candidate.locked && candidate.harvestable)) {
+    const before = inventoryQuantity(garden, tile.cropId);
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      await teleportAndInteract(page, tile.targetId);
+      garden = await campaign(page, `day-${day}-${phase}-${tile.targetId}-harvested-${attempt}`);
+      if (inventoryQuantity(garden, tile.cropId) > before) break;
+    }
+    expect(inventoryQuantity(garden, tile.cropId), `${tile.targetId} must add its actual crop`)
+      .toBeGreaterThan(before);
+    harvested.push(tile.cropId);
+  }
+  await showStep(page,
+    harvested.length > 0
+      ? `harvested ${harvested.join(',')} during ${phase}`
+      : `checked live farm during ${phase}; no crop ready`,
+    trace);
+  await teleportAndInteract(page, 'scene.Mall');
+  await waitForState(page, { scene: 'Mall', phase, day }, `day-${day}-${phase}-mall-after-farm`);
+  return harvested;
+}
+
+async function finishPhase(page, canvas, day, phase) {
   await teleportAndInteract(page, 'go-home');
   await clickTarget(page, canvas, 'confirm.yes');
-  await waitForState(page, { scene: 'Mall', phase: 'Evening', day }, `day-${day}-evening-ready`);
-  await page.waitForTimeout(900);
-  await clickTarget(page, canvas, 'phase.rest');
-  await waitForState(page, { scene: 'Mall', phase: 'Night', day }, `day-${day}-night-ready`);
-  await page.waitForTimeout(900);
-  await clickTarget(page, canvas, 'phase.rest');
+  if (phase !== 'Night') {
+    const nextPhase = phase === 'Afternoon' ? 'Evening' : 'Night';
+    return waitForState(page, { scene: 'Mall', phase: nextPhase, day },
+      `day-${day}-${nextPhase}-ready`);
+  }
   await waitForState(page,
     { scene: 'Settlement', phase: 'Preparation', day: day + 1, uiLocked: false },
     `day-${day + 1}-settlement-ready`);
@@ -826,15 +946,206 @@ async function advanceAfternoonToNextDay(page, canvas, day) {
     `day-${day + 1}-ready`);
 }
 
-test('state-driven macro operates and persists a multi-day quest using actual WebGL input', async ({ page }, testInfo) => {
-  test.setTimeout(600_000);
+async function advanceAfternoonToNextDay(page, canvas, day, trace = []) {
+  // Delivery leaves the campaign in Mall free-roam after choosing Shopping.
+  await visitAndHarvestFarm(page, day, 'Afternoon', trace);
+  await finishPhase(page, canvas, day, 'Afternoon');
+  for (const phase of ['Evening', 'Night']) {
+    await choosePhaseAction(page, canvas, 'phase.shopping', day, phase);
+    await visitAndHarvestFarm(page, day, phase, trace);
+    const state = await campaign(page, `day-${day}-${phase}-delivery-day-before-pass`);
+    expect(state.money).toBeGreaterThanOrEqual(state.managementFee);
+    await finishPhase(page, canvas, day, phase);
+  }
+  return snapshot(page, `day-${day + 1}-delivery-day-advanced`);
+}
+
+async function operateShoppingPhase(page, canvas, day, phase, requirements, trace, exerciseOffscreen = false) {
+  await openPhaseShop(page, canvas, day, phase);
+  let offscreenPurchase = null;
+  if (exerciseOffscreen) {
+    offscreenPurchase = await exerciseOffscreenShopPurchase(page, canvas);
+    await showStep(page,
+      `dragged offscreen ${offscreenPurchase.foodId} from ${offscreenPurchase.initialY.toFixed(3)} to ${offscreenPurchase.finalY.toFixed(3)} in ${offscreenPurchase.dragCount} gesture(s)`,
+      trace);
+  }
+  await ensureStorageCapacity(page, canvas, requirements, trace);
+  const acquisition = await buyRequirementsWithBoundedRefresh(page, canvas, requirements, trace);
+  await showStep(page,
+    acquisition.unmet.length === 0
+      ? `acquired all required ingredients during day ${day} ${phase}`
+      : `day ${day} ${phase} still lacks ${acquisition.unmet.join(',')}`,
+    trace);
+  await leaveShop(page, canvas, day, phase);
+  const harvested = await visitAndHarvestFarm(page, day, phase, trace);
+  const state = await campaign(page, `day-${day}-${phase}-operations-complete`);
+  return {
+    acquisition: { state, unmet: unmetRequirements(state, requirements) },
+    offscreenPurchase,
+    harvested,
+  };
+}
+
+async function operateWorkDayToShop(
+  page,
+  canvas,
+  day,
+  preferredFoodId,
+  trace,
+  { exactSales = 0, reservedRequirements = new Map() } = {},
+) {
+  expect(day, 'campaign exceeded its maximum live-day safety bound').toBeLessThanOrEqual(maxCampaignDays);
+  const plan = await enterCookingDay(page, canvas, day, preferredFoodId, reservedRequirements);
+  let servedMeals = 0;
+  let observedMealMinutes = 0;
+  const saleLimit = exactSales > 0 ? exactSales : 3;
+
+  for (let meal = 0; meal < saleLimit; meal += 1) {
+    const live = await campaign(page, `day-${day}-work-capacity-${meal}`);
+    const currentPlan = live.cookingPlans.find(candidate => candidate.targetFoodId === plan.targetFoodId);
+    if (!canCraftFromInventory(live, currentPlan, 1, reservedRequirements)) break;
+    const clock = await snapshot(page, `day-${day}-work-clock-${meal}`);
+    if (observedMealMinutes > 0 && clock.remainingPhaseMinutes <= observedMealMinutes + 15) break;
+    const served = await serveRegularMeal(
+      page,
+      canvas,
+      currentPlan,
+      trace,
+      `day ${day} campaign sale ${meal + 1}`,
+    );
+    observedMealMinutes = Math.max(observedMealMinutes, served.elapsedMinutes);
+    servedMeals += 1;
+  }
+
+  if (exactSales > 0)
+    expect(servedMeals, `day ${day} must complete every configured real sale`).toBe(exactSales);
+  await showStep(page,
+    servedMeals > 0
+      ? `operated day ${day} with ${servedMeals} regular sale(s)`
+      : `opened day ${day} without consuming quest-reserved stock`,
+    trace);
+
+  await clickTarget(page, canvas, 'cooking.early-end');
+  await clickTarget(page, canvas, 'confirm.yes');
+  await waitForState(page,
+    { scene: 'Mall', phase: 'Afternoon', day },
+    `day-${day}-campaign-afternoon`);
+  return { plan, servedMeals };
+}
+
+async function acquireQuestIngredients(
+  page,
+  canvas,
+  questOrder,
+  startDay,
+  preferredFoodId,
+  trace,
+  { exactInitialSales = 0, exerciseOffscreen = false } = {},
+) {
+  let day = startDay;
+  let requirements = new Map();
+  let acquisition = null;
+  let firstAttempt = true;
+  let offscreenPurchase = null;
+  let regularSales = 0;
+
+  do {
+    const work = await operateWorkDayToShop(page, canvas, day, preferredFoodId, trace, {
+      exactSales: firstAttempt ? exactInitialSales : 0,
+      reservedRequirements: requirements,
+    });
+    regularSales += work.servedMeals;
+    preferredFoodId = work.plan.targetFoodId;
+
+    if (firstAttempt) {
+      const shoppingState = await campaign(page, `quest-${questOrder.questId}-restock-plan`);
+      const foodCraftCounts = new Map();
+      for (const foodId of [...questOrder.mainFoodIds, ...questOrder.sideFoodIds])
+        foodCraftCounts.set(foodId, (foodCraftCounts.get(foodId) ?? 0) + 1);
+      requirements = aggregateIngredientRequirements(shoppingState, foodCraftCounts);
+    }
+
+    for (const phase of ['Afternoon', 'Evening', 'Night']) {
+      const operations = await operateShoppingPhase(
+        page,
+        canvas,
+        day,
+        phase,
+        requirements,
+        trace,
+        firstAttempt && exerciseOffscreen && phase === 'Afternoon',
+      );
+      acquisition = operations.acquisition;
+      if (operations.offscreenPurchase) offscreenPurchase = operations.offscreenPurchase;
+      const beforePass = await campaign(page, `day-${day}-${phase}-before-pass`);
+      expect(beforePass.money, `${phase} must retain one management fee before phase completion`)
+        .toBeGreaterThanOrEqual(beforePass.managementFee);
+      await finishPhase(page, canvas, day, phase);
+    }
+    day += 1;
+    firstAttempt = false;
+  } while (acquisition.unmet.length > 0 && day <= maxCampaignDays);
+
+  expect(acquisition.unmet,
+    `${questOrder.questId} ingredients must become affordable and available by live day ${maxCampaignDays}`)
+    .toEqual([]);
+  return { deliveryDay: day, preferredFoodId, requirements, offscreenPurchase, regularSales };
+}
+
+async function reloadCampaignCheckpoint(
+  page,
+  canvas,
+  expectedState,
+  expectedInventory,
+  expectedCompletedGroups,
+  expectedDeliveredOrderIds,
+  diagnostics,
+  trace,
+) {
+  const beforeReload = await page.evaluate(() => ({
+    events: window.AftertasteE2E.events,
+    errors: window.AftertasteE2E.errors,
+    errorCount: window.AftertasteE2E.errorCount(),
+  }));
+  diagnostics.events.push(...beforeReload.events);
+  diagnostics.unityErrors.push(...beforeReload.errors);
+  diagnostics.unityErrorCount += beforeReload.errorCount;
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(canvas).toBeVisible({ timeout: 30_000 });
+  await expect.poll(() => page.evaluate(() => window.AftertasteE2E?.events?.length ?? 0),
+    { timeout: 30_000 }).toBeGreaterThan(0);
+  await clickTarget(page, canvas, 'start.continue');
+  const restored = await waitForState(page,
+    { scene: 'Mall', phase: 'Preparation', day: expectedState.day },
+    `day-${expectedState.day}-save-restored`);
+  const restoredCampaign = await campaign(page, `day-${expectedState.day}-save-restored-campaign`);
+  expect(restored.money).toBe(expectedState.money);
+  expect(restored.stamina).toBe(expectedState.stamina);
+  expect(restored.immutableSeed).toBe(expectedState.immutableSeed);
+  expect(restoredCampaign.inventory).toEqual(expectedInventory.inventory);
+  for (const groupId of expectedCompletedGroups)
+    expect(questGroupState(restoredCampaign).get(groupId)?.stage).toBe('Completed');
+  for (const questId of expectedDeliveredOrderIds)
+    expect(restoredCampaign.orders.find(order => order.questId === questId)?.state).toBe('Delivered');
+  await showStep(page,
+    `restored day ${restored.day}: ${expectedCompletedGroups.length} quest group(s) persisted`,
+    trace);
+  return { state: restored, campaign: restoredCampaign };
+}
+
+test('state-driven macro completes and persists every configured quest using actual WebGL input', async ({ page }, testInfo) => {
+  test.setTimeout(campaignTimeoutMs);
   assertLocalE2EOrigin(baseUrl);
   const trace = [];
   const pageErrors = [];
   const consoleEntries = [];
-  const archivedEvents = [];
-  const archivedUnityErrors = [];
-  let unityErrorCount = 0;
+  const diagnostics = { events: [], unityErrors: [], unityErrorCount: 0 };
+  const questRuns = [];
+  const deliveredOrderIds = [];
+  let configuredQuestGroupIds = [];
+  let finalState = null;
+  let finalCampaign = null;
   page.on('pageerror', error => pageErrors.push(error.message));
   page.on('console', message => consoleEntries.push({ type: message.type(), text: message.text() }));
 
@@ -847,156 +1158,107 @@ test('state-driven macro operates and persists a multi-day quest using actual We
     await expect.poll(async () => (await snapshot(page, 'campaign-ready')).scene,
       { timeout: 20_000, message: 'new game must load the Mall' }).toBe('Mall');
 
-    const initial = await campaign(page, 'choose-live-menu');
-    const plan = chooseFeasibleMain(initial, mealsToServe);
-    expect(plan, 'the live catalog and inventory must offer a feasible main menu').toBeTruthy();
-    const quest = chooseSupportedQuest(initial);
-    expect(quest, 'the live quest graph must expose an unlocked supported delivery quest').toBeTruthy();
-    await showStep(page, `selected ${plan.targetFoodId} from ${initial.unlockedMainFoodIds.join(',')}`, trace);
-    const questOrder = await acceptQuestThroughDialogue(page, canvas, quest, trace);
-
-    await command(page, { action: 'teleport', targetId: 'go-home' });
-    await page.waitForTimeout(350);
-    await page.keyboard.press('Space');
-    await clickTarget(page, canvas, `bento.slot0.main.${plan.targetFoodId}`);
-    await clickTarget(page, canvas, 'bento.confirm');
-    await expect.poll(async () => (await snapshot(page, 'cooking-ready')).scene,
-      { timeout: 20_000, message: 'menu confirmation must enter Cooking' }).toBe('Cooking');
-    await expect.poll(async () => (await snapshot(page, 'cooking-input-ready')).uiLocked,
-      { timeout: 10_000 }).toBe(false);
-
-    let servedMeals = 0;
-    let observedMealMinutes = 0;
-    for (let meal = 0; meal < mealsToServe; meal += 1) {
-      const before = await snapshot(page, `meal-${meal}-before`);
-      if (observedMealMinutes > 0 && before.remainingPhaseMinutes <= observedMealMinutes + 15) {
-        await showStep(page, `stop cooking with ${before.remainingPhaseMinutes} phase minutes remaining`, trace);
-        break;
-      }
-      const served = await serveRegularMeal(page, canvas, plan, trace, `meal ${meal + 1}/${mealsToServe}`);
-      observedMealMinutes = Math.max(observedMealMinutes, served.elapsedMinutes);
-      servedMeals += 1;
-    }
-
-    expect(servedMeals, 'the policy must complete every configured real sale').toBe(mealsToServe);
-    await clickTarget(page, canvas, 'cooking.early-end');
-    await clickTarget(page, canvas, 'confirm.yes');
-    await waitForState(page, { scene: 'Mall', phase: 'Afternoon', day: 0 }, 'afternoon-ready');
-    await page.waitForTimeout(900);
-
-    // The accepted quest can require ingredients absent from a new-game profile.
-    // Observe that shortage and buy it in the real afternoon shop, then cook the
-    // delivery on the next day instead of injecting inventory through the bridge.
-    await clickTarget(page, canvas, 'phase.shopping');
-    await teleportAndInteract(page, 'scene.Shop');
-    await waitForState(page, { scene: 'Shop', phase: 'Afternoon', day: 0 }, 'shop-ready');
-    await expect.poll(async () => (await snapshot(page, 'shop-input-ready')).uiLocked,
-      { timeout: 10_000 }).toBe(false);
-    await teleportAndInteract(page, 'shop.Item');
-    await targetMatching(page, candidate => candidate.id.startsWith('shop.item.'), 'live shop item', true);
-    const offscreenPurchase = await exerciseOffscreenShopPurchase(page, canvas);
+    let currentCampaign = await campaign(page, 'campaign-graph-ready');
+    configuredQuestGroupIds = assertCompleteQuestGraph(currentCampaign);
+    const initialPlan = chooseFeasibleMain(currentCampaign, mealsToServe);
+    expect(initialPlan, 'the live catalog and inventory must offer a feasible opening menu').toBeTruthy();
+    let preferredFoodId = initialPlan.targetFoodId;
+    let currentDay = 0;
     await showStep(page,
-      `dragged offscreen ${offscreenPurchase.foodId} from ${offscreenPurchase.initialY.toFixed(3)} to ${offscreenPurchase.finalY.toFixed(3)} in ${offscreenPurchase.dragCount} gesture(s)`,
+      `discovered ${configuredQuestGroupIds.length} quest group(s); opening with ${preferredFoodId}`,
       trace);
 
-    const shoppingState = await campaign(page, 'build-dynamic-restock-plan');
-    const foodCraftCounts = new Map();
-    for (const foodId of [...questOrder.mainFoodIds, ...questOrder.sideFoodIds])
-      foodCraftCounts.set(foodId, (foodCraftCounts.get(foodId) ?? 0) + 1);
-    const requirements = aggregateIngredientRequirements(shoppingState, foodCraftCounts);
-    await ensureStorageCapacity(page, canvas, requirements, trace);
-    let acquisition = await buyAvailableRequirements(page, canvas, requirements);
-    await showStep(page,
-      acquisition.unmet.length === 0
-        ? 'acquired all delivery ingredients on day 0'
-        : `defer unavailable ingredients to a future lineup: ${acquisition.unmet.join(',')}`,
-      trace);
-    await leaveShop(page, canvas, 0);
-    await advanceAfternoonToNextDay(page, canvas, 0);
-    let deliveryDay = 1;
-    await page.screenshot({ path: testInfo.outputPath('dynamic-campaign-day-one.png') });
+    while (completedQuestGroups(currentCampaign, configuredQuestGroupIds).length < configuredQuestGroupIds.length) {
+      const completedBefore = completedQuestGroups(currentCampaign, configuredQuestGroupIds);
+      const quest = chooseSupportedQuest(currentCampaign);
+      if (!quest)
+        throw new Error(`No actionable quest remains: ${JSON.stringify(campaignBlocker(currentCampaign, configuredQuestGroupIds))}`);
 
-    // Special stock is random. If an affordable lineup did not contain every quest
-    // ingredient, end the work phase without mutation and retry the next day's real
-    // shop. The campaign stays bounded so an impossible economy fails explicitly.
-    while (acquisition.unmet.length > 0 && deliveryDay <= 4) {
-      await serveAcquisitionDay(page, canvas, deliveryDay, plan.targetFoodId, trace);
+      const questStartDay = currentDay;
+      await showStep(page,
+        `selected unlocked quest ${quest.groupId} from ${quest.npcId} on day ${currentDay}`,
+        trace);
+      const questOrder = await acceptQuestThroughDialogue(page, canvas, quest, trace);
+      const acquisition = await acquireQuestIngredients(
+        page,
+        canvas,
+        questOrder,
+        currentDay,
+        preferredFoodId,
+        trace,
+        {
+          exactInitialSales: questRuns.length === 0 ? mealsToServe : 0,
+          exerciseOffscreen: questRuns.length === 0,
+        },
+      );
+      currentDay = acquisition.deliveryDay;
+      preferredFoodId = acquisition.preferredFoodId;
+
+      // Travel may use the semantic teleport hook; cooking, packing, dialogue, and
+      // delivery still pass through the real runtime UI and domain services.
+      await enterCookingDay(page, canvas, currentDay, preferredFoodId);
+      await cookDeliveryOrder(page, canvas, questOrder, trace);
+      const beforeQuestDelivery = await snapshot(page, `quest-${quest.groupId}-before-delivery`);
       await clickTarget(page, canvas, 'cooking.early-end');
       await clickTarget(page, canvas, 'confirm.yes');
       await waitForState(page,
-        { scene: 'Mall', phase: 'Afternoon', day: deliveryDay },
-        `day-${deliveryDay}-acquisition-afternoon`);
+        { scene: 'Mall', phase: 'Afternoon', day: currentDay },
+        `day-${currentDay}-${quest.groupId}-delivery-afternoon`);
       await page.waitForTimeout(900);
-      await openAfternoonShop(page, canvas, deliveryDay);
-      await ensureStorageCapacity(page, canvas, requirements, trace);
-      acquisition = await buyAvailableRequirements(page, canvas, requirements);
+      await choosePhaseAction(page, canvas, 'phase.shopping', currentDay, 'Afternoon');
+      await teleportAndInteract(page, `npc.${questOrder.npcId}`);
+      await completeDialogue(page, canvas);
+      await waitForQuestStage(page, quest.groupId, 'Completed', `quest-${quest.groupId}-completed`);
+      const deliveredQuest = await campaign(page, `quest-${quest.groupId}-delivered`);
+      expect(deliveredQuest.orders.find(order => order.questId === questOrder.questId)?.state).toBe('Delivered');
+      expect((await snapshot(page, `quest-${quest.groupId}-reward`)).money)
+        .toBeGreaterThan(beforeQuestDelivery.money);
+      const completedAfter = completedQuestGroups(deliveredQuest, configuredQuestGroupIds);
+      expect(completedAfter.length, `${quest.groupId} must advance the completed campaign`).toBe(completedBefore.length + 1);
+      expect(completedAfter).toContain(quest.groupId);
+      deliveredOrderIds.push(questOrder.questId);
       await showStep(page,
-        acquisition.unmet.length === 0
-          ? `acquired remaining delivery ingredients on day ${deliveryDay}`
-          : `day ${deliveryDay} lineup still missing ${acquisition.unmet.join(',')}`,
+        `completed ${quest.groupId} (${completedAfter.length}/${configuredQuestGroupIds.length})`,
         trace);
-      await leaveShop(page, canvas, deliveryDay);
-      await advanceAfternoonToNextDay(page, canvas, deliveryDay);
-      deliveryDay += 1;
+
+      const persistedState = await advanceAfternoonToNextDay(page, canvas, currentDay, trace);
+      currentDay += 1;
+      const persistedCampaign = await campaign(page, `day-${currentDay}-${quest.groupId}-persisted`);
+      await page.screenshot({
+        path: testInfo.outputPath(`quest-${completedAfter.length}-${quest.groupId}-complete.png`),
+      });
+      const restored = await reloadCampaignCheckpoint(
+        page,
+        canvas,
+        persistedState,
+        persistedCampaign,
+        completedAfter,
+        deliveredOrderIds,
+        diagnostics,
+        trace,
+      );
+      currentCampaign = restored.campaign;
+      finalState = restored.state;
+      finalCampaign = restored.campaign;
+      questRuns.push({
+        groupId: quest.groupId,
+        npcId: questOrder.npcId,
+        questId: questOrder.questId,
+        startDay: questStartDay,
+        deliveryDay: acquisition.deliveryDay,
+        restoredDay: restored.state.day,
+        requiredFoodIds: [...questOrder.mainFoodIds, ...questOrder.sideFoodIds],
+        requiredIngredients: Object.fromEntries(acquisition.requirements),
+        regularSales: acquisition.regularSales,
+      });
+      expect(currentDay, 'campaign exceeded its maximum live-day safety bound').toBeLessThanOrEqual(maxCampaignDays);
     }
-    expect(acquisition.unmet, 'delivery ingredients must become affordable and available within five live days')
-      .toEqual([]);
 
-    // Cook every observed order item, physically attach its ticket, and return to
-    // the observed NPC. Travel alone may teleport; gameplay uses actual browser input.
-    await enterCookingDay(page, canvas, deliveryDay, plan.targetFoodId);
-    await cookDeliveryOrder(page, canvas, questOrder, trace);
-    const beforeQuestDelivery = await snapshot(page, 'quest-cooked-before-delivery');
-    await clickTarget(page, canvas, 'cooking.early-end');
-    await clickTarget(page, canvas, 'confirm.yes');
-    await waitForState(page,
-      { scene: 'Mall', phase: 'Afternoon', day: deliveryDay },
-      `day-${deliveryDay}-delivery-afternoon-ready`);
-    await page.waitForTimeout(900);
-
-    // Afternoon opens with the phase-action modal locked. Choose the roaming action
-    // through the real UI before attempting an NPC interaction.
-    await clickTarget(page, canvas, 'phase.shopping');
-    await teleportAndInteract(page, quest.targetId);
-    await completeDialogue(page, canvas);
-    await waitForQuestStage(page, quest.groupId, 'Completed', `quest-${quest.groupId}-completed`);
-    const deliveredQuest = await campaign(page, `quest-${quest.groupId}-delivered`);
-    expect(deliveredQuest.orders.find(candidate => candidate.questId === questOrder.questId)?.state).toBe('Delivered');
-    expect((await snapshot(page, 'quest-delivery-reward')).money).toBeGreaterThan(beforeQuestDelivery.money);
-    await showStep(page, `completed ${quest.groupId} and received delivery reward`, trace);
-
-    const persistedDay = deliveryDay + 1;
-    const persistedState = await advanceAfternoonToNextDay(page, canvas, deliveryDay);
-    const persistedInventory = await campaign(page, `day-${persistedDay}-inventory`);
-    await page.screenshot({ path: testInfo.outputPath('dynamic-campaign-day-two.png') });
-
-    // Reload the real WebGL page and continue from IndexedDB. This catches quest and
-    // economy state that looked correct in memory but was never durably flushed.
-    const beforeReloadDiagnostics = await page.evaluate(() => ({
-      events: window.AftertasteE2E.events,
-      errors: window.AftertasteE2E.errors,
-      errorCount: window.AftertasteE2E.errorCount(),
-    }));
-    archivedEvents.push(...beforeReloadDiagnostics.events);
-    archivedUnityErrors.push(...beforeReloadDiagnostics.errors);
-    unityErrorCount += beforeReloadDiagnostics.errorCount;
-    await page.reload({ waitUntil: 'domcontentloaded' });
-    await expect(page.locator('#unity-canvas')).toBeVisible({ timeout: 30_000 });
-    await expect.poll(() => page.evaluate(() => window.AftertasteE2E?.events?.length ?? 0), { timeout: 30_000 }).toBeGreaterThan(0);
-    await clickTarget(page, canvas, 'start.continue');
-    const restored = await waitForState(page,
-      { scene: 'Mall', phase: 'Preparation', day: persistedDay },
-      'save-restored');
-    const restoredInventory = await campaign(page, 'save-restored-inventory');
-    expect(restored.money).toBe(persistedState.money);
-    expect(restored.stamina).toBe(persistedState.stamina);
-    expect(restored.immutableSeed).toBe(persistedState.immutableSeed);
-    expect(restoredInventory.inventory).toEqual(persistedInventory.inventory);
-    expect(restoredInventory.questNpcs.find(candidate => candidate.groupId === quest.groupId)?.stage).toBe('Completed');
-    expect(restoredInventory.orders.find(candidate => candidate.questId === questOrder.questId)?.state).toBe('Delivered');
-    await showStep(page, `restored day ${restored.day} with ${restored.money}G`, trace);
-
-    const finalState = restored;
+    expect(finalCampaign, 'the full campaign must produce a restored final observation').toBeTruthy();
+    expect(completedQuestGroups(finalCampaign, configuredQuestGroupIds)).toEqual(configuredQuestGroupIds);
+    for (const questId of deliveredOrderIds)
+      expect(finalCampaign.orders.find(order => order.questId === questId)?.state).toBe('Delivered');
+    expect(deliveredOrderIds.length).toBe(configuredQuestGroupIds.length);
     expect(finalState.stamina).toBe(100);
     expect(finalState.money).toBeGreaterThan(0);
     await page.screenshot({ path: testInfo.outputPath('dynamic-campaign-complete.png') });
@@ -1006,27 +1268,34 @@ test('state-driven macro operates and persists a multi-day quest using actual We
       errors: window.AftertasteE2E.errors,
       errorCount: window.AftertasteE2E.errorCount(),
     }));
-    const events = [...archivedEvents, ...finalDiagnostics.events];
-    const unityErrors = [...archivedUnityErrors, ...finalDiagnostics.errors];
-    const totalUnityErrorCount = unityErrorCount + finalDiagnostics.errorCount;
+    const unityErrors = [...diagnostics.unityErrors, ...finalDiagnostics.errors];
+    const totalUnityErrorCount = diagnostics.unityErrorCount + finalDiagnostics.errorCount;
     const relevantConsoleErrors = consoleEntries.filter(entry => entry.type === 'error');
     expect({ pageErrors, relevantConsoleErrors, unityErrorCount: totalUnityErrorCount, unityErrors })
       .toEqual({ pageErrors: [], relevantConsoleErrors: [], unityErrorCount: 0, unityErrors: [] });
   } finally {
-    const events = [...archivedEvents,
+    const events = [...diagnostics.events,
       ...await page.evaluate(() => window.AftertasteE2E?.events ?? []).catch(() => [])];
     const liveDiagnostics = await page.evaluate(() => ({
       errors: window.AftertasteE2E?.errors ?? [],
       errorCount: window.AftertasteE2E?.errorCount?.() ?? 0,
     })).catch(() => ({ errors: [], errorCount: 0 }));
-    const unityErrors = [...archivedUnityErrors, ...liveDiagnostics.errors];
+    const unityErrors = [...diagnostics.unityErrors, ...liveDiagnostics.errors];
     const report = {
-      kind: 'state-driven-actual-input-campaign',
+      kind: 'state-driven-full-quest-actual-input-campaign',
       maxMeals: mealsToServe,
+      maxCampaignDays,
+      configuredQuestGroupIds,
+      questRuns,
+      deliveredOrderIds,
+      finalState,
+      finalQuestStages: finalCampaign
+        ? Object.fromEntries([...questGroupState(finalCampaign)].map(([groupId, quest]) => [groupId, quest.stage]))
+        : {},
       trace,
       pageErrors,
       consoleEntries,
-      unityErrorCount: unityErrorCount + liveDiagnostics.errorCount,
+      unityErrorCount: diagnostics.unityErrorCount + liveDiagnostics.errorCount,
       unityErrors,
       events,
     };

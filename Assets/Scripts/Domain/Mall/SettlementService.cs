@@ -55,6 +55,9 @@ namespace Game.Domain.Mall
             return total;
         }
 
+        public static int ProjectBalanceAfterManagementFee(int currentMoney)
+            => System.Math.Max(0, currentMoney - ManagementFee);
+
         /// <summary>PassDay 직전 호출 — DayStartMoney 스냅샷 후 누적 초기화.</summary>
         public void Reset(int currentMoney)
         {

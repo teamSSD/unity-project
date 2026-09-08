@@ -28,6 +28,23 @@ public class Farm : MonoBehaviour
     private bool playerIn = false;
     public bool IsLocked => farmIndex >= (int)(GameSessionRoot.Instance?.FarmUpgrade?.GetCurrentData("tile")?.value ?? 3);
 
+#if AFTERTASTE_E2E
+    public string E2ETargetId => $"farm.tile.{farmIndex}";
+    public string E2ECropId => tile?.GetCurrentCrop()?.cropId ?? string.Empty;
+    public int E2EPassedPhases => tile?.GetPassedPhases() ?? 0;
+    public int E2ERequiredPhases
+    {
+        get
+        {
+            var crop = tile?.GetCurrentCrop();
+            if (crop == null) return 0;
+            float reduction = GameSessionRoot.Instance?.FarmUpgrade?.GetCurrentData("timeReduction")?.value ?? 0f;
+            return Mathf.CeilToInt(crop.growPhaseCount * (1f - reduction));
+        }
+    }
+    public bool E2EIsHarvestable => tile?.IsHarvestable() ?? false;
+#endif
+
     private void Start()
     {
 #if AFTERTASTE_E2E

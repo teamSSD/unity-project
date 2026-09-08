@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Game.Domain.Cooking;
+using Game.Domain.Mall;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -158,6 +159,17 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
     }
 
     [Serializable]
+    private sealed class FarmObservation
+    {
+        public string targetId;
+        public bool locked;
+        public string cropId;
+        public int passedPhases;
+        public int requiredPhases;
+        public bool harvestable;
+    }
+
+    [Serializable]
     private sealed class CampaignObservation
     {
         public string type;
@@ -165,6 +177,11 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
         public string scene;
         public string phase;
         public int day;
+        public int money;
+        public int managementFee;
+        public int refreshCount;
+        public int refreshCost;
+        public bool canRefresh;
         public InventoryObservation[] inventory;
         public IngredientStorageObservation[] ingredientStorage;
         public StorageObservation[] storage;
@@ -175,6 +192,8 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
         public BentoObservation[] bentos;
         public TicketObservation[] tickets;
         public QuestNpcObservation[] questNpcs;
+        public FarmObservation[] farmTiles;
+        public string[] configuredQuestGroupIds;
         public MinigameObservation minigame;
         public string[] unlockedMainFoodIds;
         public string[] unlockedSideFoodIds;
@@ -536,6 +555,17 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
                 requiredFoodIds = ticket.E2ERequiredFoodIds,
             }).ToArray();
         var minigameManager = UnityEngine.Object.FindFirstObjectByType<MiniGameManager>();
+        var farmTiles = UnityEngine.Object.FindObjectsByType<Farm>(FindObjectsSortMode.None)
+            .OrderBy(farm => farm.farmIndex)
+            .Select(farm => new FarmObservation
+            {
+                targetId = farm.E2ETargetId,
+                locked = farm.IsLocked,
+                cropId = farm.E2ECropId,
+                passedPhases = farm.E2EPassedPhases,
+                requiredPhases = farm.E2ERequiredPhases,
+                harvestable = farm.E2EIsHarvestable,
+            }).ToArray();
 
         EmitJson(JsonUtility.ToJson(new CampaignObservation
         {
@@ -544,6 +574,11 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
             scene = SceneManager.GetActiveScene().name,
             phase = GameStateReporter.CaptureRuntimeState().Phase ?? string.Empty,
             day = GameStateReporter.CaptureRuntimeState().Day,
+            money = root?.Stats?.GetMoney() ?? 0,
+            managementFee = SettlementService.ManagementFee,
+            refreshCount = root?.Purchase?.RefreshCount ?? 0,
+            refreshCost = root?.Purchase?.GetRefreshCost() ?? 0,
+            canRefresh = root?.Purchase?.CanRefresh() ?? false,
             inventory = inventory,
             ingredientStorage = ingredientStorage,
             storage = storage,
@@ -554,6 +589,11 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
             bentos = bentos,
             tickets = tickets,
             questNpcs = questNpcs,
+            farmTiles = farmTiles,
+            configuredQuestGroupIds = root?.QuestMenus?.GetAllGroupIds()
+                .Where(groupId => !string.IsNullOrWhiteSpace(groupId))
+                .OrderBy(groupId => groupId)
+                .ToArray() ?? Array.Empty<string>(),
             minigame = new MinigameObservation
             {
                 name = minigameManager?.ActiveMinigame ?? string.Empty,

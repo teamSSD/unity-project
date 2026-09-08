@@ -32,6 +32,8 @@ public class WebGLE2ETestBridgeContractTest
         Assert.That(source, Does.Contain("QuestNpcObservation"));
         Assert.That(source, Does.Contain("prerequisiteGroupId"));
         Assert.That(source, Does.Contain("questNpcs = questNpcs"));
+        Assert.That(source, Does.Contain("configuredQuestGroupIds"));
+        Assert.That(source, Does.Contain("QuestMenus?.GetAllGroupIds()"));
         Assert.That(source, Does.Not.Contain("case \"questStage\""));
     }
 
@@ -51,9 +53,25 @@ public class WebGLE2ETestBridgeContractTest
         Assert.That(bridge, Does.Contain("batch.daysRemaining > 1"));
         Assert.That(bridge, Does.Contain("ShopItemObservation"));
         Assert.That(bridge, Does.Contain("canBuyOne"));
+        Assert.That(bridge, Does.Contain("refreshCost"));
+        Assert.That(bridge, Does.Contain("managementFee"));
         Assert.That(shop, Does.Contain("E2EGetCurrentItems"));
         Assert.That(shop, Does.Contain("E2EBuyOne"));
         Assert.That(shop, Does.Contain("shop.storage.{storage.Type}"));
+    }
+
+    [Test]
+    public void CampaignObservation_ExposesLiveFarmStateForRealHarvestDecisions()
+    {
+        var bridgePath = Path.Combine(Application.dataPath, "Scripts", "Unity", "Dev", "E2E", "AftertasteE2ETestBridge.cs");
+        var bridge = File.ReadAllText(bridgePath);
+        var farmPath = Path.Combine(Application.dataPath, "Scripts", "Unity", "Garden", "Farm.cs");
+        var farm = File.ReadAllText(farmPath);
+
+        Assert.That(bridge, Does.Contain("FarmObservation"));
+        Assert.That(bridge, Does.Contain("farmTiles = farmTiles"));
+        Assert.That(farm, Does.Contain("E2EIsHarvestable"));
+        Assert.That(farm, Does.Contain("tile?.IsHarvestable()"));
     }
 
     [Test]

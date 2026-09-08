@@ -32,4 +32,13 @@ public class SettlementServiceTest
         Assert.AreEqual(0, settlement.TotalIncome());
         Assert.AreEqual(0, settlement.TotalExpense());
     }
+
+    [TestCase(5000, 4000)]
+    [TestCase(1000, 0)]
+    [TestCase(200, 0)]
+    [TestCase(0, 0)]
+    public void ProjectBalanceAfterManagementFee_NeverDisplaysNegativeMoney(int currentMoney, int expected)
+    {
+        Assert.AreEqual(expected, SettlementService.ProjectBalanceAfterManagementFee(currentMoney));
+    }
 }

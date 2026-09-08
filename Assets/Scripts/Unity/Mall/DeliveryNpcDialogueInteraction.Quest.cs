@@ -105,18 +105,13 @@ public partial class DeliveryNpcDialogueInteraction
 
     void CreateQuestOrder()
     {
-        var template = GameSessionRoot.Instance?.QuestMenus.GetByGroupId(groupId);
-        if (template == null) return;
-
         var orderSvc = GameSessionRoot.Instance?.Order;
         if (orderSvc == null) return;
 
-        var menu = new MenuSchema(
-            template.name,
-            orderSvc.GetOrders().Count + 1,
-            template.mainMenu,
-            template.sideMenus
-        );
+        var menu = GameSessionRoot.Instance?.QuestMenus.CreateOrderMenu(
+            groupId,
+            orderSvc.GetOrders().Count + 1);
+        if (menu == null) return;
 
         string questId = $"quest_{groupId}";
         var npcView = GetComponent<DeliveryNpcView>();
