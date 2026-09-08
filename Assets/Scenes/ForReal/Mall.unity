@@ -4407,7 +4407,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::DialogueManager
   choiceButtonPrefab: {fileID: 3786900930374099017, guid: 64cfcccdbf696ed4184415c78302b4b3, type: 3}
   dialoguePanelPrefab: {fileID: 3696376485703433615, guid: 1f21844aaee0d49faa3960c1eb598f37, type: 3}
-  npcBlipSfx: {fileID: 8300000, guid: 31d1f57fdea9543c3936e613ecc34c47, type: 3}
+  npcBlipSfx: {fileID: 8300000, guid: 2be3d3e5314864bfcb852f63a3dcb30c, type: 3}
   skipCooldown: 0.15
   holdThreshold: 0.3
   autoAdvanceInterval: 0.15

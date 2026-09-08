@@ -3,6 +3,21 @@ import { readFile, writeFile } from 'node:fs/promises';
 
 const baseUrl = process.env.E2E_WEBGL_URL;
 const planPath = process.env.E2E_PLAY_PLAN;
+const stepDelayMs = Number(process.env.E2E_STEP_DELAY_MS ?? 0);
+const holdOpenMs = Number(process.env.E2E_HOLD_OPEN_MS ?? 0);
+
+async function showStep(page, label) {
+  if (stepDelayMs <= 0) return;
+  await page.evaluate(value => console.log(`[AftertasteE2E] macro: ${value}`), label);
+  await page.waitForTimeout(stepDelayMs);
+}
+
+async function expectBrowserAudioPlayed(page, directory, filename) {
+  await expect.poll(
+    () => page.evaluate(({ dir, name }) => window.__aftertasteBrowserAudioPlayCalls?.some(src => src.endsWith(`/StreamingAssets/Audio/${dir}/${name}`)) ?? false, { dir: directory, name: filename }),
+    { timeout: 10_000, message: `${filename} must be requested through browser audio` }
+  ).toBeTruthy();
+}
 
 function assertIsolatedLocalE2EOrigin(url) {
   if (!url) throw new Error('E2E_WEBGL_URL is required.');
@@ -73,6 +88,19 @@ test('BaselinePolicy menu decision is enacted through actual WebGL pointer input
   const consoleEntries = [];
   page.on('pageerror', error => pageErrors.push(error.message));
   page.on('console', message => consoleEntries.push({ type: message.type(), text: message.text() }));
+  await page.addInitScript(() => {
+    window.__aftertasteBrowserAudioPlayCalls = [];
+    window.__aftertasteBrowserAudioMediaErrors = [];
+    const originalPlay = HTMLMediaElement.prototype.play;
+    HTMLMediaElement.prototype.play = function (...args) {
+      const source = this.currentSrc || this.src;
+      if (source.includes('/StreamingAssets/Audio/')) {
+        window.__aftertasteBrowserAudioPlayCalls.push(source);
+        this.addEventListener('error', () => window.__aftertasteBrowserAudioMediaErrors.push(this.currentSrc || this.src), { once: true });
+      }
+      return originalPlay.apply(this, args);
+    };
+  });
 
   try {
     await page.goto(baseUrl, { waitUntil: 'domcontentloaded' });
@@ -81,6 +109,8 @@ test('BaselinePolicy menu decision is enacted through actual WebGL pointer input
     await expect.poll(() => page.evaluate(() => window.AftertasteE2E?.events?.length ?? 0), { timeout: 30_000 }).toBeGreaterThan(0);
     await expect(page.evaluate(() => typeof window.AftertasteE2E?.command)).resolves.toBe('function');
     await clickTarget(page, canvas, 'start.new-game');
+    await expectBrowserAudioPlayed(page, 'UI', 'sfx_ui_button_click.mp3');
+    await showStep(page, 'New Game clicked — campaign profile is loading');
 
     // E2E New Game은 튜토리얼 완료·고정 시드 프로필로 시작한다.
     // 메뉴 선택과 이동은 아래 실제 pointer/keyboard input이다.
@@ -90,22 +120,33 @@ test('BaselinePolicy menu decision is enacted through actual WebGL pointer input
     expect(profile.campaignProfile).toBeTruthy();
     expect(profile.immutableSeed, 'long-run policy plan seed must be applied to the actual game').toBe(42);
     expect(profile.scene).toBe('Mall');
+    await expectBrowserAudioPlayed(page, 'BGM', 'bgm_mall_theme.mp3');
 
     await walkToWorldTarget(page, 'world.go-home');
+    await showStep(page, 'Arrived at home interaction');
     await page.keyboard.press('Space');
+    await expectBrowserAudioPlayed(page, 'UI', 'sfx_ui_book.mp3');
+    await showStep(page, 'Opened menu selection');
     for (const [slot, mainId] of plannedMainIds.entries())
+    {
       await clickTarget(page, canvas, `bento.slot${slot}.main.${mainId}`);
+      await showStep(page, `Selected planned menu ${mainId} for slot ${slot + 1}`);
+    }
     const afterSelection = await snapshot(page, 'policy-pilot');
     expect(afterSelection.selectedMenuCount, `all planned menus ${plannedMainIds.join(', ')} must be selected`).toBe(plannedMainIds.length);
 
     const events = await page.evaluate(() => window.AftertasteE2E.events);
     const consoleErrors = consoleEntries.filter(entry => entry.type === 'error');
     const unityErrors = events.filter(event => event.type === 'unity-log' && ['Error', 'Exception', 'Assert'].includes(event.level));
-    expect({ pageErrors, consoleErrors, unityErrors }).toEqual({ pageErrors: [], consoleErrors: [], unityErrors: [] });
+    const browserAudioMediaErrors = await page.evaluate(() => window.__aftertasteBrowserAudioMediaErrors ?? []);
+    if (holdOpenMs > 0) await page.waitForTimeout(holdOpenMs);
+    expect({ pageErrors, consoleErrors, unityErrors, browserAudioMediaErrors }).toEqual({ pageErrors: [], consoleErrors: [], unityErrors: [], browserAudioMediaErrors: [] });
   } finally {
     const events = await page.evaluate(() => window.AftertasteE2E?.events ?? []).catch(() => []);
     const decision = { policy: 'BaselinePolicy', plannedMainIds, planPath };
-    const diagnostics = { pageErrors, consoleEntries, events };
+    const browserAudioPlayCalls = await page.evaluate(() => window.__aftertasteBrowserAudioPlayCalls ?? []).catch(() => []);
+    const browserAudioMediaErrors = await page.evaluate(() => window.__aftertasteBrowserAudioMediaErrors ?? []).catch(() => []);
+    const diagnostics = { pageErrors, consoleEntries, events, browserAudioPlayCalls, browserAudioMediaErrors };
     // Playwright reporter 설정과 무관하게 실패 폴더에 원본 진단을 남긴다.
     await writeFile(testInfo.outputPath('policy-decision.json'), JSON.stringify(decision, null, 2));
     await writeFile(testInfo.outputPath('browser-console.json'), JSON.stringify(diagnostics, null, 2));

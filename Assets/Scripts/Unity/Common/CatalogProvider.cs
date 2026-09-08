@@ -38,12 +38,6 @@ public class CatalogProvider : SingletonMonoBehaviour<CatalogProvider>
     [Header("Crop Sprites")]
     [SerializeField] private CropSpriteCatalogSO cropSprites;
 
-    [Header("BGM Audio")]
-    [SerializeField] private AudioClip bgmMall;
-    [SerializeField] private AudioClip bgmCooking;
-    [SerializeField] private AudioClip bgmNight;
-    [SerializeField] private AudioClip bgmGarden;
-
     public static FoodCatalogSO Food                     => Instance != null ? Instance.food                : null;
     public static RecipeCatalogSO Recipe                 => Instance != null ? Instance.recipe              : null;
     public static IngredientCatalogSO Ingredient         => Instance != null ? Instance.ingredient          : null;
@@ -55,11 +49,6 @@ public class CatalogProvider : SingletonMonoBehaviour<CatalogProvider>
     public static ShopConfigSO FoodShopConfig            => Instance != null ? Instance.foodShopConfig      : null;
     public static CsvCatalogSO Csvs                      => Instance != null ? Instance.csvs                : null;
     public static CropSpriteCatalogSO CropSprites        => Instance != null ? Instance.cropSprites         : null;
-    public static AudioClip BgmMall                      => Instance != null ? Instance.bgmMall             : null;
-    public static AudioClip BgmCooking                   => Instance != null ? Instance.bgmCooking          : null;
-    public static AudioClip BgmNight                     => Instance != null ? Instance.bgmNight            : null;
-    public static AudioClip BgmGarden                    => Instance != null ? Instance.bgmGarden           : null;
-
 #if UNITY_EDITOR
     private void OnValidate()
     {
