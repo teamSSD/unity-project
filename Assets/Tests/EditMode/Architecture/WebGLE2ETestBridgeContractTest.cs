@@ -13,9 +13,10 @@ public class WebGLE2ETestBridgeContractTest
         Assert.That(source, Does.Contain("#if AFTERTASTE_E2E"));
         Assert.That(source, Does.Contain("case \"snapshot\""));
         Assert.That(source, Does.Contain("case \"mark\""));
-        Assert.That(source, Does.Contain("case \"timeScale\""));
+        Assert.That(source, Does.Contain("case \"campaign\""));
         Assert.That(source, Does.Not.Contain("case \"move\""));
         Assert.That(source, Does.Not.Contain("case \"click\""));
+        Assert.That(source, Does.Not.Contain("case \"timeScale\""));
     }
 
     [Test]
@@ -37,5 +38,16 @@ public class WebGLE2ETestBridgeContractTest
         Assert.That(postprocessor, Does.Contain("window.AftertasteUnityInstance.SendMessage"));
         Assert.That(postprocessor, Does.Contain("var events = []"));
         Assert.That(postprocessor, Does.Contain("events.length > 500"));
+    }
+
+    [Test]
+    public void WebGLSaveSync_CoalescesCalls_AndWaitsForInflightIdbfsWork()
+    {
+        var path = Path.Combine(Application.dataPath, "Plugins", "WebGL", "SaveSync.jslib");
+        var source = File.ReadAllText(path);
+
+        Assert.That(source, Does.Contain("aftertasteSaveSyncQueued"));
+        Assert.That(source, Does.Contain("FS.syncFSRequests > 0"));
+        Assert.That(source, Does.Contain("aftertasteSaveSyncPumpActive"));
     }
 }

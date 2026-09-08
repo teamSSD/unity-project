@@ -69,6 +69,15 @@ public class SliceMiniGame : MiniGameAbstract
         visualizer.SetupMask(renderer, maskSprite);
         RefreshState();
         Cursor.visible = false;
+
+#if AFTERTASTE_E2E
+        // 현재 안내선의 시작/끝 좌표만 관측한다. 실제 절단 판정은 mouse down/move/up과
+        // SliceMiniGame의 허용 오차가 그대로 수행한다.
+        E2EWorldTargetRegistry.RegisterDynamic("cooking.minigame.slice.start",
+            () => new Vector3(CurrentTargetX, StartY, 0f));
+        E2EWorldTargetRegistry.RegisterDynamic("cooking.minigame.slice.end",
+            () => new Vector3(CurrentTargetX, EndY, 0f));
+#endif
     }
 
     public override void OnUpdate()
@@ -148,7 +157,20 @@ public class SliceMiniGame : MiniGameAbstract
 
     public override float CalculateScore() => _scorer != null ? _scorer.GetFinalScore() : 0f;
 
-    private void OnDestroy() => Cursor.visible = true;
+#if AFTERTASTE_E2E
+    public override string E2ENextInput => "PointerSlice";
+    public override float E2ECurrentValue => _currentSliceIndex;
+    public override float E2ETargetValue => totalSlices;
+#endif
+
+    private void OnDestroy()
+    {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.UnregisterDynamic("cooking.minigame.slice.start");
+        E2EWorldTargetRegistry.UnregisterDynamic("cooking.minigame.slice.end");
+#endif
+        Cursor.visible = true;
+    }
 
 #if UNITY_EDITOR
     private void OnValidate() => RequiredFieldValidator.Validate(this);

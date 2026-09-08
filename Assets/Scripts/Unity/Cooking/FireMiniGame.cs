@@ -156,6 +156,12 @@ public class FireMiniGame : MiniGameAbstract
         }
     }
 
+#if AFTERTASTE_E2E
+    public override string E2ENextInput => "SpaceHold";
+    public override float E2ECurrentValue => arrowValue;
+    public override float E2ETargetValue => 0.5f;
+#endif
+
 #if UNITY_EDITOR
     private void OnValidate() => RequiredFieldValidator.Validate(this);
 #endif

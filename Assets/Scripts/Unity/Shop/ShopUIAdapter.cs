@@ -73,10 +73,22 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
         }
 
         listContent = refs.ListContent;
+#if AFTERTASTE_E2E
+        if (listContent is RectTransform contentRect)
+        {
+            E2EUiTargetRegistry.RegisterRect("shop.scroll.content", contentRect);
+            var scrollRect = contentRect.GetComponentInParent<ScrollRect>();
+            if (scrollRect != null && scrollRect.viewport != null)
+                E2EUiTargetRegistry.RegisterRect("shop.scroll.viewport", scrollRect.viewport);
+        }
+#endif
         headerLabel = refs.HeaderLabel;
         detailPanel = refs.DetailPanel;
         closeButton = refs.CloseButton;
         if (closeButton != null) closeButton.onClick.AddListener(CloseShop);
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("shop.close", closeButton);
+#endif
 
         CacheServices();
         detailPanel?.Inject(purchase, toolUpgrade, storageUpgrade, farmUpgrade);
@@ -86,6 +98,9 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
         {
             bookmarkButtons[i] = bookmarks[i];
             if (bookmarkButtons[i] == null) continue;
+#if AFTERTASTE_E2E
+            E2EUiTargetRegistry.Register($"shop.tab.{i}", bookmarkButtons[i]);
+#endif
             int idx = i;
             bookmarkButtons[i].onClick.AddListener(() => SwitchTab((Tab)idx));
         }
@@ -93,6 +108,9 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
         refreshButton = refs.RefreshButton;
         refreshCostLabel = refs.RefreshCostLabel;
         if (refreshButton != null) refreshButton.onClick.AddListener(OnRefreshClicked);
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("shop.refresh", refreshButton);
+#endif
 
         bookInstance.SetActive(false);
     }
@@ -115,6 +133,11 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
         if (UILockManager.IsLocked) return;
         if (bookInstance == null) return;
 
+        // DontDestroyOnLoad 어댑터는 GameStart보다 먼저 생성될 수 있다. 그 경우
+        // SpawnBook 시점의 GameSessionRoot 서비스 참조는 null/stale이다. 매번 실제
+        // 상점을 열기 직전에 현재 세션을 다시 연결해야 재고·잔액·새로고침 상태가 일치한다.
+        CacheServices();
+        detailPanel?.Inject(purchase, toolUpgrade, storageUpgrade, farmUpgrade);
         UILockManager.Lock(UILockManager.Owner.Shop);
         bookInstance.SetActive(true);
         SoundManager.Instance?.PlayUIBook();
@@ -151,6 +174,10 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
             case Tab.Farm:    PopulateFarmList();    break;
         }
 
+        // WebGL에서는 동적 행 생성 직후 ContentSizeFitter 갱신이 지연되어 ScrollRect가
+        // 프리팹 높이만큼만 스크롤되는 경우가 있다. 실제 행을 기준으로 범위를 확정한다.
+        ShopListLayout.Rebuild(listContent as RectTransform);
+
         // Populate 이후에 갱신 — GetItemList가 phase 감지하여 _refreshCount를
         // 리셋한 뒤 GetRefreshCost가 호출되게. 이전 페이즈 stale 비용 표시 방지.
         UpdateRefreshButton();
@@ -184,7 +211,14 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
 
     private void ClearRows()
     {
-        foreach (var r in currentRows) if (r != null) Destroy(r.gameObject);
+        foreach (var r in currentRows)
+        {
+            if (r == null) continue;
+            // Destroy는 프레임 끝까지 Transform을 남긴다. 탭을 같은 프레임에 다시
+            // 채울 때 이전 행이 높이 계산에 섞이지 않도록 먼저 계층에서 분리한다.
+            r.transform.SetParent(null, false);
+            Destroy(r.gameObject);
+        }
         currentRows.Clear();
         selectedRow = null;
     }
@@ -197,6 +231,14 @@ public partial class ShopUIAdapter : SingletonMonoBehaviour<ShopUIAdapter>
         row.SetData(icon, name, leftSub, rightSub, data);
         row.OnClicked = OnRowClicked;
         currentRows.Add(row);
+#if AFTERTASTE_E2E
+        // 목록의 순서는 재고 갱신/refresh에 따라 바뀐다. 매크로가 row.0 같은
+        // 화면 순번을 추측하지 않고 실제 상품 ID를 선택하도록 안정된 식별자를 제공한다.
+        string e2eRowId = data is ItemRowData item && item.Food != null
+            ? $"shop.item.{item.Food.id}"
+            : $"shop.row.{currentRows.Count - 1}";
+        E2EUiTargetRegistry.Register(e2eRowId, row.GetComponent<Button>());
+#endif
         return row;
     }
 

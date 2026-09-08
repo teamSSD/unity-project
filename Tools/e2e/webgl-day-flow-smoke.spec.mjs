@@ -7,6 +7,7 @@ const planPath = process.env.E2E_PLAY_PLAN;
 const requestedDays = Number(process.env.E2E_SURVIVAL_DAYS ?? 3);
 const stepDelayMs = Number(process.env.E2E_STEP_DELAY_MS ?? 0);
 const holdOpenMs = Number(process.env.E2E_HOLD_OPEN_MS ?? 0);
+const skipProgrammaticResize = process.env.E2E_SKIP_PROGRAMMATIC_RESIZE === '1';
 
 function assertIsolatedLocalE2EOrigin(url) {
   if (!url) throw new Error('E2E_WEBGL_URL is required.');
@@ -126,7 +127,7 @@ async function showStep(page, label) {
   await page.waitForTimeout(stepDelayMs);
 }
 
-test('actual WebGL macro survives multiple game days using the baseline policy menus', async ({ page }, testInfo) => {
+test('actual WebGL day-flow smoke traverses the baseline policy menus', async ({ page }, testInfo) => {
   test.setTimeout(180_000);
   assertIsolatedLocalE2EOrigin(baseUrl);
   const menusByDay = await plannedMenusByDay();
@@ -142,13 +143,15 @@ test('actual WebGL macro survives multiple game days using the baseline policy m
     await expect(canvas).toBeVisible({ timeout: 30_000 });
     await expect.poll(() => page.evaluate(() => window.AftertasteE2E?.events?.length ?? 0), { timeout: 30_000 }).toBeGreaterThan(0);
 
-    // 최초 로드 뒤의 실제 창 크기 변경을 재현한다. E2E target의 정규화 좌표로 누른
-    // 브라우저 포인터가 Unity 버튼을 계속 누르는지는 아래 scene 전환으로 검증된다.
-    await page.setViewportSize({ width: 1280, height: 820 });
-    await expect.poll(async () => {
-      const box = await canvas.boundingBox();
-      return box && Math.abs(box.width / box.height - 16 / 9) < 0.01;
-    }, { timeout: 10_000, message: 'WebGL canvas must remain 16:9 after browser resize' }).toBeTruthy();
+    // 기본 CI 회귀는 최초 로드 뒤 실제 창 크기 변경을 재현한다. 사람이 지켜보는
+    // headed 실행은 OS 창을 대신 크기 조절하지 않도록 이 단계만 opt-out할 수 있다.
+    if (!skipProgrammaticResize) {
+      await page.setViewportSize({ width: 1280, height: 820 });
+      await expect.poll(async () => {
+        const box = await canvas.boundingBox();
+        return box && Math.abs(box.width / box.height - 16 / 9) < 0.01;
+      }, { timeout: 10_000, message: 'WebGL canvas must remain 16:9 after browser resize' }).toBeTruthy();
+    }
     await clickTarget(page, canvas, 'start.new-game');
     await waitForScene(page, 'Mall', 'Preparation', 0, 'new-game-ready');
 
@@ -212,7 +215,7 @@ test('actual WebGL macro survives multiple game days using the baseline policy m
   } finally {
     const events = await page.evaluate(() => window.AftertasteE2E?.events ?? []).catch(() => []);
     const report = {
-      kind: 'actual-webgl-survival-macro',
+      kind: 'actual-webgl-day-flow-smoke',
       policy: 'BaselinePolicy',
       requestedDays,
       planPath,

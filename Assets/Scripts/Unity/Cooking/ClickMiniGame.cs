@@ -22,6 +22,9 @@ public class ClickMiniGame : MiniGameAbstract
         {
             clickCount++;
         }
+
+        if (clickCount >= maxClickTarget || elapsedTime >= duration)
+            EndGame();
     }
 
     public override float CalculateScore()
@@ -29,4 +32,10 @@ public class ClickMiniGame : MiniGameAbstract
         // 클릭 횟수를 0~1 사이 점수로 변환
         return Mathf.Min(1f, (float)clickCount / maxClickTarget);
     }
+
+#if AFTERTASTE_E2E
+    public override string E2ENextInput => "Space";
+    public override float E2ECurrentValue => clickCount;
+    public override float E2ETargetValue => maxClickTarget;
+#endif
 }

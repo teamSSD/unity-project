@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -257,12 +258,17 @@ public class MallSceneController : MonoBehaviour
     private static Canvas FindOrCreateOverlayCanvas()
     {
         var canvases = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+        var activeScene = SceneManager.GetActiveScene();
         foreach (var c in canvases)
             // 페이즈 선택은 월드/카메라 기반 캔버스에 붙으면 해상도·카메라 위치에 따라
             // 화면 밖으로 밀린다. 또한 LoadingManager의 Overlay Canvas는 전환이 끝나면
             // disabled가 된다. 비활성 Canvas를 부모로 택하면 선택 UI도 순서에 따라
             // 보이지 않게 되므로, 실제 표시 중인 Overlay 루트만 재사용한다.
-            if (c != null && c.isRootCanvas && c.isActiveAndEnabled &&
+            // 전환 중에는 DontDestroyOnLoad의 LoadingCanvas도 활성 Overlay다. 그것을
+            // 재사용하면 fade-out 때 자식인 선택창까지 사라지고 PhaseSelection 잠금만
+            // 남는다. 씬 UI의 부모는 반드시 현재 씬 소유 Canvas여야 한다.
+            if (c != null && c.gameObject.scene == activeScene &&
+                c.isRootCanvas && c.isActiveAndEnabled &&
                 c.renderMode == RenderMode.ScreenSpaceOverlay) return c;
 
         var go = new GameObject("MallCanvas",

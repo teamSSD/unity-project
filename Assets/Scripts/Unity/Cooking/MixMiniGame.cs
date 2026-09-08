@@ -137,6 +137,12 @@ public class MixMiniGame : MiniGameAbstract
         }
     }
 
+#if AFTERTASTE_E2E
+    public override string E2ENextInput => "Space";
+    public override float E2ECurrentValue => pressCount;
+    public override float E2ETargetValue => pressRequiringCount;
+#endif
+
 #if UNITY_EDITOR
     private void OnValidate() => RequiredFieldValidator.Validate(this);
 #endif

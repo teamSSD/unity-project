@@ -26,8 +26,18 @@ public class OrderingCustomer : MonoBehaviour
         clickStateUtil.OnClicked += clickRoutine;
     }
 
+    private void Start()
+    {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.RegisterCollider($"cooking.ordering-customer.{GetInstanceID()}", GetComponent<Collider2D>());
+#endif
+    }
+
     public void OnDestroy()
     {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.UnregisterCollider($"cooking.ordering-customer.{GetInstanceID()}", GetComponent<Collider2D>());
+#endif
         clickStateUtil.OnClicked -= clickRoutine;
         if (speechBubble != null) Destroy(speechBubble);
     }

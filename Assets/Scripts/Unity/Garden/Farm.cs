@@ -30,6 +30,9 @@ public class Farm : MonoBehaviour
 
     private void Start()
     {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.RegisterCollider($"farm.tile.{farmIndex}", GetComponent<Collider2D>());
+#endif
         if (GameSessionRoot.Instance?.Progress == null)
             ManagerBootstrap.EnsureAll();
 
@@ -66,6 +69,9 @@ public class Farm : MonoBehaviour
 
     private void OnDestroy()
     {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.UnregisterCollider($"farm.tile.{farmIndex}", GetComponent<Collider2D>());
+#endif
         // 씬 나가기 전에 타일 상태 저장 (GardenPersistent.tiles)
         if (tile != null)
         {

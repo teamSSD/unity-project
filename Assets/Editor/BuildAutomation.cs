@@ -70,6 +70,10 @@ public static class BuildAutomation
         var report = BuildPipeline.BuildPlayer(options);
 
         LogSummary(report, outDir);
+        // 외부 E2E 실행기는 출력 폴더 생성만으로 빌드 완료를 판단하면 안 된다.
+        // WebGL 파일과 postprocess 주입까지 모두 끝난 성공 산출물에만 이 marker를 쓴다.
+        if (e2e && report.summary.result == BuildResult.Succeeded)
+            File.WriteAllText(Path.Combine(outDir, ".aftertaste-e2e-ready"), DateTime.UtcNow.ToString("O"));
     }
 
     private static void LogSummary(BuildReport report, string outDir)

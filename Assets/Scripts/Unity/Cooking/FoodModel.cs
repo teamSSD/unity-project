@@ -49,6 +49,10 @@ public class FoodModel : MonoBehaviour
 
     void OnDestroy()
     {
+#if AFTERTASTE_E2E
+        var data = GetFoodData();
+        if (data != null) E2EWorldTargetRegistry.UnregisterCollider($"cooking.food.{data.id}.{GetInstanceID()}", GetComponent<Collider2D>());
+#endif
         onDestroy?.Invoke(this);
         clickStateUtil.OnDragEnd -= OnFoodDropped;
     }
@@ -86,6 +90,14 @@ public class FoodModel : MonoBehaviour
         }
 
         injected = true;
+#if AFTERTASTE_E2E
+        // CookingSceneManager가 부모 Start에서 Inject한다. 이 컴포넌트의 Start보다
+        // 늦을 수 있으므로 Start에서 등록하면 data가 null인 채 관측 대상에서 빠진다.
+        // 기존 PolygonCollider2D는 Destroy가 프레임 끝에 반영된다. 여기서 GetComponent를
+        // 다시 호출하면 곧 파괴될 이전 collider를 등록할 수 있어 다음 target-map에서
+        // 재료가 사라진다. 방금 만든 collider 인스턴스 자체를 등록해야 한다.
+        E2EWorldTargetRegistry.RegisterCollider($"cooking.food.{foodData.id}.{GetInstanceID()}", collider);
+#endif
     }
 
     /// <summary>

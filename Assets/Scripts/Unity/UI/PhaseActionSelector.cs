@@ -45,6 +45,8 @@ public class PhaseActionSelector : MonoBehaviour
 
     private void OnDestroy()
     {
+        // 외부 씬 전환/부모 Canvas 파괴로 Hide를 거치지 않는 경우에도 전역 잠금을 반환한다.
+        UILockManager.Unlock(UILockManager.Owner.PhaseSelection);
 #if AFTERTASTE_E2E
         E2EUiTargetRegistry.Unregister("phase.work", workButton);
         E2EUiTargetRegistry.Unregister("phase.rest", restButton);

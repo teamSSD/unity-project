@@ -38,6 +38,15 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
 
     [DllImport("__Internal")]
     private static extern void AftertasteStopBgm();
+
+    [DllImport("__Internal")]
+    private static extern void AftertastePlayLoopSfx(string relativePath, float volume);
+
+    [DllImport("__Internal")]
+    private static extern void AftertasteStopLoopSfx();
+
+    [DllImport("__Internal")]
+    private static extern void AftertasteSetLoopSfxVolume(float volume);
 #endif
 
     private CancellationTokenSource _loopFadeCts;
@@ -211,7 +220,13 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         if (clip == null) return;
         // 씬 전환 순간 리스너 없으면 skip (Unity 경고 스팸 방지).
         if (!_hasAudioListener) return;
+#if UNITY_WEBGL && !UNITY_EDITOR
+        // Unity WebGL's imported AudioClip/FSB path fails for a number of short MP3
+        // effects. Route the original source through the browser decoder instead.
+        PlayStreamingSfx($"Audio/SFX/{clip.name}.mp3", volume);
+#else
         sfxSource.PlayOneShot(clip, volume);
+#endif
     }
 
     /// <summary>원본 파일이 StreamingAssets에 있는 효과음을 재생한다. WebGL에서는 Unity의
@@ -314,22 +329,36 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     {
         if (clip == null) return;
         if (!_hasAudioListener) return;
+#if UNITY_WEBGL && !UNITY_EDITOR
+        AftertastePlayLoopSfx(
+            $"Audio/SFX/{clip.name}.mp3",
+            sfxSource != null ? sfxSource.volume : 1f);
+#else
         RestartLoopFade();
         loopSfxSource.clip = clip;
         loopSfxSource.volume = 0f;
         loopSfxSource.Play();
         FadeLoopSFXAsync(0f, 1f, fadeIn, _loopFadeCts.Token).Forget();
+#endif
     }
 
     public void StopLoopSFX(float fadeOut = 0.2f)
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        AftertasteStopLoopSfx();
+#else
         RestartLoopFade();
         FadeAndStopLoopSFXAsync(fadeOut, _loopFadeCts.Token).Forget();
+#endif
     }
 
     public void SetLoopSFXVolume(float volume)
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        AftertasteSetLoopSfxVolume(Mathf.Clamp01(volume));
+#else
         loopSfxSource.volume = Mathf.Clamp01(volume);
+#endif
     }
 
     private void RestartLoopFade()

@@ -107,6 +107,14 @@ public abstract class MiniGameAbstract : MonoBehaviour
 
     public virtual void SetIngredients(List<FoodData> ingredients, string toolId = null) { }
 
+#if AFTERTASTE_E2E
+    // Read-only representation of the cue that is already visible to the player.
+    // The browser macro still has to send the corresponding real keyboard/pointer input.
+    public virtual string E2ENextInput => string.Empty;
+    public virtual float E2ECurrentValue => 0f;
+    public virtual float E2ETargetValue => 0f;
+#endif
+
 #if UNITY_EDITOR
     private void OnValidate() => RequiredFieldValidator.Validate(this);
 #endif

@@ -15,6 +15,9 @@ public static class AftertasteE2EProfileSetup
     {
         if (IsCampaignProfile || session?.Stats == null || session.Progress?.PhaseData == null) return;
 
+        // Mall.Start가 Welcome bubble을 이미 만들었을 수 있다. 저장 데이터만 완료로
+        // 바꾸지 말고 controller까지 종료해 Tutorial input lock을 함께 해제한다.
+        TutorialController.Instance?.Complete();
         session.Tutorial?.Complete();
         session.Stats.GetSaveData().immutableSeed = CampaignSeed;
         GameRandom.InitSession(CampaignSeed, CampaignSeed ^ 0x5F3759DF);

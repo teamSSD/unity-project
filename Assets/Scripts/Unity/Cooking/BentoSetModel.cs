@@ -18,8 +18,20 @@ public class BentoSetModel : MonoBehaviour
         clickStateUtil.OnDragStart += SpawnBento;
     }
 
+    private void Start()
+    {
+#if AFTERTASTE_E2E
+        // 도시락 생성은 이 묶음을 실제로 드래그해서만 시작한다. E2E에는 포인터 좌표만
+        // 노출하고 SpawnBento를 직접 호출하지 않는다.
+        E2EWorldTargetRegistry.RegisterCollider("cooking.bento-set", GetComponent<Collider2D>());
+#endif
+    }
+
     private void OnDestroy()
     {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.UnregisterCollider("cooking.bento-set", GetComponent<Collider2D>());
+#endif
         clickStateUtil.OnDragStart -= SpawnBento;
     }
 

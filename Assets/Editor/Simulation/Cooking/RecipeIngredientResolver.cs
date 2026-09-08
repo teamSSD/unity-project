@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using Game.Domain.Cooking;
 
 namespace Game.Editor.Simulation.Cooking
 {
@@ -12,7 +14,7 @@ namespace Game.Editor.Simulation.Cooking
     public class RecipeIngredientResolver
     {
         private readonly Dictionary<string, FoodData> _foodById;
-        private readonly Dictionary<string, RecipeData> _recipeByOutput;
+        private readonly RecipePlanService _plans;
 
         // 캐시: foodId → leaf ingredient counts. 반복 조회 최적화.
         private readonly Dictionary<string, Dictionary<string, int>> _cache = new();
@@ -22,12 +24,7 @@ namespace Game.Editor.Simulation.Cooking
             _foodById = new Dictionary<string, FoodData>();
             foreach (var f in foods) if (f != null && !string.IsNullOrEmpty(f.id)) _foodById[f.id] = f;
 
-            _recipeByOutput = new Dictionary<string, RecipeData>();
-            foreach (var r in recipes)
-            {
-                if (r == null || r.outputFood == null || string.IsNullOrEmpty(r.outputFood.id)) continue;
-                _recipeByOutput[r.outputFood.id] = r;
-            }
+            _plans = new RecipePlanService(_foodById.Values, recipes);
         }
 
         /// <summary>foodId 완성에 필요한 leaf ingredient(id → 수량).
@@ -35,41 +32,12 @@ namespace Game.Editor.Simulation.Cooking
         public IReadOnlyDictionary<string, int> LeafIngredients(string foodId)
         {
             if (_cache.TryGetValue(foodId, out var cached)) return cached;
-            var acc = new Dictionary<string, int>();
-            var visited = new HashSet<string>();
-            Accumulate(foodId, 1, acc, visited);
+            var plan = _plans.Build(foodId);
+            var acc = plan.valid
+                ? plan.ingredients.ToDictionary(item => item.foodId, item => item.quantity)
+                : new Dictionary<string, int>();
             _cache[foodId] = acc;
             return acc;
-        }
-
-        private void Accumulate(string foodId, int mult, Dictionary<string, int> acc, HashSet<string> visited)
-        {
-            if (!_foodById.TryGetValue(foodId, out var food) || food == null) return;
-
-            // INGREDIENT 리프 — 누적하고 종료.
-            if (food.type == FoodType.INGREDIENT)
-            {
-                acc.TryGetValue(foodId, out int cur);
-                acc[foodId] = cur + mult;
-                return;
-            }
-
-            // 순환 방지 (같은 노드 이미 처리 중이면 skip).
-            if (!visited.Add(foodId)) return;
-
-            if (!_recipeByOutput.TryGetValue(foodId, out var recipe) || recipe?.inputs == null)
-            {
-                visited.Remove(foodId);
-                return;
-            }
-
-            foreach (var input in recipe.inputs)
-            {
-                if (input?.food == null) continue;
-                Accumulate(input.food.id, mult, acc, visited);
-            }
-
-            visited.Remove(foodId);
         }
 
         /// <summary>foodId 하나 요리 시 원가 (leaf ingredient defaultPrice 합).</summary>

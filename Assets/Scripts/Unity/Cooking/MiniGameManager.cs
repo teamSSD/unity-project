@@ -19,6 +19,12 @@ MiniGameManager.cs
 public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
 {
     private MiniGameAbstract currentGame;
+    public string ActiveMinigame => currentGame != null ? currentGame.GetType().Name : string.Empty;
+#if AFTERTASTE_E2E
+    public string E2ENextInput => currentGame != null ? currentGame.E2ENextInput : string.Empty;
+    public float E2ECurrentValue => currentGame != null ? currentGame.E2ECurrentValue : 0f;
+    public float E2ETargetValue => currentGame != null ? currentGame.E2ETargetValue : 0f;
+#endif
 
     [SerializeField] private GameObject BakeMinigamePrefab;
     [SerializeField] private GameObject BoilMinigamePrefab;

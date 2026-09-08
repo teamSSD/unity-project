@@ -34,6 +34,23 @@ public class ScreenSpaceCanvasScalingContractTest
             "The three-column menu selection layout must match viewport width so its outer slots cannot be clipped.");
     }
 
+    [Test]
+    public void MallPhaseSelector_CannotAttachToPersistentLoadingCanvas()
+    {
+        var mallControllerPath = Path.Combine(
+            Application.dataPath, "Scripts", "Unity", "Common", "MallSceneController.cs");
+        var selectorPath = Path.Combine(
+            Application.dataPath, "Scripts", "Unity", "UI", "PhaseActionSelector.cs");
+
+        var mallController = File.ReadAllText(mallControllerPath);
+        var selector = File.ReadAllText(selectorPath);
+
+        Assert.That(mallController, Does.Contain("c.gameObject.scene == activeScene"),
+            "Scene-owned phase UI must not become a child of DontDestroyOnLoad LoadingCanvas during transitions.");
+        Assert.That(selector, Does.Contain("UILockManager.Unlock(UILockManager.Owner.PhaseSelection)"),
+            "Destroying phase selection UI must release its global lock even when Hide was skipped.");
+    }
+
     private static IEnumerable<string> EnumerateProductionUiAssets()
     {
         var assetsRoot = Application.dataPath;
