@@ -14,7 +14,18 @@ public class EarlyEndButton : MonoBehaviour
         if (customerManager == null)
             customerManager = Object.FindFirstObjectByType<CustomerManager>();
 
-        GetComponent<Button>().onClick.AddListener(OnClicked);
+        var button = GetComponent<Button>();
+        button.onClick.AddListener(OnClicked);
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("cooking.early-end", button);
+#endif
+    }
+
+    private void OnDestroy()
+    {
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Unregister("cooking.early-end", GetComponent<Button>());
+#endif
     }
 
     private void OnClicked()

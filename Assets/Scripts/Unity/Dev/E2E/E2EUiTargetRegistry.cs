@@ -25,6 +25,10 @@ public static class E2EUiTargetRegistry
     }
 
     private static readonly Dictionary<string, Button> Buttons = new();
+    // Button이 아닌 화면 자체의 실제 입력 지점도 있다. 예: 정산 화면은 어떤 키/클릭으로
+    // 진행되며, 그 클릭은 별도 Button 이벤트가 아니라 SettlementController.Update에서 받는다.
+    // 이 레지스트리는 그 지점을 관측만 제공한다. E2E는 여전히 브라우저 포인터 입력을 보낸다.
+    private static readonly Dictionary<string, RectTransform> Rects = new();
 
     public static void Register(string id, Button button)
     {
@@ -35,6 +39,17 @@ public static class E2EUiTargetRegistry
     {
         if (!string.IsNullOrWhiteSpace(id) && Buttons.TryGetValue(id, out var current) && current == button)
             Buttons.Remove(id);
+    }
+
+    public static void RegisterRect(string id, RectTransform rect)
+    {
+        if (!string.IsNullOrWhiteSpace(id) && rect != null) Rects[id] = rect;
+    }
+
+    public static void UnregisterRect(string id, RectTransform rect)
+    {
+        if (!string.IsNullOrWhiteSpace(id) && Rects.TryGetValue(id, out var current) && current == rect)
+            Rects.Remove(id);
     }
 
     public static List<TargetState> Capture()
@@ -53,19 +68,21 @@ public static class E2EUiTargetRegistry
             if (rect == null) continue;
             var corners = new Vector3[4];
             rect.GetWorldCorners(corners);
-            var min = RectTransformUtility.WorldToScreenPoint(null, corners[0]);
-            var max = RectTransformUtility.WorldToScreenPoint(null, corners[2]);
+            var min = ToScreenPoint(button, corners[0]);
+            var max = ToScreenPoint(button, corners[2]);
             float xMin = Mathf.Min(min.x, max.x);
             float xMax = Mathf.Max(min.x, max.x);
             float yMin = Mathf.Min(min.y, max.y);
             float yMax = Mathf.Max(min.y, max.y);
+            bool visible = IsVisibleOnScreen(button) && IsInsideScreen(xMin, xMax, yMin, yMax);
+            bool hasInputArea = xMax - xMin > 1f && yMax - yMin > 1f;
 
             states.Add(new TargetState
             {
                 id = id,
                 kind = "ui",
-                visible = button.gameObject.activeInHierarchy,
-                interactable = button.IsActive() && button.interactable,
+                visible = visible && hasInputArea,
+                interactable = visible && hasInputArea && button.interactable,
                 x = xMin / Screen.width,
                 y = (Screen.height - yMax) / Screen.height,
                 width = (xMax - xMin) / Screen.width,
@@ -74,7 +91,68 @@ public static class E2EUiTargetRegistry
         }
 
         foreach (var id in stale) Buttons.Remove(id);
+
+        stale.Clear();
+        foreach (var (id, rect) in Rects)
+        {
+            if (rect == null)
+            {
+                stale.Add(id);
+                continue;
+            }
+
+            var corners = new Vector3[4];
+            rect.GetWorldCorners(corners);
+            var min = ToScreenPoint(rect, corners[0]);
+            var max = ToScreenPoint(rect, corners[2]);
+            float xMin = Mathf.Min(min.x, max.x);
+            float xMax = Mathf.Max(min.x, max.x);
+            float yMin = Mathf.Min(min.y, max.y);
+            float yMax = Mathf.Max(min.y, max.y);
+            bool visible = IsVisibleOnScreen(rect) && IsInsideScreen(xMin, xMax, yMin, yMax);
+            bool hasInputArea = xMax - xMin > 1f && yMax - yMin > 1f;
+
+            states.Add(new TargetState
+            {
+                id = id,
+                kind = "ui-input-zone",
+                visible = visible && hasInputArea,
+                interactable = visible && hasInputArea,
+                x = xMin / Screen.width,
+                y = (Screen.height - yMax) / Screen.height,
+                width = (xMax - xMin) / Screen.width,
+                height = (yMax - yMin) / Screen.height,
+            });
+        }
+        foreach (var id in stale) Rects.Remove(id);
         return states;
     }
+
+    /// <summary>GameObject.activeInHierarchy만으로는 꺼진 Canvas의 자식을 보이는 것으로
+    /// 오판한다. ConfirmModal처럼 Canvas.enabled로 표시하는 UI는 실제 포인터를 받을 수 있는
+    /// 시점에만 E2E 타깃으로 노출해야 한다.</summary>
+    private static bool IsVisibleOnScreen(Component component)
+    {
+        if (component == null || !component.gameObject.activeInHierarchy) return false;
+        foreach (var canvas in component.GetComponentsInParent<Canvas>(true))
+            if (!canvas.isActiveAndEnabled) return false;
+        foreach (var group in component.GetComponentsInParent<CanvasGroup>(true))
+            if (!group.isActiveAndEnabled || !group.interactable || !group.blocksRaycasts) return false;
+        return true;
+    }
+
+    private static Vector2 ToScreenPoint(Component component, Vector3 worldPoint)
+    {
+        var canvas = component.GetComponentInParent<Canvas>();
+        // ScreenSpaceOverlay에는 null 카메라가 맞지만, Cooking처럼 ScreenSpaceCamera UI는
+        // 해당 캔버스 카메라를 사용해야 월드 좌표를 클릭 좌표로 잘못 해석하지 않는다.
+        var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+            ? canvas.worldCamera
+            : null;
+        return RectTransformUtility.WorldToScreenPoint(camera, worldPoint);
+    }
+
+    private static bool IsInsideScreen(float xMin, float xMax, float yMin, float yMax) =>
+        xMin >= 0f && yMin >= 0f && xMax <= Screen.width && yMax <= Screen.height;
 }
 #endif

@@ -170,6 +170,10 @@ public class PhaseActionSelector : MonoBehaviour
 
     private void OnActionClicked(ActionType actionType)
     {
+        // 휴식은 Blackout 중간에 PassPhase를 수행한다. 액션 뒤에 Hide하면
+        // OnPhaseChanged가 새 페이즈 선택창을 Show한 직후 후처리가 그 창을 숨긴다.
+        // 현재 선택창을 먼저 닫아야 다음 페이즈 UI는 그대로 남는다.
+        Hide();
         actionExecutors[actionType]?.Invoke();
         OnActionExecuted?.Invoke(actionType);
     }

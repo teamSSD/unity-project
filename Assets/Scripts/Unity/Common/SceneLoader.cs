@@ -9,9 +9,14 @@ using UnityEngine.SceneManagement;
 public static class SceneLoader
 {
     private static string currentGameplayScene;
+    // 새 씬의 Awake/Start는 비동기 로드 완료 콜백보다 먼저 실행된다. 전환 출처를
+    // currentGameplayScene에서 그때그때 추론하면 타이밍에 따라 이전 값이 바뀔 수 있으므로,
+    // 전환 요청 시점의 출처를 별도로 고정한다.
+    private static string previousGameplayScene;
     private static Vector3? _mallReturnPosition;
 
     public static string CurrentScene => currentGameplayScene;
+    public static string PreviousScene => previousGameplayScene;
     public static Vector3? MallReturnPosition => _mallReturnPosition;
     public static void SetMallReturnPosition(Vector3 pos) => _mallReturnPosition = pos;
     public static void ClearMallReturnPosition() => _mallReturnPosition = null;
@@ -44,12 +49,14 @@ public static class SceneLoader
 
     private static void LoadSceneInternal(string sceneName, System.Action initAction)
     {
+        string previousScene = currentGameplayScene;
+        previousGameplayScene = previousScene;
         UIFlowController.CloseAllForSceneTransition();
         if (LoadingManager.Instance != null)
         {
             LoadingManager.Instance.LoadSceneAdditive(
                 sceneName,
-                currentGameplayScene,
+                previousScene,
                 onComplete: () => currentGameplayScene = sceneName,
                 initAction: initAction);
         }
@@ -64,6 +71,7 @@ public static class SceneLoader
     private static async UniTaskVoid LoadSceneDirectAsync(string sceneName)
     {
         string previousScene = currentGameplayScene;
+        previousGameplayScene = previousScene;
 
         if (!string.IsNullOrEmpty(previousScene) && previousScene != sceneName)
         {

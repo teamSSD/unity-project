@@ -13,6 +13,7 @@ using UnityEngine;
 [RequireComponent(typeof(DeliveryTicketCoordinator))]
 public class CustomerManager : MonoBehaviour
 {
+    private const string DoorbellStreamingPath = "Audio/SFX/sfx_doorbell_ring.mp3";
     [Header("References")]
     [SerializeField] private AudioClip doorSfx;
     [SerializeField] private List<CustomerData> customerDataList;
@@ -126,7 +127,7 @@ public class CustomerManager : MonoBehaviour
         currentOrderingCustomer = lifecycle.StartOrder();
         activeCustomers.Add(lifecycle);
 
-        if (doorSfx != null) SoundManager.Instance.Play2DSFX(doorSfx, 0.7f);
+        SoundManager.Instance?.PlayStreamingSfx(DoorbellStreamingPath, 0.7f);
     }
 
     private void OnCustomerServed(CustomerLifecycle lifecycle, MenuValidator.ValidationResult validation, int reward)
@@ -286,7 +287,7 @@ public class CustomerManager : MonoBehaviour
         currentOrderingCustomer = lifecycle.StartOrder();
         activeCustomers.Add(lifecycle);
 
-        if (doorSfx != null) SoundManager.Instance?.Play2DSFX(doorSfx, 0.7f);
+        SoundManager.Instance?.PlayStreamingSfx(DoorbellStreamingPath, 0.7f);
         return lifecycle;
     }
 

@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using Game.Domain.Mall;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SettlementController : MonoBehaviour
 {
@@ -26,6 +27,7 @@ public class SettlementController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI saveStatusText;
 
     private bool waitingForInput = false;
+    private Button continueButton;
 
     void Start()
     {
@@ -35,12 +37,16 @@ public class SettlementController : MonoBehaviour
         Input.imeCompositionMode = IMECompositionMode.Off;
 
         BuildUI();
+        InitializeContinueButton();
         if (saveStatusText != null) saveStatusText.text = "";
         SaveRoutineAsync().Forget();
     }
 
     void OnDestroy()
     {
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Unregister("settlement.continue", continueButton);
+#endif
         // IME 원상복구 — Start에서 Off 세팅한 게 static 프로퍼티라 씬 넘어가도 유지되어
         // 이후 InputField(도시락 이름 등)에서 한글 입력 안 되는 이슈 방지.
         Input.imeCompositionMode = IMECompositionMode.Auto;
@@ -51,10 +57,7 @@ public class SettlementController : MonoBehaviour
         // IME/포커스 상관없이 진행 가능하도록 anyKey + 마우스 클릭 모두 인정.
         // Input.anyKeyDown은 이미 마우스 버튼 포함하지만, WebGL IME 활성 시 keystroke 유실 방어용.
         if (waitingForInput && (Input.anyKeyDown || Input.GetMouseButtonDown(0)))
-        {
-            waitingForInput = false;
-            SceneLoader.LoadScene(SceneNames.Mall);
-        }
+            ContinueToMall();
     }
 
     private async UniTaskVoid SaveRoutineAsync()
@@ -74,9 +77,33 @@ public class SettlementController : MonoBehaviour
         }
         finally
         {
-            if (saveStatusText != null) saveStatusText.text = "아무 키/클릭으로 계속";
+            if (saveStatusText != null) saveStatusText.text = "계속하기";
             waitingForInput = true;
+            if (continueButton != null) continueButton.interactable = true;
+#if AFTERTASTE_E2E
+            // 저장/PassDay가 끝난 실제 입력 가능 시점에만 실제 Button을 노출한다.
+            E2EUiTargetRegistry.Register("settlement.continue", continueButton);
+#endif
         }
+    }
+
+    private void InitializeContinueButton()
+    {
+        if (saveStatusText == null) return;
+        saveStatusText.raycastTarget = true;
+        continueButton = saveStatusText.GetComponent<Button>();
+        if (continueButton == null) continueButton = saveStatusText.gameObject.AddComponent<Button>();
+        continueButton.targetGraphic = saveStatusText;
+        continueButton.interactable = false;
+        continueButton.onClick.AddListener(ContinueToMall);
+    }
+
+    private void ContinueToMall()
+    {
+        if (!waitingForInput) return;
+        waitingForInput = false;
+        if (continueButton != null) continueButton.interactable = false;
+        SceneLoader.LoadScene(SceneNames.Mall);
     }
 
     private void BuildUI()

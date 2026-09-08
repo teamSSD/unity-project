@@ -214,6 +214,18 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         sfxSource.PlayOneShot(clip, volume);
     }
 
+    /// <summary>원본 파일이 StreamingAssets에 있는 효과음을 재생한다. WebGL에서는 Unity의
+    /// AudioClip/FSB 디코더를 거치지 않고 브라우저 Audio API로 재생한다.</summary>
+    public void PlayStreamingSfx(string relativePath, float volume = 1f)
+    {
+        if (string.IsNullOrWhiteSpace(relativePath)) return;
+#if UNITY_WEBGL && !UNITY_EDITOR
+        AftertastePlayUiSfx(relativePath, Mathf.Clamp01(volume) * (sfxSource != null ? sfxSource.volume : 1f));
+#else
+        PlayStreamingSfxAsync(relativePath, volume).Forget();
+#endif
+    }
+
     // ── UI SFX (UISoundManager에서 흡수) ──
 
     public void PlayUIBook() => PlayUiSfx(UiBookStreamingPath, ref _uiBookSfx);
@@ -268,6 +280,12 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         if (clip == null || _activeBgmPath != path) return;
         bgmSource.clip = clip;
         if (_hasAudioListener) bgmSource.Play();
+    }
+
+    private async UniTaskVoid PlayStreamingSfxAsync(string path, float volume)
+    {
+        var clip = await LoadStreamingAudioClipAsync(path);
+        if (clip != null) Play2DSFX(clip, volume);
     }
 #endif
 
