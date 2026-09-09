@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using Game.Domain.Cooking;
+using Game.Schema.State;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 public class MenuSelectionServiceTest
 {
@@ -29,7 +31,19 @@ public class MenuSelectionServiceTest
     }
 
     private MenuSelectionService BuildSvc(params FoodData[] catalog)
-        => new MenuSelectionService(catalog);
+        => new MenuSelectionService(new MenuSelectionState(), catalog);
+
+    [Test]
+    public void ServicesUsingSameState_ObserveTheSameSelection()
+    {
+        var state = new MenuSelectionState();
+        var writer = new MenuSelectionService(state, new[] { mainA });
+        var reader = new MenuSelectionService(state, new[] { mainA });
+
+        writer.GetMenu(0).SetMain(mainA);
+
+        Assert.AreSame(mainA, reader.GetMenu(0).MainMenu);
+    }
 
     [Test]
     public void Initial_AllMenusEmpty()
@@ -44,7 +58,9 @@ public class MenuSelectionServiceTest
     public void GetMenu_InvalidIndex_ReturnsNull()
     {
         var svc = BuildSvc();
+        LogAssert.Expect(LogType.Error, "[MenuSelectionService] Invalid menu index: -1");
         Assert.IsNull(svc.GetMenu(-1));
+        LogAssert.Expect(LogType.Error, "[MenuSelectionService] Invalid menu index: 99");
         Assert.IsNull(svc.GetMenu(99));
     }
 
@@ -102,6 +118,17 @@ public class MenuSelectionServiceTest
         var svc = BuildSvc();
         Assert.DoesNotThrow(() => svc.ApplySaveData(null));
         Assert.DoesNotThrow(() => svc.ApplySaveData(new RecipeBookSaveData()));
+    }
+
+    [Test]
+    public void ApplySaveData_EmptyData_ClearsExistingSelections()
+    {
+        var svc = BuildSvc(mainA);
+        svc.GetMenu(0).SetMain(mainA);
+
+        svc.ApplySaveData(new RecipeBookSaveData());
+
+        Assert.IsFalse(svc.HasAnySelection());
     }
 
     [Test]

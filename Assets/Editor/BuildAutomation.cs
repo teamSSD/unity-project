@@ -21,8 +21,16 @@ public static class BuildAutomation
     [MenuItem("Tools/Build/WebGL — Development")]
     public static void BuildWebGLDevelopment() => Build(development: true);
 
-    private static void Build(bool development)
+    [MenuItem("Tools/Build/WebGL — E2E (Development)")]
+    public static void BuildWebGLE2E() => Build(development: true, outputTag: "e2e");
+
+    [MenuItem("Tools/Build/WebGL — E2E Long-run (Development)")]
+    public static void BuildWebGLE2ELongRun() => Build(development: true, outputTag: "e2e_longrun");
+
+    private static void Build(bool development, string outputTag = null)
     {
+        bool e2e = outputTag == "e2e" || outputTag == "e2e_longrun";
+        bool longRunE2E = outputTag == "e2e_longrun";
         // 씬 목록은 EditorBuildSettings에서 활성화된 것만
         var scenes = EditorBuildSettings.scenes
             .Where(s => s.enabled)
@@ -36,7 +44,7 @@ public static class BuildAutomation
         }
 
         string version = PlayerSettings.bundleVersion;
-        string tag = development ? "dev" : "release";
+        string tag = outputTag ?? (development ? "dev" : "release");
         string outDir = Path.Combine(OutputRoot, $"{version}_{tag}", DateTime.Now.ToString("yyyyMMdd_HHmmss"));
         Directory.CreateDirectory(outDir);
 
@@ -46,6 +54,9 @@ public static class BuildAutomation
             locationPathName = outDir,
             target = BuildTarget.WebGL,
             options = development ? BuildOptions.Development : BuildOptions.None,
+            extraScriptingDefines = !e2e ? System.Array.Empty<string>()
+                : longRunE2E ? new[] { "AFTERTASTE_E2E", "AFTERTASTE_E2E_LONGRUN" }
+                : new[] { "AFTERTASTE_E2E" },
         };
 
         // 활성 타겟이 WebGL이 아니면 스위칭 (첫 빌드 시 시간 걸림)
@@ -59,6 +70,10 @@ public static class BuildAutomation
         var report = BuildPipeline.BuildPlayer(options);
 
         LogSummary(report, outDir);
+        // 외부 E2E 실행기는 출력 폴더 생성만으로 빌드 완료를 판단하면 안 된다.
+        // WebGL 파일과 postprocess 주입까지 모두 끝난 성공 산출물에만 이 marker를 쓴다.
+        if (e2e && report.summary.result == BuildResult.Succeeded)
+            File.WriteAllText(Path.Combine(outDir, ".aftertaste-e2e-ready"), DateTime.UtcNow.ToString("O"));
     }
 
     private static void LogSummary(BuildReport report, string outDir)

@@ -65,6 +65,12 @@ public class ShopDetailPanel : MonoBehaviour
         if (minusBtn != null) minusBtn.onClick.AddListener(OnMinusClicked);
         if (buyBtn   != null) buyBtn.onClick.AddListener(OnBuyClicked);
         if (upgradeBtn != null) upgradeBtn.onClick.AddListener(OnUpgradeClicked);
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("shop.detail.plus", plusBtn);
+        E2EUiTargetRegistry.Register("shop.detail.minus", minusBtn);
+        E2EUiTargetRegistry.Register("shop.detail.buy", buyBtn);
+        E2EUiTargetRegistry.Register("shop.detail.upgrade", upgradeBtn);
+#endif
     }
 
     // ─── 표시 분기 ─────────────────────────────────────────────────────

@@ -8,9 +8,12 @@ using UnityEngine.UI;
 /// </summary>
 public partial class DialogueManager
 {
+    private int e2eChoiceIndex;
+
     private void ShowChoices(List<DialogueChoice> choices)
     {
         ClearChoices();
+        e2eChoiceIndex = 0;
         foreach (var choice in choices)
             BuildChoiceButton(choice);
     }
@@ -47,6 +50,13 @@ public partial class DialogueManager
 
         var captured = choice;
         btn.onClick.AddListener(() => OnChoiceSelected(captured));
+#if AFTERTASTE_E2E
+        string choiceId = string.IsNullOrWhiteSpace(choice.resultTag)
+            ? $"dialogue.choice.{e2eChoiceIndex}"
+            : $"dialogue.choice.{choice.resultTag}";
+        E2EUiTargetRegistry.Register(choiceId, btn);
+        e2eChoiceIndex++;
+#endif
     }
 
     private void OnChoiceSelected(DialogueChoice choice)

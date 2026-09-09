@@ -16,6 +16,7 @@ public class DeliveryNpcView : MonoBehaviour
 
     public string NpcId => npcId;
     public string GroupId => groupId;
+    public string PrerequisiteGroupId => prerequisiteGroupId;
     public Sprite Sprite => spriteRenderer?.sprite;
     public string CharacterName => characterName;
 

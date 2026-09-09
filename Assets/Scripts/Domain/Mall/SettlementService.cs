@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Game.Schema.State.Mall;
 
 namespace Game.Domain.Mall
 {
@@ -10,52 +11,59 @@ namespace Game.Domain.Mall
     {
         public const int ManagementFee = 1000;
 
-        private readonly Dictionary<string, int> incomeMap  = new();
-        private readonly Dictionary<string, int> expenseMap = new();
-        public int DayStartMoney { get; private set; }
+        private readonly MallSessionState _state;
+        private Dictionary<string, int> IncomeMap => _state.SettlementIncome;
+        private Dictionary<string, int> ExpenseMap => _state.SettlementExpense;
+        public int DayStartMoney => _state.SettlementDayStartMoney;
+
+        public SettlementService(MallSessionState state) => _state = state ?? throw new System.ArgumentNullException(nameof(state));
+        public SettlementService() : this(new MallSessionState()) { }
 
         public void AddIncome(string label, int amount)
         {
             if (amount <= 0) return;
-            incomeMap[label] = incomeMap.GetValueOrDefault(label) + amount;
+            IncomeMap[label] = IncomeMap.GetValueOrDefault(label) + amount;
         }
 
         public void AddExpense(string label, int amount)
         {
             if (amount <= 0) return;
-            expenseMap[label] = expenseMap.GetValueOrDefault(label) + amount;
+            ExpenseMap[label] = ExpenseMap.GetValueOrDefault(label) + amount;
         }
 
         public IEnumerable<(string label, int amount)> GetIncomeEntries()
         {
-            foreach (var kv in incomeMap) yield return (kv.Key, kv.Value);
+            foreach (var kv in IncomeMap) yield return (kv.Key, kv.Value);
         }
 
         public IEnumerable<(string label, int amount)> GetExpenseEntries()
         {
-            foreach (var kv in expenseMap) yield return (kv.Key, kv.Value);
+            foreach (var kv in ExpenseMap) yield return (kv.Key, kv.Value);
         }
 
         public int TotalIncome()
         {
             int total = 0;
-            foreach (var kv in incomeMap) total += kv.Value;
+            foreach (var kv in IncomeMap) total += kv.Value;
             return total;
         }
 
         public int TotalExpense()
         {
             int total = 0;
-            foreach (var kv in expenseMap) total += kv.Value;
+            foreach (var kv in ExpenseMap) total += kv.Value;
             return total;
         }
+
+        public static int ProjectBalanceAfterManagementFee(int currentMoney)
+            => System.Math.Max(0, currentMoney - ManagementFee);
 
         /// <summary>PassDay 직전 호출 — DayStartMoney 스냅샷 후 누적 초기화.</summary>
         public void Reset(int currentMoney)
         {
-            DayStartMoney = currentMoney;
-            incomeMap.Clear();
-            expenseMap.Clear();
+            _state.SettlementDayStartMoney = currentMoney;
+            IncomeMap.Clear();
+            ExpenseMap.Clear();
         }
     }
 }

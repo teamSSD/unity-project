@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using Game.Schema.State;
 
 namespace Game.Domain.Cooking
 {
@@ -10,23 +10,26 @@ namespace Game.Domain.Cooking
     /// </summary>
     public class UnlockedFoodService : IUnlockedFoodProvider
     {
-        private HashSet<string> unlockedRecipeIds = new HashSet<string>();
+        private readonly UnlockedFoodState _state;
+        private HashSet<string> UnlockedRecipeIds => _state.RecipeIds;
         private readonly List<FoodData> allFoodData;
 
-        public UnlockedFoodService(IEnumerable<FoodData> catalog)
+        public UnlockedFoodService(UnlockedFoodState state, IEnumerable<FoodData> catalog)
         {
+            _state = state ?? throw new System.ArgumentNullException(nameof(state));
             allFoodData = catalog != null ? new List<FoodData>(catalog) : new List<FoodData>();
         }
 
         public UnlockedRecipesSaveData GetSaveData()
         {
-            return new UnlockedRecipesSaveData { recipeIds = unlockedRecipeIds.ToList() };
+            return new UnlockedRecipesSaveData { recipeIds = UnlockedRecipeIds.ToList() };
         }
 
         public void ApplySaveData(UnlockedRecipesSaveData data)
         {
+            UnlockedRecipeIds.Clear();
             if (data != null && data.recipeIds != null && data.recipeIds.Count > 0)
-                unlockedRecipeIds = new HashSet<string>(data.recipeIds);
+                UnlockedRecipeIds.UnionWith(data.recipeIds);
             else
                 UnlockDefaultRecipes();
         }
@@ -35,8 +38,9 @@ namespace Game.Domain.Cooking
         public void LoadUnlocksFromProgressLegacy(PhaseData pd)
         {
             var unlockedList = pd?.UnlockedRecipes;
+            UnlockedRecipeIds.Clear();
             if (unlockedList != null && unlockedList.Count > 0)
-                unlockedRecipeIds = new HashSet<string>(unlockedList);
+                UnlockedRecipeIds.UnionWith(unlockedList);
             else
                 UnlockDefaultRecipes();
         }
@@ -51,14 +55,14 @@ namespace Game.Domain.Cooking
             foreach (var id in defaultSides) UnlockRecipe(id);
         }
 
-        public void UnlockRecipe(string foodId) => unlockedRecipeIds.Add(foodId);
+        public void UnlockRecipe(string foodId) => UnlockedRecipeIds.Add(foodId);
 
-        public void LockRecipe(string foodId) => unlockedRecipeIds.Remove(foodId);
+        public void LockRecipe(string foodId) => UnlockedRecipeIds.Remove(foodId);
 
         public void UnlockAll()
         {
-            unlockedRecipeIds.Clear();
-            foreach (var food in allFoodData) unlockedRecipeIds.Add(food.id);
+            UnlockedRecipeIds.Clear();
+            foreach (var food in allFoodData) UnlockedRecipeIds.Add(food.id);
         }
 
         public List<FoodData> GetAllMainFoods() =>
@@ -68,11 +72,11 @@ namespace Game.Domain.Cooking
             allFoodData.Where(f => f.type == FoodType.SIDE).OrderBy(f => f.id).ToList();
 
         public List<FoodData> GetUnlockedMainFoods() =>
-            allFoodData.Where(f => f.type == FoodType.MAIN && unlockedRecipeIds.Contains(f.id)).ToList();
+            allFoodData.Where(f => f.type == FoodType.MAIN && UnlockedRecipeIds.Contains(f.id)).ToList();
 
         public List<FoodData> GetUnlockedSideFoods() =>
-            allFoodData.Where(f => f.type == FoodType.SIDE && unlockedRecipeIds.Contains(f.id)).ToList();
+            allFoodData.Where(f => f.type == FoodType.SIDE && UnlockedRecipeIds.Contains(f.id)).ToList();
 
-        public bool IsUnlocked(string foodId) => unlockedRecipeIds.Contains(foodId);
+        public bool IsUnlocked(string foodId) => UnlockedRecipeIds.Contains(foodId);
     }
 }

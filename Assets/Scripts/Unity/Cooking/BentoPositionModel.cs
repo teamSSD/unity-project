@@ -30,6 +30,22 @@ public class BentoPositionModel : MonoBehaviour
         spriteRenderer.enabled = false;
     }
 
+    private void Start()
+    {
+#if AFTERTASTE_E2E
+        // 빈 도시락 슬롯은 화면 좌표만 노출한다. 배치는 매크로의 실제 mouse drag와
+        // BentoModel의 충돌 판정이 결정한다.
+        E2EWorldTargetRegistry.Register($"cooking.bento-slot.{GetInstanceID()}", transform);
+#endif
+    }
+
+    private void OnDestroy()
+    {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.Unregister($"cooking.bento-slot.{GetInstanceID()}", transform);
+#endif
+    }
+
     private void EnsureFallbackSprite()
     {
         if (spriteRenderer.sprite != null) return;

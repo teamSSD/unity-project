@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Game.Domain.Mall;
+using Game.Schema.State.Mall;
 using NUnit.Framework;
 
 public class OrderServiceTest
@@ -11,12 +12,25 @@ public class OrderServiceTest
     public void Setup()
     {
         money = new FakeMoneyService { Current = 0 };
-        svc = new OrderService(money);
+        svc = new OrderService(new MallSessionState(), money);
     }
 
     private static MenuSchema MakeMenu(int orderNumber)
     {
         return new MenuSchema("test_menu", orderNumber, (FoodData)null, new List<FoodData>());
+    }
+
+    [Test]
+    public void ServicesUsingSameState_ObserveTheSameOrders()
+    {
+        var state = new MallSessionState();
+        var writer = new OrderService(state, money);
+        var reader = new OrderService(state, money);
+
+        writer.GenerateOrder(MakeMenu(1), "q1", "npc_a");
+
+        Assert.AreEqual(1, reader.GetOrders().Count);
+        Assert.AreEqual("q1", reader.GetOrder("q1").questId);
     }
 
     [Test]

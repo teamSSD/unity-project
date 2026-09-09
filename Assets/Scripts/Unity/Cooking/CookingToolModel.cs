@@ -51,6 +51,9 @@ public class CookingToolModel : MonoBehaviour
 
     void Start()
     {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.RegisterCollider($"cooking.tool.{GetToolId()}", GetComponent<Collider2D>());
+#endif
         if (tooltipController != null && tooltipController.GetTooltipObject() != null)
         {
             cookingToolDescriptionScript = tooltipController.GetTooltipObject().GetComponent<CookingToolDescription>();
@@ -87,6 +90,9 @@ public class CookingToolModel : MonoBehaviour
 
     void OnDestroy()
     {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.UnregisterCollider($"cooking.tool.{GetToolId()}", GetComponent<Collider2D>());
+#endif
         clickStateUtil.OnDragEnd -= DetectTrashcan;
         clickStateUtil.OnClicked -= PlayMinigame;
         clickStateUtil.OnDragEnd -= OnToolDropped;
@@ -176,6 +182,21 @@ public class CookingToolModel : MonoBehaviour
     {
         return SchemaInstance.cookingToolData.id;
     }
+
+#if AFTERTASTE_E2E
+    /// <summary>WebGL E2E 조리 상태 관측값.</summary>
+    public int E2EIngredientCount => SchemaInstance?.Ingredients?.Count ?? 0;
+    public bool E2EIsCookable => SchemaInstance?.IsCookable() ?? false;
+    public string E2EResultFoodId => SchemaInstance?.GetResult()?.foodData?.id ?? string.Empty;
+    public string[] E2EIngredientFoodIds => SchemaInstance?.Ingredients?
+        .Where(food => food?.foodData != null)
+        .Select(food => food.foodData.id)
+        .ToArray() ?? System.Array.Empty<string>();
+
+    /// <summary>실제 도구 드롭과 동일한 전이 규칙/시각 갱신 경로를 호출한다.</summary>
+    public bool E2ETransferToTool(CookingToolModel target) =>
+        injected && target != null && !UILockManager.IsLocked && TryTransferToTool(target);
+#endif
 
     private void DetectTrashcan()
     {

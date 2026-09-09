@@ -38,21 +38,26 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
     {
         isLoading = true;
         UILockManager.Lock(UILockManager.Owner.Loading);
+        try
+        {
+            canvas.enabled = true;
+            await FadeAsync(0f, 1f, FADE_DURATION);
 
-        canvas.enabled = true;
-        await FadeAsync(0f, 1f, FADE_DURATION);
+            midAction?.Invoke();
 
-        midAction?.Invoke();
+            if (holdSeconds > 0f)
+                await UniTask.Delay(System.TimeSpan.FromSeconds(holdSeconds),
+                    cancellationToken: this.GetCancellationTokenOnDestroy());
 
-        if (holdSeconds > 0f)
-            await UniTask.Delay(System.TimeSpan.FromSeconds(holdSeconds),
-                cancellationToken: this.GetCancellationTokenOnDestroy());
-
-        await FadeAsync(1f, 0f, FADE_DURATION);
-
-        canvas.enabled = false;
-        isLoading = false;
-        UILockManager.Unlock(UILockManager.Owner.Loading);
+            await FadeAsync(1f, 0f, FADE_DURATION);
+        }
+        catch (System.Exception ex) { Debug.LogError($"[LoadingManager] BlackoutAsync failed: {ex}"); }
+        finally
+        {
+            canvas.enabled = false;
+            isLoading = false;
+            UILockManager.Unlock(UILockManager.Owner.Loading);
+        }
         onComplete?.Invoke();
     }
 
@@ -70,43 +75,47 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
     {
         isLoading = true;
         UILockManager.Lock(UILockManager.Owner.Loading);
-
-        // Fade in
-        canvas.enabled = true;
-        await FadeAsync(0f, 1f, FADE_DURATION);
-
-        // 페이드 인 직후 화면이 완전 가려진 상태에서 무거운 동기 초기화 실행
-        if (initAction != null)
+        try
         {
-            initAction.Invoke();
-            await UniTask.Yield(); // 초기화 직후 한 프레임 양보
-        }
+            // Fade in
+            canvas.enabled = true;
+            await FadeAsync(0f, 1f, FADE_DURATION);
 
-        // Unload previous
-        if (!string.IsNullOrEmpty(previousScene))
-        {
-            var scene = SceneManager.GetSceneByName(previousScene);
-            if (scene.isLoaded)
+            // 페이드 인 직후 화면이 완전 가려진 상태에서 무거운 동기 초기화 실행
+            if (initAction != null)
             {
-                var unload = SceneManager.UnloadSceneAsync(scene);
-                if (unload != null) await unload;
+                initAction.Invoke();
+                await UniTask.Yield();
             }
+
+            // Unload previous
+            if (!string.IsNullOrEmpty(previousScene))
+            {
+                var scene = SceneManager.GetSceneByName(previousScene);
+                if (scene.isLoaded)
+                {
+                    var unload = SceneManager.UnloadSceneAsync(scene);
+                    if (unload != null) await unload;
+                }
+            }
+
+            // Additive load
+            await SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+            SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
+
+            // 씬 활성화 = Awake/Start 일괄 실행 = 한 프레임 스파이크 가능.
+            await UniTask.Yield();
+
+            // Fade out
+            await FadeAsync(1f, 0f, FADE_DURATION);
         }
-
-        // Additive load
-        await SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-        SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
-
-        // 씬 활성화 = Awake/Start 일괄 실행 = 한 프레임 스파이크 가능.
-        // 불투명한 동안 한 프레임 흘려보내 스파이크를 흡수.
-        await UniTask.Yield();
-
-        // Fade out
-        await FadeAsync(1f, 0f, FADE_DURATION);
-
-        canvas.enabled = false;
-        isLoading = false;
-        UILockManager.Unlock(UILockManager.Owner.Loading);
+        catch (System.Exception ex) { Debug.LogError($"[LoadingManager] LoadSceneAdditiveAsync failed: {ex}"); }
+        finally
+        {
+            canvas.enabled = false;
+            isLoading = false;
+            UILockManager.Unlock(UILockManager.Owner.Loading);
+        }
         onComplete?.Invoke();
     }
 
@@ -114,20 +123,20 @@ public class LoadingManager : SingletonMonoBehaviour<LoadingManager>
     {
         isLoading = true;
         UILockManager.Lock(UILockManager.Owner.Loading);
-
-        // Fade in
-        canvas.enabled = true;
-        await FadeAsync(0f, 1f, FADE_DURATION);
-
-        // Async load
-        await SceneManager.LoadSceneAsync(sceneName);
-
-        // Fade out
-        await FadeAsync(1f, 0f, FADE_DURATION);
-
-        canvas.enabled = false;
-        isLoading = false;
-        UILockManager.Unlock(UILockManager.Owner.Loading);
+        try
+        {
+            canvas.enabled = true;
+            await FadeAsync(0f, 1f, FADE_DURATION);
+            await SceneManager.LoadSceneAsync(sceneName);
+            await FadeAsync(1f, 0f, FADE_DURATION);
+        }
+        catch (System.Exception ex) { Debug.LogError($"[LoadingManager] LoadSceneAsync failed: {ex}"); }
+        finally
+        {
+            canvas.enabled = false;
+            isLoading = false;
+            UILockManager.Unlock(UILockManager.Owner.Loading);
+        }
     }
 
     private async UniTask FadeAsync(float from, float to, float duration)

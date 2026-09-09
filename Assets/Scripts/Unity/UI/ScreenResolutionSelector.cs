@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class ScreenResolutionSelector : MonoBehaviour
 {
+    private const string BrowserManagedLabel = "브라우저 자동";
+
     private static readonly (int w, int h)[] Resolutions =
     {
         (1280, 720), (1600, 900), (1920, 1080), (2560, 1440)
@@ -17,6 +19,9 @@ public class ScreenResolutionSelector : MonoBehaviour
 
     public int CurrentIndex => currentIndex;
 
+    public static bool SupportsManualResolution(RuntimePlatform platform) =>
+        platform != RuntimePlatform.WebGLPlayer;
+
     public void SetIndex(int idx)
     {
         currentIndex = Mathf.Clamp(idx, 0, Resolutions.Length - 1);
@@ -25,6 +30,14 @@ public class ScreenResolutionSelector : MonoBehaviour
 
     void Start()
     {
+        if (!SupportsManualResolution(Application.platform))
+        {
+            prevButton.interactable = false;
+            nextButton.interactable = false;
+            UpdateText();
+            return;
+        }
+
         for (int i = 0; i < Resolutions.Length; i++)
         {
             if (Screen.width == Resolutions[i].w && Screen.height == Resolutions[i].h)
@@ -54,14 +67,39 @@ public class ScreenResolutionSelector : MonoBehaviour
 
     void Apply()
     {
+        if (!SupportsManualResolution(Application.platform)) return;
+
         var (w, h) = Resolutions[currentIndex];
         Screen.SetResolution(w, h, Screen.fullScreen);
         UpdateText();
         OnChanged?.Invoke();
+        StartCoroutine(RefreshInputAfterResize());
     }
 
-void UpdateText()
+    private System.Collections.IEnumerator RefreshInputAfterResize()
     {
+        // WebGL은 canvas render target/DOM 크기 변경이 여러 프레임에 걸쳐 propagate됨.
+        // 한 프레임만 대기하면 EventSystem/GraphicRaycaster/Camera.pixelRect 갱신이 늦음.
+        for (int i = 0; i < 3; i++) yield return null;
+        Canvas.ForceUpdateCanvases();
+        // Camera pixelRect도 강제 갱신 (raycast 좌표 매핑 원천).
+        var cam = Camera.main;
+        if (cam != null) { cam.enabled = false; cam.enabled = true; }
+        var es = UnityEngine.EventSystems.EventSystem.current;
+        if (es != null) { es.enabled = false; es.enabled = true; }
+        // 갱신 후 한 프레임 더 대기해서 재초기화 반영 확인.
+        yield return null;
+        Canvas.ForceUpdateCanvases();
+    }
+
+    void UpdateText()
+    {
+        if (!SupportsManualResolution(Application.platform))
+        {
+            resolutionText.text = BrowserManagedLabel;
+            return;
+        }
+
         var (w, h) = Resolutions[currentIndex];
         resolutionText.text = $"{w}x{h}";
     }

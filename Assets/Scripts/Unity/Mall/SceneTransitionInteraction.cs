@@ -10,6 +10,20 @@ public class SceneTransitionInteraction : MonoBehaviour
 
     private bool isPlayerNear;
 
+    private void Start()
+    {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.RegisterCollider($"scene.{targetScene}", GetComponent<Collider2D>());
+#endif
+    }
+
+    private void OnDestroy()
+    {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.UnregisterCollider($"scene.{targetScene}", GetComponent<Collider2D>());
+#endif
+    }
+
     private void Update()
     {
         if (isPlayerNear && !UILockManager.IsLocked && Input.GetKeyDown(KeyCode.Space))

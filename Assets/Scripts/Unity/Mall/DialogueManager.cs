@@ -83,6 +83,9 @@ public partial class DialogueManager : MonoBehaviour
         if (panelBtn == null) panelBtn = dialoguePanel.AddComponent<Button>();
         panelBtn.transition = Selectable.Transition.None;
         panelBtn.onClick.AddListener(OnPanelClicked);
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("dialogue.advance", panelBtn);
+#endif
 
         dialoguePanel.SetActive(false);
         playerMove = FindFirstObjectByType<PlayerMove>();

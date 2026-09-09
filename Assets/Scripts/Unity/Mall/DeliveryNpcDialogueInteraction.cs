@@ -41,6 +41,18 @@ public partial class DeliveryNpcDialogueInteraction : MonoBehaviour, INpcInterac
     void Start()
     {
         dialogueManager = Object.FindFirstObjectByType<DialogueManager>();
+#if AFTERTASTE_E2E
+        var collider = GetComponent<Collider2D>();
+        if (collider != null) E2EWorldTargetRegistry.RegisterCollider($"npc.{npcId}", collider);
+#endif
+    }
+
+    private void OnDestroy()
+    {
+#if AFTERTASTE_E2E
+        var collider = GetComponent<Collider2D>();
+        if (collider != null) E2EWorldTargetRegistry.UnregisterCollider($"npc.{npcId}", collider);
+#endif
     }
 
     void Update()

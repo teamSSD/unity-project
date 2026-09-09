@@ -19,7 +19,8 @@ public static class UILockManager
         Settings,
         PhaseSelection,
         Tutorial,
-        CookingTutorial
+        CookingTutorial,
+        ConfirmModal
     }
 
     private static readonly HashSet<Owner> activeLocks = new();

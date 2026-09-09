@@ -395,10 +395,6 @@ MonoBehaviour:
   foodShopConfig: {fileID: 11400000, guid: eae71541312c54a23bbe22f712fe8da6, type: 2}
   csvs: {fileID: 11400000, guid: 548d4a3881d1b44e29900254994050e1, type: 2}
   cropSprites: {fileID: 11400000, guid: 9ef4942b94e8c439a909c0acda9a7555, type: 2}
-  bgmMall: {fileID: 8300000, guid: f2e88d222179644bf9522dbbf0974fe4, type: 3}
-  bgmCooking: {fileID: 8300000, guid: 1d30f6b7b33c14d0face99950d6bf5ee, type: 3}
-  bgmNight: {fileID: 8300000, guid: e5bfc24d070ff461dbce1867c04df9aa, type: 3}
-  bgmGarden: {fileID: 8300000, guid: 88a88a01be4d146c7b57005d486878e7, type: 3}
 --- !u!4 &1503211006
 Transform:
   m_ObjectHideFlags: 0
@@ -492,8 +488,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::SoundManager
   bgmSource: {fileID: 0}
   sfxSource: {fileID: 0}
-  uiBookSfx: {fileID: 8300000, guid: 31d1f57fdea9543c3936e613ecc34c47, type: 3}
-  buttonClickSfx: {fileID: 8300000, guid: d69ef296295da44cbbdfda58fc9d737b, type: 3}
 --- !u!4 &1678895036
 Transform:
   m_ObjectHideFlags: 0

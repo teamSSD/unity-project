@@ -147,6 +147,12 @@ public class SauceMiniGame : MiniGameAbstract
         }
     }
 
+#if AFTERTASTE_E2E
+    public override string E2ENextInput => isUpperTurn ? "ArrowUp" : "ArrowDown";
+    public override float E2ECurrentValue => currentGauge;
+    public override float E2ETargetValue => targetGauge;
+#endif
+
 #if UNITY_EDITOR
     private void OnValidate() => RequiredFieldValidator.Validate(this);
 #endif

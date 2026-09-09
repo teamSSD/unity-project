@@ -172,7 +172,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 400, y: 100}
+  m_SizeDelta: {x: 250, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4256718533536143845
 CanvasRenderer:
@@ -204,15 +204,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC791\uBB3C \uC774\uB984"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c78b298cb66dcfe48a4353be015c7322, type: 2}
-  m_sharedMaterial: {fileID: 1914132618132894529, guid: c78b298cb66dcfe48a4353be015c7322, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 0545ace1e04104948bd80ac2267053bf, type: 2}
+  m_sharedMaterial: {fileID: -456126712835312690, guid: 0545ace1e04104948bd80ac2267053bf, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 0.34509805, g: 0.23529412, b: 0.15686275, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -224,18 +224,18 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48
-  m_fontSizeBase: 48
+  m_fontSize: 36
+  m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -246,7 +246,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 0
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -332,7 +332,7 @@ MonoBehaviour:
   gaugeCanvas: {fileID: 2136378795540798559}
   cropNameCanvas: {fileID: 5275240588914532642}
   cropNameLabel: {fileID: 6878130769119895931}
-  nameOffsetY: 0.3
+  cropNameClearance: 0.1
   farmIndex: 0
 --- !u!61 &372574293562405825
 BoxCollider2D:
@@ -897,11 +897,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9009058711819973355, guid: 7dc98fbbd91294b7397a6874121d3cbb, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 200
+      value: 130
       objectReference: {fileID: 0}
     - target: {fileID: 9009058711819973355, guid: 7dc98fbbd91294b7397a6874121d3cbb, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 200
+      value: 130
       objectReference: {fileID: 0}
     - target: {fileID: 9009058711819973355, guid: 7dc98fbbd91294b7397a6874121d3cbb, type: 3}
       propertyPath: m_LocalPosition.x

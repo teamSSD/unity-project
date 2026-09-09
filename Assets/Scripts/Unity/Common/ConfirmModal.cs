@@ -30,6 +30,12 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
         canvas.enabled = false;
     }
 
+    protected override void OnDestroy()
+    {
+        UILockManager.Unlock(UILockManager.Owner.ConfirmModal);
+        base.OnDestroy();
+    }
+
     private void Update()
     {
         if (!IsOpen) return;
@@ -55,6 +61,16 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
         Instance.ShowInternal(title, message, onOk, null, okText, "", singleButton: true);
     }
 
+    /// <summary>씬 전환용 강제 종료. 콜백은 실행하지 않는다.</summary>
+    public static void Dismiss()
+    {
+        if (Instance == null || !IsOpen) return;
+        Instance.canvas.enabled = false;
+        Instance.currentOnConfirm = null;
+        Instance.currentOnCancel = null;
+        UILockManager.Unlock(UILockManager.Owner.ConfirmModal);
+    }
+
     private void ShowInternal(string title, string message,
         Action onConfirm, Action onCancel, string yesText, string noText, bool singleButton)
     {
@@ -66,11 +82,13 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
         currentOnCancel = onCancel;
         if (noButton != null) noButton.gameObject.SetActive(!singleButton);
         canvas.enabled = true;
+        UILockManager.Lock(UILockManager.Owner.ConfirmModal);
     }
 
     private void OnYes()
     {
         canvas.enabled = false;
+        UILockManager.Unlock(UILockManager.Owner.ConfirmModal);
         var cb = currentOnConfirm;
         currentOnConfirm = null; currentOnCancel = null;
         cb?.Invoke();
@@ -79,6 +97,7 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
     private void OnNo()
     {
         canvas.enabled = false;
+        UILockManager.Unlock(UILockManager.Owner.ConfirmModal);
         var cb = currentOnCancel;
         currentOnConfirm = null; currentOnCancel = null;
         cb?.Invoke();
@@ -143,6 +162,10 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
 
         yesButton.onClick.AddListener(OnYes);
         noButton.onClick.AddListener(OnNo);
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("confirm.yes", yesButton);
+        E2EUiTargetRegistry.Register("confirm.no", noButton);
+#endif
     }
 
     private static TextMeshProUGUI AddText(Transform parent, int size, FontStyles style, Color color)

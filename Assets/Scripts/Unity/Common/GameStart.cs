@@ -41,6 +41,21 @@ public class GameStart : MonoBehaviour
 
         if (Settings != null)
             Settings.onClick.AddListener(OpenSetting);
+
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("start.new-game", NewGameButton);
+        E2EUiTargetRegistry.Register("start.continue", ContinueButton);
+        E2EUiTargetRegistry.Register("start.settings", Settings);
+#endif
+    }
+
+    private void OnDestroy()
+    {
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Unregister("start.new-game", NewGameButton);
+        E2EUiTargetRegistry.Unregister("start.continue", ContinueButton);
+        E2EUiTargetRegistry.Unregister("start.settings", Settings);
+#endif
     }
 
     private void ProcessContinue()
@@ -91,13 +106,18 @@ public class GameStart : MonoBehaviour
             InitializeManagers();
             ApplyNewGameDefaults();
 
-            // NewGame: 새 시드 생성
+            // NewGame: 새 시드 생성. E2E 전용 빌드는 장기 운영을 바로 검증하도록
+            // 튜토리얼 완료 + 고정 시드 프로필로 시작한다.
+#if AFTERTASTE_E2E_LONGRUN
+            AftertasteE2EProfileSetup.ApplyAtNewGame(GameStateReporter.CurrentSession);
+#else
             int now = (int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             GameSessionRoot.Instance.Stats.GetSaveData().immutableSeed = now;
             int newSessionSeed = (int)((uint)now ^ (uint)System.Environment.TickCount);
             GameRandom.InitSession(now, newSessionSeed);
             GameRandom.InitDay(0);
             GameSessionRoot.Instance?.Weather?.UpdateWeather(0);
+#endif
 
             SaveManager.SaveAll();
             HUDManager.Instance?.Initialize();
@@ -131,7 +151,7 @@ public class GameStart : MonoBehaviour
     }
     private void OpenSetting()
     {
-        SettingsUIManager.Instance?.Open();
+        UIFlowController.TryOpenSettings();
     }
 
 #if UNITY_EDITOR

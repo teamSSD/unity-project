@@ -195,6 +195,24 @@ public class GriddleMinigame : MiniGameAbstract
         }
     }
 
+#if AFTERTASTE_E2E
+    public override string E2ENextInput
+    {
+        get
+        {
+            if (_activeDirections.Count == 0) return string.Empty;
+            var next = _activeDirections[0];
+            if (next == Vector2Int.up) return "ArrowUp";
+            if (next == Vector2Int.down) return "ArrowDown";
+            if (next == Vector2Int.left) return "ArrowLeft";
+            if (next == Vector2Int.right) return "ArrowRight";
+            return string.Empty;
+        }
+    }
+    public override float E2ECurrentValue => _processedCount;
+    public override float E2ETargetValue => totalArrowCount;
+#endif
+
 #if UNITY_EDITOR
     private void OnValidate() => RequiredFieldValidator.Validate(this);
 #endif

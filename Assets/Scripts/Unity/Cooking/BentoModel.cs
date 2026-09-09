@@ -41,8 +41,20 @@ public class BentoModel : MonoBehaviour
         clickStateUtil.OnDragEnd += SetPosition;
     }
 
+    void Start()
+    {
+#if AFTERTASTE_E2E
+        // E2E는 이 도시락을 실제 드래그로 조작한다. 상태 변경 API가 아니라
+        // 캔버스 좌표를 계산하기 위한 관측 지점만 제공한다.
+        E2EWorldTargetRegistry.Register($"cooking.bento.{GetInstanceID()}", transform);
+#endif
+    }
+
     private void OnDestroy()
     {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.Unregister($"cooking.bento.{GetInstanceID()}", transform);
+#endif
         clickStateUtil.OnDragStart -= ShowAvailablePositions;
         clickStateUtil.OnDragEnd -= HideAvailablePositions;
         clickStateUtil.OnDragEnd -= SetPosition;

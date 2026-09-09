@@ -20,7 +20,6 @@ MonoBehaviour:
   image: {fileID: 21300000, guid: ce8b82f90afa544969fa3d0368226110, type: 3}
   ingredient: {fileID: 11400000, guid: 79a78d28e5876407385a962b3242a0cb, type: 2}
   availableTools:
-  - T001
   - T003
   type: 1
   toolVariants:

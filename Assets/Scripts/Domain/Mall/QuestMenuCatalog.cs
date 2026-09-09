@@ -18,5 +18,20 @@ namespace Game.Domain.Mall
 
         public MenuSchema GetByGroupId(string groupId)
             => _menus.TryGetValue(groupId, out var m) ? m : null;
+
+        public MenuSchema CreateOrderMenu(string groupId, int orderNumber)
+        {
+            var template = GetByGroupId(groupId);
+            return template == null
+                ? null
+                : new MenuSchema(
+                    template.name,
+                    orderNumber,
+                    new List<FoodData>(template.mainMenus),
+                    new List<FoodData>(template.sideMenus));
+        }
+
+        /// <summary>카탈로그에 정의된 전체 배달 퀘스트 그룹 ID.</summary>
+        public IEnumerable<string> GetAllGroupIds() => _menus.Keys;
     }
 }

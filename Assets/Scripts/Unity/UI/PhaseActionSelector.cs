@@ -36,6 +36,22 @@ public class PhaseActionSelector : MonoBehaviour
     {
         InitializeActionExecutors();
         SetupButtons();
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("phase.work", workButton);
+        E2EUiTargetRegistry.Register("phase.rest", restButton);
+        E2EUiTargetRegistry.Register("phase.shopping", shoppingButton);
+#endif
+    }
+
+    private void OnDestroy()
+    {
+        // 외부 씬 전환/부모 Canvas 파괴로 Hide를 거치지 않는 경우에도 전역 잠금을 반환한다.
+        UILockManager.Unlock(UILockManager.Owner.PhaseSelection);
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Unregister("phase.work", workButton);
+        E2EUiTargetRegistry.Unregister("phase.rest", restButton);
+        E2EUiTargetRegistry.Unregister("phase.shopping", shoppingButton);
+#endif
     }
 
     private void InitializeActionExecutors()
@@ -93,6 +109,17 @@ public class PhaseActionSelector : MonoBehaviour
         if (workButton != null) workButton.interactable = true;
         if (restButton != null) restButton.interactable = true;
         if (shoppingButton != null) shoppingButton.interactable = true;
+        // 프리팹 세팅에 관계없이 부모 캔버스 중앙 강제 배치.
+        // (일부 화면비/해상도에서 root RectTransform anchor가 어긋나 화면 밖으로 밀리는 케이스 방어.)
+        var rt = transform as RectTransform;
+        if (rt != null)
+        {
+            rt.anchorMin = new Vector2(0.5f, 0.5f);
+            rt.anchorMax = new Vector2(0.5f, 0.5f);
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition = Vector2.zero;
+            rt.localScale = Vector3.one;
+        }
         gameObject.SetActive(true);
         UILockManager.Lock(UILockManager.Owner.PhaseSelection);
 
@@ -122,11 +149,8 @@ public class PhaseActionSelector : MonoBehaviour
         UILockManager.Unlock(UILockManager.Owner.PhaseSelection);
     }
 
-    private void Update()
-    {
-        if (gameObject.activeInHierarchy && Input.GetKeyDown(KeyCode.Escape))
-            Hide();
-    }
+    // ESC 닫기 제거: 페이즈 선택은 필수 액션이라 취소 없이 반드시 하나 골라야 함.
+    // (이전엔 ESC로 Hide 가능 → UILock만 풀리고 유저가 다음 행동 없이 진행 불가 상태로 인식.)
 
     private void UpdateUI()
     {
@@ -148,6 +172,10 @@ public class PhaseActionSelector : MonoBehaviour
 
     private void OnActionClicked(ActionType actionType)
     {
+        // 휴식은 Blackout 중간에 PassPhase를 수행한다. 액션 뒤에 Hide하면
+        // OnPhaseChanged가 새 페이즈 선택창을 Show한 직후 후처리가 그 창을 숨긴다.
+        // 현재 선택창을 먼저 닫아야 다음 페이즈 UI는 그대로 남는다.
+        Hide();
         actionExecutors[actionType]?.Invoke();
         OnActionExecuted?.Invoke(actionType);
     }

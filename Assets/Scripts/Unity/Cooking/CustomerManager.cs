@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Game.Domain.Cooking;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ using UnityEngine;
 [RequireComponent(typeof(DeliveryTicketCoordinator))]
 public class CustomerManager : MonoBehaviour
 {
+    private const string DoorbellStreamingPath = "Audio/SFX/sfx_doorbell_ring.mp3";
     [Header("References")]
     [SerializeField] private AudioClip doorSfx;
     [SerializeField] private List<CustomerData> customerDataList;
@@ -126,7 +128,7 @@ public class CustomerManager : MonoBehaviour
         currentOrderingCustomer = lifecycle.StartOrder();
         activeCustomers.Add(lifecycle);
 
-        if (doorSfx != null) SoundManager.Instance.Play2DSFX(doorSfx, 0.7f);
+        SoundManager.Instance?.PlayStreamingSfx(DoorbellStreamingPath, 0.7f);
     }
 
     private void OnCustomerServed(CustomerLifecycle lifecycle, MenuValidator.ValidationResult validation, int reward)
@@ -286,12 +288,21 @@ public class CustomerManager : MonoBehaviour
         currentOrderingCustomer = lifecycle.StartOrder();
         activeCustomers.Add(lifecycle);
 
-        if (doorSfx != null) SoundManager.Instance?.Play2DSFX(doorSfx, 0.7f);
+        SoundManager.Instance?.PlayStreamingSfx(DoorbellStreamingPath, 0.7f);
         return lifecycle;
     }
 
     /// <summary>튜토리얼용. 현재 spawn된 ordering customer GameObject (스폰 직후 유효, 클릭 완료 후 destroy됨).</summary>
     public GameObject GetCurrentOrderingCustomer() => currentOrderingCustomer;
+
+#if AFTERTASTE_E2E
+    /// <summary>현재 Cooking 세션이 진입 시 캡처한 판매 메인 메뉴. 읽기 전용 E2E 관측값.</summary>
+    public string[] E2ESalesMainFoodIds => salesMenus?
+        .SelectMany(menu => menu?.mainMenus ?? new List<FoodData>())
+        .Where(food => food != null)
+        .Select(food => food.id)
+        .ToArray() ?? Array.Empty<string>();
+#endif
 
     /// <summary>영업 조기 종료 — 모든 손님/티켓 즉시 파괴 후 페이즈 넘김.
     /// 스킵 버튼용. 정산은 지금까지 벌어들인 금액 그대로 반영.</summary>

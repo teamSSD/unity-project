@@ -1,7 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -11,9 +15,39 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     public AudioSource sfxSource;
     private AudioSource loopSfxSource;
 
-    [Header("UI SFX")]
-    [SerializeField] private AudioClip uiBookSfx;
-    [SerializeField] private AudioClip buttonClickSfx;
+    // UI SFX는 Unity AudioClip으로 import하지 않는다. WebGL은 브라우저의 Audio API가
+    // StreamingAssets 원본을 재생하고, 다른 플랫폼만 같은 원본을 Unity AudioClip으로 preload한다.
+    private const string UiBookStreamingPath = "Audio/UI/sfx_ui_book.mp3";
+    private const string ButtonClickStreamingPath = "Audio/UI/sfx_ui_button_click.mp3";
+    private const string BgmMallStreamingPath = "Audio/BGM/bgm_mall_theme.mp3";
+    private const string BgmCookingStreamingPath = "Audio/BGM/bgm_preperation_theme.mp3";
+    private const string BgmNightStreamingPath = "Audio/BGM/bgm_night_theme.mp3";
+    private const string BgmGardenStreamingPath = "Audio/BGM/bgm_garden_dawn.mp3";
+    private AudioClip _uiBookSfx;
+    private AudioClip _buttonClickSfx;
+    private bool _uiSfxPreloadStarted;
+    private readonly Dictionary<string, AudioClip> _streamingAudioClips = new Dictionary<string, AudioClip>();
+    private string _activeBgmPath;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [DllImport("__Internal")]
+    private static extern void AftertastePlayUiSfx(string relativePath, float volume);
+
+    [DllImport("__Internal")]
+    private static extern void AftertastePlayBgm(string relativePath, float volume);
+
+    [DllImport("__Internal")]
+    private static extern void AftertasteStopBgm();
+
+    [DllImport("__Internal")]
+    private static extern void AftertastePlayLoopSfx(string relativePath, float volume);
+
+    [DllImport("__Internal")]
+    private static extern void AftertasteStopLoopSfx();
+
+    [DllImport("__Internal")]
+    private static extern void AftertasteSetLoopSfxVolume(float volume);
+#endif
 
     private CancellationTokenSource _loopFadeCts;
     private readonly HashSet<int> _registeredButtons = new HashSet<int>();
@@ -53,6 +87,7 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         if (progress != null) progress.OnPhaseChanged += OnPhaseChanged;
         UpdateBGM();
         RegisterButtons(null);
+        PreloadUiSfxAsync().Forget();
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -134,31 +169,48 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
 
     private void UpdateBGM()
     {
-        AudioClip clip = SelectBGMClip();
-        if (clip == null)
+        string path = SelectBgmStreamingPath();
+        if (string.IsNullOrEmpty(path))
         {
+            _activeBgmPath = null;
+#if UNITY_WEBGL && !UNITY_EDITOR
+            AftertasteStopBgm();
+#else
             bgmSource.Stop();
             bgmSource.clip = null;
+#endif
             return;
         }
-        if (bgmSource.clip == clip) return;
-        bgmSource.clip = clip;
-        if (_hasAudioListener) bgmSource.Play();
+
+        if (_activeBgmPath == path) return;
+        _activeBgmPath = path;
+#if UNITY_WEBGL && !UNITY_EDITOR
+        AftertastePlayBgm(path, bgmSource != null ? bgmSource.volume : 1f);
+#else
+        PlayStreamingBgmAsync(path).Forget();
+#endif
     }
 
-    private AudioClip SelectBGMClip()
+    private string SelectBgmStreamingPath()
     {
         string scene = SceneManager.GetActiveScene().name;
         if (scene == "Boot" || scene == "GameStart") return null;
         // Garden은 페이즈 무관 항상 dawn BGM 유지.
-        if (scene == "Garden") return CatalogProvider.BgmGarden ?? CatalogProvider.BgmMall;
-        if (GameSessionRoot.Instance?.Progress?.PhaseData?.Phase == PhaseType.Night) return CatalogProvider.BgmNight;
-        return scene == "Cooking" ? CatalogProvider.BgmCooking : CatalogProvider.BgmMall;
+        if (scene == "Garden") return BgmGardenStreamingPath;
+        if (GameSessionRoot.Instance?.Progress?.PhaseData?.Phase == PhaseType.Night) return BgmNightStreamingPath;
+        return scene == "Cooking" ? BgmCookingStreamingPath : BgmMallStreamingPath;
     }
 
     // ── BGM 볼륨 ──
 
-    public void SetBGMVolume(float volume) => bgmSource.volume = Mathf.Clamp01(volume);
+    public void SetBGMVolume(float volume)
+    {
+        float clamped = Mathf.Clamp01(volume);
+        bgmSource.volume = clamped;
+#if UNITY_WEBGL && !UNITY_EDITOR
+        if (!string.IsNullOrEmpty(_activeBgmPath)) AftertastePlayBgm(_activeBgmPath, clamped);
+#endif
+    }
     public void SetSFXVolume(float volume) => sfxSource.volume = Mathf.Clamp01(volume);
 
     // ── 일회성 SFX ──
@@ -168,13 +220,89 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         if (clip == null) return;
         // 씬 전환 순간 리스너 없으면 skip (Unity 경고 스팸 방지).
         if (!_hasAudioListener) return;
+#if UNITY_WEBGL && !UNITY_EDITOR
+        // Unity WebGL's imported AudioClip/FSB path fails for a number of short MP3
+        // effects. Route the original source through the browser decoder instead.
+        PlayStreamingSfx($"Audio/SFX/{clip.name}.mp3", volume);
+#else
         sfxSource.PlayOneShot(clip, volume);
+#endif
+    }
+
+    /// <summary>원본 파일이 StreamingAssets에 있는 효과음을 재생한다. WebGL에서는 Unity의
+    /// AudioClip/FSB 디코더를 거치지 않고 브라우저 Audio API로 재생한다.</summary>
+    public void PlayStreamingSfx(string relativePath, float volume = 1f)
+    {
+        if (string.IsNullOrWhiteSpace(relativePath)) return;
+#if UNITY_WEBGL && !UNITY_EDITOR
+        AftertastePlayUiSfx(relativePath, Mathf.Clamp01(volume) * (sfxSource != null ? sfxSource.volume : 1f));
+#else
+        PlayStreamingSfxAsync(relativePath, volume).Forget();
+#endif
     }
 
     // ── UI SFX (UISoundManager에서 흡수) ──
 
-    public void PlayUIBook()      => Play2DSFX(uiBookSfx);
-    public void PlayButtonClick() => Play2DSFX(buttonClickSfx);
+    public void PlayUIBook() => PlayUiSfx(UiBookStreamingPath, ref _uiBookSfx);
+    public void PlayButtonClick() => PlayUiSfx(ButtonClickStreamingPath, ref _buttonClickSfx);
+
+    private void PlayUiSfx(string streamingPath, ref AudioClip clip)
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        // WebGL의 Unity AudioClip(AAC/FSB) 디코더는 이 두 짧은 UI 효과음에서 실패한다.
+        // 실제 브라우저 사용자 입력에서 호출되므로 Audio.play()의 autoplay 정책도 충족한다.
+        AftertastePlayUiSfx(streamingPath, sfxSource != null ? sfxSource.volume : 1f);
+#else
+        if (clip == null) PreloadUiSfxAsync().Forget();
+        Play2DSFX(clip);
+#endif
+    }
+
+    private async UniTaskVoid PreloadUiSfxAsync()
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        await UniTask.CompletedTask;
+#else
+        if (_uiSfxPreloadStarted) return;
+        _uiSfxPreloadStarted = true;
+        _uiBookSfx = await LoadStreamingAudioClipAsync(UiBookStreamingPath);
+        _buttonClickSfx = await LoadStreamingAudioClipAsync(ButtonClickStreamingPath);
+#endif
+    }
+
+#if !UNITY_WEBGL || UNITY_EDITOR
+    private async UniTask<AudioClip> LoadStreamingAudioClipAsync(string relativePath)
+    {
+        if (_streamingAudioClips.TryGetValue(relativePath, out var cached)) return cached;
+        var path = Path.Combine(Application.streamingAssetsPath, relativePath);
+        using var request = UnityWebRequestMultimedia.GetAudioClip(new Uri(path), AudioType.MPEG);
+        await request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogWarning($"[SoundManager] UI SFX preload failed: {relativePath} ({request.error})");
+            return null;
+        }
+
+        var clip = DownloadHandlerAudioClip.GetContent(request);
+        _streamingAudioClips[relativePath] = clip;
+        return clip;
+    }
+
+    private async UniTaskVoid PlayStreamingBgmAsync(string path)
+    {
+        var clip = await LoadStreamingAudioClipAsync(path);
+        if (clip == null || _activeBgmPath != path) return;
+        bgmSource.clip = clip;
+        if (_hasAudioListener) bgmSource.Play();
+    }
+
+    private async UniTaskVoid PlayStreamingSfxAsync(string path, float volume)
+    {
+        var clip = await LoadStreamingAudioClipAsync(path);
+        if (clip != null) Play2DSFX(clip, volume);
+    }
+#endif
 
     // ── 버튼 자동 등록 (GlobalButtonSfxManager에서 흡수) ──
 
@@ -201,22 +329,36 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     {
         if (clip == null) return;
         if (!_hasAudioListener) return;
+#if UNITY_WEBGL && !UNITY_EDITOR
+        AftertastePlayLoopSfx(
+            $"Audio/SFX/{clip.name}.mp3",
+            sfxSource != null ? sfxSource.volume : 1f);
+#else
         RestartLoopFade();
         loopSfxSource.clip = clip;
         loopSfxSource.volume = 0f;
         loopSfxSource.Play();
         FadeLoopSFXAsync(0f, 1f, fadeIn, _loopFadeCts.Token).Forget();
+#endif
     }
 
     public void StopLoopSFX(float fadeOut = 0.2f)
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        AftertasteStopLoopSfx();
+#else
         RestartLoopFade();
         FadeAndStopLoopSFXAsync(fadeOut, _loopFadeCts.Token).Forget();
+#endif
     }
 
     public void SetLoopSFXVolume(float volume)
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        AftertasteSetLoopSfxVolume(Mathf.Clamp01(volume));
+#else
         loopSfxSource.volume = Mathf.Clamp01(volume);
+#endif
     }
 
     private void RestartLoopFade()

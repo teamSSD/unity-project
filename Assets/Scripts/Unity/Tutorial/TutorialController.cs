@@ -153,6 +153,12 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
     public void Complete()
     {
         GameSessionRoot.Instance?.Tutorial?.Complete();
+        // 저장 상태만 완료로 바꾸면, 이미 표시 중인 bubble의 Tutorial lock은 남는다.
+        // 새 게임 직후 E2E 프로필처럼 완료 상태를 강제하는 경로에서도 입력이 막히지 않게
+        // 화면·레시피북 플래그·lock을 한 단위로 정리한다.
+        RecipeBookManager.TutorialForceOpen = false;
+        RecipeBookManager.TutorialBlockOpen = false;
+        DestroyActive();
         SaveManager.SaveAll();
     }
 

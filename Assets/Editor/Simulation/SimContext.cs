@@ -89,7 +89,7 @@ namespace Game.Editor.Simulation
 
             // Weather + Settlement 먼저 (upgrade 서비스가 필요)
             ctx.Weather = new WeatherService();
-            ctx.Settlement = new SettlementService();
+            ctx.Settlement = new SettlementService(ctx.State.mall.session);
 
             // Adapters (Stats/Settlement 필요)
             ctx.Money = new DirectMoneyAdapter(ctx.Stats);
@@ -113,14 +113,14 @@ namespace Game.Editor.Simulation
             ctx.StorageUpgrade = new StorageUpgradeService(ctx.State.shop.persistent, storageRows, ctx.Money, ctx.Expense);
             ctx.ToolUpgrade = new ToolUpgradeService(ctx.State.shop.persistent, toolRows, ctx.Money, ctx.Expense);
 
-            ctx.Inventory = new InventoryService(cats.food.All, ctx.StorageUpgrade);
-            ctx.Purchase = new PurchaseService(cats.foodShopConfig, ctx.Inventory, ctx.Money, ctx.Expense);
+            ctx.Inventory = new InventoryService(new Game.Schema.State.InventoryState(), cats.food.All, ctx.StorageUpgrade);
+            ctx.Purchase = new PurchaseService(ctx.State.shop.session, cats.foodShopConfig, ctx.Inventory, ctx.Money, ctx.Expense);
 
-            ctx.MenuSelection = new MenuSelectionService(cats.food.All);
-            ctx.UnlockedFood = new UnlockedFoodService(cats.food.All);
+            ctx.MenuSelection = new MenuSelectionService(new Game.Schema.State.MenuSelectionState(), cats.food.All);
+            ctx.UnlockedFood = new UnlockedFoodService(new Game.Schema.State.UnlockedFoodState(), cats.food.All);
             ctx.RecipeLookup = new RecipeLookupService(cats.recipe.All);
 
-            ctx.Order = new OrderService(ctx.Money);
+            ctx.Order = new OrderService(new Game.Schema.State.Mall.MallSessionState(), ctx.Money);
 
             // HeadlessProgress
             ctx.Progress = new HeadlessProgress(ctx.State.phase, ctx.Stats, ctx.Inventory, ctx.Weather, ctx.Settlement);

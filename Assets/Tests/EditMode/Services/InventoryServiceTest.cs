@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Game.Domain.Common;
+using Game.Schema.State;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -36,7 +37,19 @@ public class InventoryServiceTest
     }
 
     private InventoryService BuildSvc(params FoodData[] catalog)
-        => new InventoryService(catalog, null);
+        => new InventoryService(new InventoryState(), catalog, null);
+
+    [Test]
+    public void ServicesUsingSameState_ObserveTheSameInventory()
+    {
+        var state = new InventoryState();
+        var writer = new InventoryService(state, new[] { foodA }, null);
+        var reader = new InventoryService(state, new[] { foodA }, null);
+
+        writer.AddFood(foodA, 4);
+
+        Assert.AreEqual(4, reader.CheckStockAmount(foodA));
+    }
 
     [Test]
     public void AddFood_NewItem_AddsBatch()
@@ -47,13 +60,13 @@ public class InventoryServiceTest
     }
 
     [Test]
-    public void AddFood_SameItemTwice_TwoBatches()
+    public void AddFood_SameExpiration_MergesIntoOneBatch()
     {
         var svc = BuildSvc(foodA);
         svc.AddFood(foodA, 3);
         svc.AddFood(foodA, 2);
         Assert.AreEqual(5, svc.CheckStockAmount(foodA));
-        Assert.AreEqual(2, svc.GetBatches(foodA).Count);
+        Assert.AreEqual(1, svc.GetBatches(foodA).Count);
     }
 
     [Test]

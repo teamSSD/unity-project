@@ -19,6 +19,19 @@ MiniGameManager.cs
 public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
 {
     private MiniGameAbstract currentGame;
+    public string ActiveMinigame => currentGame != null ? currentGame.GetType().Name : string.Empty;
+#if AFTERTASTE_E2E
+    public string E2ENextInput => currentGame != null ? currentGame.E2ENextInput : string.Empty;
+    public float E2ECurrentValue => currentGame != null ? currentGame.E2ECurrentValue : 0f;
+    public float E2ETargetValue => currentGame != null ? currentGame.E2ETargetValue : 0f;
+
+    /// <summary>씬에 실제 연결된 프리팹 기준 미니게임 타입. 레시피 ID 추측을 피하는 E2E 관측값.</summary>
+    public string E2EResolveMinigameName(string toolId, RecipeData recipeData)
+    {
+        var prefab = recipeData != null ? GetPrefab(toolId, recipeData) : null;
+        return prefab != null ? prefab.GetComponent<MiniGameAbstract>()?.GetType().Name ?? string.Empty : string.Empty;
+    }
+#endif
 
     [SerializeField] private GameObject BakeMinigamePrefab;
     [SerializeField] private GameObject BoilMinigamePrefab;
@@ -54,12 +67,14 @@ public class MiniGameManager : MonoBehaviour, PlayMinigameUsecase
             isFinished = true;
         };
         UILockManager.Lock(UILockManager.Owner.Minigame);
-        currentGame.StartGame();
-
-        await UniTask.WaitUntil(() => isFinished, cancellationToken: ct);
-        await UniTask.WaitUntil(() => currentGame == null, cancellationToken: ct);
-
-        UILockManager.Unlock(UILockManager.Owner.Minigame);
+        try
+        {
+            currentGame.StartGame();
+            await UniTask.WaitUntil(() => isFinished, cancellationToken: ct);
+            await UniTask.WaitUntil(() => currentGame == null, cancellationToken: ct);
+        }
+        catch (System.Exception ex) { Debug.LogError($"[MiniGameManager] Minigame await failed: {ex}"); }
+        finally { UILockManager.Unlock(UILockManager.Owner.Minigame); }
         onCompleted?.Invoke(recipeData, finalScore);
     }
 

@@ -9,6 +9,7 @@ using UnityEngine.UI;
 /// </summary>
 public class BentoSelectionController : MonoBehaviour
 {
+    public static BentoSelectionController ActiveInstance { get; private set; }
     [Header("Bento Slots")]
     public BentoSlotUI[] bentoSlots; // 0: Bento 1, 1: Bento 2, 2: Bento 3
     
@@ -23,6 +24,30 @@ public class BentoSelectionController : MonoBehaviour
     private List<FoodData> allFoodData = new List<FoodData>();
     private IUnlockedFoodProvider unlockedProvider;
     private MenuSelectionService menuAccess;
+
+    private void Awake()
+    {
+        ActiveInstance = this;
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("bento.confirm", confirmButton);
+        E2EUiTargetRegistry.Register("bento.back", backButton);
+#endif
+    }
+    private void OnDestroy()
+    {
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Unregister("bento.confirm", confirmButton);
+        E2EUiTargetRegistry.Unregister("bento.back", backButton);
+        for (int i = 0; i < bentoSlots.Length; i++)
+        {
+            var slot = bentoSlots[i];
+            if (slot == null) continue;
+            UnregisterCategoryArrows(i, "main", slot.mainCategory);
+            UnregisterCategoryArrows(i, "side", slot.sideCategory);
+        }
+#endif
+        if (ActiveInstance == this) ActiveInstance = null;
+    }
 
     /// <summary>Composition Root에서 의존 명시 주입 — Start에서의 singleton 직접 조회 제거.</summary>
     public void Inject(IUnlockedFoodProvider unlocked, MenuSelectionService menu)
@@ -56,6 +81,10 @@ public class BentoSelectionController : MonoBehaviour
             
             int bentoIndex = i;
             bentoSlots[i].Initialize(bentoIndex, OnBentoNameChanged);
+#if AFTERTASTE_E2E
+            RegisterCategoryArrows(bentoIndex, "main", bentoSlots[i].mainCategory);
+            RegisterCategoryArrows(bentoIndex, "side", bentoSlots[i].sideCategory);
+#endif
 
             // Instantiate items for each slot
             PopulateSlotItems(bentoIndex);
@@ -75,6 +104,22 @@ public class BentoSelectionController : MonoBehaviour
         }
     }
 
+#if AFTERTASTE_E2E
+    private static void RegisterCategoryArrows(int slotIndex, string category, BentoCategoryUI ui)
+    {
+        if (ui == null) return;
+        E2EUiTargetRegistry.Register($"bento.slot{slotIndex}.{category}.previous", ui.leftArrow);
+        E2EUiTargetRegistry.Register($"bento.slot{slotIndex}.{category}.next", ui.rightArrow);
+    }
+
+    private static void UnregisterCategoryArrows(int slotIndex, string category, BentoCategoryUI ui)
+    {
+        if (ui == null) return;
+        E2EUiTargetRegistry.Unregister($"bento.slot{slotIndex}.{category}.previous", ui.leftArrow);
+        E2EUiTargetRegistry.Unregister($"bento.slot{slotIndex}.{category}.next", ui.rightArrow);
+    }
+#endif
+
     private void PopulateSlotItems(int bentoIndex)
     {
         var slot = bentoSlots[bentoIndex];
@@ -87,11 +132,17 @@ public class BentoSelectionController : MonoBehaviour
         {
             if (food.type == FoodType.MAIN)
             {
-                slot.mainCategory.AddItem(itemPrefab, food, (item) => HandleItemSelection(bentoIndex, item, true));
+                var item = slot.mainCategory.AddItem(itemPrefab, food, (selected) => HandleItemSelection(bentoIndex, selected, true));
+#if AFTERTASTE_E2E
+                E2EUiTargetRegistry.Register($"bento.slot{bentoIndex}.main.{food.id}", item?.GetComponent<Button>());
+#endif
             }
             else if (food.type == FoodType.SIDE)
             {
-                slot.sideCategory.AddItem(itemPrefab, food, (item) => HandleItemSelection(bentoIndex, item, false));
+                var item = slot.sideCategory.AddItem(itemPrefab, food, (selected) => HandleItemSelection(bentoIndex, selected, false));
+#if AFTERTASTE_E2E
+                E2EUiTargetRegistry.Register($"bento.slot{bentoIndex}.side.{food.id}", item?.GetComponent<Button>());
+#endif
             }
         }
     }
@@ -175,6 +226,8 @@ public class BentoSelectionController : MonoBehaviour
 
     public void Show(System.Action onConfirm)
     {
+        if (!UILockManager.CanOpen(UILockManager.Owner.BentoSelection)) return;
+
         UILockManager.Lock(UILockManager.Owner.BentoSelection);
         onConfirmCallback = onConfirm;
         gameObject.SetActive(true);

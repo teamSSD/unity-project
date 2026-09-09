@@ -48,16 +48,33 @@ public class StairsInteraction : MonoBehaviour
 
         float speed = playerMove != null ? playerMove.moveSpeed : 5f;
 
-        // Phase 1: player → 현재 stair 위치
-        yield return MoveTo(player, transform.position, speed, sr);
-        // Phase 2: 현재 stair → target stair (계단 타기)
-        yield return MoveTo(player, targetStair.position, speed, sr);
+        try
+        {
+            // Phase 1: player → 현재 stair 위치
+            yield return MoveTo(player, transform.position, speed, sr);
+            // Phase 2: 현재 stair → target stair (계단 타기)
+            yield return MoveTo(player, targetStair.position, speed, sr);
 
-        if (animator != null) animator.SetBool(IsMovingHash, false);
-        if (rb != null) rb.simulated = true;
-        if (playerMove != null) playerMove.enabled = true;
-        UILockManager.Unlock(UILockManager.Owner.Loading);
-        isClimbing = false;
+            if (animator != null) animator.SetBool(IsMovingHash, false);
+            if (rb != null) rb.simulated = true;
+            if (playerMove != null) playerMove.enabled = true;
+        }
+        finally
+        {
+            // Coroutine 중단/씬 전환 시에도 Lock 해제 보장 (dispose 되면 finally 실행됨)
+            UILockManager.Unlock(UILockManager.Owner.Loading);
+            isClimbing = false;
+        }
+    }
+
+    // Coroutine이 dispose 안 될 케이스(GameObject Destroy 직전 등) 대응 방어선.
+    private void OnDisable()
+    {
+        if (isClimbing)
+        {
+            UILockManager.Unlock(UILockManager.Owner.Loading);
+            isClimbing = false;
+        }
     }
 
     static IEnumerator MoveTo(GameObject player, Vector3 target, float speed, SpriteRenderer sr)

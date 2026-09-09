@@ -8,5 +8,6 @@ namespace Game.Schema.State.Mall
     public class MallState
     {
         public MallPersistent persistent = new MallPersistent();
+        public MallSessionState session = new MallSessionState();
     }
 }

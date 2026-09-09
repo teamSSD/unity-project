@@ -180,7 +180,7 @@ accuracyScore = clamp01(mainScore + sideScore)
 ```
 
 - **메인 매칭**: `foodData.id == order.mainMenu.id`.
-- **사이드 매칭**: HashSet 기반 id 매칭 (순서 무관).
+- **사이드 매칭**: id 기반 multiset 매칭 (순서 무관, 주문에 요구된 개수까지만 일치로 계산).
 - **잘못된 사이드 존재 시**: `providedSides > expectedSides` 각 1개당 0.1 감점.
 
 ### 5.2 등급 산출

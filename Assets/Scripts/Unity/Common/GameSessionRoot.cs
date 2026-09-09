@@ -20,7 +20,8 @@ using UnityEngine;
 [DefaultExecutionOrder(-999)]
 public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
 {
-    public GameState State { get; private set; }
+    public GameSessionStore Store { get; private set; }
+    public GameState State => Store?.State;
 
     public StatsService Stats { get; private set; }
     public ProgressService Progress { get; private set; }
@@ -43,7 +44,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
 
     protected override void OnSingletonAwake()
     {
-        State = new GameState();
+        Store = new GameSessionStore(NewGameStateFactory.Create());
         WireServices();
     }
 
@@ -63,7 +64,7 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
         WireCookingDomain(foodCatalog);
 
         Weather = new WeatherService();
-        Settlement = new SettlementService();
+        Settlement = new SettlementService(State.mall.session);
         Tutorial = new TutorialService(() => State?.tutorial);
     }
 
@@ -95,22 +96,22 @@ public class GameSessionRoot : SingletonMonoBehaviour<GameSessionRoot>
 
     private void WireInventoryAndPurchase(IMoneyService money, IExpenseLog expense, System.Collections.Generic.IEnumerable<FoodData> foodCatalog)
     {
-        Inventory = new InventoryService(foodCatalog, StorageUpgrade);
-        Purchase = new PurchaseService(CatalogProvider.FoodShopConfig, Inventory, money, expense);
+        Inventory = new InventoryService(State.inventory, foodCatalog, StorageUpgrade);
+        Purchase = new PurchaseService(State.shop.session, CatalogProvider.FoodShopConfig, Inventory, money, expense);
     }
 
     private void WireMallDomain(IMoneyService money)
     {
         DeliveryQuest = new DeliveryQuestService(State.mall.persistent);
         NpcNormalDialogue = new NpcNormalDialogueService(State.mall.persistent);
-        Order = new OrderService(money);
+        Order = new OrderService(State.mall.session, money);
         QuestMenus = new QuestMenuCatalog(ParseQuestMenus());
     }
 
     private void WireCookingDomain(System.Collections.Generic.IEnumerable<FoodData> foodCatalog)
     {
-        MenuSelection = new MenuSelectionService(foodCatalog);
-        UnlockedFood = new UnlockedFoodService(foodCatalog);
+        MenuSelection = new MenuSelectionService(State.menuSelection, foodCatalog);
+        UnlockedFood = new UnlockedFoodService(State.unlockedFood, foodCatalog);
         RecipeLookup = new RecipeLookupService(CatalogProvider.Recipe?.All);
     }
 

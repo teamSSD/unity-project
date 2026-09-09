@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -80,6 +81,10 @@ public class MallSceneController : MonoBehaviour
         if (goHomeButton != null)
             goHomeButton.onClick.AddListener(GoHome);
 
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Register("mall.go-home", goHomeButton);
+#endif
+
         // Mall 체류 중 페이즈 전환(Rest / GoHome confirm) 시 새 페이즈 UI 즉시 표시.
         progressService = session?.Progress;
         if (progressService != null)
@@ -90,11 +95,11 @@ public class MallSceneController : MonoBehaviour
         // - Morning: 어차피 실제로 도달 불가(Prep→Cooking 경로), 방어적으로 skip.
         // - Shop/Garden 복귀: 유저가 Shopping/Farming 후 돌아온 것 → 다시 강요하지 않음.
         // - 그 외 (Cooking→Mall 복귀 등): ActionSelector 자동 표시.
-        // 주: SceneLoader.CurrentScene은 LoadSceneAdditive의 onComplete 이전엔
-        // 이전 씬명을 유지하므로 Mall.Start 실행 중엔 "직전 씬"을 가리킴.
+        // Mall.Start는 비동기 로드 완료 콜백보다 먼저 실행된다. 따라서 변하는
+        // CurrentScene을 읽지 말고 전환 시작 시 고정한 출처를 사용한다.
         var currentPhase = session?.Progress?.PhaseData?.Phase ?? PhaseType.Preparation;
-        bool cameFromSubScene = SceneLoader.CurrentScene == SceneNames.Shop
-                             || SceneLoader.CurrentScene == SceneNames.Garden;
+        bool cameFromSubScene = SceneLoader.PreviousScene == SceneNames.Shop
+                             || SceneLoader.PreviousScene == SceneNames.Garden;
         if (currentPhase != PhaseType.Preparation && currentPhase != PhaseType.Morning && !cameFromSubScene)
             OpenActionSelection();
 
@@ -113,6 +118,9 @@ public class MallSceneController : MonoBehaviour
 
     private void OnDestroy()
     {
+#if AFTERTASTE_E2E
+        E2EUiTargetRegistry.Unregister("mall.go-home", goHomeButton);
+#endif
         if (phaseSelector != null)
             phaseSelector.OnActionExecuted -= OnPhaseActionExecuted;
         if (progressService != null)
@@ -173,7 +181,7 @@ public class MallSceneController : MonoBehaviour
             return;
         }
 
-        bentoSelectionController.Show(() =>
+        UIFlowController.TryOpenBentoSelection(bentoSelectionController, () =>
         {
             // Preparation → Morning 후 자동으로 Cooking 씬 진입.
             // 튜토리얼 활성 시엔 격리된 CookingTutorial 씬 (Mock).
@@ -239,9 +247,6 @@ public class MallSceneController : MonoBehaviour
 
     private void OnPhaseActionExecuted(ActionType actionType)
     {
-        // 액션 실행 후 UI 닫음 (씬 전환되는 액션은 어차피 UI 자동 destroy).
-        phaseSelector?.Hide();
-
         // 튜토리얼 진행 중 Shopping 선택 → 활성 파트 dismiss (마지막 파트 dismiss 시 MarkShown + onDone).
         if (actionType == ActionType.Shopping)
             TutorialController.Instance?.DismissActivePart();
@@ -253,8 +258,18 @@ public class MallSceneController : MonoBehaviour
     private static Canvas FindOrCreateOverlayCanvas()
     {
         var canvases = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+        var activeScene = SceneManager.GetActiveScene();
         foreach (var c in canvases)
-            if (c != null && c.isRootCanvas) return c;
+            // 페이즈 선택은 월드/카메라 기반 캔버스에 붙으면 해상도·카메라 위치에 따라
+            // 화면 밖으로 밀린다. 또한 LoadingManager의 Overlay Canvas는 전환이 끝나면
+            // disabled가 된다. 비활성 Canvas를 부모로 택하면 선택 UI도 순서에 따라
+            // 보이지 않게 되므로, 실제 표시 중인 Overlay 루트만 재사용한다.
+            // 전환 중에는 DontDestroyOnLoad의 LoadingCanvas도 활성 Overlay다. 그것을
+            // 재사용하면 fade-out 때 자식인 선택창까지 사라지고 PhaseSelection 잠금만
+            // 남는다. 씬 UI의 부모는 반드시 현재 씬 소유 Canvas여야 한다.
+            if (c != null && c.gameObject.scene == activeScene &&
+                c.isRootCanvas && c.isActiveAndEnabled &&
+                c.renderMode == RenderMode.ScreenSpaceOverlay) return c;
 
         var go = new GameObject("MallCanvas",
             typeof(Canvas), typeof(UnityEngine.UI.CanvasScaler), typeof(UnityEngine.UI.GraphicRaycaster));

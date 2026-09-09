@@ -15,6 +15,29 @@ namespace Game.Editor.Simulation
         [MenuItem("Tools/Simulation/Run Baseline (seed=42, days=30)")]
         public static void RunBaseline() => RunOne(new BaselinePolicy(), 42, 30);
 
+        /// <summary>
+        /// 실제 플레이 매크로가 소비할 정책 결정 원본. 실행기는 이 JSONL을 읽고
+        /// UI 타깃 좌표에 실제 브라우저 입력을 보내며, 정책을 JavaScript로 재구현하지 않는다.
+        /// </summary>
+        [MenuItem("Tools/Simulation/Export Baseline Playtest Plan (seed=42, days=7)")]
+        public static void ExportBaselinePlaytestPlan()
+        {
+            const int seed = 42;
+            const int days = 7;
+            var ctx = SimContext.Build(seed);
+            ctx.Policy = new BaselinePolicy();
+            new SimHarness(ctx).Run(days);
+
+            const string runDir = "tmp/playtest/plans/baseline_seed42_7d";
+            WriteAllReports(ctx, runDir, days);
+            File.WriteAllText(Path.Combine(runDir, "README.md"),
+                "# Baseline 7-day actual-play plan\n\n" +
+                "This is an exported decision log from `BaselinePolicy`, not a second policy. " +
+                "The WebGL macro must translate these decisions into real browser input and compare its observed telemetry separately.\n\n" +
+                $"- Seed: {seed}\n- Days: {days}\n- Events: {ctx.Log.Count}\n");
+            Debug.Log($"[PlaytestPlan] Baseline seed={seed}, days={days}, events={ctx.Log.Count} → {runDir}");
+        }
+
         [MenuItem("Tools/Simulation/Run SideStuffed (seed=42, days=30)")]
         public static void RunSideStuffed() => RunOne(new SideStuffedPolicy(), 42, 30);
 

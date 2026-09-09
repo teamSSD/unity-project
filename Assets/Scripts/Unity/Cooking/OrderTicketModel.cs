@@ -43,11 +43,26 @@ public class OrderTicketModel : MonoBehaviour
         // (Awake에 두면 [AddToBento → DSB]가 되어 DSB가 sortingOrder를 0으로 reset해버림.)
         clickStateUtil.OnDragEnd += AddToBento;
 
+#if AFTERTASTE_E2E
+        // QuestId는 DeliveryTicketCoordinator가 Instantiate 직후, Start 전에 설정한다.
+        // 전표 부착도 실제 드래그/ValidateExactMatch 흐름으로만 처리된다.
+        string id = IsDelivery && !string.IsNullOrEmpty(QuestId)
+            ? $"cooking.delivery-ticket.{QuestId}"
+            : $"cooking.order-ticket.{GetInstanceID()}";
+        E2EWorldTargetRegistry.Register(id, transform);
+#endif
+
         SoundManager.Instance?.Play2DSFX(attachSfx, 0.4f);
     }
 
     void OnDestroy()
     {
+#if AFTERTASTE_E2E
+        string id = IsDelivery && !string.IsNullOrEmpty(QuestId)
+            ? $"cooking.delivery-ticket.{QuestId}"
+            : $"cooking.order-ticket.{GetInstanceID()}";
+        E2EWorldTargetRegistry.Unregister(id, transform);
+#endif
         clickStateUtil.OnDragEnd -= AddToBento;
     }
 
@@ -103,6 +118,16 @@ public class OrderTicketModel : MonoBehaviour
     {
         BehaviorInstance.defaultPosition = position;
     }
+
+#if AFTERTASTE_E2E
+    public string E2ETargetId => IsDelivery && !string.IsNullOrEmpty(QuestId)
+        ? $"world.cooking.delivery-ticket.{QuestId}"
+        : $"world.cooking.order-ticket.{GetInstanceID()}";
+    public string[] E2ERequiredFoodIds => menuSchema == null
+        ? Array.Empty<string>()
+        : menuSchema.mainMenus.Concat(menuSchema.sideMenus ?? new List<FoodData>())
+            .Where(food => food != null).Select(food => food.id).ToArray();
+#endif
 
     public void DestroyObject()
     {

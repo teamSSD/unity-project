@@ -18,8 +18,8 @@ public class Farm : MonoBehaviour
     [Header("작물 이름 UI")]
     public GameObject cropNameCanvas;
     public TextMeshProUGUI cropNameLabel;
-    [Tooltip("crop sprite 하단에서 이름 라벨까지의 offset (양수 = 더 아래).")]
-    public float nameOffsetY = 0.3f;
+    [Tooltip("작물 스프라이트 상단과 작물명 사이의 FarmTile 로컬 좌표 여백.")]
+    [Min(0f)] public float cropNameClearance = 0.1f;
 
     public int farmIndex;
     private FarmTile tile;
@@ -28,8 +28,28 @@ public class Farm : MonoBehaviour
     private bool playerIn = false;
     public bool IsLocked => farmIndex >= (int)(GameSessionRoot.Instance?.FarmUpgrade?.GetCurrentData("tile")?.value ?? 3);
 
+#if AFTERTASTE_E2E
+    public string E2ETargetId => $"farm.tile.{farmIndex}";
+    public string E2ECropId => tile?.GetCurrentCrop()?.cropId ?? string.Empty;
+    public int E2EPassedPhases => tile?.GetPassedPhases() ?? 0;
+    public int E2ERequiredPhases
+    {
+        get
+        {
+            var crop = tile?.GetCurrentCrop();
+            if (crop == null) return 0;
+            float reduction = GameSessionRoot.Instance?.FarmUpgrade?.GetCurrentData("timeReduction")?.value ?? 0f;
+            return Mathf.CeilToInt(crop.growPhaseCount * (1f - reduction));
+        }
+    }
+    public bool E2EIsHarvestable => tile?.IsHarvestable() ?? false;
+#endif
+
     private void Start()
     {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.RegisterCollider($"farm.tile.{farmIndex}", GetComponent<Collider2D>());
+#endif
         if (GameSessionRoot.Instance?.Progress == null)
             ManagerBootstrap.EnsureAll();
 
@@ -66,6 +86,9 @@ public class Farm : MonoBehaviour
 
     private void OnDestroy()
     {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.UnregisterCollider($"farm.tile.{farmIndex}", GetComponent<Collider2D>());
+#endif
         // 씬 나가기 전에 타일 상태 저장 (GardenPersistent.tiles)
         if (tile != null)
         {
@@ -164,10 +187,7 @@ public class Farm : MonoBehaviour
             cropNameLabel.text = food?.ingredientName ?? currentCrop.cropId;
         }
 
-        // 이전엔 AdjustUIPosition으로 gauge/name을 sprite bounds 기준 이동시켰지만,
-        // 크롭 sprite가 3840x2160 @ PPU 217로 매우 크고 custom pivot이라 bounds.max.y가
-        // 예측 불가 (천장에 매달림 이슈). 지금은 prefab에서 잡은 anchoredPosition 그대로 사용.
-        // 위치 튜닝은 Editor Inspector에서 Canvas/GrowthGauge RectTransform 직접 조작.
+        PositionCropNameAboveCrop();
     }
 
     private void UpdatePrompt()
@@ -175,20 +195,37 @@ public class Farm : MonoBehaviour
         if (!playerIn || actionPrompt == null || tile == null) return;
 
         if (IsLocked)
-            actionPrompt.text = "잠겨 있음";
+            actionPrompt.text = "*locked*";
         else if (tile.IsHarvestable())
-            actionPrompt.text = "(스페이스바로 수확)";
+            actionPrompt.text = "(press spacebar to harvest)";
         else if (tile.IsEmpty())
-            actionPrompt.text = "(스페이스바로 심기)";
+            actionPrompt.text = "(press spacebar to plant)";
         else
         {
-            // "성장 중..." 대신 실제 작물 이름 표시.
-            var food = SearchDataUtil.GetFoodDataById(tile.GetCurrentCrop()?.cropId);
-            actionPrompt.text = food?.ingredientName ?? "";
+            // 성장 중 작물명은 상시 라벨이 담당한다. 근접 안내문에서 중복 표시하지 않는다.
+            actionPrompt.text = "";
         }
     }
 
-    // AdjustUIPosition 삭제: prefab의 anchoredPosition만 사용.
+    private void PositionCropNameAboveCrop()
+    {
+        if (cropSpriteRenderer == null || cropNameCanvas == null) return;
+        if (cropNameCanvas.transform is not RectTransform nameRect) return;
+
+        Sprite sprite = cropSpriteRenderer.sprite;
+        if (sprite == null) return;
+
+        // Tight mesh 꼭짓점은 투명 여백을 제외한 실제 그려지는 작물 윤곽이다.
+        // 원본 rect 또는 Renderer.bounds를 쓰면 새싹이 작을 때 라벨이 하늘로 올라간다.
+        Bounds visibleSpriteBounds = FarmLabelLayout.VisibleBounds(sprite.vertices, sprite.bounds);
+        float labelHalfHeight = nameRect.rect.height * nameRect.localScale.y * 0.5f;
+        nameRect.localPosition = FarmLabelLayout.AboveCrop(
+            cropSpriteRenderer.transform.localPosition,
+            cropSpriteRenderer.transform.localScale,
+            visibleSpriteBounds,
+            labelHalfHeight,
+            cropNameClearance);
+    }
 
     private void OnTimePassed()
     {

@@ -4,6 +4,20 @@ public class FarmPathInteraction : MonoBehaviour
 {
     private bool isPlayerNear = false;
 
+    private void Start()
+    {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.RegisterCollider("farm-path", GetComponent<Collider2D>());
+#endif
+    }
+
+    private void OnDestroy()
+    {
+#if AFTERTASTE_E2E
+        E2EWorldTargetRegistry.UnregisterCollider("farm-path", GetComponent<Collider2D>());
+#endif
+    }
+
     void Update()
     {
         if (isPlayerNear && !UILockManager.IsLocked && Input.GetKeyDown(KeyCode.Space))

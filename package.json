@@ -1,0 +1,14 @@
+{
+  "name": "aftertaste-e2e",
+  "private": true,
+  "scripts": {
+    "test:e2e:webgl": "playwright test Tools/e2e/webgl-smoke.spec.mjs",
+    "test:e2e:webgl:policy": "playwright test Tools/e2e/webgl-policy-pilot.spec.mjs",
+    "test:e2e:webgl:day-flow-smoke": "playwright test Tools/e2e/webgl-day-flow-smoke.spec.mjs",
+    "test:e2e:webgl:world-navigation": "playwright test Tools/e2e/webgl-world-navigation.spec.mjs",
+    "test:e2e:webgl:dynamic-campaign": "playwright test Tools/e2e/webgl-dynamic-campaign.spec.mjs --reporter=dot"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.0"
+  }
+}
