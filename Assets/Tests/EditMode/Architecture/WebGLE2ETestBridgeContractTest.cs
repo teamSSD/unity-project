@@ -102,6 +102,19 @@ public class WebGLE2ETestBridgeContractTest
     }
 
     [Test]
+    public void CampaignObservation_UsesActualSceneMinigamePrefabBindings()
+    {
+        var bridgePath = Path.Combine(Application.dataPath, "Scripts", "Unity", "Dev", "E2E", "AftertasteE2ETestBridge.cs");
+        var managerPath = Path.Combine(Application.dataPath, "Scripts", "Unity", "Cooking", "MiniGameManager.cs");
+        var bridge = File.ReadAllText(bridgePath);
+        var manager = File.ReadAllText(managerPath);
+
+        Assert.That(bridge, Does.Contain("minigameBindings = minigameBindings"));
+        Assert.That(bridge, Does.Contain("E2EResolveMinigameName"));
+        Assert.That(manager, Does.Contain("GetComponent<MiniGameAbstract>()?.GetType().Name"));
+    }
+
+    [Test]
     public void DevelopmentWebGLBuild_RegistersInstance_AndKeepsBoundedEventLog()
     {
         var pluginPath = Path.Combine(Application.dataPath, "Plugins", "WebGL", "AftertasteE2E.jslib");

@@ -154,6 +154,15 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
     }
 
     [Serializable]
+    private sealed class MinigameBindingObservation
+    {
+        public string recipeId;
+        public string toolId;
+        public string minigameId;
+        public string runtimeName;
+    }
+
+    [Serializable]
     private sealed class QuestNpcObservation
     {
         public string npcId;
@@ -205,6 +214,7 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
         public FarmObservation[] farmTiles;
         public string[] configuredQuestGroupIds;
         public MinigameObservation minigame;
+        public MinigameBindingObservation[] minigameBindings;
         public string[] unlockedMainFoodIds;
         public string[] unlockedSideFoodIds;
     }
@@ -418,9 +428,10 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
     {
         var root = GameSessionRoot.Instance;
         var orderData = root?.Order?.GetOrders() ?? Array.Empty<DeliveryOrderData>();
+        var recipes = root?.RecipeLookup?.GetAllRecipes() ?? new List<RecipeData>();
         var planner = new RecipePlanService(
             CatalogProvider.Food?.All ?? Array.Empty<FoodData>(),
-            root?.RecipeLookup?.GetAllRecipes() ?? new List<RecipeData>());
+            recipes);
 
         var orders = orderData.Select(order => new OrderObservation
         {
@@ -579,6 +590,26 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
             }).ToArray();
         var customerManager = UnityEngine.Object.FindFirstObjectByType<CustomerManager>();
         var minigameManager = UnityEngine.Object.FindFirstObjectByType<MiniGameManager>();
+        var cookingPlans = targetFoodIds.Select(planner.Build).ToArray();
+        var recipeById = recipes
+            .Where(recipe => recipe != null && !string.IsNullOrWhiteSpace(recipe.id))
+            .GroupBy(recipe => recipe.id)
+            .ToDictionary(group => group.Key, group => group.First());
+        var minigameBindings = cookingPlans
+            .SelectMany(plan => plan.steps)
+            .GroupBy(step => step.recipeId)
+            .Select(group => group.First())
+            .Select(step => new MinigameBindingObservation
+            {
+                recipeId = step.recipeId,
+                toolId = step.toolId,
+                minigameId = step.minigameId,
+                runtimeName = minigameManager != null && recipeById.TryGetValue(step.recipeId, out var recipe)
+                    ? minigameManager.E2EResolveMinigameName(step.toolId, recipe)
+                    : string.Empty,
+            })
+            .OrderBy(binding => binding.recipeId)
+            .ToArray();
         var farmTiles = UnityEngine.Object.FindObjectsByType<Farm>(FindObjectsSortMode.None)
             .OrderBy(farm => farm.farmIndex)
             .Select(farm => new FarmObservation
@@ -608,7 +639,7 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
             storage = storage,
             shopItems = shopItems,
             orders = orders,
-            cookingPlans = targetFoodIds.Select(planner.Build).ToArray(),
+            cookingPlans = cookingPlans,
             tools = tools,
             bentos = bentos,
             tickets = tickets,
@@ -627,6 +658,7 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
                 currentValue = minigameManager?.E2ECurrentValue ?? 0f,
                 targetValue = minigameManager?.E2ETargetValue ?? 0f,
             },
+            minigameBindings = minigameBindings,
             unlockedMainFoodIds = root?.UnlockedFood?.GetUnlockedMainFoods()
                 .Where(food => food != null).Select(food => food.id).OrderBy(id => id).ToArray()
                 ?? Array.Empty<string>(),

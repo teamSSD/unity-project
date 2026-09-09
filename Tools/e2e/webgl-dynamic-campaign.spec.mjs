@@ -74,7 +74,13 @@ async function snapshot(page, label) {
 async function campaign(page, label) {
   const start = await eventCursor(page);
   await command(page, { action: 'campaign', label });
-  return eventAfter(page, start, { type: 'campaign-observation', label }, `missing campaign observation ${label}`);
+  const observation = await eventAfter(page, start,
+    { type: 'campaign-observation', label }, `missing campaign observation ${label}`);
+  const bindings = new Map((observation.minigameBindings ?? [])
+    .map(binding => [binding.recipeId, binding.runtimeName]));
+  for (const plan of observation.cookingPlans ?? [])
+    for (const step of plan.steps ?? []) step.runtimeMinigameName = bindings.get(step.recipeId) ?? '';
+  return observation;
 }
 
 async function targetMap(page) {
@@ -348,14 +354,14 @@ async function startMinigame(page, canvas, toolId, expectedMinigame) {
     `${expectedMinigame} must start through a retried actual tool click`).toBe(expectedMinigame);
 }
 
-const runtimeMinigameName = {
-  M001: 'FireMiniGame',
-  M002: 'ClickMiniGame',
-  M004: 'MixMiniGame',
-  M005: 'SauceMiniGame',
-  M006: 'SliceMiniGame',
-  M007: 'GriddleMinigame',
-};
+const supportedRuntimeMinigames = new Set([
+  'FireMiniGame',
+  'ClickMiniGame',
+  'MixMiniGame',
+  'SauceMiniGame',
+  'SliceMiniGame',
+  'GriddleMinigame',
+]);
 
 async function executeRecipePlan(page, canvas, plan, trace) {
   expect(plan.valid, plan.error).toBeTruthy();
@@ -409,8 +415,9 @@ async function executeRecipePlan(page, canvas, plan, trace) {
       .toEqual([...step.inputFoodIds].sort());
     expect(readyTool.cookable, `${step.toolId} must be cookable before its actual click`).toBe(true);
 
-    const expected = runtimeMinigameName[step.minigameId];
-    if (!expected) throw new Error(`No actual-input minigame executor for ${step.minigameId}.`);
+    const expected = step.runtimeMinigameName;
+    if (!supportedRuntimeMinigames.has(expected))
+      throw new Error(`No actual-input executor for observed ${step.recipeId}/${step.minigameId}: ${expected || 'unbound'}.`);
     await startMinigame(page, canvas, step.toolId, expected);
     await finishMinigame(page, canvas, expected);
     const state = await campaign(page, `verify-${step.outputFoodId}`);
@@ -431,7 +438,7 @@ function chooseFeasibleMain(observation, quantity = 1, reservedRequirements = ne
         stock.get(item.foodId) ?? 0,
         reservedRequirements.get(item.foodId) ?? 0,
       ) >= item.quantity * quantity))
-    .filter(plan => plan.steps.every(step => runtimeMinigameName[step.minigameId]))
+    .filter(plan => plan.steps.every(step => supportedRuntimeMinigames.has(step.runtimeMinigameName)))
     .sort((left, right) => right.steps.length - left.steps.length || left.targetFoodId.localeCompare(right.targetFoodId))[0];
 }
 
@@ -456,7 +463,7 @@ function chooseSupportedQuest(observation) {
       seenGroups.add(quest.groupId);
       for (const foodId of [...quest.mainFoodIds, ...quest.sideFoodIds]) {
         const plan = plans.get(foodId);
-        if (!plan?.valid || !plan.steps.every(step => runtimeMinigameName[step.minigameId])) return false;
+        if (!plan?.valid || !plan.steps.every(step => supportedRuntimeMinigames.has(step.runtimeMinigameName))) return false;
       }
       return true;
     })[0];
@@ -496,7 +503,7 @@ function campaignBlocker(observation, configuredQuestGroupIds) {
     const unsupportedFoods = [...(quest?.mainFoodIds ?? []), ...(quest?.sideFoodIds ?? [])]
       .filter(foodId => {
         const plan = plans.get(foodId);
-        return !plan?.valid || !plan.steps.every(step => runtimeMinigameName[step.minigameId]);
+        return !plan?.valid || !plan.steps.every(step => supportedRuntimeMinigames.has(step.runtimeMinigameName));
       });
     return {
       groupId,
@@ -898,7 +905,7 @@ function chooseOperationalStockPlan(observation, servings = 2) {
 
   return observation.cookingPlans
     .filter(plan => plan.valid && observation.unlockedMainFoodIds.includes(plan.targetFoodId))
-    .filter(plan => plan.steps.every(step => runtimeMinigameName[step.minigameId]))
+    .filter(plan => plan.steps.every(step => supportedRuntimeMinigames.has(step.runtimeMinigameName)))
     .map(plan => {
       const requirements = new Map();
       const newTypes = new Map();
@@ -951,7 +958,7 @@ async function enterCookingDay(page, canvas, day, preferredFoodId = '', reserved
   const stock = new Map(observation.inventory.map(item => [item.foodId, item.quantity]));
   const isSupportedMain = plan => plan?.valid &&
     observation.unlockedMainFoodIds.includes(plan.targetFoodId) &&
-    plan.steps.every(step => runtimeMinigameName[step.minigameId]);
+    plan.steps.every(step => supportedRuntimeMinigames.has(step.runtimeMinigameName));
   const preferredIsFeasible = isSupportedMain(preferred) &&
     preferred.ingredients.every(item =>
       (stock.get(item.foodId) ?? 0) - Math.min(
@@ -960,7 +967,7 @@ async function enterCookingDay(page, canvas, day, preferredFoodId = '', reserved
       ) >= item.quantity);
   const fallback = observation.cookingPlans
     .filter(plan => plan.valid && observation.unlockedMainFoodIds.includes(plan.targetFoodId))
-    .filter(plan => plan.steps.every(step => runtimeMinigameName[step.minigameId]))
+    .filter(plan => plan.steps.every(step => supportedRuntimeMinigames.has(step.runtimeMinigameName)))
     .sort((left, right) => left.targetFoodId.localeCompare(right.targetFoodId))[0];
   const livePlan = preferredIsFeasible ? preferred : chooseFeasibleMain(observation, 1, reservedRequirements) ??
     (isSupportedMain(preferred) ? preferred : fallback);
