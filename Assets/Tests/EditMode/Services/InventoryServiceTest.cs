@@ -99,6 +99,18 @@ public class InventoryServiceTest
     }
 
     [Test]
+    public void DiscardBatch_RemovesTheSelectedBatchAndEmptyFoodEntry()
+    {
+        var svc = BuildSvc(foodA);
+        svc.AddFood(foodA, 3);
+        var batch = svc.GetBatches(foodA)[0];
+
+        Assert.IsTrue(svc.DiscardBatch(foodA, batch));
+        Assert.AreEqual(0, svc.CheckStockAmount(foodA));
+        Assert.AreEqual(0, svc.GetBatches(foodA).Count);
+    }
+
+    [Test]
     public void AdvanceDay_DecrementsAndExpires()
     {
         var svc = BuildSvc(foodA);

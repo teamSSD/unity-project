@@ -9,6 +9,8 @@ using UnityEngine.UI;
 /// </summary>
 public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
 {
+    public const int CanvasSortingOrder = 2000;
+
     private Canvas canvas;
     private GameObject panel;
     private TextMeshProUGUI titleText;
@@ -110,7 +112,9 @@ public class ConfirmModal : SingletonMonoBehaviour<ConfirmModal>
         canvasObj.transform.SetParent(transform);
         canvas = canvasObj.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 300; // Shop UI(100)보다 위
+        // 확인 모달은 현재 열린 UI의 작업을 확정/취소하는 전역 최상단 UI다.
+        // RecipeBook(1100), 그 위의 튜토리얼 말풍선(1200)보다도 항상 앞에 둔다.
+        canvas.sortingOrder = CanvasSortingOrder;
 
         var scaler = canvasObj.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;

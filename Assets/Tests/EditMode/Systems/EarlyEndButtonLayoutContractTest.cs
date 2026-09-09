@@ -21,4 +21,17 @@ public class EarlyEndButtonLayoutContractTest
         Assert.That(int.Parse(match.Groups[1].Value), Is.LessThanOrEqualTo(-350),
             $"{sceneName}의 조기 종료 버튼은 시계 안전 영역 아래에 있어야 합니다.");
     }
+
+    [Test]
+    public void EarlyEndButton_CanForceCloseAfterClockEnd_WithoutDuplicateSessionEnd()
+    {
+        var managerPath = Path.Combine(
+            Application.dataPath, "Scripts", "Unity", "Cooking", "CustomerManager.cs");
+        var source = File.ReadAllText(managerPath);
+
+        Assert.That(source, Does.Contain("private bool hasEnded;"));
+        Assert.That(source, Does.Contain("if (hasEnded) return;"));
+        Assert.That(source, Does.Not.Contain("if (!isOpen) return;"));
+        Assert.That(source, Does.Contain("private void FinishSession()"));
+    }
 }
