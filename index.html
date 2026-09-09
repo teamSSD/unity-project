@@ -6,10 +6,31 @@
     <title>Unity Web Player | Aftertaste</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
+  <style id="aftertaste-webgl-layout">
+html, body { width: 100%; min-height: 100%; margin: 0; background: #231F20; }
+body { min-height: 100vh; display: grid; place-items: center; overflow: hidden; }
+#unity-container,
+#unity-container.unity-desktop,
+#unity-container.unity-mobile {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  width: min(100vw, calc((100vh - 38px) * 1.77777778));
+}
+#unity-canvas,
+.unity-mobile #unity-canvas {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+  touch-action: none;
+}
+</style>
+</head>
   <body>
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
+      <canvas id="unity-canvas" width=960 height=540 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -52,12 +73,12 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/20260831_154755.loader.js";
+      var loaderUrl = buildUrl + "/20260909_200959.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/20260831_154755.data.unityweb",
-        frameworkUrl: buildUrl + "/20260831_154755.framework.js.unityweb",
-        codeUrl: buildUrl + "/20260831_154755.wasm.unityweb",
+        dataUrl: buildUrl + "/20260909_200959.data.unityweb",
+        frameworkUrl: buildUrl + "/20260909_200959.framework.js.unityweb",
+        codeUrl: buildUrl + "/20260909_200959.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "teamSSD",
         productName: "Aftertaste",
@@ -105,7 +126,7 @@
       } else {
         // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
         canvas.style.width = "960px";
-        canvas.style.height = "600px";
+        canvas.style.height = "540px";
       }
 
       document.querySelector("#unity-loading-bar").style.display = "block";
