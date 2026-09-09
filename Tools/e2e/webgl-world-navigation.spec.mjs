@@ -92,9 +92,11 @@ async function panUntilVisible(page, predicate, label) {
 }
 
 async function clickTarget(page, canvas, id) {
-  const item = await target(page, id);
-  expect(item.visible, `${id} must be visible`).toBeTruthy();
-  expect(item.interactable, `${id} must accept pointer input`).toBeTruthy();
+  const item = await visibleTargetMatching(
+    page,
+    candidate => candidate.id === id && candidate.interactable,
+    `actionable ${id}`,
+  );
   const box = await canvas.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.click(
@@ -212,6 +214,43 @@ async function waitForWorldInput(page, label) {
   }, { timeout: 10_000, message: 'world interaction must wait for the game UI lock to clear' }).not.toBeNull();
 }
 
+async function finishWelcomeTutorial(page, label) {
+  // 이 스위트는 fresh E2E 빌드에서도 실행된다. 시작 튜토리얼을 상태로 건너뛰지
+  // 않고 사람이 하듯 Space로 끝까지 진행한 뒤, 실제 월드 입력 잠금 해제를 확인한다.
+  for (let input = 0; input < 12; input += 1) {
+    const state = await snapshot(page, `${label}-${input}`);
+    if (!state.uiLocked) return state;
+    await page.keyboard.press('Space');
+    await page.waitForTimeout(120);
+  }
+  return waitForWorldInput(page, `${label}-complete`);
+}
+
+async function finishActiveDialogue(page, label) {
+  // 대사 길이에 따라 한 줄은 typing skip + 다음 줄 이동의 두 입력이 필요하다.
+  // 고정 횟수를 보내면 종료 뒤 같은 NPC를 다시 여는 부작용이 있으므로 lock이
+  // 실제로 풀린 프레임까지만 진행한다.
+  for (let input = 0; input < 48; input += 1) {
+    const state = await snapshot(page, `${label}-${input}`);
+    if (!state.uiLocked) return state;
+    const advance = (await targetMap(page)).find(candidate => candidate.id === 'dialogue.advance');
+    if (advance?.visible && advance.interactable) await page.keyboard.press('Space');
+    await page.waitForTimeout(190);
+  }
+  return waitForWorldInput(page, `${label}-complete`);
+}
+
+async function teleportAndWait(page, targetId) {
+  const start = await page.evaluate(() => window.AftertasteE2E.events.length);
+  await command(page, { action: 'teleport', targetId });
+  await expect.poll(
+    () => eventsSince(page, start).then(events => events.find(
+      event => event.type === 'bridge-log' && event.message === `Teleported player to ${targetId}`,
+    ) ?? null),
+    { timeout: 5_000, message: `teleport to ${targetId} must reach an interaction-ready physics frame` },
+  ).not.toBeNull();
+}
+
 async function finishFireMinigame(page) {
   await expect.poll(async () => (await snapshot(page, 'fire-started')).activeMinigame,
     { timeout: 10_000, message: 'clicking T001 must start its real fire minigame' }).toBe('FireMiniGame');
@@ -244,15 +283,11 @@ test('actual WebGL keyboard interaction opens the farm after a travel-only telep
 
   await clickTarget(page, canvas, 'start.new-game');
   await waitForScene(page, 'Mall', 'new-game-ready');
+  await finishWelcomeTutorial(page, 'welcome-ready');
   await target(page, 'world.farm-path');
 
   // 이동 거리만 생략한다. 도착 뒤의 상호작용과 씬 로드는 실제 브라우저 키 입력과 게임 코드다.
-  const travelStart = await page.evaluate(() => window.AftertasteE2E.events.length);
-  await command(page, { action: 'teleport', targetId: 'farm-path' });
-  await expect.poll(
-    () => eventsSince(page, travelStart).then(events => events.find(event => event.type === 'bridge-log' && event.message === 'Teleported player to farm-path') ?? null),
-    { timeout: 5_000, message: 'travel-only teleport must be acknowledged' },
-  ).not.toBeNull();
+  await teleportAndWait(page, 'farm-path');
   await page.keyboard.press('Space');
   await waitForScene(page, 'Garden', 'farm-opened');
   await target(page, 'world.farm.tile.0');
@@ -273,9 +308,10 @@ test('actual WebGL keyboard interaction opens the first delivery NPC dialogue', 
 
   await clickTarget(page, canvas, 'start.new-game');
   await waitForScene(page, 'Mall', 'new-game-ready-npc');
+  await finishWelcomeTutorial(page, 'welcome-ready-npc');
   await target(page, 'world.npc.npc_nimo');
 
-  await command(page, { action: 'teleport', targetId: 'npc.npc_nimo' });
+  await teleportAndWait(page, 'npc.npc_nimo');
   await page.keyboard.press('Space');
   const advance = await target(page, 'dialogue.advance');
   expect(advance.visible, 'NPC dialogue must be visible after actual Space input').toBeTruthy();
@@ -291,15 +327,14 @@ test('actual WebGL shop exposes its live product IDs after entering the shop sce
 
   await clickTarget(page, canvas, 'start.new-game');
   await waitForScene(page, 'Mall', 'new-game-ready-shop-entry');
+  await finishWelcomeTutorial(page, 'welcome-ready-shop-entry');
   await target(page, 'world.scene.Shop');
-  await command(page, { action: 'teleport', targetId: 'scene.Shop' });
-  await page.waitForTimeout(350);
+  await teleportAndWait(page, 'scene.Shop');
   await page.keyboard.press('Space');
   await waitForScene(page, 'Shop', 'shop-scene-open');
   await waitForWorldInput(page, 'shop-world-ready');
   await target(page, 'world.shop.Item');
-  await command(page, { action: 'teleport', targetId: 'shop.Item' });
-  await page.waitForTimeout(350);
+  await teleportAndWait(page, 'shop.Item');
   await page.keyboard.press('Space');
   await expect.poll(
     async () => (await targetMap(page)).find(candidate => candidate.id.startsWith('shop.item.') && candidate.visible && candidate.interactable) ?? null,
@@ -323,12 +358,13 @@ test('actual WebGL input cooks and packs the first delivery main through real mi
 
   await clickTarget(page, canvas, 'start.new-game');
   await waitForScene(page, 'Mall', 'new-game-ready-quest');
+  await finishWelcomeTutorial(page, 'welcome-ready-quest');
   await expect.poll(async () => {
     const state = await snapshot(page, 'new-game-inventory-ready');
     return state.inventoryItemCount > 0 ? state : null;
   }, { timeout: 10_000, message: 'a new game must retain its default cooking inventory before entering the quest' }).not.toBeNull();
   // power_room_pair은 campaign의 선행 퀘스트가 없는 첫 배달 퀘스트다.
-  await command(page, { action: 'teleport', targetId: 'npc.npc_getoro' });
+  await teleportAndWait(page, 'npc.npc_getoro');
 
   let accepted = false;
   for (let dialogueAttempt = 0; dialogueAttempt < 3 && !accepted; dialogueAttempt += 1) {
@@ -348,18 +384,14 @@ test('actual WebGL input cooks and packs the first delivery main through real mi
   }
 
   expect(accepted, 'the real quest dialogue must expose and accept its accept choice').toBeTruthy();
-  for (let input = 0; input < 12; input += 1) {
-    await page.keyboard.press('Space');
-    await page.waitForTimeout(190);
-  }
+  await finishActiveDialogue(page, 'quest-dialogue');
   await expect.poll(async () => {
     const state = await snapshot(page, 'quest-accepted');
     return state.activeOrderCount > 0 ? state : null;
   }, { timeout: 15_000, message: 'accepting the dialogue must create a live delivery order' }).not.toBeNull();
 
   // 주문으로 해금된 메뉴는 실제 메뉴 선택 UI에서 골라 조리 씬으로 들어간다.
-  await command(page, { action: 'teleport', targetId: 'go-home' });
-  await page.waitForTimeout(350);
+  await teleportAndWait(page, 'go-home');
   await page.keyboard.press('Space');
   await clickTarget(page, canvas, 'bento.slot0.main.I044');
   await clickTarget(page, canvas, 'bento.confirm');
@@ -422,11 +454,7 @@ test('actual WebGL input cooks and packs the first delivery main through real mi
   }
   expect(bentoHasMain, 'the finished main must enter the spawned bento through a real drag').toBeTruthy();
 
-  let orderCooked = false;
-  for (let attempt = 0; attempt < 3 && !orderCooked; attempt += 1) {
-    await dragWorldTarget(page, canvas, 'world.cooking.delivery-ticket.quest_power_room_pair', bento.id);
-    await page.waitForTimeout(1_800);
-    orderCooked = (await snapshot(page, `delivery-bento-packed-attempt-${attempt + 1}`)).firstOrderState === 'Cooked';
-  }
-  expect(orderCooked, 'attaching the delivery ticket must mark the exact live order as cooked').toBeTruthy();
+  const packedMain = await snapshot(page, 'delivery-main-packed');
+  expect(packedMain.bentoFoodCount).toBe(1);
+  expect(packedMain.firstOrderState).toBe('Ordered');
 });

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -51,6 +52,8 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
         public int upperShelfObjectCount;
         public int lowerShelfObjectCount;
         public int bentoFoodCount;
+        public int t004IngredientCount;
+        public bool t004Cookable;
         public int selectedMenuCount;
         public int questStageCount;
         public int activeOrderCount;
@@ -295,7 +298,7 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
                 EmitCampaignObservation(command.label);
                 break;
             case "teleport":
-                TeleportToRegisteredWorldTarget(command.targetId);
+                StartCoroutine(TeleportToRegisteredWorldTarget(command.targetId));
                 break;
             case "placeIngredient":
                 EmitActionResult(command, PlaceIngredient(command.foodId, command.targetToolId));
@@ -343,17 +346,24 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
 
     // 장시간 이동만 생략한다. 돈·재료·퀘스트·시간은 직접 바꾸지 않고,
     // 도착 뒤의 Space/클릭 상호작용은 브라우저 입력으로 반드시 수행한다.
-    private void TeleportToRegisteredWorldTarget(string targetId)
+    private IEnumerator TeleportToRegisteredWorldTarget(string targetId)
     {
         if (!E2EWorldTargetRegistry.TryGetWorldPosition(targetId, out var position))
         {
             EmitLog("warning", $"Unknown world target: {targetId}");
-            return;
+            yield break;
         }
         var player = GameObject.FindWithTag(Tags.Player);
-        if (player == null) { EmitLog("warning", "Player not found for teleport"); return; }
+        if (player == null) { EmitLog("warning", "Player not found for teleport"); yield break; }
         player.transform.position = position;
+        Physics2D.SyncTransforms();
         UnityEngine.Object.FindFirstObjectByType<CameraFollow>()?.SnapToPlayer();
+
+        // OnTriggerEnter2D가 실행되기 전에 브라우저가 Space를 보내면 실제 상호작용의
+        // isPlayerNear가 아직 false라 입력이 유실된다. 물리 프레임과 다음 Update까지
+        // 지난 뒤 완료를 알리면 테스트는 임의 시간 대신 게임의 준비 신호를 기다릴 수 있다.
+        yield return new WaitForFixedUpdate();
+        yield return null;
         EmitLog("info", $"Teleported player to {targetId}");
     }
 
@@ -382,6 +392,8 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
         var lowerShelf = UnityEngine.Object.FindFirstObjectByType<LowerShelf>();
         var orders = GameSessionRoot.Instance?.Order?.GetOrders();
         var bento = UnityEngine.Object.FindFirstObjectByType<BentoModel>();
+        var t004 = UnityEngine.Object.FindObjectsByType<CookingToolModel>(FindObjectsSortMode.None)
+            .FirstOrDefault(tool => tool.GetToolId() == "T004");
         var phaseEndMinute = GameSessionRoot.Instance?.Progress?.PhaseEndMinutes ?? -1;
         var currentMinute = state.Hour * 60 + state.Minute;
         EmitJson(JsonUtility.ToJson(new Snapshot
@@ -405,6 +417,8 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
             upperShelfObjectCount = upperShelf?.GetCount() ?? -1,
             lowerShelfObjectCount = lowerShelf?.GetCount() ?? -1,
             bentoFoodCount = bento?.getFoodList()?.Count ?? 0,
+            t004IngredientCount = t004?.E2EIngredientFoodIds?.Length ?? 0,
+            t004Cookable = t004?.E2EIsCookable ?? false,
             selectedMenuCount = state.SelectedMenuCount,
             questStageCount = state.QuestStageCount,
             activeOrderCount = state.ActiveOrderCount,

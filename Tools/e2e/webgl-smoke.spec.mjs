@@ -70,8 +70,15 @@ test('fresh WebGL build boots, emits E2E events, and accepts real tutorial input
   // Unity가 제공한 관측 좌표를 사용하되, 실행은 실제 Canvas 마우스 입력이다.
   // 브리지는 버튼을 호출하거나 게임 상태를 변경할 수 없다.
   await clickTarget(page, canvas, 'start.new-game');
-  await page.waitForTimeout(500);
-  await page.evaluate(() => window.AftertasteE2E.command({ action: 'snapshot', label: 'after-new-game-click' }));
+  await expect.poll(async () => {
+    await page.evaluate(() => window.AftertasteE2E.command({ action: 'snapshot', label: 'after-new-game-click' }));
+    await page.waitForTimeout(100);
+    return page.evaluate(() => [...window.AftertasteE2E.events].reverse()
+      .find(event => event.type === 'snapshot' && event.label === 'after-new-game-click')?.scene ?? '');
+  }, {
+    timeout: 20_000,
+    message: 'actual New Game input must finish the Managers → Mall transition',
+  }).toBe('Mall');
   const afterClickScreenshot = await page.screenshot({ path: testInfo.outputPath('02-new-game-click.png') });
   await page.keyboard.press('Space');
   await page.waitForTimeout(800);
@@ -90,7 +97,8 @@ test('fresh WebGL build boots, emits E2E events, and accepts real tutorial input
   });
 
   expect(events.some(event => event.type === 'snapshot')).toBeTruthy();
-  const snapshot = label => events.find(event => event.type === 'snapshot' && event.label === label);
+  const snapshot = label => [...events].reverse()
+    .find(event => event.type === 'snapshot' && event.label === label);
   const beforeClick = snapshot('before-new-game-click');
   const afterClick = snapshot('after-new-game-click');
   const afterSpace = snapshot('after-space-input');

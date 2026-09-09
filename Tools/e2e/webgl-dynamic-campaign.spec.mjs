@@ -1011,8 +1011,12 @@ async function ensureStorageCapacity(page, canvas, requirements, trace) {
 }
 
 async function teleportAndInteract(page, targetId) {
+  const start = await eventCursor(page);
   await command(page, { action: 'teleport', targetId });
-  await page.waitForTimeout(350);
+  await eventAfter(page, start,
+    { type: 'bridge-log', message: `Teleported player to ${targetId}` },
+    `teleport to ${targetId} did not reach an interaction-ready physics frame`,
+    5_000);
   await page.keyboard.press('Space');
 }
 

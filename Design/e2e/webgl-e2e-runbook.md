@@ -6,6 +6,10 @@
 
 튜토리얼 실제 입력 smoke는 `Tools > Build > WebGL — E2E (Development)`를 사용한다. 장기 정책 운영은 `Tools > Build > WebGL — E2E Long-run (Development)`를 사용하며, 튜토리얼 완료·seed 42 상태로 시작한다.
 
+`webgl-smoke`는 일반 E2E 빌드에서 튜토리얼 입력을 확인한다. `webgl-world-navigation`과
+`webgl-dynamic-campaign`은 퀘스트·일반 조리 씬을 검증하므로 Long-run 빌드에서 실행한다.
+두 프로필을 섞으면 정상적인 튜토리얼 전환(`CookingTutorial`)을 일반 조리 실패로 오판한다.
+
 빌드 폴더는 일반 개발 서버와 다른 포트로 제공한다. 예를 들어 새 터미널에서 다음처럼 실행한다.
 
 ```sh
