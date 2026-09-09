@@ -224,6 +224,8 @@ public class IngredientImageConsistencyChecker : EditorWindow
                 continue;
             }
 
+            ValidateRecipeToolVariant(recipe, recipe.outputFood, toolId, "output", violations);
+
             foreach (var input in recipe.inputs ?? new List<RecipeIngredient>())
             {
                 var food = input.food;
@@ -244,7 +246,28 @@ public class IngredientImageConsistencyChecker : EditorWindow
                     violations.Add(
                         $"[{recipe.id}] Bowl-only input {food.id} is used with {toolId}.");
                 }
+
+                ValidateRecipeToolVariant(recipe, food, toolId, "input", violations);
             }
+        }
+    }
+
+    private static void ValidateRecipeToolVariant(
+        RecipeData recipe,
+        FoodData food,
+        string toolId,
+        string role,
+        ICollection<string> violations)
+    {
+        if (food == null || !ToolVariants.TryGetValue(toolId, out var definition)) return;
+
+        if (food.toolVariants == null ||
+            food.toolVariants.Length <= definition.index ||
+            food.toolVariants[definition.index] == null)
+        {
+            violations.Add(
+                $"[{recipe.id}] {role} {food.id} is missing {toolId} ({definition.suffix}); " +
+                "runtime would fall back to the raw image.");
         }
     }
 

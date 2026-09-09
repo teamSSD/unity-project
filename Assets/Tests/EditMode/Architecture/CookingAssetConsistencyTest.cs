@@ -46,4 +46,21 @@ public class CookingAssetConsistencyTest
         Assert.That(food, Is.Not.Null);
         Assert.That(food.availableTools, Is.EquivalentTo(new[] { "T003" }));
     }
+
+    [Test]
+    public void CaramelTopping_UsesExplicitPlateVariantInsteadOfRawFallback()
+    {
+        var caramel = AssetDatabase.LoadAssetAtPath<FoodData>(
+            "Assets/Bundles/ScriptableObjects/FoodData/I048.asset");
+
+        Assert.That(caramel, Is.Not.Null);
+        Assert.That(caramel.toolVariants[4], Is.Not.Null);
+        Assert.That(
+            AssetDatabase.GetAssetPath(caramel.toolVariants[4]),
+            Does.EndWith("/item_caramelTopping_plate.png"));
+        Assert.That(caramel.toolVariants[4], Is.Not.SameAs(caramel.image));
+
+        // TODO(art): 현재 plate 이미지는 raw의 임시 복제본이다.
+        // 캐러멜 토핑의 T005 전용 최종 아트가 준비되면 PNG 내용만 교체한다.
+    }
 }

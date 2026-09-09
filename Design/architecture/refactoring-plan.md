@@ -206,3 +206,7 @@ Release 빌드 전에 다음을 자동 실행하고 하나라도 실패하면 �
 - 기존 behavior가 불명확하면 코드, GDD, 테스트 중 무엇이 기준인지 먼저 결정한다.
 - 리팩터링 도중에도 항상 실행 가능한 상태를 유지한다.
 - Phase 0~5가 완료되기 전에는 배포하지 않는다. Phase 6의 정리는 배포 후에도 계속할 수 있다.
+
+## 7. 추적 중인 임시 자산
+
+- `item_caramelTopping_plate.png`는 T005의 암묵적 raw fallback을 제거하기 위해 `item_caramelTopping_raw.png`를 복제한 임시 이미지다. 최종 T005 전용 아트가 준비되면 같은 경로의 PNG 내용만 교체한다.
