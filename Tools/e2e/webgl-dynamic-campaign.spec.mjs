@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { writeFile } from 'node:fs/promises';
+import { createServer } from 'node:http';
 
 const baseUrl = process.env.E2E_WEBGL_URL;
 const mealsToServe = Number(process.env.E2E_MEALS_TO_SERVE ?? 2);
@@ -7,6 +8,7 @@ const stepDelayMs = Number(process.env.E2E_STEP_DELAY_MS ?? 0);
 const holdOpenMs = Number(process.env.E2E_HOLD_OPEN_MS ?? 0);
 const maxCampaignDays = Number(process.env.E2E_MAX_CAMPAIGN_DAYS ?? 60);
 const campaignTimeoutMs = Number(process.env.E2E_CAMPAIGN_TIMEOUT_MS ?? 3_600_000);
+const liveObserverPort = Number(process.env.E2E_LIVE_OBSERVER_PORT ?? 0);
 
 // Headed runs are meant to be watched for hours; keep the real game rendering and
 // input path while preventing Chromium audio from disturbing the workspace.
@@ -23,6 +25,114 @@ function assertLocalE2EOrigin(url) {
     throw new Error('E2E_MAX_CAMPAIGN_DAYS must be an integer from 1 through 365.');
   if (!Number.isInteger(campaignTimeoutMs) || campaignTimeoutMs < 60_000)
     throw new Error('E2E_CAMPAIGN_TIMEOUT_MS must be an integer of at least 60000.');
+  if (liveObserverPort !== 0 &&
+      (!Number.isInteger(liveObserverPort) || liveObserverPort < 8100 || liveObserverPort > 8199 ||
+       liveObserverPort === Number(parsed.port)))
+    throw new Error('E2E_LIVE_OBSERVER_PORT must be a different localhost port from 8100 through 8199.');
+}
+
+async function startLiveObserver(page) {
+  if (liveObserverPort === 0) return null;
+
+  let latestFrame = null;
+  let latestFrameAt = 0;
+  let latestGameState = null;
+  let captureTimer = null;
+  let stopped = false;
+  const server = createServer((request, response) => {
+    response.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    if (request.url?.startsWith('/frame.jpg')) {
+      if (!latestFrame) {
+        response.writeHead(503, { 'Content-Type': 'text/plain; charset=utf-8', 'Retry-After': '1' });
+        response.end('Waiting for the first WebGL frame.');
+        return;
+      }
+      response.writeHead(200, {
+        'Content-Type': 'image/jpeg',
+        'Content-Length': latestFrame.length,
+        'X-Frame-Captured-At': String(latestFrameAt),
+      });
+      response.end(latestFrame);
+      return;
+    }
+    if (request.url?.startsWith('/status.json')) {
+      response.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      response.end(JSON.stringify({ ready: Boolean(latestFrame), capturedAt: latestFrameAt, game: latestGameState }));
+      return;
+    }
+    if (request.url !== '/' && !request.url?.startsWith('/?')) {
+      response.writeHead(404).end();
+      return;
+    }
+
+    response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    response.end(`<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aftertaste E2E Live Observer</title><style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;color:#fff;font-family:system-ui,sans-serif}
+#frame{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none}
+#status{position:fixed;left:12px;top:12px;padding:6px 10px;border-radius:6px;background:#000b;font-size:13px}
+</style></head><body><img id="frame" alt="자동 E2E 실시간 화면"><div id="status">연결 중…</div><script>
+const frame=document.getElementById('frame');const status=document.getElementById('status');
+async function refresh(){const now=Date.now();frame.src='/frame.jpg?t='+now;try{const data=await fetch('/status.json?t='+now).then(r=>r.json());const game=data.game;const progress=game?' · '+game.scene+'/'+game.phase+' · '+game.day+'일차 · 퀘스트 '+game.completedQuests+'/'+game.totalQuests+(game.activeMinigame?' · '+game.activeMinigame:''):'';status.textContent=data.ready?'자동 E2E · 입력 격리됨'+progress+' · '+new Date(data.capturedAt).toLocaleTimeString():'첫 화면 대기 중…';}catch{status.textContent='중계 재연결 중…';}}
+setInterval(refresh,500);refresh();
+</script></body></html>`);
+  });
+
+  await new Promise((resolve, reject) => {
+    const onError = error => reject(error);
+    server.once('error', onError);
+    server.listen(liveObserverPort, '127.0.0.1', () => {
+      server.off('error', onError);
+      resolve();
+    });
+  });
+
+  const capture = async () => {
+    if (stopped || page.isClosed()) return;
+    try {
+      latestFrame = await page.screenshot({ type: 'jpeg', quality: 72, timeout: 5_000 });
+      latestFrameAt = Date.now();
+      const observedGameState = await page.evaluate(() => {
+        const events = window.AftertasteE2E?.events ?? [];
+        const state = [...events].reverse().find(event => event.type === 'snapshot');
+        const campaign = [...events].reverse().find(event => event.type === 'campaign-observation');
+        if (!state && !campaign) return null;
+        const quests = campaign?.questNpcs ?? [];
+        const stages = new Map(quests.filter(quest => quest.groupId)
+          .map(quest => [quest.groupId, quest.stage]));
+        return {
+          scene: state?.scene ?? campaign?.scene ?? '',
+          phase: state?.phase ?? campaign?.phase ?? '',
+          day: state?.day ?? campaign?.day ?? 0,
+          activeMinigame: state?.activeMinigame ?? campaign?.minigame?.name ?? '',
+          completedQuests: [...stages.values()].filter(stage => stage === 'Completed').length,
+          totalQuests: stages.size,
+        };
+      });
+      if (observedGameState) {
+        if (observedGameState.totalQuests === 0 && latestGameState?.totalQuests > 0) {
+          observedGameState.completedQuests = latestGameState.completedQuests;
+          observedGameState.totalQuests = latestGameState.totalQuests;
+        }
+        latestGameState = observedGameState;
+      }
+    } catch {
+      // Navigation and shutdown can invalidate a frame; the previous frame stays visible.
+    } finally {
+      if (!stopped) captureTimer = setTimeout(capture, 500);
+    }
+  };
+  void capture();
+  process.stdout.write(`Read-only E2E observer: http://127.0.0.1:${liveObserverPort}/\n`);
+
+  return {
+    async stop() {
+      stopped = true;
+      if (captureTimer) clearTimeout(captureTimer);
+      await new Promise(resolve => server.close(resolve));
+    },
+  };
 }
 
 async function showStep(page, label, trace) {
@@ -292,13 +402,21 @@ async function finishMinigame(page, canvas, expectedMinigame) {
       await page.waitForTimeout(60);
     }
   } else if (expectedMinigame === 'SliceMiniGame') {
-    for (let slice = 0; slice < 6; slice += 1) {
+    for (let attempt = 0; attempt < 24; attempt += 1) {
+      const before = await campaign(page, `slice-minigame-cue-${attempt}`);
+      if (before.minigame.name !== expectedMinigame) break;
+      if (before.minigame.currentValue >= before.minigame.targetValue) break;
+      const previousSlice = before.minigame.currentValue;
       await dragToWorldTarget(
         page, canvas,
         candidate => candidate.id === 'world.cooking.minigame.slice.start', 'slice guide start',
         candidate => candidate.id === 'world.cooking.minigame.slice.end', 'slice guide end',
         24,
       );
+      await expect.poll(async () => {
+        const after = await campaign(page, `slice-minigame-result-${attempt}`);
+        return after.minigame.name !== expectedMinigame || after.minigame.currentValue > previousSlice;
+      }, { timeout: 4_000, message: 'each real slice drag must advance the live slice counter' }).toBe(true);
     }
   } else if (expectedMinigame === 'ClickMiniGame') {
     for (let press = 0; press < 30; press += 1) {
@@ -362,6 +480,13 @@ const supportedRuntimeMinigames = new Set([
   'SliceMiniGame',
   'GriddleMinigame',
 ]);
+
+// Menu/shop planning happens in scenes that do not own MiniGameManager, so an
+// empty runtimeName means "not observed yet", not "unsupported". Execution in
+// Cooking remains strict once the live prefab binding is available.
+function isPotentiallySupportedStep(step) {
+  return !step.runtimeMinigameName || supportedRuntimeMinigames.has(step.runtimeMinigameName);
+}
 
 async function executeRecipePlan(page, canvas, plan, trace) {
   expect(plan.valid, plan.error).toBeTruthy();
@@ -438,7 +563,7 @@ function chooseFeasibleMain(observation, quantity = 1, reservedRequirements = ne
         stock.get(item.foodId) ?? 0,
         reservedRequirements.get(item.foodId) ?? 0,
       ) >= item.quantity * quantity))
-    .filter(plan => plan.steps.every(step => supportedRuntimeMinigames.has(step.runtimeMinigameName)))
+    .filter(plan => plan.steps.every(isPotentiallySupportedStep))
     .sort((left, right) => right.steps.length - left.steps.length || left.targetFoodId.localeCompare(right.targetFoodId))[0];
 }
 
@@ -463,7 +588,7 @@ function chooseSupportedQuest(observation) {
       seenGroups.add(quest.groupId);
       for (const foodId of [...quest.mainFoodIds, ...quest.sideFoodIds]) {
         const plan = plans.get(foodId);
-        if (!plan?.valid || !plan.steps.every(step => supportedRuntimeMinigames.has(step.runtimeMinigameName))) return false;
+        if (!plan?.valid || !plan.steps.every(isPotentiallySupportedStep)) return false;
       }
       return true;
     })[0];
@@ -503,7 +628,7 @@ function campaignBlocker(observation, configuredQuestGroupIds) {
     const unsupportedFoods = [...(quest?.mainFoodIds ?? []), ...(quest?.sideFoodIds ?? [])]
       .filter(foodId => {
         const plan = plans.get(foodId);
-        return !plan?.valid || !plan.steps.every(step => supportedRuntimeMinigames.has(step.runtimeMinigameName));
+        return !plan?.valid || !plan.steps.every(isPotentiallySupportedStep);
       });
     return {
       groupId,
@@ -897,7 +1022,7 @@ function unmetRequirements(observation, requirements) {
     .map(([foodId]) => foodId);
 }
 
-function chooseOperationalStockPlan(observation, servings = 2) {
+function chooseOperationalStockPlan(observation, reservedRequirements = new Map(), servings = 3) {
   const storageTypeByFood = new Map(
     observation.ingredientStorage.map(item => [item.foodId, item.storageType]),
   );
@@ -905,13 +1030,17 @@ function chooseOperationalStockPlan(observation, servings = 2) {
 
   return observation.cookingPlans
     .filter(plan => plan.valid && observation.unlockedMainFoodIds.includes(plan.targetFoodId))
-    .filter(plan => plan.steps.every(step => supportedRuntimeMinigames.has(step.runtimeMinigameName)))
+    .filter(plan => plan.steps.every(isPotentiallySupportedStep))
     .map(plan => {
+      // Operational ingredients are inserted first so limited cash buys the stock
+      // that can generate tomorrow's revenue before unrelated quest ingredients.
+      // Shared ingredients still include the full quest reserve.
       const requirements = new Map();
       const newTypes = new Map();
       let missingUnits = 0;
       for (const ingredient of plan.ingredients) {
-        const desired = ingredient.quantity * servings;
+        const desired = (reservedRequirements.get(ingredient.foodId) ?? 0) +
+          ingredient.quantity * servings;
         requirements.set(ingredient.foodId, desired);
         const have = inventoryQuantity(observation, ingredient.foodId, true);
         missingUnits += Math.max(0, desired - have);
@@ -920,6 +1049,8 @@ function chooseOperationalStockPlan(observation, servings = 2) {
         if (!newTypes.has(storageType)) newTypes.set(storageType, new Set());
         newTypes.get(storageType).add(ingredient.foodId);
       }
+      for (const [foodId, desired] of reservedRequirements)
+        if (!requirements.has(foodId)) requirements.set(foodId, desired);
       const fits = [...newTypes].every(([storageType, foodIds]) => {
         const storage = storageByType.get(storageType);
         return storage && storage.used + foodIds.size <= storage.capacity;
@@ -958,7 +1089,7 @@ async function enterCookingDay(page, canvas, day, preferredFoodId = '', reserved
   const stock = new Map(observation.inventory.map(item => [item.foodId, item.quantity]));
   const isSupportedMain = plan => plan?.valid &&
     observation.unlockedMainFoodIds.includes(plan.targetFoodId) &&
-    plan.steps.every(step => supportedRuntimeMinigames.has(step.runtimeMinigameName));
+    plan.steps.every(isPotentiallySupportedStep);
   const preferredIsFeasible = isSupportedMain(preferred) &&
     preferred.ingredients.every(item =>
       (stock.get(item.foodId) ?? 0) - Math.min(
@@ -967,7 +1098,7 @@ async function enterCookingDay(page, canvas, day, preferredFoodId = '', reserved
       ) >= item.quantity);
   const fallback = observation.cookingPlans
     .filter(plan => plan.valid && observation.unlockedMainFoodIds.includes(plan.targetFoodId))
-    .filter(plan => plan.steps.every(step => supportedRuntimeMinigames.has(step.runtimeMinigameName)))
+    .filter(plan => plan.steps.every(isPotentiallySupportedStep))
     .sort((left, right) => left.targetFoodId.localeCompare(right.targetFoodId))[0];
   const livePlan = preferredIsFeasible ? preferred : chooseFeasibleMain(observation, 1, reservedRequirements) ??
     (isSupportedMain(preferred) ? preferred : fallback);
@@ -1090,13 +1221,14 @@ async function operateShoppingPhase(page, canvas, day, phase, requirements, trac
       `dragged offscreen ${offscreenPurchase.foodId} from ${offscreenPurchase.initialY.toFixed(3)} to ${offscreenPurchase.finalY.toFixed(3)} in ${offscreenPurchase.dragCount} gesture(s)`,
       trace);
   }
-  const deferredUpgrades = await ensureStorageCapacity(page, canvas, requirements, trace);
-  const fundingPlan = deferredUpgrades.length > 0
-    ? chooseOperationalStockPlan(await campaign(page, `day-${day}-${phase}-funding-plan`))
-    : null;
-  const purchaseRequirements = fundingPlan?.requirements ?? requirements;
-  if (fundingPlan) await showStep(page,
-    `funding mode: restock ${fundingPlan.plan.targetFoodId} for two real sales`,
+  await ensureStorageCapacity(page, canvas, requirements, trace);
+  const operationalPlan = chooseOperationalStockPlan(
+    await campaign(page, `day-${day}-${phase}-operational-plan`),
+    requirements,
+  );
+  const purchaseRequirements = operationalPlan?.requirements ?? requirements;
+  if (operationalPlan) await showStep(page,
+    `restock ${operationalPlan.plan.targetFoodId} for up to three real sales while preserving quest stock`,
     trace);
   const acquisition = await buyRequirementsWithBoundedRefresh(
     page,
@@ -1119,8 +1251,7 @@ async function operateShoppingPhase(page, canvas, day, phase, requirements, trac
     acquisition: { state, unmet: unmetRequirements(state, requirements) },
     offscreenPurchase,
     harvested,
-    capacityReady: deferredUpgrades.length === 0,
-    fundingFoodId: fundingPlan?.plan.targetFoodId ?? '',
+    operationalFoodId: operationalPlan?.plan.targetFoodId ?? '',
   };
 }
 
@@ -1181,28 +1312,23 @@ async function acquireQuestIngredients(
   { exactInitialSales = 0, exerciseOffscreen = false } = {},
 ) {
   let day = startDay;
-  let requirements = new Map();
+  const planningState = await campaign(page, `quest-${questOrder.questId}-restock-plan`);
+  const foodCraftCounts = new Map();
+  for (const foodId of [...questOrder.mainFoodIds, ...questOrder.sideFoodIds])
+    foodCraftCounts.set(foodId, (foodCraftCounts.get(foodId) ?? 0) + 1);
+  const requirements = aggregateIngredientRequirements(planningState, foodCraftCounts);
   let acquisition = null;
   let firstAttempt = true;
   let offscreenPurchase = null;
   let regularSales = 0;
-  let reserveQuestStock = false;
 
   do {
     const work = await operateWorkDayToShop(page, canvas, day, preferredFoodId, trace, {
       exactSales: firstAttempt ? exactInitialSales : 0,
-      reservedRequirements: reserveQuestStock ? requirements : new Map(),
+      reservedRequirements: requirements,
     });
     regularSales += work.servedMeals;
     preferredFoodId = work.plan.targetFoodId;
-
-    if (firstAttempt) {
-      const shoppingState = await campaign(page, `quest-${questOrder.questId}-restock-plan`);
-      const foodCraftCounts = new Map();
-      for (const foodId of [...questOrder.mainFoodIds, ...questOrder.sideFoodIds])
-        foodCraftCounts.set(foodId, (foodCraftCounts.get(foodId) ?? 0) + 1);
-      requirements = aggregateIngredientRequirements(shoppingState, foodCraftCounts);
-    }
 
     for (const phase of ['Afternoon', 'Evening', 'Night']) {
       const operations = await operateShoppingPhase(
@@ -1215,7 +1341,7 @@ async function acquireQuestIngredients(
         firstAttempt && exerciseOffscreen && phase === 'Afternoon',
       );
       acquisition = operations.acquisition;
-      if (operations.capacityReady) reserveQuestStock = true;
+      if (operations.operationalFoodId) preferredFoodId = operations.operationalFoodId;
       if (operations.offscreenPurchase) offscreenPurchase = operations.offscreenPurchase;
       const beforePass = await campaign(page, `day-${day}-${phase}-before-pass`);
       expect(beforePass.money, `${phase} must retain one management fee before phase completion`)
@@ -1286,6 +1412,7 @@ test('state-driven macro completes and persists every configured quest using act
   let configuredQuestGroupIds = [];
   let finalState = null;
   let finalCampaign = null;
+  let liveObserver = null;
   page.on('pageerror', error => pageErrors.push(error.message));
   page.on('console', message => consoleEntries.push({ type: message.type(), text: message.text() }));
 
@@ -1293,6 +1420,7 @@ test('state-driven macro completes and persists every configured quest using act
     await page.goto(baseUrl, { waitUntil: 'domcontentloaded' });
     const canvas = page.locator('#unity-canvas');
     await expect(canvas).toBeVisible({ timeout: 30_000 });
+    liveObserver = await startLiveObserver(page);
     await expect.poll(() => page.evaluate(() => window.AftertasteE2E?.events?.length ?? 0), { timeout: 30_000 }).toBeGreaterThan(0);
     await clickTarget(page, canvas, 'start.new-game');
     await expect.poll(async () => (await snapshot(page, 'campaign-ready')).scene,
@@ -1439,8 +1567,12 @@ test('state-driven macro completes and persists every configured quest using act
       unityErrors,
       events,
     };
-    await writeFile(testInfo.outputPath('dynamic-campaign-report.json'), JSON.stringify(report, null, 2));
-    await testInfo.attach('dynamic-campaign-report.json', { body: JSON.stringify(report, null, 2), contentType: 'application/json' });
-    if (holdOpenMs > 0) await page.waitForTimeout(holdOpenMs);
+    try {
+      await writeFile(testInfo.outputPath('dynamic-campaign-report.json'), JSON.stringify(report, null, 2));
+      await testInfo.attach('dynamic-campaign-report.json', { body: JSON.stringify(report, null, 2), contentType: 'application/json' });
+      if (holdOpenMs > 0) await page.waitForTimeout(holdOpenMs);
+    } finally {
+      await liveObserver?.stop();
+    }
   }
 });
