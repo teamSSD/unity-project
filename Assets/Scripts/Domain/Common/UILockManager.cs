@@ -51,6 +51,11 @@ public static class UILockManager
     {
         if (activeLocks.Count == 0) return true;
         if (activeLocks.Count == 1 && activeLocks.Contains(requester)) return true;
+        // GameStart는 게임 진입 전 다른 UI를 막는 장면 잠금이지만,
+        // 시작 화면에 명시적으로 배치된 설정 버튼까지 막아서는 안 된다.
+        if (requester == Owner.Settings &&
+            activeLocks.Count == 1 &&
+            activeLocks.Contains(Owner.GameStart)) return true;
         return false;
     }
 
