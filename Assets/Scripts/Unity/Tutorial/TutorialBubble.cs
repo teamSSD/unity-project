@@ -15,6 +15,8 @@ using TMPro;
 /// </summary>
 public class TutorialBubble : MonoBehaviour
 {
+    public const int RecipeBookOverlaySortingOrder = 1200;
+
     public enum TailDirection { Down, Up }
 
     [SerializeField] private RectTransform body;
@@ -53,7 +55,7 @@ public class TutorialBubble : MonoBehaviour
         {
             if (canvas == null) canvas = gameObject.AddComponent<Canvas>();
             canvas.overrideSorting = true;
-            canvas.sortingOrder = 1200;
+            canvas.sortingOrder = RecipeBookOverlaySortingOrder;
         }
         else if (canvas != null)
         {

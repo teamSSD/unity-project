@@ -35,6 +35,13 @@ public class ScreenSpaceCanvasScalingContractTest
     }
 
     [Test]
+    public void ConfirmModal_RendersAboveRecipeBookAndItsTutorialOverlay()
+    {
+        Assert.That(ConfirmModal.CanvasSortingOrder, Is.GreaterThan(RecipeBookManager.CanvasSortingOrder));
+        Assert.That(ConfirmModal.CanvasSortingOrder, Is.GreaterThan(TutorialBubble.RecipeBookOverlaySortingOrder));
+    }
+
+    [Test]
     public void MallPhaseSelector_CannotAttachToPersistentLoadingCanvas()
     {
         var mallControllerPath = Path.Combine(
