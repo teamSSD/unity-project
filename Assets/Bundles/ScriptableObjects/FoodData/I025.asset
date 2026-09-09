@@ -21,13 +21,12 @@ MonoBehaviour:
   image: {fileID: 21300000, guid: 2ad88b14694c34f9faa68b912f52dd7a, type: 3}
   ingredient: {fileID: 11400000, guid: 44e6342875e4e476c81fc10ce2609f6f, type: 2}
   availableTools:
-  - T001
   - T003
   type: 1
   toolVariants:
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 21300000, guid: 9c5bc7d1e628e42308ea739bfed9518c, type: 3}
   - {fileID: 0}
   - {fileID: 0}
   bentoVariants:
