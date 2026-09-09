@@ -333,6 +333,7 @@ MonoBehaviour:
   cropNameCanvas: {fileID: 5275240588914532642}
   cropNameLabel: {fileID: 6878130769119895931}
   cropNameClearance: 0.1
+  gaugeClearance: 0.1
   farmIndex: 0
 --- !u!61 &372574293562405825
 BoxCollider2D:
