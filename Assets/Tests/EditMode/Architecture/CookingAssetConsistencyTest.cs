@@ -60,7 +60,6 @@ public class CookingAssetConsistencyTest
             Does.EndWith("/item_caramelTopping_plate.png"));
         Assert.That(caramel.toolVariants[4], Is.Not.SameAs(caramel.image));
 
-        // TODO(art): 현재 plate 이미지는 raw의 임시 복제본이다.
-        // 캐러멜 토핑의 T005 전용 최종 아트가 준비되면 PNG 내용만 교체한다.
+        // T005에서는 팬이 제거된 캐러멜 토핑 전용 아트를 사용한다.
     }
 }

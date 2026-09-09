@@ -27,6 +27,10 @@ public class IngredientImageConsistencyChecker : EditorWindow
         {
             "Assets/Bundles/driveAssets/art/item/cooking/food/item_cheongyangLeaf_bowl.png",
             "a77a638d9121df5626e33e59990575050af7d412b2572cbc1652df8e9fe8c0d6"
+        },
+        {
+            "Assets/Bundles/driveAssets/art/item/cooking/food/item_caramelTopping_plate.png",
+            "18bdeb49a14c0b321858a8b988b3487fc78fd029218a16bdb20c8f0f570c5c4c"
         }
     };
 
