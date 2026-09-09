@@ -41,6 +41,7 @@ public class CustomerManager : MonoBehaviour
     private readonly CustomerSessionStats sessionStats = new();
     private int nextOrderNumber = 1;
     private bool isOpen = true;
+    private bool hasEnded;
 
     // Spawn timing
     private float timer = 0;
@@ -264,10 +265,15 @@ public class CustomerManager : MonoBehaviour
     private void CheckGameEnd()
     {
         if (!isOpen && !ticketController.HasActiveCustomerTickets())
-        {
-            LogSessionSummary();
-            OnGameEnd?.Invoke();
-        }
+            FinishSession();
+    }
+
+    private void FinishSession()
+    {
+        if (hasEnded) return;
+        hasEnded = true;
+        LogSessionSummary();
+        OnGameEnd?.Invoke();
     }
 
     /// <summary>튜토리얼 mock 전용. 자동 spawn 로직을 우회하고 손님 하나 강제 생성.
@@ -308,7 +314,9 @@ public class CustomerManager : MonoBehaviour
     /// 스킵 버튼용. 정산은 지금까지 벌어들인 금액 그대로 반영.</summary>
     public void EndEarly()
     {
-        if (!isOpen) return;
+        // 시간이 끝나 isOpen=false여도 남은 손님을 기다리는 중이면 강제 종료할 수 있어야 한다.
+        // 실제 세션 종료가 끝난 뒤의 중복 호출만 차단한다.
+        if (hasEnded) return;
         Debug.Log("[CustomerManager] EndEarly — force close");
         isOpen = false;
 
@@ -331,8 +339,7 @@ public class CustomerManager : MonoBehaviour
         // 모든 티켓 강제 제거 → HasActiveCustomerTickets false → OnGameEnd 발화
         ticketController.ClearAllTickets();
 
-        LogSessionSummary();
-        OnGameEnd?.Invoke();
+        FinishSession();
     }
 
     private void OnDestroy()
