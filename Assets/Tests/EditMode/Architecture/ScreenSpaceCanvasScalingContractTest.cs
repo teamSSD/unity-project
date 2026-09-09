@@ -73,6 +73,34 @@ public class ScreenSpaceCanvasScalingContractTest
             "The persistent phase range must win over a stale TimeManager during scene transitions.");
     }
 
+    [Test]
+    public void TutorialReferenceOffsets_FollowCanvasScaleFactor()
+    {
+        var referenceOffset = new Vector2(-661.36f, 205.57f);
+        var scaled = TutorialScreenPlacement.ScaleReferenceOffset(referenceOffset, 2f / 3f);
+
+        Assert.That(scaled.x, Is.EqualTo(-440.9067f).Within(0.001f));
+        Assert.That(scaled.y, Is.EqualTo(137.0467f).Within(0.001f));
+        Assert.That(
+            TutorialScreenPlacement.ScaleReferenceOffset(referenceOffset, 1f),
+            Is.EqualTo(referenceOffset));
+    }
+
+    [Test]
+    public void TutorialBubbleBody_IsCorrectedInsideViewportPadding()
+    {
+        var viewport = new Rect(0f, 0f, 1282f, 721f);
+        var bodyOutsideTopLeft = Rect.MinMaxRect(-40f, 680f, 260f, 760f);
+
+        var correction = TutorialScreenPlacement.CalculateViewportCorrection(
+            bodyOutsideTopLeft,
+            viewport,
+            12f);
+
+        Assert.That(correction.x, Is.EqualTo(52f).Within(0.001f));
+        Assert.That(correction.y, Is.EqualTo(-51f).Within(0.001f));
+    }
+
     private static IEnumerable<string> EnumerateProductionUiAssets()
     {
         var assetsRoot = Application.dataPath;
