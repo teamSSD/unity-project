@@ -36,4 +36,25 @@ public static class FarmLabelLayout
             cropLocalPosition.y + scaledTop + labelHalfHeight + clearance,
             cropLocalPosition.z);
     }
+
+    public static Vector3 AboveElement(
+        Vector3 lowerCenter,
+        float lowerHalfHeight,
+        float upperHalfHeight,
+        float clearance)
+    {
+        return new Vector3(
+            lowerCenter.x,
+            lowerCenter.y + lowerHalfHeight + upperHalfHeight + clearance,
+            lowerCenter.z);
+    }
+
+    public static float HalfHeightInAncestor(RectTransform rect, Transform ancestor)
+    {
+        Vector3 bottom = ancestor.InverseTransformPoint(
+            rect.TransformPoint(new Vector3(0f, rect.rect.yMin, 0f)));
+        Vector3 top = ancestor.InverseTransformPoint(
+            rect.TransformPoint(new Vector3(0f, rect.rect.yMax, 0f)));
+        return Mathf.Abs(top.y - bottom.y) * 0.5f;
+    }
 }

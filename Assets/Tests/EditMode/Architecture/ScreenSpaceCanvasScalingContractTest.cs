@@ -58,6 +58,21 @@ public class ScreenSpaceCanvasScalingContractTest
             "Destroying phase selection UI must release its global lock even when Hide was skipped.");
     }
 
+    [Test]
+    public void ClockUI_UsesProgressPhaseRangeBeforeSceneLocalTimer()
+    {
+        var path = Path.Combine(Application.dataPath, "Scripts", "Unity", "UI", "ClockUI.cs");
+        var source = File.ReadAllText(path);
+        var resolverStart = source.IndexOf("private static bool TryGetPhaseEndMinutes", System.StringComparison.Ordinal);
+        var progressRead = source.IndexOf("GameSessionRoot.Instance?.Progress", resolverStart, System.StringComparison.Ordinal);
+        var timerRead = source.IndexOf("TimeManager.Instance", resolverStart, System.StringComparison.Ordinal);
+
+        Assert.That(resolverStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(progressRead, Is.GreaterThan(resolverStart));
+        Assert.That(timerRead, Is.GreaterThan(progressRead),
+            "The persistent phase range must win over a stale TimeManager during scene transitions.");
+    }
+
     private static IEnumerable<string> EnumerateProductionUiAssets()
     {
         var assetsRoot = Application.dataPath;

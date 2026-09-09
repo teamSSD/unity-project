@@ -31,6 +31,8 @@ public class FarmTileLayoutContractTest
         var farmScript = File.ReadAllText(farmScriptPath);
         StringAssert.Contains("FarmLabelLayout.VisibleBounds(sprite.vertices, sprite.bounds)", farmScript);
         StringAssert.Contains("FarmLabelLayout.AboveCrop", farmScript);
+        StringAssert.Contains("FarmLabelLayout.AboveElement", farmScript);
+        StringAssert.Contains("FarmLabelLayout.HalfHeightInAncestor", farmScript);
         StringAssert.Contains("actionPrompt.text = \"\";", farmScript);
     }
 }

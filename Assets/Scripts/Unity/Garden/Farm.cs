@@ -20,6 +20,8 @@ public class Farm : MonoBehaviour
     public TextMeshProUGUI cropNameLabel;
     [Tooltip("작물 스프라이트 상단과 작물명 사이의 FarmTile 로컬 좌표 여백.")]
     [Min(0f)] public float cropNameClearance = 0.1f;
+    [Tooltip("작물명 상단과 성장 게이지 사이의 FarmTile 로컬 좌표 여백.")]
+    [Min(0f)] public float gaugeClearance = 0.1f;
 
     public int farmIndex;
     private FarmTile tile;
@@ -187,7 +189,7 @@ public class Farm : MonoBehaviour
             cropNameLabel.text = food?.ingredientName ?? currentCrop.cropId;
         }
 
-        PositionCropNameAboveCrop();
+        PositionCropIndicatorsAboveCrop();
     }
 
     private void UpdatePrompt()
@@ -207,7 +209,7 @@ public class Farm : MonoBehaviour
         }
     }
 
-    private void PositionCropNameAboveCrop()
+    private void PositionCropIndicatorsAboveCrop()
     {
         if (cropSpriteRenderer == null || cropNameCanvas == null) return;
         if (cropNameCanvas.transform is not RectTransform nameRect) return;
@@ -218,13 +220,26 @@ public class Farm : MonoBehaviour
         // Tight mesh 꼭짓점은 투명 여백을 제외한 실제 그려지는 작물 윤곽이다.
         // 원본 rect 또는 Renderer.bounds를 쓰면 새싹이 작을 때 라벨이 하늘로 올라간다.
         Bounds visibleSpriteBounds = FarmLabelLayout.VisibleBounds(sprite.vertices, sprite.bounds);
-        float labelHalfHeight = nameRect.rect.height * nameRect.localScale.y * 0.5f;
+        float labelHalfHeight = FarmLabelLayout.HalfHeightInAncestor(nameRect, transform);
         nameRect.localPosition = FarmLabelLayout.AboveCrop(
             cropSpriteRenderer.transform.localPosition,
             cropSpriteRenderer.transform.localScale,
             visibleSpriteBounds,
             labelHalfHeight,
             cropNameClearance);
+
+        if (gaugeCanvas?.transform is not RectTransform gaugeRect) return;
+
+        // 이름은 작물 높이에 따라 움직이므로 게이지도 이름을 기준으로 쌓아야
+        // 성장 단계가 바뀌어도 항상 작물 → 이름 → 게이지 순서가 유지된다.
+        float gaugeHalfHeight = FarmLabelLayout.HalfHeightInAncestor(gaugeRect, transform);
+        Vector3 labelCenter = transform.InverseTransformPoint(nameRect.position);
+        Vector3 gaugeCenter = FarmLabelLayout.AboveElement(
+            labelCenter,
+            labelHalfHeight,
+            gaugeHalfHeight,
+            gaugeClearance);
+        gaugeRect.position = transform.TransformPoint(gaugeCenter);
     }
 
     private void OnTimePassed()

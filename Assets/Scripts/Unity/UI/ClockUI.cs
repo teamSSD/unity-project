@@ -39,20 +39,7 @@ public class ClockUI : MonoBehaviour
         targetHourAngle = -((hour % 12) / 12f * 360f + (minute / 60f) * 30f) + hourHandOffset;
 
         int current = hour * 60 + minute;
-        int start, end;
-
-        if (TimeManager.Instance != null)
-        {
-            start = TimeManager.Instance.StartTimeMinutes;
-            end   = TimeManager.Instance.EndTimeMinutes;
-        }
-        else if (GameSessionRoot.Instance?.Progress != null)
-        {
-            var progress = GameSessionRoot.Instance.Progress;
-            start = progress.PhaseStartMinutes;
-            end   = progress.PhaseEndMinutes;
-        }
-        else return;
+        if (!TryGetPhaseEndMinutes(out int end)) return;
 
         targetFillAngle = -(current / 720f * 360f);
         targetFill      = Mathf.Clamp01((end - current) / 720f);
@@ -63,6 +50,30 @@ public class ClockUI : MonoBehaviour
             cachedEnd   = end;
             currentFill = targetFill;
         }
+    }
+
+    private static bool TryGetPhaseEndMinutes(out int end)
+    {
+        // ProgressService owns the current phase range. During a sub-scene transition,
+        // the previous scene's TimeManager can still exist when the next phase is set.
+        // Reading that stale timer first collapses the Mall clock range to zero.
+        var progress = GameSessionRoot.Instance?.Progress;
+        if (progress?.PhaseData != null)
+        {
+            end = progress.PhaseEndMinutes;
+            return true;
+        }
+
+        // Keep inspector-configured TimeManager values only as an isolated-scene fallback.
+        var timeManager = TimeManager.Instance;
+        if (timeManager != null)
+        {
+            end = timeManager.EndTimeMinutes;
+            return true;
+        }
+
+        end = 0;
+        return false;
     }
 
     void Update()

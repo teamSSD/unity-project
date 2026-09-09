@@ -34,4 +34,19 @@ public class FarmLabelLayoutTest
         // y scale이 음수이면 local min.y가 월드 상단으로 변환된다: (-0.4) * (-1) = 0.4.
         Assert.That(label.y, Is.EqualTo(0.75f).Within(0.0001f));
     }
+
+    [Test]
+    public void AboveElement_StacksGaugeAboveLabelWithClearance()
+    {
+        var labelCenter = new Vector3(0.4f, 2f, 0f);
+        var gaugeCenter = FarmLabelLayout.AboveElement(
+            labelCenter,
+            lowerHalfHeight: 0.5f,
+            upperHalfHeight: 0.65f,
+            clearance: 0.1f);
+
+        Assert.That(gaugeCenter, Is.EqualTo(new Vector3(0.4f, 3.25f, 0f)));
+        Assert.That(gaugeCenter.y - 0.65f, Is.EqualTo(labelCenter.y + 0.5f + 0.1f).Within(0.0001f),
+            "게이지 하단은 작물명 상단보다 항상 지정 여백만큼 위에 있어야 합니다.");
+    }
 }
