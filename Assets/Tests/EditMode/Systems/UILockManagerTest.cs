@@ -12,6 +12,7 @@ public class UILockManagerTest
         UILockManager.Unlock(UILockManager.Owner.BentoSelection);
         UILockManager.Unlock(UILockManager.Owner.GameStart);
         UILockManager.Unlock(UILockManager.Owner.Loading);
+        UILockManager.Unlock(UILockManager.Owner.Settings);
     }
 
     [Test]
@@ -74,6 +75,21 @@ public class UILockManagerTest
     {
         UILockManager.Lock(UILockManager.Owner.GameStart);
         Assert.IsFalse(UILockManager.CanOpen(UILockManager.Owner.RecipeBook));
+    }
+
+    [Test]
+    public void CanOpen_Settings_WhenOnlyGameStartLocked_ReturnsTrue()
+    {
+        UILockManager.Lock(UILockManager.Owner.GameStart);
+        Assert.IsTrue(UILockManager.CanOpen(UILockManager.Owner.Settings));
+    }
+
+    [Test]
+    public void CanOpen_Settings_WhenLoadingIsAlsoLocked_ReturnsFalse()
+    {
+        UILockManager.Lock(UILockManager.Owner.GameStart);
+        UILockManager.Lock(UILockManager.Owner.Loading);
+        Assert.IsFalse(UILockManager.CanOpen(UILockManager.Owner.Settings));
     }
 
     [Test]
