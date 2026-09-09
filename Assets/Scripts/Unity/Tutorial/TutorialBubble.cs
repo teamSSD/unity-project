@@ -31,6 +31,8 @@ public class TutorialBubble : MonoBehaviour
     private float tailTipVisualPadding = 8f;
     [SerializeField, Tooltip("Tail이 body의 어느 쪽에 붙을지. -1=body 왼쪽 코너, 0=중앙, +1=body 오른쪽 코너. 대략 ±0.5 권장.")]
     private float tailHorizontalFraction = -0.5f;
+    [SerializeField, Tooltip("말풍선 본체가 화면 가장자리와 유지할 1920x1080 기준 Canvas 여백.")]
+    private float screenEdgePadding = 16f;
 
     private bool _interactive;
     private System.Action _onDismiss;
@@ -42,6 +44,7 @@ public class TutorialBubble : MonoBehaviour
     private System.Func<Vector2> _screenPosGetter;
     private System.Func<Vector2, float> _fractionGetter;
     private TailDirection _followDir;
+    private readonly Vector3[] _bodyWorldCorners = new Vector3[4];
 
     public void SetDismissKey(KeyCode key) { _dismissKey = key; }
 
@@ -103,6 +106,7 @@ public class TutorialBubble : MonoBehaviour
         if (body != null) LayoutRebuilder.ForceRebuildLayoutImmediate(body);
         ApplyDirection(dir, horizontalFractionOverride ?? tailHorizontalFraction);
         transform.position = (Vector3)targetScreenPos;
+        ClampBodyInsideViewport();
     }
 
     public void PlaceAtWorldPoint(Vector3 worldPoint, TailDirection dir = TailDirection.Down)
@@ -158,6 +162,32 @@ public class TutorialBubble : MonoBehaviour
             body.pivot = new Vector2(0.5f, 0f);
             body.anchoredPosition = new Vector2(bodyOffsetX, baseOffset);
         }
+    }
+
+    private void ClampBodyInsideViewport()
+    {
+        if (body == null) return;
+
+        var canvas = GetComponentInParent<Canvas>();
+        var rootCanvas = canvas != null ? canvas.rootCanvas : null;
+        Rect viewport = rootCanvas != null
+            ? rootCanvas.pixelRect
+            : new Rect(0f, 0f, Screen.width, Screen.height);
+        float scaleFactor = TutorialScreenPlacement.NormalizeScaleFactor(
+            rootCanvas != null ? rootCanvas.scaleFactor : 1f);
+
+        body.GetWorldCorners(_bodyWorldCorners);
+        Rect bodyScreenRect = Rect.MinMaxRect(
+            _bodyWorldCorners[0].x,
+            _bodyWorldCorners[0].y,
+            _bodyWorldCorners[2].x,
+            _bodyWorldCorners[2].y);
+        Vector2 correction = TutorialScreenPlacement.CalculateViewportCorrection(
+            bodyScreenRect,
+            viewport,
+            screenEdgePadding * scaleFactor);
+
+        transform.position += (Vector3)correction;
     }
 
     private void Update()

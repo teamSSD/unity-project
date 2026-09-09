@@ -24,7 +24,7 @@ public class TutorialTarget : MonoBehaviour
     private float verticalAnchorFraction = 1f;
 
     [SerializeField,
-     Tooltip("최종 스크린 좌표에 더할 오프셋 (px). 미세 조정.")]
+     Tooltip("최종 스크린 좌표에 더할 1920x1080 기준 Canvas 오프셋. 미세 조정.")]
     private Vector2 screenOffset = Vector2.zero;
 
     public string Key => key;
@@ -56,14 +56,16 @@ public class TutorialTarget : MonoBehaviour
     }
 
     /// <summary>이 타겟의 화면(스크린) 위치 반환. bubble tail이 여기 꽂힘.</summary>
-    public Vector2 GetScreenPosition()
+    public Vector2 GetScreenPosition(float referenceOffsetScale = 1f)
     {
+        Vector2 scaledOffset = TutorialScreenPlacement.ScaleReferenceOffset(screenOffset, referenceOffsetScale);
+
         // anchorOverride가 있으면 그 world position을 스크린으로 변환.
         if (anchorOverride != null)
         {
             var cam0 = Camera.main;
             if (cam0 == null) return Vector2.zero;
-            return (Vector2)cam0.WorldToScreenPoint(anchorOverride.position) + screenOffset;
+            return (Vector2)cam0.WorldToScreenPoint(anchorOverride.position) + scaledOffset;
         }
 
         var rt = transform as RectTransform;
@@ -72,7 +74,7 @@ public class TutorialTarget : MonoBehaviour
             Vector3[] corners = new Vector3[4];
             rt.GetWorldCorners(corners);
             var center = new Vector2((corners[0].x + corners[2].x) * 0.5f, (corners[0].y + corners[2].y) * 0.5f);
-            return center + screenOffset;
+            return center + scaledOffset;
         }
 
         var cam = Camera.main;
@@ -84,9 +86,9 @@ public class TutorialTarget : MonoBehaviour
             // verticalAnchorFraction: 0=하단, 1=상단.
             float y = sr.bounds.min.y + sr.bounds.size.y * verticalAnchorFraction;
             var anchorWorld = new Vector3(sr.bounds.center.x, y, sr.bounds.center.z);
-            return (Vector2)cam.WorldToScreenPoint(anchorWorld) + screenOffset;
+            return (Vector2)cam.WorldToScreenPoint(anchorWorld) + scaledOffset;
         }
 
-        return (Vector2)cam.WorldToScreenPoint(transform.position) + screenOffset;
+        return (Vector2)cam.WorldToScreenPoint(transform.position) + scaledOffset;
     }
 }

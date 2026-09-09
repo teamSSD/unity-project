@@ -2,6 +2,68 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
+/// 튜토리얼 좌표를 1920x1080 기준 Canvas 단위에서 실제 스크린 좌표로 변환한다.
+/// 타겟별 임의 픽셀 보정과 화면 경계 처리를 이곳에서 일원화한다.
+/// </summary>
+public static class TutorialScreenPlacement
+{
+    private const float MinimumValidScale = 0.0001f;
+
+    public static float NormalizeScaleFactor(float canvasScaleFactor)
+        => canvasScaleFactor > MinimumValidScale ? canvasScaleFactor : 1f;
+
+    public static Vector2 ScaleReferenceOffset(Vector2 referenceOffset, float canvasScaleFactor)
+        => referenceOffset * NormalizeScaleFactor(canvasScaleFactor);
+
+    /// <summary>
+    /// contentScreenRect가 viewportScreenRect의 padding 안에 들어오도록 필요한 이동량을 반환한다.
+    /// 콘텐츠가 가용 영역보다 크면 해당 축의 중앙을 맞춘다.
+    /// </summary>
+    public static Vector2 CalculateViewportCorrection(
+        Rect contentScreenRect,
+        Rect viewportScreenRect,
+        float padding)
+    {
+        padding = Mathf.Max(0f, padding);
+
+        float minX = viewportScreenRect.xMin + padding;
+        float maxX = viewportScreenRect.xMax - padding;
+        float minY = viewportScreenRect.yMin + padding;
+        float maxY = viewportScreenRect.yMax - padding;
+
+        float correctionX = CalculateAxisCorrection(
+            contentScreenRect.xMin,
+            contentScreenRect.xMax,
+            minX,
+            maxX);
+        float correctionY = CalculateAxisCorrection(
+            contentScreenRect.yMin,
+            contentScreenRect.yMax,
+            minY,
+            maxY);
+
+        return new Vector2(correctionX, correctionY);
+    }
+
+    private static float CalculateAxisCorrection(
+        float contentMin,
+        float contentMax,
+        float viewportMin,
+        float viewportMax)
+    {
+        float contentSize = contentMax - contentMin;
+        float viewportSize = viewportMax - viewportMin;
+        if (contentSize > viewportSize)
+            return (viewportMin + viewportMax - contentMin - contentMax) * 0.5f;
+        if (contentMin < viewportMin)
+            return viewportMin - contentMin;
+        if (contentMax > viewportMax)
+            return viewportMax - contentMax;
+        return 0f;
+    }
+}
+
+/// <summary>
 /// 튜토리얼 스텝 오케스트레이터. Managers 씬 singleton.
 /// - Catalog + TutorialBubble prefab + Overlay canvas 참조
 /// - Show(stepId): 스텝의 여러 파트를 순차 표시 (space dismiss로 다음 파트)
@@ -17,6 +79,7 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
 
     private static readonly Dictionary<string, TutorialTarget> _targets = new();
     private TutorialBubble _active;
+    private Canvas _rootCanvas;
 
     /// <summary>파트가 표시될 때 발화 (카메라 focus 등 부수 처리용).</summary>
     public event System.Action<int, int, TutorialStepPart> OnPartShown;
@@ -102,7 +165,7 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
             return sign * Mathf.Abs(baseFrac);
         };
 
-        Vector2 initialScreenPos = ResolveScreenPos(targetKey) + offset;
+        Vector2 initialScreenPos = ResolvePartScreenPos(targetKey, offset);
         _active.PlaceAtScreenPoint(initialScreenPos, dir, effectiveFraction(initialScreenPos));
 
         // dismissOnRecipeBookClose 파트는 dismissKey를 None으로 (키 입력으로 안 넘어감).
@@ -116,7 +179,7 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
         if (!string.IsNullOrEmpty(targetKey))
         {
             _active.EnableDynamicFollow(
-                () => ResolveScreenPos(targetKey) + offset,
+                () => ResolvePartScreenPos(targetKey, offset),
                 dir,
                 effectiveFraction);
         }
@@ -143,11 +206,29 @@ public class TutorialController : SingletonMonoBehaviour<TutorialController>
         }, lockInput: !part.allowSceneInteraction);
     }
 
-    private Vector2 ResolveScreenPos(string key)
+    private Vector2 ResolvePartScreenPos(string key, Vector2 referenceOffset)
     {
+        float canvasScaleFactor = GetOverlayScaleFactor();
         if (!string.IsNullOrEmpty(key) && _targets.TryGetValue(key, out var t) && t != null)
-            return t.GetScreenPosition();
-        return new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+        {
+            return t.GetScreenPosition(canvasScaleFactor) +
+                   TutorialScreenPlacement.ScaleReferenceOffset(referenceOffset, canvasScaleFactor);
+        }
+
+        return new Vector2(Screen.width * 0.5f, Screen.height * 0.5f) +
+               TutorialScreenPlacement.ScaleReferenceOffset(referenceOffset, canvasScaleFactor);
+    }
+
+    private float GetOverlayScaleFactor()
+    {
+        if (_rootCanvas == null && overlayCanvas != null)
+        {
+            var canvas = overlayCanvas.GetComponentInParent<Canvas>();
+            _rootCanvas = canvas != null ? canvas.rootCanvas : null;
+        }
+
+        return TutorialScreenPlacement.NormalizeScaleFactor(
+            _rootCanvas != null ? _rootCanvas.scaleFactor : 1f);
     }
 
     public void Complete()
