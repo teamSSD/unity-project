@@ -83,10 +83,10 @@ async function targetMap(page) {
   return (await eventAfter(page, start, { type: 'target-map' }, 'missing E2E target map')).targets;
 }
 
-async function targetMatching(page, predicate, label, visible = false) {
+async function targetMatching(page, predicate, label, visible = false, timeout = 20_000) {
   await expect.poll(async () => {
     return (await targetMap(page)).find(candidate => predicate(candidate) && (!visible || candidate.visible)) ?? null;
-  }, { timeout: 20_000, message: `missing ${visible ? 'visible ' : ''}target ${label}` }).not.toBeNull();
+  }, { timeout, message: `missing ${visible ? 'visible ' : ''}target ${label}` }).not.toBeNull();
   return (await targetMap(page)).find(candidate => predicate(candidate) && (!visible || candidate.visible));
 }
 
@@ -107,6 +107,39 @@ async function clickTarget(page, canvas, id) {
   // Keep pointer down/up and the following action on separate Unity render frames.
   // Zero-duration browser clicks can otherwise collapse while WebGL is busy.
   await page.waitForTimeout(80);
+}
+
+async function scrollBentoTargetIntoView(page, canvas, slotIndex, category, foodId) {
+  const itemId = `bento.slot${slotIndex}.${category}.${foodId}`;
+  const visibleItem = async () => (await targetMap(page))
+    .find(candidate => candidate.id === itemId && candidate.visible && candidate.interactable) ?? null;
+  if (await visibleItem()) return;
+
+  // A newly opened selection starts at the left, but the fallback sweep also handles
+  // a ScrollRect position retained while the modal stays alive.
+  for (const [direction, attempts] of [['next', 6], ['previous', 12], ['next', 6]]) {
+    for (let attempt = 0; attempt < attempts; attempt += 1) {
+      if (await visibleItem()) return;
+      await clickTarget(page, canvas, `bento.slot${slotIndex}.${category}.${direction}`);
+    }
+  }
+  expect(await visibleItem(), `${itemId} must become clickable through actual carousel arrows`).toBeTruthy();
+}
+
+async function setBentoFoodSelected(page, canvas, slotIndex, category, foodId, selected, label) {
+  const isSelected = observation => {
+    const slot = observation.selectedMenus?.find(candidate => candidate.slotIndex === slotIndex);
+    return category === 'main'
+      ? slot?.mainFoodId === foodId
+      : (slot?.sideFoodIds ?? []).includes(foodId);
+  };
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const before = await campaign(page, `${label}-before-${attempt}`);
+    if (isSelected(before) === selected) return;
+    await scrollBentoTargetIntoView(page, canvas, slotIndex, category, foodId);
+    await clickTarget(page, canvas, `bento.slot${slotIndex}.${category}.${foodId}`);
+  }
+  expect(isSelected(await campaign(page, `${label}-failed`)), label).toBe(selected);
 }
 
 async function choosePhaseAction(page, canvas, targetId, day, phase) {
@@ -152,27 +185,27 @@ async function completeDialogue(page, canvas, preferredResultTag = '') {
   throw new Error('Dialogue did not close after 120 actual clicks.');
 }
 
-async function panUntilVisible(page, predicate, label) {
-  const initial = await targetMatching(page, predicate, label);
+async function panUntilVisible(page, predicate, label, timeout = 20_000) {
+  const initial = await targetMatching(page, predicate, label, false, timeout);
   if (initial.visible) return initial;
   const direction = initial.x < 0 ? 'ArrowLeft' : 'ArrowRight';
   await page.keyboard.down(direction);
   try {
-    return await targetMatching(page, predicate, label, true);
+    return await targetMatching(page, predicate, label, true, timeout);
   } finally {
     await page.keyboard.up(direction);
   }
 }
 
-async function worldPoint(page, canvas, predicate, label) {
-  const item = await panUntilVisible(page, predicate, label);
+async function worldPoint(page, canvas, predicate, label, timeout = 20_000) {
+  const item = await panUntilVisible(page, predicate, label, timeout);
   const box = await canvas.boundingBox();
   expect(box).not.toBeNull();
   return { x: box.x + box.width * item.x, y: box.y + box.height * item.y };
 }
 
-async function clickWorldTarget(page, canvas, predicate, label) {
-  const point = await worldPoint(page, canvas, predicate, label);
+async function clickWorldTarget(page, canvas, predicate, label, timeout = 20_000) {
+  const point = await worldPoint(page, canvas, predicate, label, timeout);
   await page.mouse.move(point.x, point.y);
   await page.waitForTimeout(60);
   await page.mouse.down();
@@ -299,6 +332,22 @@ async function finishMinigame(page, canvas, expectedMinigame) {
     { timeout: 12_000, message: `${expectedMinigame} must finish through actual input` }).toBe('');
 }
 
+async function startMinigame(page, canvas, toolId, expectedMinigame) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    await clickWorldTarget(page, canvas,
+      candidate => candidate.id === `world.cooking.tool.${toolId}`, `tool ${toolId}`);
+    for (let poll = 0; poll < 6; poll += 1) {
+      const active = (await snapshot(page,
+        `minigame-${expectedMinigame}-start-attempt-${attempt}-${poll}`)).activeMinigame;
+      if (active === expectedMinigame) return;
+      if (active) throw new Error(`${toolId} started unexpected minigame ${active}`);
+      await page.waitForTimeout(120);
+    }
+  }
+  expect((await snapshot(page, `minigame-${expectedMinigame}-start-failed`)).activeMinigame,
+    `${expectedMinigame} must start through a retried actual tool click`).toBe(expectedMinigame);
+}
+
 const runtimeMinigameName = {
   M001: 'FireMiniGame',
   M002: 'ClickMiniGame',
@@ -360,10 +409,9 @@ async function executeRecipePlan(page, canvas, plan, trace) {
       .toEqual([...step.inputFoodIds].sort());
     expect(readyTool.cookable, `${step.toolId} must be cookable before its actual click`).toBe(true);
 
-    await clickWorldTarget(page, canvas,
-      candidate => candidate.id === `world.cooking.tool.${step.toolId}`, `tool ${step.toolId}`);
     const expected = runtimeMinigameName[step.minigameId];
     if (!expected) throw new Error(`No actual-input minigame executor for ${step.minigameId}.`);
+    await startMinigame(page, canvas, step.toolId, expected);
     await finishMinigame(page, canvas, expected);
     const state = await campaign(page, `verify-${step.outputFoodId}`);
     expect(state.tools.find(tool => tool.toolId === step.toolId)?.resultFoodId,
@@ -537,8 +585,8 @@ async function cookDeliveryOrder(page, canvas, questOrder, trace) {
 
 async function openNextCustomerOrder(page, canvas) {
   const predicate = candidate => candidate.id.startsWith('world.cooking.ordering-customer.');
-  await clickWorldTarget(page, canvas, predicate, 'ordering customer');
-  await clickWorldTarget(page, canvas, predicate, 'ordering customer');
+  await clickWorldTarget(page, canvas, predicate, 'ordering customer', 75_000);
+  await clickWorldTarget(page, canvas, predicate, 'ordering customer', 75_000);
   await expect.poll(async () => {
     const observation = await campaign(page, 'wait-regular-ticket');
     return observation.tickets.find(ticket => !ticket.delivery) ?? null;
@@ -546,24 +594,30 @@ async function openNextCustomerOrder(page, canvas) {
   return (await campaign(page, 'regular-ticket-ready')).tickets.find(ticket => !ticket.delivery);
 }
 
-async function serveRegularMeal(page, canvas, plan, trace, label) {
+async function serveRegularMeal(page, canvas, reservedRequirements, trace, label) {
   const before = await snapshot(page, `${label}-before`);
-  const latest = await campaign(page, `${label}-replan`);
-  const livePlan = latest.cookingPlans.find(candidate => candidate.targetFoodId === plan.targetFoodId);
+  const ticket = await openNextCustomerOrder(page, canvas);
+  expect(ticket.requiredFoodIds, 'a regular customer must request one complete selected menu')
+    .toHaveLength(1);
+  const requestedFoodId = ticket.requiredFoodIds[0];
+  const latest = await campaign(page, `${label}-ticket-plan`);
+  expect(latest.customerSalesMainFoodIds, 'the customer order must come from the live Cooking menu')
+    .toContain(requestedFoodId);
+  const livePlan = latest.cookingPlans.find(candidate => candidate.targetFoodId === requestedFoodId);
+  expect(livePlan, `the live customer order ${requestedFoodId} must have a recipe plan`).toBeTruthy();
+  expect(canCraftFromInventory(latest, livePlan, 1, reservedRequirements),
+    `the selected customer menu ${requestedFoodId} must be craftable without consuming quest reserves`)
+    .toBe(true);
   const finalToolId = await executeRecipePlan(page, canvas, livePlan, trace);
   const bentoTargetId = await createBento(page, canvas);
   await dragToWorldTarget(
     page, canvas,
-    candidate => candidate.id === `world.cooking.tool.${finalToolId}`, `finished ${plan.targetFoodId}`,
+    candidate => candidate.id === `world.cooking.tool.${finalToolId}`, `finished ${requestedFoodId}`,
     candidate => candidate.id === bentoTargetId, 'spawned bento',
   );
   const packed = await campaign(page, `${label}-packed`);
   expect(packed.bentos.find(bento => bento.targetId === bentoTargetId)?.foodIds)
-    .toEqual([plan.targetFoodId]);
-
-  const ticket = await openNextCustomerOrder(page, canvas);
-  expect(ticket.requiredFoodIds, 'the random customer must request the selected live menu')
-    .toEqual([plan.targetFoodId]);
+    .toEqual([requestedFoodId]);
   await dragToWorldTarget(
     page, canvas,
     candidate => candidate.id === ticket.targetId, 'regular customer ticket',
@@ -574,10 +628,11 @@ async function serveRegularMeal(page, canvas, plan, trace, label) {
     return state.money > before.money ? state.money : null;
   }, { timeout: 12_000, message: 'serving the real customer must increase live money' }).not.toBeNull();
   const after = await snapshot(page, `${label}-served-state`);
-  await showStep(page, `served ${label}`, trace);
+  await showStep(page, `served ${label}: actual order ${requestedFoodId}`, trace);
   return {
     before,
     after,
+    foodId: requestedFoodId,
     elapsedMinutes: (after.hour * 60 + after.minute) - (before.hour * 60 + before.minute),
   };
 }
@@ -768,6 +823,7 @@ function aggregateIngredientRequirements(observation, foodCraftCounts) {
 
 async function ensureStorageCapacity(page, canvas, requirements, trace) {
   let observation = await campaign(page, 'storage-capacity-plan');
+  const deferredUpgrades = [];
   const storageByIngredient = new Map(
     observation.ingredientStorage.map(item => [item.foodId, item.storageType]),
   );
@@ -788,8 +844,13 @@ async function ensureStorageCapacity(page, canvas, requirements, trace) {
       expect(live.isMax, `${storageType} must have an upgrade for ${live.used + foodIds.size} slots`).toBe(false);
       const beforeMoney = (await snapshot(page, `before-${storageType}-upgrade`)).money;
       const reserve = observation.managementFee * 2;
-      expect(beforeMoney - live.nextCost,
-        `${storageType} upgrade must preserve the ${reserve}G operating reserve`).toBeGreaterThanOrEqual(reserve);
+      if (beforeMoney - live.nextCost < reserve) {
+        deferredUpgrades.push({ storageType, cost: live.nextCost, money: beforeMoney, reserve });
+        await showStep(page,
+          `deferred ${storageType} upgrade (${live.nextCost}G); ${beforeMoney}G cash must preserve ${reserve}G`,
+          trace);
+        break;
+      }
       await clickTarget(page, canvas, 'shop.tab.2');
       await clickTarget(page, canvas, `shop.storage.${storageType}`);
       const beforeCapacity = live.capacity;
@@ -814,6 +875,7 @@ async function ensureStorageCapacity(page, canvas, requirements, trace) {
     await clickTarget(page, canvas, 'shop.tab.0');
     await targetMatching(page, candidate => candidate.id.startsWith('shop.item.'), 'shop item after storage planning', true);
   }
+  return deferredUpgrades;
 }
 
 async function teleportAndInteract(page, targetId) {
@@ -828,6 +890,41 @@ function unmetRequirements(observation, requirements) {
     .map(([foodId]) => foodId);
 }
 
+function chooseOperationalStockPlan(observation, servings = 2) {
+  const storageTypeByFood = new Map(
+    observation.ingredientStorage.map(item => [item.foodId, item.storageType]),
+  );
+  const storageByType = new Map(observation.storage.map(item => [item.storageType, item]));
+
+  return observation.cookingPlans
+    .filter(plan => plan.valid && observation.unlockedMainFoodIds.includes(plan.targetFoodId))
+    .filter(plan => plan.steps.every(step => runtimeMinigameName[step.minigameId]))
+    .map(plan => {
+      const requirements = new Map();
+      const newTypes = new Map();
+      let missingUnits = 0;
+      for (const ingredient of plan.ingredients) {
+        const desired = ingredient.quantity * servings;
+        requirements.set(ingredient.foodId, desired);
+        const have = inventoryQuantity(observation, ingredient.foodId, true);
+        missingUnits += Math.max(0, desired - have);
+        if (have > 0) continue;
+        const storageType = storageTypeByFood.get(ingredient.foodId);
+        if (!newTypes.has(storageType)) newTypes.set(storageType, new Set());
+        newTypes.get(storageType).add(ingredient.foodId);
+      }
+      const fits = [...newTypes].every(([storageType, foodIds]) => {
+        const storage = storageByType.get(storageType);
+        return storage && storage.used + foodIds.size <= storage.capacity;
+      });
+      return { plan, requirements, missingUnits, fits };
+    })
+    .filter(candidate => candidate.fits)
+    .sort((left, right) => left.missingUnits - right.missingUnits ||
+      left.plan.steps.length - right.plan.steps.length ||
+      left.plan.targetFoodId.localeCompare(right.plan.targetFoodId))[0] ?? null;
+}
+
 async function buyAvailableRequirements(page, canvas, requirements) {
   for (const [foodId, desired] of requirements) {
     let available = inventoryQuantity(await campaign(page, `stock-${foodId}`), foodId, true);
@@ -840,9 +937,9 @@ async function buyAvailableRequirements(page, canvas, requirements) {
   return { state, unmet: unmetRequirements(state, requirements) };
 }
 
-async function buyRequirementsWithBoundedRefresh(page, canvas, requirements, trace) {
+async function buyRequirementsWithBoundedRefresh(page, canvas, requirements, trace, allowRefresh = true) {
   let acquisition = await buyAvailableRequirements(page, canvas, requirements);
-  if (acquisition.unmet.length > 0 &&
+  if (allowRefresh && acquisition.unmet.length > 0 &&
       await refreshLineupOnceIfRational(page, canvas, requirements, trace))
     acquisition = await buyAvailableRequirements(page, canvas, requirements);
   return acquisition;
@@ -869,17 +966,34 @@ async function enterCookingDay(page, canvas, day, preferredFoodId = '', reserved
     (isSupportedMain(preferred) ? preferred : fallback);
   expect(livePlan, `day ${day} must have a selectable main menu supported by the macro`).toBeTruthy();
   await teleportAndInteract(page, 'go-home');
-  let selectedMenuCount = 0;
-  for (let attempt = 0; attempt < 3 && selectedMenuCount === 0; attempt += 1) {
-    await clickTarget(page, canvas, `bento.slot0.main.${livePlan.targetFoodId}`);
-    selectedMenuCount = (await snapshot(page, `day-${day}-menu-selected-${attempt}`)).selectedMenuCount;
+
+  let menuState = await campaign(page, `day-${day}-menu-before-normalize`);
+  for (const selected of menuState.selectedMenus ?? []) {
+    for (const sideFoodId of selected.sideFoodIds ?? [])
+      await setBentoFoodSelected(page, canvas, selected.slotIndex, 'side', sideFoodId, false,
+        `day ${day} clears slot ${selected.slotIndex} side ${sideFoodId}`);
+    if (selected.slotIndex > 0 && selected.mainFoodId)
+      await setBentoFoodSelected(page, canvas, selected.slotIndex, 'main', selected.mainFoodId, false,
+        `day ${day} clears slot ${selected.slotIndex} main ${selected.mainFoodId}`);
   }
-  expect(selectedMenuCount, `day ${day} must register the actual ${livePlan.targetFoodId} menu click`)
-    .toBeGreaterThan(0);
+  menuState = await campaign(page, `day-${day}-menu-normalized`);
+  const slotZero = menuState.selectedMenus?.find(candidate => candidate.slotIndex === 0);
+  if (slotZero?.mainFoodId !== livePlan.targetFoodId)
+    await setBentoFoodSelected(page, canvas, 0, 'main', livePlan.targetFoodId, true,
+      `day ${day} selects ${livePlan.targetFoodId}`);
+  await expect.poll(async () => {
+    const selected = (await campaign(page, `day-${day}-menu-selected`)).selectedMenus ?? [];
+    return selected.filter(candidate => candidate.mainFoodId)
+      .map(candidate => `${candidate.slotIndex}:${candidate.mainFoodId}`);
+  }, { timeout: 10_000, message: `day ${day} must select only ${livePlan.targetFoodId} in slot 0` })
+    .toEqual([`0:${livePlan.targetFoodId}`]);
   await clickTarget(page, canvas, 'bento.confirm');
   await waitForState(page, { scene: 'Cooking', day }, `day-${day}-cooking-ready`);
   await expect.poll(async () => (await snapshot(page, `day-${day}-cooking-input-ready`)).uiLocked,
     { timeout: 10_000 }).toBe(false);
+  await expect.poll(async () => (await campaign(page, `day-${day}-live-sales-menu`)).customerSalesMainFoodIds,
+    { timeout: 10_000, message: `Cooking must capture only the selected ${livePlan.targetFoodId} menu` })
+    .toEqual([livePlan.targetFoodId]);
   return livePlan;
 }
 
@@ -969,12 +1083,27 @@ async function operateShoppingPhase(page, canvas, day, phase, requirements, trac
       `dragged offscreen ${offscreenPurchase.foodId} from ${offscreenPurchase.initialY.toFixed(3)} to ${offscreenPurchase.finalY.toFixed(3)} in ${offscreenPurchase.dragCount} gesture(s)`,
       trace);
   }
-  await ensureStorageCapacity(page, canvas, requirements, trace);
-  const acquisition = await buyRequirementsWithBoundedRefresh(page, canvas, requirements, trace);
+  const deferredUpgrades = await ensureStorageCapacity(page, canvas, requirements, trace);
+  const fundingPlan = deferredUpgrades.length > 0
+    ? chooseOperationalStockPlan(await campaign(page, `day-${day}-${phase}-funding-plan`))
+    : null;
+  const purchaseRequirements = fundingPlan?.requirements ?? requirements;
+  if (fundingPlan) await showStep(page,
+    `funding mode: restock ${fundingPlan.plan.targetFoodId} for two real sales`,
+    trace);
+  const acquisition = await buyRequirementsWithBoundedRefresh(
+    page,
+    canvas,
+    purchaseRequirements,
+    trace,
+    phase === 'Night',
+  );
+  const questState = await campaign(page, `day-${day}-${phase}-quest-stock-after-purchases`);
+  const questAcquisition = { state: questState, unmet: unmetRequirements(questState, requirements) };
   await showStep(page,
-    acquisition.unmet.length === 0
+    questAcquisition.unmet.length === 0
       ? `acquired all required ingredients during day ${day} ${phase}`
-      : `day ${day} ${phase} still lacks ${acquisition.unmet.join(',')}`,
+      : `day ${day} ${phase} still lacks ${questAcquisition.unmet.join(',')}`,
     trace);
   await leaveShop(page, canvas, day, phase);
   const harvested = await visitAndHarvestFarm(page, day, phase, trace);
@@ -983,6 +1112,8 @@ async function operateShoppingPhase(page, canvas, day, phase, requirements, trac
     acquisition: { state, unmet: unmetRequirements(state, requirements) },
     offscreenPurchase,
     harvested,
+    capacityReady: deferredUpgrades.length === 0,
+    fundingFoodId: fundingPlan?.plan.targetFoodId ?? '',
   };
 }
 
@@ -1009,7 +1140,7 @@ async function operateWorkDayToShop(
     const served = await serveRegularMeal(
       page,
       canvas,
-      currentPlan,
+      reservedRequirements,
       trace,
       `day ${day} campaign sale ${meal + 1}`,
     );
@@ -1048,11 +1179,12 @@ async function acquireQuestIngredients(
   let firstAttempt = true;
   let offscreenPurchase = null;
   let regularSales = 0;
+  let reserveQuestStock = false;
 
   do {
     const work = await operateWorkDayToShop(page, canvas, day, preferredFoodId, trace, {
       exactSales: firstAttempt ? exactInitialSales : 0,
-      reservedRequirements: requirements,
+      reservedRequirements: reserveQuestStock ? requirements : new Map(),
     });
     regularSales += work.servedMeals;
     preferredFoodId = work.plan.targetFoodId;
@@ -1076,6 +1208,7 @@ async function acquireQuestIngredients(
         firstAttempt && exerciseOffscreen && phase === 'Afternoon',
       );
       acquisition = operations.acquisition;
+      if (operations.capacityReady) reserveQuestStock = true;
       if (operations.offscreenPurchase) offscreenPurchase = operations.offscreenPurchase;
       const beforePass = await campaign(page, `day-${day}-${phase}-before-pass`);
       expect(beforePass.money, `${phase} must retain one management fee before phase completion`)

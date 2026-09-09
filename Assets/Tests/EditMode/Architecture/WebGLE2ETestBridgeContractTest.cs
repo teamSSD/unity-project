@@ -75,6 +75,33 @@ public class WebGLE2ETestBridgeContractTest
     }
 
     [Test]
+    public void CampaignObservation_ExposesSelectedAndCapturedSalesMenusForRandomOrders()
+    {
+        var bridgePath = Path.Combine(Application.dataPath, "Scripts", "Unity", "Dev", "E2E", "AftertasteE2ETestBridge.cs");
+        var customerPath = Path.Combine(Application.dataPath, "Scripts", "Unity", "Cooking", "CustomerManager.cs");
+        var bridge = File.ReadAllText(bridgePath);
+        var customer = File.ReadAllText(customerPath);
+
+        Assert.That(bridge, Does.Contain("selectedMenus = selectedMenus"));
+        Assert.That(bridge, Does.Contain("customerSalesMainFoodIds = customerManager?.E2ESalesMainFoodIds"));
+        Assert.That(customer, Does.Contain("public string[] E2ESalesMainFoodIds"));
+    }
+
+    [Test]
+    public void MenuSelectionTargets_RespectScrollMasks_AndExposeActualArrowInputs()
+    {
+        var registryPath = Path.Combine(Application.dataPath, "Scripts", "Unity", "Dev", "E2E", "E2EUiTargetRegistry.cs");
+        var selectionPath = Path.Combine(Application.dataPath, "Scripts", "Unity", "UI", "BentoSelectionController.cs");
+        var registry = File.ReadAllText(registryPath);
+        var selection = File.ReadAllText(selectionPath);
+
+        Assert.That(registry, Does.Contain("ClipToParentMasks"));
+        Assert.That(registry, Does.Contain("GetComponentsInParent<RectMask2D>"));
+        Assert.That(selection, Does.Contain("RegisterCategoryArrows"));
+        Assert.That(selection, Does.Contain("bento.slot{slotIndex}.{category}.next"));
+    }
+
+    [Test]
     public void DevelopmentWebGLBuild_RegistersInstance_AndKeepsBoundedEventLog()
     {
         var pluginPath = Path.Combine(Application.dataPath, "Plugins", "WebGL", "AftertasteE2E.jslib");

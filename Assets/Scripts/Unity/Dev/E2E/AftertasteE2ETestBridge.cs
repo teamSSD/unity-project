@@ -137,6 +137,14 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
     }
 
     [Serializable]
+    private sealed class SelectedMenuObservation
+    {
+        public int slotIndex;
+        public string mainFoodId;
+        public string[] sideFoodIds;
+    }
+
+    [Serializable]
     private sealed class MinigameObservation
     {
         public string name;
@@ -191,6 +199,8 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
         public CookingToolObservation[] tools;
         public BentoObservation[] bentos;
         public TicketObservation[] tickets;
+        public SelectedMenuObservation[] selectedMenus;
+        public string[] customerSalesMainFoodIds;
         public QuestNpcObservation[] questNpcs;
         public FarmObservation[] farmTiles;
         public string[] configuredQuestGroupIds;
@@ -554,6 +564,20 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
                 questId = ticket.QuestId ?? string.Empty,
                 requiredFoodIds = ticket.E2ERequiredFoodIds,
             }).ToArray();
+        var selectedMenus = Enumerable.Range(0, 3)
+            .Select(slotIndex =>
+            {
+                var menu = root?.MenuSelection?.GetMenu(slotIndex);
+                return new SelectedMenuObservation
+                {
+                    slotIndex = slotIndex,
+                    mainFoodId = menu?.MainMenu?.id ?? string.Empty,
+                    sideFoodIds = menu?.SideMenus?
+                        .Where(food => food != null).Select(food => food.id).ToArray()
+                        ?? Array.Empty<string>(),
+                };
+            }).ToArray();
+        var customerManager = UnityEngine.Object.FindFirstObjectByType<CustomerManager>();
         var minigameManager = UnityEngine.Object.FindFirstObjectByType<MiniGameManager>();
         var farmTiles = UnityEngine.Object.FindObjectsByType<Farm>(FindObjectsSortMode.None)
             .OrderBy(farm => farm.farmIndex)
@@ -588,6 +612,8 @@ public sealed class AftertasteE2ETestBridge : MonoBehaviour
             tools = tools,
             bentos = bentos,
             tickets = tickets,
+            selectedMenus = selectedMenus,
+            customerSalesMainFoodIds = customerManager?.E2ESalesMainFoodIds ?? Array.Empty<string>(),
             questNpcs = questNpcs,
             farmTiles = farmTiles,
             configuredQuestGroupIds = root?.QuestMenus?.GetAllGroupIds()

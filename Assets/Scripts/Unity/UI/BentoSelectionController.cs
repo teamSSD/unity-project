@@ -38,6 +38,13 @@ public class BentoSelectionController : MonoBehaviour
 #if AFTERTASTE_E2E
         E2EUiTargetRegistry.Unregister("bento.confirm", confirmButton);
         E2EUiTargetRegistry.Unregister("bento.back", backButton);
+        for (int i = 0; i < bentoSlots.Length; i++)
+        {
+            var slot = bentoSlots[i];
+            if (slot == null) continue;
+            UnregisterCategoryArrows(i, "main", slot.mainCategory);
+            UnregisterCategoryArrows(i, "side", slot.sideCategory);
+        }
 #endif
         if (ActiveInstance == this) ActiveInstance = null;
     }
@@ -74,6 +81,10 @@ public class BentoSelectionController : MonoBehaviour
             
             int bentoIndex = i;
             bentoSlots[i].Initialize(bentoIndex, OnBentoNameChanged);
+#if AFTERTASTE_E2E
+            RegisterCategoryArrows(bentoIndex, "main", bentoSlots[i].mainCategory);
+            RegisterCategoryArrows(bentoIndex, "side", bentoSlots[i].sideCategory);
+#endif
 
             // Instantiate items for each slot
             PopulateSlotItems(bentoIndex);
@@ -92,6 +103,22 @@ public class BentoSelectionController : MonoBehaviour
             backButton.onClick.AddListener(Close);
         }
     }
+
+#if AFTERTASTE_E2E
+    private static void RegisterCategoryArrows(int slotIndex, string category, BentoCategoryUI ui)
+    {
+        if (ui == null) return;
+        E2EUiTargetRegistry.Register($"bento.slot{slotIndex}.{category}.previous", ui.leftArrow);
+        E2EUiTargetRegistry.Register($"bento.slot{slotIndex}.{category}.next", ui.rightArrow);
+    }
+
+    private static void UnregisterCategoryArrows(int slotIndex, string category, BentoCategoryUI ui)
+    {
+        if (ui == null) return;
+        E2EUiTargetRegistry.Unregister($"bento.slot{slotIndex}.{category}.previous", ui.leftArrow);
+        E2EUiTargetRegistry.Unregister($"bento.slot{slotIndex}.{category}.next", ui.rightArrow);
+    }
+#endif
 
     private void PopulateSlotItems(int bentoIndex)
     {
