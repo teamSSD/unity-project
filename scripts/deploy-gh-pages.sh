@@ -5,17 +5,24 @@
 # 사용:
 #   ./scripts/deploy-gh-pages.sh                    # 최신 빌드 자동 선택
 #   ./scripts/deploy-gh-pages.sh <build_folder>     # 특정 빌드 경로 지정
+#   ./scripts/deploy-gh-pages.sh --check-only [build_folder]
 
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
+CHECK_ONLY=false
+if [ "${1:-}" = "--check-only" ]; then
+  CHECK_ONLY=true
+  shift
+fi
+
 # ── 1. 빌드 소스 결정
 if [ $# -ge 1 ]; then
   BUILD_SRC="$1"
 else
-  BUILD_SRC="$(ls -td Builds/WebGL/*/*/ 2>/dev/null | head -1 || true)"
+  BUILD_SRC="$(ls -td Builds/WebGL/*_release/*/ 2>/dev/null | head -1 || true)"
 fi
 
 if [ -z "${BUILD_SRC:-}" ] || [ ! -d "$BUILD_SRC" ]; then
@@ -32,9 +39,25 @@ if [ ! -f "$BUILD_SRC/index.html" ] || [ ! -d "$BUILD_SRC/Build" ]; then
   exit 1
 fi
 
-BUILD_LABEL="$(basename "$(dirname "$BUILD_SRC")")/$(basename "$BUILD_SRC")"
+BUILD_KIND="$(basename "$(dirname "$BUILD_SRC")")"
+if [[ "$BUILD_KIND" != *_release ]]; then
+  echo "❌ Release 빌드만 배포할 수 있음: $BUILD_KIND"
+  exit 1
+fi
+
+if [ -f "$BUILD_SRC/.aftertaste-e2e-ready" ] || grep -q "window.AftertasteE2E" "$BUILD_SRC/index.html"; then
+  echo "❌ E2E 브리지/마커가 포함된 빌드는 배포할 수 없음: $BUILD_SRC"
+  exit 1
+fi
+
+BUILD_LABEL="$BUILD_KIND/$(basename "$BUILD_SRC")"
 echo "📦 배포 소스: $BUILD_SRC"
 echo "🏷  라벨: $BUILD_LABEL"
+
+if [ "$CHECK_ONLY" = true ]; then
+  echo "✅ Release 배포 사전 검증 통과"
+  exit 0
+fi
 
 # ── 2. 현재 상태 안전 검증 (uncommitted 변경 있으면 warning)
 if ! git diff-index --quiet HEAD --; then

@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class ScreenResolutionSelector : MonoBehaviour
 {
+    private const string BrowserManagedLabel = "브라우저 자동";
+
     private static readonly (int w, int h)[] Resolutions =
     {
         (1280, 720), (1600, 900), (1920, 1080), (2560, 1440)
@@ -17,6 +19,9 @@ public class ScreenResolutionSelector : MonoBehaviour
 
     public int CurrentIndex => currentIndex;
 
+    public static bool SupportsManualResolution(RuntimePlatform platform) =>
+        platform != RuntimePlatform.WebGLPlayer;
+
     public void SetIndex(int idx)
     {
         currentIndex = Mathf.Clamp(idx, 0, Resolutions.Length - 1);
@@ -25,6 +30,14 @@ public class ScreenResolutionSelector : MonoBehaviour
 
     void Start()
     {
+        if (!SupportsManualResolution(Application.platform))
+        {
+            prevButton.interactable = false;
+            nextButton.interactable = false;
+            UpdateText();
+            return;
+        }
+
         for (int i = 0; i < Resolutions.Length; i++)
         {
             if (Screen.width == Resolutions[i].w && Screen.height == Resolutions[i].h)
@@ -54,12 +67,12 @@ public class ScreenResolutionSelector : MonoBehaviour
 
     void Apply()
     {
+        if (!SupportsManualResolution(Application.platform)) return;
+
         var (w, h) = Resolutions[currentIndex];
         Screen.SetResolution(w, h, Screen.fullScreen);
         UpdateText();
         OnChanged?.Invoke();
-        // WebGL: SetResolution 후 canvas render target/DOM은 즉시 바뀌지만 EventSystem/GraphicRaycaster의
-        // 좌표 매핑 캐시가 다음 프레임까지 이전 값을 사용 → 클릭 좌표 어긋남. 강제 refresh.
         StartCoroutine(RefreshInputAfterResize());
     }
 
@@ -79,8 +92,14 @@ public class ScreenResolutionSelector : MonoBehaviour
         Canvas.ForceUpdateCanvases();
     }
 
-void UpdateText()
+    void UpdateText()
     {
+        if (!SupportsManualResolution(Application.platform))
+        {
+            resolutionText.text = BrowserManagedLabel;
+            return;
+        }
+
         var (w, h) = Resolutions[currentIndex];
         resolutionText.text = $"{w}x{h}";
     }
